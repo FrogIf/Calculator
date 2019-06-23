@@ -1,6 +1,6 @@
 package frog.calculator.control;
 
-import frog.calculator.expression.IExpression;
+import frog.calculator.express.IExpression;
 
 public interface IMonitor {
 

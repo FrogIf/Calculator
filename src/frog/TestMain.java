@@ -14,6 +14,8 @@ public class TestMain {
 //        String expression = "1 + 2 * 3 + 4 * 5";
 
         // 输出计算过程
+
+
         // 计算策略使用桥接
         // 结算结果不使用double
 
@@ -21,7 +23,7 @@ public class TestMain {
         Calculator cal = new Calculator();
 
         while(sc.hasNext()){
-            String expression = sc.next();
+            String expression = sc.nextLine();
 
             if("exit".equals(expression)) {
                 System.out.println("bye !");
@@ -29,8 +31,7 @@ public class TestMain {
             }
 
             try{
-                double calculate = cal.calculate(expression);
-                System.out.println(calculate);
+                System.out.println(cal.calculate(expression));
             }catch (Exception e){
                 e.printStackTrace();
             }

@@ -1,6 +1,6 @@
 package frog.calculator;
 
-import frog.calculator.expression.IExpression;
+import frog.calculator.express.IExpression;
 
 public interface ExpressionNodeHandler {
 

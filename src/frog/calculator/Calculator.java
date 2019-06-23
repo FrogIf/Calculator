@@ -1,46 +1,46 @@
 package frog.calculator;
 
-import frog.calculator.expression.IExpression;
-import frog.calculator.expression.MonitorExpressionWrapper;
-import frog.calculator.expression.end.NumberExpression;
-import frog.calculator.expression.mid.AddExpression;
-import frog.calculator.resolver.DefaultResolverConfigure;
-import frog.calculator.resolver.IResolveResult;
-import frog.calculator.resolver.IResolver;
-import frog.calculator.resolver.IResolverConfigure;
+import frog.calculator.express.IExpression;
+import frog.calculator.express.MonitorExpressionWrapper;
+import frog.calculator.express.result.ResultExpression;
+import frog.calculator.operate.IOperator;
+import frog.calculator.operate.IOperatorPool;
+import frog.calculator.resolve.IResolveResult;
+import frog.calculator.resolve.IResolver;
 
 /**
  * 计算器
  */
 public class Calculator {
 
-    private IResolverConfigure configure;
+    private ICalculatorConfigure configure;
+
+    private IResolver resolver;
+
+    private IOperatorPool operatorPool;
 
     public Calculator() {
-        this.configure = new DefaultResolverConfigure();
+        this.configure = new DefaultCalculatorConfigure();
+        resolver = this.configure.getResolverConfigure().getResolver();
+        operatorPool = this.configure.getOperatorConfigure().getIOperatorPool();
     }
 
-    public Calculator(IResolverConfigure configure) {
+    public Calculator(ICalculatorConfigure configure) {
         this.configure = configure;
     }
 
     private IExpression explain(String expression){
         char[] chars = expression.toCharArray();
 
-        AddExpression initExp = new AddExpression();
-        initExp.setLeft(new NumberExpression("0"));
-        IExpression root = initExp;
+        IResolveResult rootResult = resolver.resolve(chars, 0);
+        IExpression root = this.handleResolveResult(rootResult);
 
-        IResolver resolver = configure.getResolver();
-
-        for(int i = 0; i < chars.length; i++){
+        for(int i = rootResult.getEndIndex() + 1; i < chars.length; i++){
             IResolveResult result = resolver.resolve(chars, i);
 
-            if(result.getExpression() == null) {
-                throw new IllegalArgumentException("can't recognize expression.");
-            }
+            IExpression exp = this.handleResolveResult(result);
 
-            root = root.assembleTree(result.getExpression());
+            root = root.assembleTree(exp);
 
             if(root == null){
                 throw new IllegalStateException("tree root lost.");
@@ -52,12 +52,32 @@ public class Calculator {
         return root;
     }
 
-    public double calculate(String expression){
+    private IExpression handleResolveResult(IResolveResult result){
+        if(result.getExpression() == null) {
+            throw new IllegalArgumentException("can't recognize expression.");
+        }
+
+        IExpression exp = result.getExpression();
+
+        IOperator operator = operatorPool.getOperator(result.getSymbol());
+
+        if(operator == null){
+            throw new IllegalStateException("can't find operator for it.");
+        }else{
+            exp.setOperator(operator);
+        }
+
+        return result.getExpression();
+    }
+
+    public String calculate(String expression){
         IExpression tree = explain(expression.replaceAll(" ", ""));
 
         foreachExpressionTree(tree, exp -> new MonitorExpressionWrapper(exp));
 
-        return tree.interpret();
+        ResultExpression result = tree.interpret();
+
+        return result.resultValue();
     }
 
     private IExpression foreachExpressionTree(IExpression expression, ExpressionNodeHandler expressionNodeHandler){
