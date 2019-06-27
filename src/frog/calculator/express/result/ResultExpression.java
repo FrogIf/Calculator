@@ -8,7 +8,7 @@ public abstract class ResultExpression implements IExpression {
     public abstract String resultValue();
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return 100;
     }
 
@@ -25,11 +25,6 @@ public abstract class ResultExpression implements IExpression {
     @Override
     public IExpression assembleTree(IExpression expression) {
         return null;
-    }
-
-    @Override
-    public IExpression[] branches() {
-        return new IExpression[0];
     }
 
     @Override

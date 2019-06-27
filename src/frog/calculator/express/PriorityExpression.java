@@ -20,7 +20,7 @@ public abstract class PriorityExpression implements IExpression {
     @Override
     public IExpression assembleTree(IExpression expression) {
         IExpression root;
-        if(this.getPriority() == expression.getPriority()){
+        if(this.priority() == expression.priority()){
             // 如果两个表达式的优先级相等
 
             // 尝试将传入表达式作为根
@@ -37,7 +37,7 @@ public abstract class PriorityExpression implements IExpression {
         }else{
             IExpression low;
             IExpression high;
-            if(this.getPriority() < expression.getPriority()){
+            if(this.priority() < expression.priority()){
                 low = this;
                 high = expression;
             }else{

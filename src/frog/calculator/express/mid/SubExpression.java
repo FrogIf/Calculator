@@ -7,7 +7,7 @@ public class SubExpression extends MidExpression {
     private static final int priority = 1;
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return priority;
     }
 

@@ -19,8 +19,8 @@ public class NumberExpression extends EndExpression {
     }
 
     @Override
-    public int getPriority(){
-        return super.getPriority() + 1;
+    public int priority(){
+        return super.priority() + 1;
     }
 
     @Override

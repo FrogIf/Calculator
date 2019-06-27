@@ -7,7 +7,7 @@ public class MultExpression extends MidExpression {
     private static final int priority = 2;
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return priority;
     }
 

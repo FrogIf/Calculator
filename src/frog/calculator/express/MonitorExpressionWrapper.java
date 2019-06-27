@@ -18,8 +18,8 @@ public class MonitorExpressionWrapper implements IExpression {
     }
 
     @Override
-    public int getPriority() {
-        return expression.getPriority();
+    public int priority() {
+        return expression.priority();
     }
 
     @Override
@@ -35,11 +35,6 @@ public class MonitorExpressionWrapper implements IExpression {
     @Override
     public IExpression assembleTree(IExpression expression) {
         return this.expression.assembleTree(expression);
-    }
-
-    @Override
-    public IExpression[] branches() {
-        return this.expression.branches();
     }
 
     @Override

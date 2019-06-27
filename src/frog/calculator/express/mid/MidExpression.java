@@ -69,9 +69,4 @@ public abstract class MidExpression extends PriorityExpression {
         return root;
     }
 
-    @Override
-    public IExpression[] branches() {
-        return new IExpression[]{this.left, this.right};
-    }
-
 }

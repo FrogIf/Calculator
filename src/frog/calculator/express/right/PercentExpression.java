@@ -1,6 +1,6 @@
 package frog.calculator.express.right;
 
-public class FactorialExpression extends RightExpression {
+public class PercentExpression extends RightExpression {
 
     private static final int priority = 3;
 
@@ -8,5 +8,4 @@ public class FactorialExpression extends RightExpression {
     public int priority() {
         return priority;
     }
-
 }

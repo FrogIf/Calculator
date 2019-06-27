@@ -1,7 +1,6 @@
 package frog.calculator;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.MonitorExpressionWrapper;
 import frog.calculator.express.result.ResultExpression;
 import frog.calculator.operate.IOperator;
 import frog.calculator.operate.IOperatorPool;
@@ -73,25 +72,25 @@ public class Calculator {
     public String calculate(String expression){
         IExpression tree = explain(expression.replaceAll(" ", ""));
 
-        foreachExpressionTree(tree, exp -> new MonitorExpressionWrapper(exp));
+//        foreachExpressionTree(tree, exp -> new MonitorExpressionWrapper(exp));
 
         ResultExpression result = tree.interpret();
 
         return result.resultValue();
     }
 
-    private IExpression foreachExpressionTree(IExpression expression, ExpressionNodeHandler expressionNodeHandler){
-        IExpression[] branches = expression.branches();
-
-        IExpression transExp = expressionNodeHandler.handleExpression(expression);
-
-        if(branches != null && branches.length != 0){
-            for(IExpression exp : branches){
-                IExpression tExp = expressionNodeHandler.handleExpression(exp);
-                foreachExpressionTree(tExp, expressionNodeHandler);
-            }
-        }
-
-        return transExp;
-    }
+//    private IExpression foreachExpressionTree(IExpression expression, ExpressionNodeHandler expressionNodeHandler){
+//        IExpression[] branches = expression.branches();
+//
+//        IExpression transExp = expressionNodeHandler.handleExpression(expression);
+//
+//        if(branches != null && branches.length != 0){
+//            for(IExpression exp : branches){
+//                IExpression tExp = expressionNodeHandler.handleExpression(exp);
+//                foreachExpressionTree(tExp, expressionNodeHandler);
+//            }
+//        }
+//
+//        return transExp;
+//    }
 }

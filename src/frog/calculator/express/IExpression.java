@@ -11,7 +11,7 @@ public interface IExpression {
      * 获取当前表达式的优先级
      * @return
      */
-    int getPriority();
+    int priority();
 
     boolean isLeaf();
 
@@ -28,12 +28,6 @@ public interface IExpression {
      * @return
      */
     IExpression assembleTree(IExpression expression);
-
-    /**
-     * 获取当前表达式的所有枝
-     * @return
-     */
-    IExpression[] branches();
 
     /**
      * 设置表达式运算器

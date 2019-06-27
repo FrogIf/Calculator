@@ -2,6 +2,7 @@ package frog.calculator.resolve.dresolver;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.right.FactorialExpression;
+import frog.calculator.express.right.PercentExpression;
 
 public class RightSingleCharExpressionResolver extends AResolver {
 
@@ -18,6 +19,11 @@ public class RightSingleCharExpressionResolver extends AResolver {
         switch (symbol){
             case '!':
                 exp = new FactorialExpression();
+                break;
+            case '%':
+                exp = new PercentExpression();
+                break;
+            default:
                 break;
         }
         return exp;

@@ -6,7 +6,7 @@ import frog.calculator.express.PriorityExpression;
 public abstract class EndExpression extends PriorityExpression {
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return 100;
     }
 
@@ -28,10 +28,5 @@ public abstract class EndExpression extends PriorityExpression {
         }else{
             return expression.assembleTree(this);
         }
-    }
-
-    @Override
-    public IExpression[] branches() {
-        return new IExpression[0];
     }
 }

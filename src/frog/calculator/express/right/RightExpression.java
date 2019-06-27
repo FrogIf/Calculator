@@ -15,23 +15,19 @@ public abstract class RightExpression extends PriorityExpression {
     }
 
     @Override
-    public abstract int getPriority();
-
-    @Override
     public boolean createBranch(IExpression expression) {
         boolean hasRebuild = false;
         if(this.left == null){
             this.left = expression;
             hasRebuild = true;
         }else{
-            left.assembleTree(expression);
+            IExpression root = left.assembleTree(expression);
+            if (root != null) {
+                this.left = root;
+                hasRebuild = true;
+            }
         }
         return hasRebuild;
-    }
-
-    @Override
-    public IExpression[] branches() {
-        return new IExpression[]{this.left};
     }
 
 }
