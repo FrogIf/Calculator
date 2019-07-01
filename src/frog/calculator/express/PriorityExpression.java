@@ -45,7 +45,7 @@ public abstract class PriorityExpression implements IExpression {
                 high = this;
             }
 
-            // 使用低优先级作为解析树的根
+            // 使用低优先级作为解析树作为根
             root = low.createBranch(high) ? low : null;
         }
 
@@ -54,6 +54,19 @@ public abstract class PriorityExpression implements IExpression {
 
     @Override
     public ResultExpression interpret() {
-        return operator.operate(this);
+        if(this.operator == null){
+            throw new IllegalArgumentException("can't find operator.");
+        }
+        return this.operator.operate(this);
+    }
+
+    @Override
+    public IExpression clone(){
+        try {
+            return (IExpression) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

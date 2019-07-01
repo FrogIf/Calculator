@@ -1,4 +1,4 @@
-package frog.calculator.operate.doubleopr.oprs.end;
+package frog.calculator.operate.doubleopr.opr.end;
 
 import frog.calculator.express.end.NumberExpression;
 import frog.calculator.express.result.ResultExpression;

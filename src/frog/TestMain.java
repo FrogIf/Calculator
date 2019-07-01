@@ -22,6 +22,13 @@ public class TestMain {
          * 需要修改的地方:
          *      新增IExpression, 新增IOperator(这块不变, 因为目的就是将表达与运算解耦)
          *      修改Discriminator, 修改Resolver(这两块放到一起)
+         *  思路:
+         *      1. 初始化阶段将Expression与Operator绑定
+         *      2. 采用原型模式初始化expression
+         *  改为新增一个运算, 修改三个地方:
+         *      1. 增加IExpression
+         *      2. 增加IOperator
+         *      3. 将两者关联并注册入代码池(Btree索引)
          */
 
         Scanner sc = new Scanner(System.in);

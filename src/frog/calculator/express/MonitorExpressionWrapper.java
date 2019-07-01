@@ -41,4 +41,9 @@ public class MonitorExpressionWrapper implements IExpression {
     public void setOperator(IOperator operator) {
         this.expression.setOperator(operator);
     }
+
+    @Override
+    public IExpression clone() {
+        return this.expression.clone();
+    }
 }

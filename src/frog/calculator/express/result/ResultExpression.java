@@ -30,4 +30,14 @@ public abstract class ResultExpression implements IExpression {
     @Override
     public void setOperator(IOperator operator) {
     }
+
+    @Override
+    public IExpression clone() {
+        try {
+            return (IExpression) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

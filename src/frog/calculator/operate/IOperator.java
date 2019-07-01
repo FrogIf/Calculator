@@ -7,4 +7,6 @@ public interface IOperator<E extends IExpression> {
 
     ResultExpression operate(E expression);
 
+    IOperator copyThis();
+
 }

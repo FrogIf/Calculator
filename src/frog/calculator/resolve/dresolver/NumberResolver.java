@@ -1,15 +1,17 @@
 package frog.calculator.resolve.dresolver;
 
 import frog.calculator.express.end.NumberExpression;
+import frog.calculator.operate.doubleopr.opr.end.NumberDoubleOperator;
 
 /**
  * 数字表达式解析器
  */
-public class NumberExpressionResolver extends AResolver{
+public class NumberResolver extends AResolver{
 
     @Override
     protected void resolve(char[] chars, int startIndex, AResolveResult resolveResult) {
         NumberExpression numberExpression = new NumberExpression();
+        numberExpression.setOperator(new NumberDoubleOperator());
 
         boolean hasDot = false;
         if(chars[startIndex] == '-' && (startIndex == 0 || !isNumber(chars[startIndex - 1])) && startIndex + 1 < chars.length && isNumber(chars[startIndex + 1])){

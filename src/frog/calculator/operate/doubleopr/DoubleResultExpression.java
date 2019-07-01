@@ -1,5 +1,6 @@
 package frog.calculator.operate.doubleopr;
 
+import frog.calculator.express.IExpression;
 import frog.calculator.express.result.ResultExpression;
 
 public class DoubleResultExpression extends ResultExpression {
@@ -20,6 +21,11 @@ public class DoubleResultExpression extends ResultExpression {
     @Override
     public ResultExpression interpret() {
         return this;
+    }
+
+    @Override
+    public IExpression clone() {
+        return (IExpression) super.clone();
     }
 
     @Override

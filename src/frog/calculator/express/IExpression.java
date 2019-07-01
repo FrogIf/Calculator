@@ -3,7 +3,7 @@ package frog.calculator.express;
 import frog.calculator.express.result.ResultExpression;
 import frog.calculator.operate.IOperator;
 
-public interface IExpression {
+public interface IExpression extends Cloneable{
 
     ResultExpression interpret();
 
@@ -34,4 +34,6 @@ public interface IExpression {
      * @param operator
      */
     void setOperator(IOperator operator);
+
+    IExpression clone();
 }

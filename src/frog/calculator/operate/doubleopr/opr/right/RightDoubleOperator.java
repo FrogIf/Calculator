@@ -1,8 +1,9 @@
-package frog.calculator.operate.doubleopr.oprs.right;
+package frog.calculator.operate.doubleopr.opr.right;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.result.ResultExpression;
 import frog.calculator.express.right.RightExpression;
+import frog.calculator.operate.IOperator;
 import frog.calculator.operate.doubleopr.DoubleOperatorUtil;
 import frog.calculator.operate.doubleopr.IDoubleOperator;
 
@@ -20,5 +21,10 @@ public abstract class RightDoubleOperator<T extends RightExpression> implements 
         double result = this.calculate(leftResultValue);
 
         return DoubleOperatorUtil.doubleToResultExpression(result);
+    }
+
+    @Override
+    public IOperator copyThis() {
+        return this;
     }
 }

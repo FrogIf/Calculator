@@ -5,11 +5,7 @@ import frog.calculator.resolve.IResolver;
 
 public abstract class AResolver implements IResolver {
 
-    private IResolverContext context;
-
-    protected void setResolverContext(IResolverContext context){
-        this.context = context;
-    }
+    private static final IResolveResultFactory resultFactory = new CommonResolveResultFactory();
 
     private IResolver next;
 
@@ -19,13 +15,16 @@ public abstract class AResolver implements IResolver {
 
     @Override
     public IResolveResult resolve(char[] chars, int startIndex){
-        AResolveResult resolveResult = context.createResolveResult();
+        AResolveResult resolveResult = resultFactory.createResolverResult();
 
         this.resolve(chars, startIndex, resolveResult);
 
-        if(resolveResult.getExpression() != null || this.next == null){
+        if(resolveResult.getExpression() != null){
             return resolveResult;
         }else{
+            if(this.next == null){
+                throw new IllegalArgumentException("can't recognize expression.");
+            }
             return this.next.resolve(chars, startIndex);
         }
     }

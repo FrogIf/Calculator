@@ -2,8 +2,6 @@ package frog.calculator;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.result.ResultExpression;
-import frog.calculator.operate.IOperator;
-import frog.calculator.operate.IOperatorPool;
 import frog.calculator.resolve.IResolveResult;
 import frog.calculator.resolve.IResolver;
 
@@ -16,30 +14,30 @@ public class Calculator {
 
     private IResolver resolver;
 
-    private IOperatorPool operatorPool;
-
     public Calculator() {
         this.configure = new DefaultCalculatorConfigure();
         resolver = this.configure.getResolverConfigure().getResolver();
-        operatorPool = this.configure.getOperatorConfigure().getIOperatorPool();
     }
 
     public Calculator(ICalculatorConfigure configure) {
         this.configure = configure;
     }
 
-    private IExpression explain(String expression){
+    /**
+     * 构造解析树
+     * @param expression
+     * @return
+     */
+    private IExpression build(String expression){
         char[] chars = expression.toCharArray();
 
         IResolveResult rootResult = resolver.resolve(chars, 0);
-        IExpression root = this.handleResolveResult(rootResult);
+        IExpression root = rootResult.getExpression();
 
         for(int i = rootResult.getEndIndex() + 1; i < chars.length; i++){
             IResolveResult result = resolver.resolve(chars, i);
 
-            IExpression exp = this.handleResolveResult(result);
-
-            root = root.assembleTree(exp);
+            root = root.assembleTree(result.getExpression());
 
             if(root == null){
                 throw new IllegalStateException("tree root lost.");
@@ -51,32 +49,16 @@ public class Calculator {
         return root;
     }
 
-    private IExpression handleResolveResult(IResolveResult result){
-        if(result.getExpression() == null) {
-            throw new IllegalArgumentException("can't recognize expression.");
-        }
-
-        IExpression exp = result.getExpression();
-
-        IOperator operator = operatorPool.getOperator(result.getSymbol());
-
-        if(operator == null){
-            throw new IllegalStateException("can't find operator for it.");
-        }else{
-            exp.setOperator(operator);
-        }
-
-        return result.getExpression();
-    }
-
     public String calculate(String expression){
-        IExpression tree = explain(expression.replaceAll(" ", ""));
+        expression = expression.replaceAll(" ", "");
+
+        IExpression expTree = build(expression); // 去空格
 
 //        foreachExpressionTree(tree, exp -> new MonitorExpressionWrapper(exp));
 
-        ResultExpression result = tree.interpret();
+        ResultExpression result = expTree.interpret(); // 执行计算
 
-        return result.resultValue();
+        return result.resultValue();    // 计算结果
     }
 
 //    private IExpression foreachExpressionTree(IExpression expression, ExpressionNodeHandler expressionNodeHandler){

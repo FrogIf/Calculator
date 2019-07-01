@@ -1,7 +1,8 @@
-package frog.calculator.operate.doubleopr.oprs.mid;
+package frog.calculator.operate.doubleopr.opr.mid;
 
 import frog.calculator.express.mid.MidExpression;
 import frog.calculator.express.result.ResultExpression;
+import frog.calculator.operate.IOperator;
 import frog.calculator.operate.doubleopr.DoubleOperatorUtil;
 import frog.calculator.operate.doubleopr.IDoubleOperator;
 
@@ -20,6 +21,11 @@ public abstract class MidDoubleOperator<E extends MidExpression> implements IDou
         double result = calculate(leftDoubleValue, rightDoubleValue);
 
         return DoubleOperatorUtil.doubleToResultExpression(result);
+    }
+
+    @Override
+    public IOperator copyThis() {
+        return this;
     }
 
 }

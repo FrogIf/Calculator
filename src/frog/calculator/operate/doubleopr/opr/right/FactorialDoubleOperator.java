@@ -1,14 +1,6 @@
-package frog.calculator.operate.doubleopr.oprs.right;
+package frog.calculator.operate.doubleopr.opr.right;
 
 public class FactorialDoubleOperator extends RightDoubleOperator{
-
-    private static FactorialDoubleOperator instance = new FactorialDoubleOperator();
-
-    public static FactorialDoubleOperator getInstance(){
-        return instance;
-    }
-
-    protected FactorialDoubleOperator(){ }
 
     @Override
     protected double calculate(double left) {
@@ -32,4 +24,5 @@ public class FactorialDoubleOperator extends RightDoubleOperator{
     private boolean isInteger(double value){
         return value == (int)value;
     }
+
 }

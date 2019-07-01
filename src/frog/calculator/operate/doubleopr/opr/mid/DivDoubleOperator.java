@@ -1,14 +1,6 @@
-package frog.calculator.operate.doubleopr.oprs.mid;
+package frog.calculator.operate.doubleopr.opr.mid;
 
 public class DivDoubleOperator extends MidDoubleOperator {
-
-    protected DivDoubleOperator(){}
-
-    private static DivDoubleOperator instance = new DivDoubleOperator();
-
-    public static DivDoubleOperator getInstance(){
-        return instance;
-    }
 
     @Override
     protected double calculate(double left, double right) {

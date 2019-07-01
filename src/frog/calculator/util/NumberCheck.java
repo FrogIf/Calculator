@@ -1,22 +1,7 @@
-package frog.calculator.operate.doubleopr.discriminator;
+package frog.calculator.util;
 
-import frog.calculator.operate.IOperator;
-import frog.calculator.operate.doubleopr.ADiscriminator;
-import frog.calculator.operate.doubleopr.oprs.end.NumberDoubleOperator;
-
-public class NumberDiscriminator extends ADiscriminator {
-
-    @Override
-    protected IOperator retrieve(String symbol) {
-        IOperator operator = null;
-        if(this.isNumber(symbol)){
-            operator = new NumberDoubleOperator();
-        }
-
-        return operator;
-    }
-
-    private boolean isNumber(String symbol){
+public class NumberCheck {
+    public static boolean isNumber(String symbol){
         char first = symbol.charAt(0);
         if(symbol.length() == 1){
             if(first < '0' || first > '9'){
