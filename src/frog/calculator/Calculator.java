@@ -72,7 +72,7 @@ public class Calculator {
      * @param funDef
      * @param expression
      */
-    public void defineFunction(String funDef, String expression){
+    public synchronized void defineFunction(String funDef, String expression){
         // TODO 自定义函数
     }
 }

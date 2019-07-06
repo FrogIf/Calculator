@@ -15,7 +15,7 @@ import frog.calculator.express.mid.MidExpression;
 import frog.calculator.express.right.RightExpression;
 import frog.calculator.express.round.RoundCloseExpression;
 import frog.calculator.express.round.RoundOpenExpression;
-import frog.calculator.register.DictionaryRegister;
+import frog.calculator.register.TreeRegister;
 import frog.calculator.register.IRegister;
 import frog.calculator.resolve.IResolver;
 import frog.calculator.resolve.resolver.*;
@@ -54,12 +54,19 @@ public class DoubleCalculatorConfigure implements ICalculatorConfigure {
     }
 
     private IRegister initRegister(){
-        DictionaryRegister register = new DictionaryRegister();
+        TreeRegister register = new TreeRegister();
         for(IExpression exp : expArr){
             register.registe(exp.symbol(), exp, exp.getOperator());
         }
         return register;
     }
+//    private IRegister initRegister(){
+//        DictionaryRegister register = new DictionaryRegister();
+//        for(IExpression exp : expArr){
+//            register.registe(exp.symbol(), exp, exp.getOperator());
+//        }
+//        return register;
+//    }
 
     public DoubleCalculatorConfigure() {
         this.register = initRegister();
