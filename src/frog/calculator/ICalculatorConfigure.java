@@ -1,9 +1,12 @@
 package frog.calculator;
 
-import frog.calculator.resolve.IResolverConfigure;
+import frog.calculator.register.IRegister;
+import frog.calculator.resolve.IResolver;
 
 public interface ICalculatorConfigure {
 
-    IResolverConfigure getResolverConfigure();
+    IResolver getResolver();
+
+    IRegister getRegister();
 
 }

@@ -1,14 +1,19 @@
 package frog.calculator.express.right;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.PriorityExpression;
+import frog.calculator.express.APriorityExpression;
+import frog.calculator.operate.IOperator;
 
 /**
  * 运算符在右边的表达式
  */
-public abstract class RightExpression extends PriorityExpression {
+public class RightExpression extends APriorityExpression {
 
     private IExpression left;
+
+    public RightExpression(IOperator operator, int priority, String symbol) {
+        super(operator, priority, symbol);
+    }
 
     public IExpression getLeft() {
         return left;

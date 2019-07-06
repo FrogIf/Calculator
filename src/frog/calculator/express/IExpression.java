@@ -1,11 +1,15 @@
 package frog.calculator.express;
 
-import frog.calculator.express.result.ResultExpression;
+import frog.calculator.express.result.AResultExpression;
 import frog.calculator.operate.IOperator;
 
 public interface IExpression extends Cloneable{
 
-    ResultExpression interpret();
+    /**
+     * 解释执行表达式
+     * @return
+     */
+    AResultExpression interpret();
 
     /**
      * 获取当前表达式的优先级
@@ -13,12 +17,16 @@ public interface IExpression extends Cloneable{
      */
     int priority();
 
-    boolean isLeaf();
+    /**
+     * 标记一个表达式是否是叶子
+     * @return
+     */
+    boolean leaf();
 
     /**
      * 以当前表达式作为根, 创建下级分支
      * @param expression
-     * @return 当前表达式的下级分支, 如果创建失败, 返回null
+     * @return 当前表达式的下级分支, 如果创建失败, 返回false
      */
     boolean createBranch(IExpression expression);
 
@@ -30,10 +38,21 @@ public interface IExpression extends Cloneable{
     IExpression assembleTree(IExpression expression);
 
     /**
-     * 设置表达式运算器
-     * @param operator
+     * 复制表达式对象
+     * 在解析器中, 每解析出一个表达式, 会应用原型模式调用这个方法, 复制一个表达式对象
+     * @return
      */
-    void setOperator(IOperator operator);
-
     IExpression clone();
+
+    /**
+     * 返回在输入的算式中, 该表达式所代表的那部分
+     * @return
+     */
+    String symbol();
+
+    /**
+     * 获取运算器
+     * @return
+     */
+    IOperator getOperator();
 }

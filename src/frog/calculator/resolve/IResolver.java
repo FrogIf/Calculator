@@ -1,5 +1,7 @@
 package frog.calculator.resolve;
 
+import frog.calculator.register.IRegister;
+
 /**
  * 解析器, 将字符串解析为一个个IExpression对象
  */
@@ -12,4 +14,5 @@ public interface IResolver {
      */
     IResolveResult resolve(char[] chars, int startIndex);
 
+    void setRegister(IRegister register);
 }

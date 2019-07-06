@@ -1,13 +1,22 @@
 package frog.calculator.express.end;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.PriorityExpression;
+import frog.calculator.express.APriorityExpression;
+import frog.calculator.express.context.IExpressContext;
+import frog.calculator.operate.IOperator;
 
-public abstract class EndExpression extends PriorityExpression {
+public class EndExpression extends APriorityExpression {
+
+    private IExpressContext context;
+
+    public EndExpression(IOperator operator, String symbol, IExpressContext context) {
+        super(operator, symbol);
+        this.context = context;
+    }
 
     @Override
     public int priority() {
-        return 100;
+        return context.getMaxPriority();
     }
 
     @Override
@@ -16,13 +25,13 @@ public abstract class EndExpression extends PriorityExpression {
     }
 
     @Override
-    public boolean isLeaf(){
+    public boolean leaf(){
         return true;
     }
 
     @Override
     public IExpression assembleTree(IExpression expression){
-        if(expression.isLeaf()){
+        if(expression.leaf()){
             // 两个叶子不能组装到一起
             return null;
         }else{

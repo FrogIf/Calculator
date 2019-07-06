@@ -1,7 +1,9 @@
 package frog.calculator;
 
+import frog.calculator.dimpl.DoubleCalculatorConfigure;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.result.ResultExpression;
+import frog.calculator.express.result.AResultExpression;
+import frog.calculator.register.IRegister;
 import frog.calculator.resolve.IResolveResult;
 import frog.calculator.resolve.IResolver;
 
@@ -14,12 +16,17 @@ public class Calculator {
 
     private IResolver resolver;
 
+    private IRegister register;
+
     public Calculator() {
-        this.configure = new DefaultCalculatorConfigure();
-        resolver = this.configure.getResolverConfigure().getResolver();
+        this(new DoubleCalculatorConfigure());
     }
 
     public Calculator(ICalculatorConfigure configure) {
+        this.configure = configure;
+        resolver = this.configure.getResolver();
+        register = this.configure.getRegister();
+        resolver.setRegister(register);
         this.configure = configure;
     }
 
@@ -36,8 +43,9 @@ public class Calculator {
 
         for(int i = rootResult.getEndIndex() + 1; i < chars.length; i++){
             IResolveResult result = resolver.resolve(chars, i);
+            IExpression curExp = result.getExpression();
 
-            root = root.assembleTree(result.getExpression());
+            root = root.assembleTree(curExp);
 
             if(root == null){
                 throw new IllegalStateException("tree root lost.");
@@ -54,25 +62,17 @@ public class Calculator {
 
         IExpression expTree = build(expression); // 去空格
 
-//        foreachExpressionTree(tree, exp -> new MonitorExpressionWrapper(exp));
-
-        ResultExpression result = expTree.interpret(); // 执行计算
+        AResultExpression result = expTree.interpret(); // 执行计算
 
         return result.resultValue();    // 计算结果
     }
 
-//    private IExpression foreachExpressionTree(IExpression expression, ExpressionNodeHandler expressionNodeHandler){
-//        IExpression[] branches = expression.branches();
-//
-//        IExpression transExp = expressionNodeHandler.handleExpression(expression);
-//
-//        if(branches != null && branches.length != 0){
-//            for(IExpression exp : branches){
-//                IExpression tExp = expressionNodeHandler.handleExpression(exp);
-//                foreachExpressionTree(tExp, expressionNodeHandler);
-//            }
-//        }
-//
-//        return transExp;
-//    }
+    /**
+     * 自定义函数
+     * @param funDef
+     * @param expression
+     */
+    public void defineFunction(String funDef, String expression){
+        // TODO 自定义函数
+    }
 }

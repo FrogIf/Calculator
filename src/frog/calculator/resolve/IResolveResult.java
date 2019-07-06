@@ -21,4 +21,10 @@ public interface IResolveResult {
      * @return
      */
     String getSymbol();
+
+    void setEndIndex(int index);
+
+    void setExpression(IExpression expression);
+
+    void setSymbol(String symbol);
 }

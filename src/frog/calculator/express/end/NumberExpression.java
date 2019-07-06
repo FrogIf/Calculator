@@ -1,34 +1,32 @@
 package frog.calculator.express.end;
 
+import frog.calculator.express.context.IExpressContext;
+import frog.calculator.operate.IOperator;
+
 public class NumberExpression extends EndExpression {
 
     private final StringBuilder sb = new StringBuilder();
 
-    public NumberExpression(){}
-
-    public NumberExpression(String value) {
-        sb.append(value);
+    public NumberExpression(IOperator operator, IExpressContext context) {
+        super(operator, "", context);
     }
 
     public void assemble(char ch){
         sb.append(ch);
     }
 
-    public String number(){
-        return sb.toString();
-    }
-
     @Override
-    public int priority(){
-        return super.priority() + 1;
+    public String symbol() {
+        return sb.toString();
     }
 
     @Override
     public String toString(){
-        return sb.toString();
+        return symbol();
     }
 
     public boolean isEmpty(){
         return sb.length() == 0;
     }
+
 }
