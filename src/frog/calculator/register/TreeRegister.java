@@ -22,25 +22,28 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     @Override
     public void registe(String exp, IExpression expression, IOperator operator) {
-        registe(exp.toCharArray(), 0, expression, null);
+        char[] chars = exp.toCharArray();
+        registe(chars, 0, expression, operator, new TreeRegister());
     }
 
     @Override
     public void registe(String exp, IOperator operator) {
-        registe(exp.toCharArray(), 0, expression, operator);
+        char[] chars = exp.toCharArray();
+        registe(chars, 0, null, operator, new TreeRegister());
     }
 
     @Override
     public void registe(String exp, IExpression expression) {
-        registe(exp.toCharArray(), 0, null, operator);
+        char[] chars = exp.toCharArray();
+        registe(chars, 0, expression, null, new TreeRegister());
     }
 
-    private void registe(char[] oprs, int startIndex, IExpression expression, IOperator operator){
+    private void registe(char[] oprs, int startIndex, IExpression expression, IOperator operator, TreeRegister finder){
         char ch = oprs[startIndex];
-        TreeRegister avlTreeRegister = new TreeRegister();
-        avlTreeRegister.symbol = ch;
 
-        TreeRegister register = charRegister.find(avlTreeRegister);
+        finder.symbol = ch;
+
+        TreeRegister register = charRegister.find(finder);
 
         if(register == null){
             register = new TreeRegister();
