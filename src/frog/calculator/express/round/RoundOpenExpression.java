@@ -34,6 +34,14 @@ public class RoundOpenExpression extends APriorityExpression {
     public IExpression assembleTree(IExpression expression) {
         IExpression root = this;
 
+        if(expression instanceof RoundOpenExpression && this.suspendExp != null){   // TODO 临时修补, 不能采用这种方式, 会影响装饰器模式的使用
+            if(expression.createBranch(this)){
+                return expression;
+            }else{
+                return root;
+            }
+        }
+
         if (this.closeExp != null) {
             return super.assembleTree(expression);
         }else{
