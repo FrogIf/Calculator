@@ -1,9 +1,9 @@
 package frog.calculator.express;
 
 import frog.calculator.express.result.AResultExpression;
-import frog.calculator.operate.IOperator;
+import frog.calculator.operater.IOperator;
 
-public interface IExpression extends Cloneable{
+public interface IExpression extends Cloneable {
 
     /**
      * 解释执行表达式
@@ -16,12 +16,6 @@ public interface IExpression extends Cloneable{
      * @return
      */
     int priority();
-
-    /**
-     * 标记一个表达式是否是叶子
-     * @return
-     */
-    boolean leaf();
 
     /**
      * 以当前表达式作为根, 创建下级分支
@@ -55,4 +49,10 @@ public interface IExpression extends Cloneable{
      * @return
      */
     IOperator getOperator();
+
+    /**
+     * 获取表达式类型, 只是提供表达式对象之间在构建解析树时使用
+     * @return
+     */
+    ExpressionType type();
 }

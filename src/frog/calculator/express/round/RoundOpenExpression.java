@@ -1,12 +1,13 @@
 package frog.calculator.express.round;
 
-import frog.calculator.express.APriorityExpression;
+import frog.calculator.express.ACombinedExpression;
+import frog.calculator.express.ExpressionType;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.context.IExpressContext;
+import frog.calculator.express.IExpressContext;
 import frog.calculator.express.result.AResultExpression;
-import frog.calculator.operate.IOperator;
+import frog.calculator.operater.IOperator;
 
-public class RoundOpenExpression extends APriorityExpression {
+public class RoundOpenExpression extends ACombinedExpression {
 
     private IExpression suspendExp;
 
@@ -18,8 +19,8 @@ public class RoundOpenExpression extends APriorityExpression {
 
     private IExpressContext context;
 
-    public RoundOpenExpression(IOperator operator, int priority, String symbol, String closeSymbol, IExpressContext context) {
-        super(operator, priority, symbol);
+    public RoundOpenExpression(IOperator operator, String symbol, String closeSymbol, IExpressContext context) {
+        super(operator, -1, symbol);
         if(closeSymbol == null){
             throw new IllegalArgumentException("closeSymbol can not be null.");
         }
@@ -34,20 +35,11 @@ public class RoundOpenExpression extends APriorityExpression {
     public IExpression assembleTree(IExpression expression) {
         IExpression root = this;
 
-        if(expression instanceof RoundOpenExpression && this.suspendExp != null){   // TODO 临时修补, 不能采用这种方式, 会影响装饰器模式的使用
-            if(expression.createBranch(this)){
-                return expression;
-            }else{
-                return root;
-            }
-        }
-
         if (this.closeExp != null) {
             return super.assembleTree(expression);
         }else{
             if(this.closeSymbol.equals(expression.symbol())){
                 this.closeExp = expression;
-                this.isLeaf = true;
                 if(this.suspendExp != null){
                     root = this.suspendExp;
                     this.suspendExp = null;
@@ -56,7 +48,13 @@ public class RoundOpenExpression extends APriorityExpression {
                     }
                 }
             }else{
-                if(this.content == null){
+                if(expression.type() == ExpressionType.COMBINED && this.suspendExp != null){
+                    if(expression.createBranch(this)){
+                        root = expression;
+                    }else{
+                        root = null;
+                    }
+                }else if(this.content == null){
                     this.content = expression;
                 }else{
                     this.content = this.content.assembleTree(expression);
@@ -98,23 +96,8 @@ public class RoundOpenExpression extends APriorityExpression {
     }
 
     @Override
-    public AResultExpression interpret() {
-        if(this.content  == null){
-            throw new IllegalStateException("invalid expression.");
-        }
-        return this.content.interpret();
-    }
-
-    @Override
     public IExpression clone(){
         return super.clone();
-    }
-
-    private boolean isLeaf = false;
-
-    @Override
-    public boolean leaf(){
-        return this.isLeaf;
     }
 
     @Override
@@ -126,4 +109,11 @@ public class RoundOpenExpression extends APriorityExpression {
         }
     }
 
+    public String getCloseSymbol() {
+        return closeSymbol;
+    }
+
+    public IExpression getContent() {
+        return content;
+    }
 }

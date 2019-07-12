@@ -215,32 +215,4 @@ public class AVLTree<T extends Comparable<T>> {
         }
     }
 
-    public static void main(String[] args){
-        int[] arr = {1,2 , 3, 4, 5, 6, 7, 8, 9, 10, 0, -1, 30, -6, -7, 40, 22, 90, 88, 100};
-
-        AVLTree<Integer> tree = new AVLTree<>();
-        for(int a : arr){
-            tree.add(a);
-        }
-
-        System.out.println(tree);
-
-        tree.remove(88);
-        tree.remove(30);
-        tree.remove(-1);
-        tree.remove(1);
-        tree.remove(15);
-        tree.remove(4);
-
-        System.out.println(tree.find(88));
-        System.out.println(tree.find(30));
-        System.out.println(tree.find(-1));
-        System.out.println(tree.find(1));
-        System.out.println(tree.find(15));
-        System.out.println(tree.find(4));
-
-        System.out.println(tree);
-    }
-
-
 }

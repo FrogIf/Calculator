@@ -1,5 +1,7 @@
 package frog.calculator.express.context;
 
+import frog.calculator.express.IExpressContext;
+
 public class DefaultExpressionContext implements IExpressContext {
 
     private int minPriority;

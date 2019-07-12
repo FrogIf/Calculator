@@ -1,6 +1,7 @@
 package frog;
 
 import frog.calculator.Calculator;
+import frog.calculator.operater.oprimpl.dimpl.DoubleBuilderPrototypeHolder;
 
 import java.util.Scanner;
 
@@ -9,7 +10,9 @@ public class TestApp {
         // 输出计算过程
         // 函数, 自定义函数
         Scanner sc = new Scanner(System.in);
-        Calculator cal = new Calculator();
+        Calculator cal = new Calculator(new DoubleBuilderPrototypeHolder());
+//        Calculator cal = new Calculator(new StringBuilderPrototypeHolder());
+//        Calculator cal = new Calculator(new StepBuilderPrototypeHolder());
 
         while(sc.hasNext()){
             String expression = sc.nextLine();

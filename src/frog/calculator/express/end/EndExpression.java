@@ -1,16 +1,17 @@
 package frog.calculator.express.end;
 
+import frog.calculator.express.ATerminalExpression;
+import frog.calculator.express.ExpressionType;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.APriorityExpression;
-import frog.calculator.express.context.IExpressContext;
-import frog.calculator.operate.IOperator;
+import frog.calculator.express.IExpressContext;
+import frog.calculator.operater.IOperator;
 
-public class EndExpression extends APriorityExpression {
+public class EndExpression extends ATerminalExpression {
 
     private IExpressContext context;
 
     public EndExpression(IOperator operator, String symbol, IExpressContext context) {
-        super(operator, symbol);
+        super(operator, -1, symbol);
         this.context = context;
     }
 
@@ -25,17 +26,17 @@ public class EndExpression extends APriorityExpression {
     }
 
     @Override
-    public boolean leaf(){
-        return true;
-    }
-
-    @Override
     public IExpression assembleTree(IExpression expression){
-        if(expression.leaf()){
+        if(expression.type() == ExpressionType.TERMINAL){
             // 两个叶子不能组装到一起
             return null;
         }else{
             return expression.assembleTree(this);
         }
+    }
+
+    @Override
+    public EndExpression clone(){
+        return (EndExpression) super.clone();
     }
 }

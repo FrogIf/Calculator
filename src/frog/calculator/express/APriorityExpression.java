@@ -1,7 +1,7 @@
 package frog.calculator.express;
 
 import frog.calculator.express.result.AResultExpression;
-import frog.calculator.operate.IOperator;
+import frog.calculator.operater.IOperator;
 
 public abstract class APriorityExpression implements IExpression {
 
@@ -11,13 +11,10 @@ public abstract class APriorityExpression implements IExpression {
 
     private String symbol;
 
-    protected APriorityExpression(IOperator operator, String symbol){
-        this.priority = -1;
-        this.operator = operator;
-        this.symbol = symbol;
-    }
-
     public APriorityExpression(IOperator operator, int priority, String symbol) {
+        if(operator == null){
+            throw new IllegalArgumentException("operator cat't null.");
+        }
         this.operator = operator;
         this.priority = priority;
         this.symbol = symbol;
@@ -31,11 +28,6 @@ public abstract class APriorityExpression implements IExpression {
     @Override
     public int priority() {
         return priority;
-    }
-
-    @Override
-    public boolean leaf(){
-        return false;
     }
 
     @Override
@@ -85,7 +77,6 @@ public abstract class APriorityExpression implements IExpression {
     public IExpression clone(){
         try {
             APriorityExpression cExp = (APriorityExpression) super.clone();
-            cExp.setOperator(cExp.getOperator() == null ? null : cExp.getOperator().copyThis());
             return cExp;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();

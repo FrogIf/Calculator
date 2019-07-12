@@ -1,15 +1,16 @@
 package frog.calculator.express.result;
 
+import frog.calculator.express.ExpressionType;
 import frog.calculator.express.IExpression;
+import frog.calculator.operater.IOperator;
 
 public abstract class AResultExpression implements IExpression {
 
-    public abstract String resultValue();
-
-    @Override
-    public boolean leaf() {
-        return true;
+    public String resultValue(){
+        return this.strValue;
     }
+
+    protected String strValue;
 
     @Override
     public boolean createBranch(IExpression expression) {
@@ -30,4 +31,26 @@ public abstract class AResultExpression implements IExpression {
             return null;
         }
     }
+
+    @Override
+    public final ExpressionType type(){
+        return ExpressionType.TERMINAL;
+    }
+
+    @Override
+    public AResultExpression interpret() {
+        return this;
+    }
+
+    @Override
+    public int priority() {
+        return 0;
+    }
+
+
+    @Override
+    public IOperator getOperator() {
+        return null;
+    }
+
 }

@@ -1,11 +1,11 @@
 package frog.calculator.express.end;
 
-import frog.calculator.express.context.IExpressContext;
-import frog.calculator.operate.IOperator;
+import frog.calculator.express.IExpressContext;
+import frog.calculator.operater.IOperator;
 
 public class NumberExpression extends EndExpression {
 
-    private final StringBuilder sb = new StringBuilder();
+    private StringBuilder sb = new StringBuilder();
 
     public NumberExpression(IOperator operator, IExpressContext context) {
         super(operator, "", context);
@@ -29,4 +29,10 @@ public class NumberExpression extends EndExpression {
         return sb.length() == 0;
     }
 
+    @Override
+    public NumberExpression clone(){
+        NumberExpression exp = (NumberExpression) super.clone();
+        exp.sb = new StringBuilder();
+        return exp;
+    }
 }

@@ -1,33 +1,34 @@
 package frog.calculator;
 
-import frog.calculator.dimpl.DoubleCalculatorConfigure;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.result.AResultExpression;
 import frog.calculator.register.IRegister;
-import frog.calculator.resolve.IResolveResult;
-import frog.calculator.resolve.IResolver;
+import frog.calculator.resolver.IResolver;
+import frog.calculator.resolver.IResolverBuilder;
+import frog.calculator.resolver.IResolverResult;
+import frog.calculator.resolver.build.DefaultResolverBuilder;
+import frog.calculator.resolver.build.IBuilderPrototypeHolder;
 
 /**
  * 计算器
  */
 public class Calculator {
 
-    private ICalculatorConfigure configure;
-
     private IResolver resolver;
 
     private IRegister register;
 
-    public Calculator() {
-        this(new DoubleCalculatorConfigure());
+    public Calculator(IBuilderPrototypeHolder prototypeHolder) {
+        IResolverBuilder builder = new DefaultResolverBuilder(prototypeHolder);
+        this.register = builder.getRegister();
+        this.resolver = builder.getResolver();
+        resolver.setRegister(register);
     }
 
-    public Calculator(ICalculatorConfigure configure) {
-        this.configure = configure;
-        resolver = this.configure.getResolver();
-        register = this.configure.getRegister();
+    public Calculator(IResolverBuilder builder) {
+        this.register = builder.getRegister();
+        this.resolver = builder.getResolver();
         resolver.setRegister(register);
-        this.configure = configure;
     }
 
     /**
@@ -38,11 +39,11 @@ public class Calculator {
     private IExpression build(String expression){
         char[] chars = expression.toCharArray();
 
-        IResolveResult rootResult = resolver.resolve(chars, 0);
+        IResolverResult rootResult = resolver.resolve(chars, 0);
         IExpression root = rootResult.getExpression();
 
         for(int i = rootResult.getEndIndex() + 1; i < chars.length; i++){
-            IResolveResult result = resolver.resolve(chars, i);
+            IResolverResult result = resolver.resolve(chars, i);
             IExpression curExp = result.getExpression();
 
             root = root.assembleTree(curExp);

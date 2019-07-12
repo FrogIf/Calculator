@@ -1,10 +1,10 @@
 package frog.calculator.express.mid;
 
+import frog.calculator.express.ANaturalExpression;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.APriorityExpression;
-import frog.calculator.operate.IOperator;
+import frog.calculator.operater.IOperator;
 
-public class MidExpression extends APriorityExpression {
+public class MidExpression extends ANaturalExpression {
 
     private IExpression left;
 
@@ -74,5 +74,4 @@ public class MidExpression extends APriorityExpression {
 
         return root;
     }
-
 }

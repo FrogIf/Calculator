@@ -1,7 +1,7 @@
 package frog.calculator.register;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operate.IOperator;
+import frog.calculator.operater.IOperator;
 import frog.calculator.util.AVLTree;
 
 public class TreeRegister implements IRegister, Comparable<TreeRegister>{
@@ -60,6 +60,8 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
             register.operator = operator;
             register.expression = expression;
+        }else{
+            register.registe(oprs, startIndex + 1, expression, operator, finder);
         }
 
         charRegister.add(register);
@@ -94,5 +96,10 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
     @Override
     public int compareTo(TreeRegister o) {
         return this.symbol - o.symbol;
+    }
+
+    @Override
+    public String toString(){
+        return String.valueOf(symbol);
     }
 }

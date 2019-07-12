@@ -1,13 +1,13 @@
 package frog.calculator.express.right;
 
+import frog.calculator.express.ANaturalExpression;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.APriorityExpression;
-import frog.calculator.operate.IOperator;
+import frog.calculator.operater.IOperator;
 
 /**
  * 运算符在右边的表达式
  */
-public class RightExpression extends APriorityExpression {
+public class RightExpression extends ANaturalExpression {
 
     private IExpression left;
 
