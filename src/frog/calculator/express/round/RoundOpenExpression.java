@@ -4,7 +4,6 @@ import frog.calculator.express.ACombinedExpression;
 import frog.calculator.express.ExpressionType;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressContext;
-import frog.calculator.express.result.AResultExpression;
 import frog.calculator.operater.IOperator;
 
 public class RoundOpenExpression extends ACombinedExpression {

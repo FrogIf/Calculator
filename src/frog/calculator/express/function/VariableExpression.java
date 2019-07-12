@@ -1,7 +1,6 @@
 package frog.calculator.express.function;
 
 import frog.calculator.express.ANaturalExpression;
-import frog.calculator.express.ATerminalExpression;
 import frog.calculator.express.IExpressContext;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.result.AResultExpression;
