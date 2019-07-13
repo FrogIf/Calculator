@@ -39,12 +39,14 @@ public class Calculator {
      */
     private IExpression build(String expression){
         char[] chars = expression.toCharArray();
+        int order = 0;
 
         IExpressionContext context = new DefaultExpressionContext();
 
         IResolverResult rootResult = resolver.resolve(chars, 0);
         IExpression root = rootResult.getExpression();
 
+        root.setOrder(order++);
         root.setExpressionContext(context);
         context.monitor(root);
 
@@ -52,6 +54,7 @@ public class Calculator {
             IResolverResult result = resolver.resolve(chars, i);
             IExpression curExp = result.getExpression();
 
+            curExp.setOrder(order++);
             curExp.setExpressionContext(context);
             context.monitor(curExp);
 

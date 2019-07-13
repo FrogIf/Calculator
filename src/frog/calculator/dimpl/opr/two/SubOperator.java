@@ -1,9 +1,8 @@
 package frog.calculator.dimpl.opr.two;
 
-public class SubOperator extends TwoArgOperator {
+public class SubOperator extends LeftNullableOperator {
     @Override
     protected double doubleCalculate(double left, double right) {
-        // TODO 减号需要考虑左侧为null的情况
         return left - right;
     }
 }

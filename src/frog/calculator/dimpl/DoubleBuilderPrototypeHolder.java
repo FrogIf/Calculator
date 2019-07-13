@@ -3,6 +3,7 @@ package frog.calculator.dimpl;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.container.ContainerExpression;
 import frog.calculator.express.endpoint.MarkExpression;
+import frog.calculator.express.separator.RightSepatatorExpression;
 import frog.calculator.express.separator.SeparatorExpression;
 import frog.calculator.operater.StructContainerOperator;
 import frog.calculator.dimpl.opr.SqrtOperator;
@@ -37,8 +38,8 @@ public class DoubleBuilderPrototypeHolder implements IBuilderPrototypeHolder {
                 new SeparatorExpression("-", 1, new SubOperator()),
                 new SeparatorExpression("*", 2, new MultiOperator()),
                 new SeparatorExpression("/", 2, new DivOperator()),
-                new SeparatorExpression("!", 3, new FactorialOperator(), -1),
-                new SeparatorExpression("%", 3, new PercentOperator(), -1),
+                new RightSepatatorExpression("!", 3, new FactorialOperator()),
+                new RightSepatatorExpression("%", 3, new PercentOperator()),
                 new ContainerExpression("(", new StructContainerOperator(), ")"),
                 new MarkExpression(")"),
                 new ContainerExpression("sqrt(", new SqrtOperator(), ")")

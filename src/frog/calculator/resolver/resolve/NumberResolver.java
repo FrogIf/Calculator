@@ -21,20 +21,7 @@ public class NumberResolver extends AResolver {
     protected void resolve(char[] chars, int startIndex, IResolverResult resolveResult) {
         StringBuilder numberBuilder = new StringBuilder();
 
-        /*
-         * 判断是否为数字:
-         *  1. 开始就是数字, 那么是数字
-         *  2. 开始是"-", "-"右侧是数字则可能是数字, 需要以下判断:
-         *      "-"左侧是否是数字, 如果是, 则不是数字, 否则是
-         */
-
         boolean hasDot = false;
-        // TODO 临时修补, 不能使用')'
-        if(chars[startIndex] == '-' && (startIndex == 0 || (!isNumber(chars[startIndex - 1]) && chars[startIndex - 1] != ')')) && startIndex + 1 < chars.length && isNumber(chars[startIndex + 1])){
-            numberBuilder.append(chars[startIndex]);
-            numberBuilder.append(chars[startIndex + 1]);
-            startIndex += 2;
-        }
 
         for(; startIndex < chars.length; startIndex++){
             char ch = chars[startIndex];

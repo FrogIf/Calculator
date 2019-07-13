@@ -6,6 +6,8 @@ public abstract class AExpression implements IExpression{
 
     private String symbol;
 
+    protected int order = -1;
+
     protected IOperator operator;
 
     public AExpression(String symbol, IOperator operator) {
@@ -64,5 +66,15 @@ public abstract class AExpression implements IExpression{
     @Override
     public String toString() {
         return this.symbol;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int order() {
+        return this.order;
     }
 }

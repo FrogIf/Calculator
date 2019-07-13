@@ -51,6 +51,10 @@ public interface IExpression extends Cloneable {
      */
     void setExpressionContext(IExpressionContext context);
 
+    /**
+     * 获取运算器
+     * @return
+     */
     IOperator getOperator();
 
     /**
@@ -58,4 +62,12 @@ public interface IExpression extends Cloneable {
      * @return
      */
     IExpression clone();
+
+    /**
+     * 标记符号在字符串表达式中的位置
+     * @return
+     */
+    void setOrder(int order);
+
+    int order();
 }

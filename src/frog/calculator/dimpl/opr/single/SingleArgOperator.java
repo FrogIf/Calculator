@@ -10,19 +10,15 @@ public abstract class SingleArgOperator implements IOperator {
 
     @Override
     public IExpression operate(String symbol, IExpression... expressions) {
-        IExpression exp;
-        if(expressions.length == 1){
-            exp = expressions[0];
-        }else if(expressions.length == 2){
-            exp = expressions[0] == null ? expressions[1] : expressions[0];
-        }else{
+        if(expressions.length != 1 || expressions[0] == null){
             throw new IllegalArgumentException("input expressions' number is not right.");
+        }else{
+            IExpression exp = expressions[0];
+            double value = DoubleOperatorUtil.resultExpressionToDouble(exp.interpret());
+
+            double result = this.doubleCalcuate(value);
+
+            return DoubleOperatorUtil.doubleToResultExpression(result);
         }
-
-        double value = DoubleOperatorUtil.resultExpressionToDouble(exp.interpret());
-
-        double result = this.doubleCalcuate(value);
-
-        return DoubleOperatorUtil.doubleToResultExpression(result);
     }
 }
