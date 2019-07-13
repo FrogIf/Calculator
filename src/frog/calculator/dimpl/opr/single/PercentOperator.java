@@ -1,4 +1,4 @@
-package frog.calculator.operater.oprimpl.dimpl.opr.single;
+package frog.calculator.dimpl.opr.single;
 
 public class PercentOperator extends SingleArgOperator {
     @Override

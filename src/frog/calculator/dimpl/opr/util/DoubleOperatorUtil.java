@@ -1,7 +1,7 @@
-package frog.calculator.operater.oprimpl.dimpl.opr.util;
+package frog.calculator.dimpl.opr.util;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operater.oprimpl.dimpl.DoubleResultExpression;
+import frog.calculator.dimpl.DoubleResultExpression;
 
 public class DoubleOperatorUtil {
 

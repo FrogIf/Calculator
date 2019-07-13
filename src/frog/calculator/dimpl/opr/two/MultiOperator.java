@@ -1,4 +1,4 @@
-package frog.calculator.operater.oprimpl.dimpl.opr.two;
+package frog.calculator.dimpl.opr.two;
 
 public class MultiOperator extends TwoArgOperator {
     @Override

@@ -1,8 +1,8 @@
-package frog.calculator.operater.oprimpl.dimpl.opr.two;
+package frog.calculator.dimpl.opr.two;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.operater.IOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.util.DoubleOperatorUtil;
+import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 
 public abstract class TwoArgOperator implements IOperator {
 

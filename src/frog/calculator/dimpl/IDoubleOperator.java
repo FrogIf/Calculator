@@ -1,4 +1,4 @@
-package frog.calculator.operater.oprimpl.dimpl;
+package frog.calculator.dimpl;
 
 import frog.calculator.operater.IOperator;
 

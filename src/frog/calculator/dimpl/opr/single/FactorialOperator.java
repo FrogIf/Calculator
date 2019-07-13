@@ -1,6 +1,4 @@
-package frog.calculator.operater.oprimpl.dimpl.opr.single;
-
-import frog.calculator.express.IExpression;
+package frog.calculator.dimpl.opr.single;
 
 public class FactorialOperator extends SingleArgOperator {
     @Override

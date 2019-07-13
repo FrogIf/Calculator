@@ -1,19 +1,17 @@
-package frog.calculator.operater.oprimpl.dimpl;
+package frog.calculator.dimpl;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.container.ContainerExpression;
-import frog.calculator.express.endpoint.EndPointExpression;
 import frog.calculator.express.endpoint.MarkExpression;
 import frog.calculator.express.separator.SeparatorExpression;
 import frog.calculator.operater.StructContainerOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.SqrtOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.end.NumberDoubleOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.single.FactorialOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.single.PercentOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.two.AddOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.two.DivOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.two.MultiOperator;
-import frog.calculator.operater.oprimpl.dimpl.opr.two.SubOperator;
+import frog.calculator.dimpl.opr.SqrtOperator;
+import frog.calculator.dimpl.opr.single.FactorialOperator;
+import frog.calculator.dimpl.opr.single.PercentOperator;
+import frog.calculator.dimpl.opr.two.AddOperator;
+import frog.calculator.dimpl.opr.two.DivOperator;
+import frog.calculator.dimpl.opr.two.MultiOperator;
+import frog.calculator.dimpl.opr.two.SubOperator;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.build.DefaultNumberExpressionFactory;
 import frog.calculator.resolver.build.IBuilderPrototypeHolder;

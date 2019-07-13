@@ -1,7 +1,7 @@
 package frog;
 
 import frog.calculator.Calculator;
-import frog.calculator.operater.oprimpl.dimpl.DoubleBuilderPrototypeHolder;
+import frog.calculator.dimpl.DoubleBuilderPrototypeHolder;
 
 import java.util.Scanner;
 
