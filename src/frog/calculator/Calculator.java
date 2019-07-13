@@ -1,7 +1,8 @@
 package frog.calculator;
 
+import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.result.AResultExpression;
+import frog.calculator.express.IExpressionContext;
 import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverBuilder;
@@ -39,12 +40,20 @@ public class Calculator {
     private IExpression build(String expression){
         char[] chars = expression.toCharArray();
 
+        IExpressionContext context = new DefaultExpressionContext();
+
         IResolverResult rootResult = resolver.resolve(chars, 0);
         IExpression root = rootResult.getExpression();
+
+        root.setExpressionContext(context);
+        context.monitor(root);
 
         for(int i = rootResult.getEndIndex() + 1; i < chars.length; i++){
             IResolverResult result = resolver.resolve(chars, i);
             IExpression curExp = result.getExpression();
+
+            curExp.setExpressionContext(context);
+            context.monitor(curExp);
 
             root = root.assembleTree(curExp);
 
@@ -63,9 +72,9 @@ public class Calculator {
 
         IExpression expTree = build(expression); // 去空格
 
-        AResultExpression result = expTree.interpret(); // 执行计算
+        IExpression result = expTree.interpret(); // 执行计算
 
-        return result.resultValue();    // 计算结果
+        return result.symbol();    // 计算结果
     }
 
     /**

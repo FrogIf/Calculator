@@ -1,24 +1,25 @@
 package frog.calculator.resolver.resolve;
 
-import frog.calculator.express.end.NumberExpression;
+import frog.calculator.express.IExpression;
 import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
+import frog.calculator.resolver.build.INumberExpressionFactory;
 
 /**
  * 数字表达式解析器
  */
 public class NumberResolver extends AResolver {
 
-    private NumberExpression numberPrototype;
+    private INumberExpressionFactory numberExpressionFactory;
 
-    public NumberResolver(IResolverResult resolveResultPrototype, NumberExpression numberPrototype) {
+    public NumberResolver(INumberExpressionFactory numberExpressionFactory, IResolverResult resolveResultPrototype) {
         super(resolveResultPrototype);
-        this.numberPrototype = numberPrototype;
+        this.numberExpressionFactory = numberExpressionFactory;
     }
 
     @Override
     protected void resolve(char[] chars, int startIndex, IResolverResult resolveResult) {
-        NumberExpression numberExpression = numberPrototype.clone();
+        StringBuilder numberBuilder = new StringBuilder();
 
         /*
          * 判断是否为数字:
@@ -30,8 +31,8 @@ public class NumberResolver extends AResolver {
         boolean hasDot = false;
         // TODO 临时修补, 不能使用')'
         if(chars[startIndex] == '-' && (startIndex == 0 || (!isNumber(chars[startIndex - 1]) && chars[startIndex - 1] != ')')) && startIndex + 1 < chars.length && isNumber(chars[startIndex + 1])){
-            numberExpression.assemble(chars[startIndex]);
-            numberExpression.assemble(chars[startIndex + 1]);
+            numberBuilder.append(chars[startIndex]);
+            numberBuilder.append(chars[startIndex + 1]);
             startIndex += 2;
         }
 
@@ -39,19 +40,20 @@ public class NumberResolver extends AResolver {
             char ch = chars[startIndex];
 
             if(isNumber(ch)){
-                numberExpression.assemble(ch);
+                numberBuilder.append(ch);
             }else if(isDot(ch)){
                 if(hasDot){
                     break;
                 }
-                numberExpression.assemble(ch);
+                numberBuilder.append(ch);
                 hasDot = true;
             }else{
                 break;
             }
         }
 
-        if(!numberExpression.isEmpty()){
+        if(numberBuilder.length() != 0){
+            IExpression numberExpression = numberExpressionFactory.createNumberExpression(numberBuilder.toString());
             resolveResult.setEndIndex(startIndex - 1);
             resolveResult.setExpression(numberExpression);
             resolveResult.setSymbol(numberExpression.symbol());

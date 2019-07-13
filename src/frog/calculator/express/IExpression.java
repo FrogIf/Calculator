@@ -1,58 +1,61 @@
 package frog.calculator.express;
 
-import frog.calculator.express.result.AResultExpression;
 import frog.calculator.operater.IOperator;
 
 public interface IExpression extends Cloneable {
 
     /**
-     * 解释执行表达式
-     * @return
+     * 创建树的分支<br />
+     * 该方法会尝试以调用者本身作为根节点, 将传入节点作为子节点进行创建, 成功为true, 失败为false
+     * @param childExpression
+     * @return true : 创建成功, false : 创建失败
      */
-    AResultExpression interpret();
+    boolean createBranch(IExpression childExpression);
 
     /**
-     * 获取当前表达式的优先级
-     * @return
-     */
-    int priority();
-
-    /**
-     * 以当前表达式作为根, 创建下级分支
-     * @param expression
-     * @return 当前表达式的下级分支, 如果创建失败, 返回false
-     */
-    boolean createBranch(IExpression expression);
-
-    /**
-     * 将表达式对象本身与传入的表达式组装成树, 如果不能组装在一起, 则返回null
-     * @param expression
-     * @return
+     * 将调用者节点与传入节点组装为一棵树, 返回树的根节点
+     * @param expression 待组装节点
+     * @return 返回组装树的根节点
      */
     IExpression assembleTree(IExpression expression);
 
     /**
-     * 复制表达式对象
-     * 在解析器中, 每解析出一个表达式, 会应用原型模式调用这个方法, 复制一个表达式对象
-     * @return
-     */
-    IExpression clone();
-
-    /**
-     * 返回在输入的算式中, 该表达式所代表的那部分
+     * 表达式字面值的字符串表示<br />
+     * 约定: 返回值需与传入待解析字符串中完全吻合, 内部逻辑需要使用这一约定<br />
+     * 如果是动态生成表达式, 如结果表达式, 该字面值也必须保证是解析器可以识别的
      * @return
      */
     String symbol();
 
     /**
-     * 获取运算器
+     * 解释执行表达式
      * @return
      */
+    IExpression interpret();
+
+    /**
+     * 是否是叶子节点
+     * @return
+     */
+    boolean isLeaf();
+
+    /**
+     * 构建因子, 根据构建因子的不同, 内部会判断那个节点是子节点, 哪个是父节点
+     * @return
+     */
+    int buildFactor();
+
+    /**
+     * 设置当前表达式上下文, 每一个表达式树有一个共同的表达式上下文
+     * @param context
+     */
+    void setExpressionContext(IExpressionContext context);
+
     IOperator getOperator();
 
     /**
-     * 获取表达式类型, 只是提供表达式对象之间在构建解析树时使用
+     * 复制表达式及其子表达式
      * @return
      */
-    ExpressionType type();
+    IExpression clone();
 }

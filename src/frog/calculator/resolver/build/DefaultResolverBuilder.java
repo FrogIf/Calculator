@@ -1,7 +1,6 @@
 package frog.calculator.resolver.build;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.end.NumberExpression;
 import frog.calculator.register.IRegister;
 import frog.calculator.register.TreeRegister;
 import frog.calculator.resolver.IResolver;
@@ -14,17 +13,17 @@ public class DefaultResolverBuilder implements IResolverBuilder {
 
     public DefaultResolverBuilder(IBuilderPrototypeHolder prototypeHolder) {
         this.register = initRegister(prototypeHolder.getPrototypeExpressions());
-        this.resolver = initResolver(prototypeHolder.getNumberExpressionPrototype(), prototypeHolder.getResolverResultPrototype());
+        this.resolver = initResolver(prototypeHolder.getNumberExpressionFactory(), prototypeHolder.getResolverResultPrototype());
     }
 
     private IResolver resolver;
 
     private IRegister register;
 
-    private IResolver initResolver(NumberExpression numberExpressionPrototype, IResolverResult resolverResultPrototype){
+    private IResolver initResolver(INumberExpressionFactory numberExpressionFactory, IResolverResult resolverResultPrototype){
         SymbolResolver symbolResolver = new SymbolResolver(resolverResultPrototype);
 
-        NumberResolver numberResolver = new NumberResolver(resolverResultPrototype, numberExpressionPrototype);
+        NumberResolver numberResolver = new NumberResolver(numberExpressionFactory, resolverResultPrototype);
         numberResolver.setNextResolver(symbolResolver);
 
         return numberResolver;

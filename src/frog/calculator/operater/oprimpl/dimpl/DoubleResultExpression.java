@@ -1,11 +1,15 @@
 package frog.calculator.operater.oprimpl.dimpl;
 
-import frog.calculator.express.IExpression;
-import frog.calculator.express.result.AResultExpression;
+import frog.calculator.express.endpoint.EndPointExpression;
+import frog.calculator.operater.IOperator;
 
-public class DoubleResultExpression extends AResultExpression {
+public class DoubleResultExpression extends EndPointExpression {
 
     private double doubleValue;
+
+    public DoubleResultExpression(String symbol, IOperator operator) {
+        super(symbol, operator);
+    }
 
     public double getDoubleValue() {
         return doubleValue;
@@ -13,17 +17,6 @@ public class DoubleResultExpression extends AResultExpression {
 
     public void setDoubleValue(double doubleValue) {
         this.doubleValue = doubleValue;
-        super.strValue = String.valueOf(doubleValue);
-    }
-
-    @Override
-    public IExpression clone() {
-        return super.clone();
-    }
-
-    @Override
-    public String symbol() {
-        return strValue;
     }
 
 }
