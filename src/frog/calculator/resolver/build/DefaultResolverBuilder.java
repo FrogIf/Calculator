@@ -6,6 +6,7 @@ import frog.calculator.register.TreeRegister;
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverBuilder;
 import frog.calculator.resolver.IResolverResult;
+import frog.calculator.resolver.resolve.AddSubResolver;
 import frog.calculator.resolver.resolve.NumberResolver;
 import frog.calculator.resolver.resolve.SymbolResolver;
 
@@ -13,18 +14,25 @@ public class DefaultResolverBuilder implements IResolverBuilder {
 
     public DefaultResolverBuilder(IBuilderPrototypeHolder prototypeHolder) {
         this.register = initRegister(prototypeHolder.getPrototypeExpressions());
-        this.resolver = initResolver(prototypeHolder.getNumberExpressionFactory(), prototypeHolder.getResolverResultPrototype());
+        this.resolver = initResolver(prototypeHolder.getNumberExpressionFactory(),
+                prototypeHolder.getResolverResultPrototype(),
+                prototypeHolder.getAddExpressionPrototype(),
+                prototypeHolder.getSubExpressionPrototype());
     }
 
     private IResolver resolver;
 
     private IRegister register;
 
-    private IResolver initResolver(INumberExpressionFactory numberExpressionFactory, IResolverResult resolverResultPrototype){
+    private IResolver initResolver(INumberExpressionFactory numberExpressionFactory,
+                                   IResolverResult resolverResultPrototype, IExpression addExpression,
+                                   IExpression subExpression){
+        NumberResolver numberResolver = new NumberResolver(numberExpressionFactory, resolverResultPrototype);
+        AddSubResolver addSubResolver = new AddSubResolver(resolverResultPrototype, addExpression, subExpression);
         SymbolResolver symbolResolver = new SymbolResolver(resolverResultPrototype);
 
-        NumberResolver numberResolver = new NumberResolver(numberExpressionFactory, resolverResultPrototype);
-        numberResolver.setNextResolver(symbolResolver);
+        numberResolver.setNextResolver(addSubResolver);
+        addSubResolver.setNextResolver(symbolResolver);
 
         return numberResolver;
     }

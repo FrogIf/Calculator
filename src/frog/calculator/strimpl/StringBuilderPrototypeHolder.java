@@ -22,4 +22,14 @@ public class StringBuilderPrototypeHolder implements IBuilderPrototypeHolder {
     public IExpression[] getPrototypeExpressions() {
         return new IExpression[0];
     }
+
+    @Override
+    public IExpression getAddExpressionPrototype() {
+        return null;
+    }
+
+    @Override
+    public IExpression getSubExpressionPrototype() {
+        return null;
+    }
 }

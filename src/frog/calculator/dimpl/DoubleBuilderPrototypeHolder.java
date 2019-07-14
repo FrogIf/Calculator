@@ -34,8 +34,6 @@ public class DoubleBuilderPrototypeHolder implements IBuilderPrototypeHolder {
     @Override
     public IExpression[] getPrototypeExpressions() {
         return new IExpression[]{
-                new SeparatorExpression("+", 1, new AddOperator()),
-                new SeparatorExpression("-", 1, new SubOperator()),
                 new SeparatorExpression("*", 2, new MultiOperator()),
                 new SeparatorExpression("/", 2, new DivOperator()),
                 new RightSepatatorExpression("!", 3, new FactorialOperator()),
@@ -44,5 +42,15 @@ public class DoubleBuilderPrototypeHolder implements IBuilderPrototypeHolder {
                 new MarkExpression(")"),
                 new ContainerExpression("sqrt(", new SqrtOperator(), ")")
         };
+    }
+
+    @Override
+    public IExpression getAddExpressionPrototype() {
+        return new SeparatorExpression("+", 1, new AddOperator());
+    }
+
+    @Override
+    public IExpression getSubExpressionPrototype() {
+        return new SeparatorExpression("-", 1, new SubOperator());
     }
 }

@@ -10,4 +10,8 @@ public interface IBuilderPrototypeHolder {
     IResolverResult getResolverResultPrototype();
 
     IExpression[] getPrototypeExpressions();
+
+    IExpression getAddExpressionPrototype();
+
+    IExpression getSubExpressionPrototype();
 }
