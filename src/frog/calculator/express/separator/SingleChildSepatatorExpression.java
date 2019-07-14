@@ -15,11 +15,8 @@ public abstract class SingleChildSepatatorExpression extends SeparatorExpression
 
     @Override
     public boolean createBranch(IExpression childExpression) {
-        if(isClose) return false;
-
-        boolean buildSuccess = true;
-
         if(checkOrder(this.order, childExpression.order())){
+            boolean buildSuccess = true;
             if(this.child == null){
                 this.child = childExpression;
             }else{
@@ -30,11 +27,10 @@ public abstract class SingleChildSepatatorExpression extends SeparatorExpression
                     buildSuccess = false;
                 }
             }
+            return buildSuccess;
+        }else{
+            return false;
         }
-
-        isClose = !buildSuccess;
-
-        return buildSuccess;
     }
 
 

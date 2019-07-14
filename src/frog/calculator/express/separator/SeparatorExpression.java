@@ -13,11 +13,6 @@ public class SeparatorExpression extends AExpression {
 
     private int buildFactor;
 
-    /**
-     * 用于标记当前节点是否已关闭
-     */
-    protected boolean isClose = false;
-
     public SeparatorExpression(String symbol, int buildFactor, IOperator operator) {
         super(symbol, operator);
         this.buildFactor = buildFactor;
@@ -55,15 +50,12 @@ public class SeparatorExpression extends AExpression {
 
     @Override
     public boolean createBranch(IExpression childExpression) {
-        if(isClose) return false;
-
         boolean buildSuccess = false;
-        if(this.right == null){
-            IExpression lRoot = this.assembleLeftTree(childExpression);
-            if(lRoot != null){
-                this.left = lRoot;
-                buildSuccess = true;
-            }
+
+        IExpression lRoot = this.assembleLeftTree(childExpression);
+        if(lRoot != null){
+            this.left = lRoot;
+            buildSuccess = true;
         }
 
         if(!buildSuccess){
@@ -73,8 +65,6 @@ public class SeparatorExpression extends AExpression {
                 buildSuccess = true;
             }
         }
-
-        isClose = !buildSuccess;
 
         return buildSuccess;
     }
