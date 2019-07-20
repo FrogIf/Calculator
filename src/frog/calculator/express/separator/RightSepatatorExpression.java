@@ -1,8 +1,8 @@
 package frog.calculator.express.separator;
 
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 
-public class RightSepatatorExpression extends SingleChildSepatatorExpression {
+public class RightSepatatorExpression extends SingleChildSeparatorExpression {
 
     public RightSepatatorExpression(String symbol, int buildFactor, IOperator operator) {
         super(symbol, buildFactor, operator);

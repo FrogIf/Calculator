@@ -1,13 +1,11 @@
 package frog.calculator.express.endpoint;
 
-import frog.calculator.express.AExpression;
+import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 
-public class EndPointExpression extends AExpression {
-
-    private IExpressionContext context;
+public class EndPointExpression extends AbstractExpression {
 
     private IOperator operator;
 
@@ -43,16 +41,16 @@ public class EndPointExpression extends AExpression {
 
     @Override
     public int buildFactor() {
-        return this.context.getCurrentMaxBuildFactor();
-    }
-
-    @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
+        return 1;
     }
 
     @Override
     public IExpression clone() {
         return super.clone();
+    }
+
+    @Override
+    public void setExpressionContext(IExpressionContext context) {
+        // do nothing.
     }
 }

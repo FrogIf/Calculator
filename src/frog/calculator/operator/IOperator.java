@@ -1,4 +1,4 @@
-package frog.calculator.operater;
+package frog.calculator.operator;
 
 import frog.calculator.express.IExpression;
 

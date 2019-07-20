@@ -3,21 +3,15 @@ package frog.calculator.resolver.resolve;
 import frog.calculator.express.IExpression;
 import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
+import frog.calculator.resolver.IResolverResultFactory;
 
-public class SymbolResolver extends AResolver {
+public class SymbolResolver extends AbstractResolver {
 
-    private IRegister register = null;
+    private IRegister register;
 
-    public SymbolResolver(IResolverResult resolveResultPrototype) {
-        super(resolveResultPrototype);
-    }
-
-    @Override
-    public void setRegister(IRegister register) {
-        this.register = register;
-        if(this.getNext() != null){
-            this.getNext().setRegister(register);
-        }
+    public SymbolResolver(IResolverResultFactory resolverResultFactory, IRegister innerSymbolRegister) {
+        super(resolverResultFactory);
+        this.register = innerSymbolRegister;
     }
 
     @Override
@@ -27,11 +21,11 @@ public class SymbolResolver extends AResolver {
         }
         IRegister registry = this.register.retrieveRegistryInfo(chars, startIndex);
         if(registry == null){
-            throw new IllegalArgumentException("unrecognize expression.");
+            return;
         }else{
             IExpression expression = registry.getExpression();
             if(expression == null){
-                throw new IllegalStateException("can't get express. char start : " + chars[startIndex]);
+                return;
             }
             IExpression exp = expression.clone();
             resolveResult.setExpression(exp);
@@ -42,6 +36,5 @@ public class SymbolResolver extends AResolver {
             }
         }
     }
-
 
 }

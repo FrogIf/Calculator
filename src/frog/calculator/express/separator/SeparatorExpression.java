@@ -1,11 +1,11 @@
 package frog.calculator.express.separator;
 
-import frog.calculator.express.AExpression;
+import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 
-public class SeparatorExpression extends AExpression {
+public class SeparatorExpression extends AbstractExpression {
 
     private IExpression right;
 
@@ -24,18 +24,13 @@ public class SeparatorExpression extends AExpression {
     }
 
     @Override
-    public boolean isLeaf() {
+    public final boolean isLeaf() {
         return false;
     }
 
     @Override
     public int buildFactor() {
         return this.buildFactor;
-    }
-
-    @Override
-    public void setExpressionContext(IExpressionContext context) {
-        // do nothing.
     }
 
     @Override
@@ -46,6 +41,45 @@ public class SeparatorExpression extends AExpression {
         clone.right = this.right == null ? null : this.right.clone();
 
         return clone;
+    }
+
+    @Override
+    public void setExpressionContext(IExpressionContext context) {
+        if(this.left != null){
+            this.left.setExpressionContext(context);
+        }
+        if(this.right != null){
+            this.right.setExpressionContext(context);
+        }
+    }
+
+    @Override
+    public IExpression assembleTree(IExpression expression) {
+        IExpression root;
+        boolean inputLeaf = expression.isLeaf();
+        if(!inputLeaf && this.buildFactor() == expression.buildFactor()){   // 如果两个表达式的优先级相等
+            if(expression.createBranch(this)){  // 尝试将传入表达式作为根
+                root = expression;
+            }else{  // 尝试使用当前表达式作为根
+                root = this.createBranch(expression) ? this : null;
+            }
+        }else{
+            IExpression low;
+            IExpression high;
+
+            // 这里没有判断this是否是leaf, 因为所有SeparatorExpression都不可能是leaf
+            if(inputLeaf || this.buildFactor() < expression.buildFactor()){
+                low = this;
+                high = expression;
+            }else{
+                low = expression;
+                high = this;
+            }
+
+            // 使用低优先级作为解析树的根
+            root = low.createBranch(high) ? low : null;
+        }
+        return root;
     }
 
     @Override

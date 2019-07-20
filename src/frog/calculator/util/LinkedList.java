@@ -6,6 +6,8 @@ public class LinkedList<T>{
 
     private LinkedNode<T> tail = null;
 
+    private int size = 0;
+
     public void add(T t){
         if(root == null){
             root = new LinkedNode<>();
@@ -14,6 +16,11 @@ public class LinkedList<T>{
         tail.next = new LinkedNode<>();
         tail.next.data = t;
         tail = tail.next;
+        size++;
+    }
+
+    public int size(){
+        return size;
     }
 
     public Iterator getIterator(){
@@ -43,35 +50,35 @@ public class LinkedList<T>{
          * 当前遍历节点前插入
          * @param t
          */
-        public void preInsert(T t){
-            LinkedNode<T> insertNode = new LinkedNode<>();
-            if(this.preNode == null){
-                LinkedNode<T> oldRoot = LinkedList.this.root;
-                LinkedList.this.root = insertNode;
-                insertNode.next = oldRoot;
-            }else{
-                LinkedNode<T> oldNext = this.preNode.next;
-                this.preNode.next = insertNode;
-                insertNode.next = oldNext;
-            }
-        }
+//        public void preInsert(T t){
+//            LinkedNode<T> insertNode = new LinkedNode<>();
+//            if(this.preNode == null){
+//                LinkedNode<T> oldRoot = LinkedList.this.root;
+//                LinkedList.this.root = insertNode;
+//                insertNode.next = oldRoot;
+//            }else{
+//                LinkedNode<T> oldNext = this.preNode.next;
+//                this.preNode.next = insertNode;
+//                insertNode.next = oldNext;
+//            }
+//        }
 
         /**
          * 当前遍历节点后插入
          * @param t
          */
-        public void postInsert(T t){
-            LinkedNode<T> insertNode = new LinkedNode<>();
-            if(this.viewNode == null){
-                LinkedNode<T> oldRoot = LinkedList.this.root;
-                LinkedList.this.root = insertNode;
-                insertNode.next = oldRoot;
-            }else{
-                LinkedNode<T> oldNext = this.viewNode.next;
-                this.viewNode.next = insertNode;
-                insertNode.next = oldNext;
-            }
-        }
+//        public void postInsert(T t){
+//            LinkedNode<T> insertNode = new LinkedNode<>();
+//            if(this.viewNode == null){
+//                LinkedNode<T> oldRoot = LinkedList.this.root;
+//                LinkedList.this.root = insertNode;
+//                insertNode.next = oldRoot;
+//            }else{
+//                LinkedNode<T> oldNext = this.viewNode.next;
+//                this.viewNode.next = insertNode;
+//                insertNode.next = oldNext;
+//            }
+//        }
 
     }
 

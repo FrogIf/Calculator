@@ -1,10 +1,10 @@
 package frog.calculator.resolver.resolve;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
+import frog.calculator.resolver.IResolverResultFactory;
 
-public class AddSubResolver extends AResolver {
+public class AddSubResolver extends AbstractResolver {
 
     private char[] addSymbol = {'+'};
 
@@ -14,8 +14,8 @@ public class AddSubResolver extends AResolver {
 
     private final IExpression subExpression;
 
-    public AddSubResolver(IResolverResult resolveResultPrototype, IExpression addExpression, IExpression subExpression) {
-        super(resolveResultPrototype);
+    public AddSubResolver(IResolverResultFactory resolverResultFactory, IExpression addExpression, IExpression subExpression) {
+        super(resolverResultFactory);
         this.addExpression = addExpression;
         this.subExpression = subExpression;
         if(addExpression.symbol() != null){
@@ -69,13 +69,6 @@ public class AddSubResolver extends AResolver {
         if(counts[0] > 0 || counts[1] > 0){
             resolveResult.setExpression(counts[1] % 2 == 0 ? addExpression.clone() : subExpression.clone());
             resolveResult.setEndIndex(startIndex + counts[1] * subSymbol.length + counts[0] * addSymbol.length - 1);
-        }
-    }
-
-    @Override
-    public void setRegister(IRegister register) {
-        if(this.getNext() != null){
-            this.getNext().setRegister(register);
         }
     }
 }

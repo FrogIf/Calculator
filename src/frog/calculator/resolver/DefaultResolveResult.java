@@ -1,7 +1,6 @@
-package frog.calculator.resolver.result;
+package frog.calculator.resolver;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.resolver.IResolverResult;
 
 public class DefaultResolveResult implements IResolverResult {
 
@@ -10,6 +9,8 @@ public class DefaultResolveResult implements IResolverResult {
     private int endIndex = -1;
 
     private String symbol;
+
+    private ExpressionType type = ExpressionType.RUNNABLE;
 
     @Override
     public IExpression getExpression() {
@@ -48,6 +49,16 @@ public class DefaultResolveResult implements IResolverResult {
             throw new IllegalStateException("the symbol can't be modify.");
         }
         this.symbol = symbol;
+    }
+
+    @Override
+    public void setType(ExpressionType type) {
+        this.type = type;
+    }
+
+    @Override
+    public ExpressionType getType() {
+        return this.type;
     }
 
     @Override

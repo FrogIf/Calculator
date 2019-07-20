@@ -1,7 +1,7 @@
 package frog.calculator.strimpl.opr.end;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 import frog.calculator.strimpl.StringResultExpression;
 
 public class StringEndOperator implements IOperator {

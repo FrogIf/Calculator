@@ -1,7 +1,7 @@
 package frog.calculator.dimpl.opr;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 
 public class SqrtOperator implements IOperator {

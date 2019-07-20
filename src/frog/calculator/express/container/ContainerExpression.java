@@ -1,22 +1,20 @@
 package frog.calculator.express.container;
 
-import frog.calculator.express.AExpression;
+import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.endpoint.MarkExpression;
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 
-public class ContainerExpression extends AExpression {
+public class ContainerExpression extends AbstractExpression {
 
     private IExpression content;
 
-    private IExpressionContext context;
+    protected IExpression suspendExpression;
 
-    private IExpression suspendExpression;
+    protected String closeSymbol;
 
-    private String closeSymbol;
-
-    private boolean isClose = false;
+    protected boolean isClose = false;
 
     public ContainerExpression(String symbol, IOperator operator, String closeSymbol) {
         super(symbol, operator);
@@ -35,7 +33,7 @@ public class ContainerExpression extends AExpression {
                 throw new IllegalStateException("expression error.");
             }
 
-            if(this.suspendExpression == null){
+            if(this.suspendExpression == null && this.order() > childExpression.order()){
                 this.suspendExpression = childExpression;
             }else{
                 if(this.content == null){
@@ -58,17 +56,14 @@ public class ContainerExpression extends AExpression {
         IExpression root = this;
 
         if(isClose){
-            return super.assembleTree(expression);
+            if(expression.createBranch(this)){
+                return expression;
+            }else{
+                return null;
+            }
         }else{
             if(this.closeSymbol.equals(expression.symbol())){
-                isClose = true;
-                if(this.suspendExpression != null){
-                    root = this.suspendExpression;
-                    this.suspendExpression = null;
-                    if(!root.createBranch(this)){
-                        throw new IllegalStateException("the expression can't put into this tree.");
-                    }
-                }
+                root = reversal();
             }else{
                 if(expression.buildFactor() < 0){
                     if(expression.createBranch(this)){
@@ -76,18 +71,27 @@ public class ContainerExpression extends AExpression {
                     }else{
                         root = null;
                     }
-                }else if(this.content == null){
-                    this.content = expression;
                 }else{
-                    this.content = this.content.assembleTree(expression);
-                    if(this.content == null){
-                        throw new IllegalStateException("tree root lost in contain.");
+                    if(!this.createBranch(expression)){
+                        root = null;
                     }
                 }
             }
         }
 
+        return root;
+    }
 
+    protected IExpression reversal(){
+        IExpression root = this;
+        isClose = true;
+        if(this.suspendExpression != null){
+            root = this.suspendExpression;
+            this.suspendExpression = null;
+            if(!root.createBranch(this)){
+                throw new IllegalStateException("the expression can't put into this tree.");
+            }
+        }
         return root;
     }
 
@@ -103,16 +107,7 @@ public class ContainerExpression extends AExpression {
 
     @Override
     public int buildFactor() {
-        if(isClose){
-            return context.getCurrentMaxBuildFactor();
-        }else{
-            return 0 - context.getCurrentMaxBuildFactor();
-        }
-    }
-
-    @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
+        return -1;
     }
 
     @Override
@@ -120,6 +115,11 @@ public class ContainerExpression extends AExpression {
         ContainerExpression clone = (ContainerExpression) super.clone();
         clone.content = this.content == null ? null : this.content.clone();
         return clone;
+    }
+
+    @Override
+    public void setExpressionContext(IExpressionContext context) {
+        if(this.content != null) this.content.setExpressionContext(context);
     }
 
 

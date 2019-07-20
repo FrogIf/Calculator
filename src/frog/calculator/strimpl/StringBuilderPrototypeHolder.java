@@ -1,34 +1,28 @@
 package frog.calculator.strimpl;
 
 import frog.calculator.express.IExpression;
+import frog.calculator.resolver.DefaultResolveResult;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.build.DefaultNumberExpressionFactory;
-import frog.calculator.resolver.build.IBuilderPrototypeHolder;
-import frog.calculator.resolver.build.INumberExpressionFactory;
-import frog.calculator.resolver.result.DefaultResolveResult;
+import frog.calculator.resolver.resolve.factory.DefaultNumberExpressionFactory;
+import frog.calculator.resolver.resolve.factory.INumberExpressionFactory;
 
-public class StringBuilderPrototypeHolder implements IBuilderPrototypeHolder {
-    @Override
+public class StringBuilderPrototypeHolder {
     public INumberExpressionFactory getNumberExpressionFactory() {
         return new DefaultNumberExpressionFactory();
     }
 
-    @Override
     public IResolverResult getResolverResultPrototype() {
         return new DefaultResolveResult();
     }
 
-    @Override
     public IExpression[] getPrototypeExpressions() {
         return new IExpression[0];
     }
 
-    @Override
     public IExpression getAddExpressionPrototype() {
         return null;
     }
 
-    @Override
     public IExpression getSubExpressionPrototype() {
         return null;
     }

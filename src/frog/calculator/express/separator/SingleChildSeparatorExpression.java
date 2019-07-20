@@ -1,13 +1,14 @@
 package frog.calculator.express.separator;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operater.IOperator;
+import frog.calculator.express.IExpressionContext;
+import frog.calculator.operator.IOperator;
 
-public abstract class SingleChildSepatatorExpression extends SeparatorExpression {
+public abstract class SingleChildSeparatorExpression extends SeparatorExpression {
 
     private IExpression child;
 
-    public SingleChildSepatatorExpression(String symbol, int buildFactor, IOperator operator) {
+    public SingleChildSeparatorExpression(String symbol, int buildFactor, IOperator operator) {
         super(symbol, buildFactor, operator);
     }
 
@@ -39,5 +40,10 @@ public abstract class SingleChildSepatatorExpression extends SeparatorExpression
         return this.operator.operate(this.symbol(), this.child);
     }
 
-
+    @Override
+    public void setExpressionContext(IExpressionContext context) {
+        if(this.child != null){
+            this.child.setExpressionContext(context);
+        }
+    }
 }

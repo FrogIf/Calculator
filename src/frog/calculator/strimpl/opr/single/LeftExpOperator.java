@@ -1,7 +1,7 @@
 package frog.calculator.strimpl.opr.single;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operater.IOperator;
+import frog.calculator.operator.IOperator;
 import frog.calculator.strimpl.StringResultExpression;
 
 public class LeftExpOperator implements IOperator {

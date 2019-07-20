@@ -1,19 +1,20 @@
 package frog.calculator.resolver.resolve;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.build.INumberExpressionFactory;
+import frog.calculator.resolver.IResolverResultFactory;
+import frog.calculator.resolver.resolve.factory.INumberExpressionFactory;
+import frog.calculator.util.NumberUtil;
 
 /**
  * 数字表达式解析器
  */
-public class NumberResolver extends AResolver {
+public class NumberResolver extends AbstractResolver {
 
     private INumberExpressionFactory numberExpressionFactory;
 
-    public NumberResolver(INumberExpressionFactory numberExpressionFactory, IResolverResult resolveResultPrototype) {
-        super(resolveResultPrototype);
+    public NumberResolver(INumberExpressionFactory numberExpressionFactory, IResolverResultFactory resolverResultFactory) {
+        super(resolverResultFactory);
         this.numberExpressionFactory = numberExpressionFactory;
     }
 
@@ -26,7 +27,7 @@ public class NumberResolver extends AResolver {
         for(; startIndex < chars.length; startIndex++){
             char ch = chars[startIndex];
 
-            if(isNumber(ch)){
+            if(NumberUtil.isNumber(ch)){
                 numberBuilder.append(ch);
             }else if(isDot(ch)){
                 if(hasDot){
@@ -47,18 +48,8 @@ public class NumberResolver extends AResolver {
         }
     }
 
-    private boolean isNumber(char ch){
-        return ch >= '0' && ch <= '9';
-    }
-
     private boolean isDot(char ch){
         return ch == '.';
     }
 
-    @Override
-    public void setRegister(IRegister register) {
-        if(this.getNext() != null){
-            this.getNext().setRegister(register);
-        }
-    }
 }
