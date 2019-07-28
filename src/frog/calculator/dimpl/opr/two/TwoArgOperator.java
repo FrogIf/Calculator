@@ -1,10 +1,11 @@
 package frog.calculator.dimpl.opr.two;
 
+import frog.calculator.dimpl.opr.AbstractOperator;
 import frog.calculator.express.IExpression;
 import frog.calculator.operator.IOperator;
 import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 
-public abstract class TwoArgOperator implements IOperator {
+public abstract class TwoArgOperator extends AbstractOperator {
 
     protected abstract double doubleCalculate(double left, double right);
 

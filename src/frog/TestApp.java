@@ -3,10 +3,9 @@ package frog;
 import frog.calculator.Calculator;
 import frog.calculator.DefaultCalculatorConfigure;
 import frog.calculator.ICalculatorConfigure;
-import frog.calculator.connect.DefaultCalculatorSessionFactory;
-import frog.calculator.connect.ICalculatorSessionFactory;
-import frog.calculator.dimpl.DoubleExpressionHolder;
+import frog.calculator.connect.DefaultCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.dimpl.DoubleExpressionHolder;
 
 import java.util.Scanner;
 
@@ -14,35 +13,31 @@ public class TestApp {
 
     private static Calculator calculator;
 
-    private static ICalculatorSessionFactory calculatorSessionFactory;
-
     private static void init(){
         ICalculatorConfigure calculatorConfigure = new DefaultCalculatorConfigure(new DoubleExpressionHolder());
         calculator = new Calculator(calculatorConfigure);
-        calculatorSessionFactory = new DefaultCalculatorSessionFactory(calculatorConfigure.getResolverResultFactory());
     }
 
     public static void main(String[] args){
         init();
         // 函数, 自定义函数
-        // lambda表达式 : @(a, b, c, d, e, f, g, h) -> (a+b+c*d)
+        // lambda表达式 : @frog(a, b, c, d, e, f, g, h) -> {a+b+c*d}
+        //      @ - 声明表达式; frog - 变量表达式; () - 形参表达式; a, b, c - 变量表达式
         // 输出计算过程
         Scanner sc = new Scanner(System.in);
 
-        ICalculatorSession session = calculatorSessionFactory.createSession();
-
-        calculator.defineFunction("frog(", new String[]{"a", "b"}, ")", "a+b", session, ",");
+        ICalculatorSession session = new DefaultCalculatorSession();
 
         while(sc.hasNext()){
             String expression = sc.nextLine();
-
+            expression = expression.replaceAll(" " , "");
             if("exit".equals(expression)) {
                 System.out.println("bye !");
                 break;
             }
 
             try{
-                System.out.println(calculator.calculate(expression, session.getSessionResolver()));
+                System.out.println(calculator.calculate(expression, session));
             }catch (Exception e){
                 e.printStackTrace();
             }

@@ -13,8 +13,17 @@ public class FunctionExpression extends ContainerExpression{
 
     protected ArgumentNode args = new ArgumentNode();
 
-    public FunctionExpression(String symbol, IOperator operator, String closeSymbol, String splitSymbol){
-        super(symbol, operator, closeSymbol);
+    /**
+     * 创建一个内置函数表达式
+     * 一个内置函数结构由以下几部分组成:
+     *  容器起始 [参数1 分割符 参数2 分隔符 ... ] 容器终止
+     * @param openSymbol 容器起始位置
+     * @param operator  函数实际算法
+     * @param closeSymbol 容器终止位置
+     * @param splitSymbol 参数分割符
+     */
+    public FunctionExpression(String openSymbol, IOperator operator, String closeSymbol, String splitSymbol){
+        super(openSymbol, operator, closeSymbol);
         this.splitSymbol = splitSymbol;
     }
 
@@ -42,87 +51,12 @@ public class FunctionExpression extends ContainerExpression{
 
     @Override
     public IExpression interpret() {
-        return this.operator.operate(this.symbol(), getArgumentExpressionArray());
-    }
-
-    protected IExpression[] getArgumentExpressionArray(){
-        int len = 0;
-        if(this.args != null){
-            len = this.args.len;
-        }
-        IExpression[] expressions = new IExpression[len];
-        if(len > 0){
-            ArgumentNode node = this.args;
-            expressions[0] = node.expression;
-            node = node.next;
-
-            int i = 1;
-            while(node != null){
-                expressions[i] = node.expression;
-                node = node.next;
-                i++;
-            }
-        }
-        return expressions;
-    }
-
-    protected static class ArgumentNode{
-        private int len = 0;
-        protected IExpression expression;
-        private ArgumentNode next;
-        private boolean isClose;
-
-        private ArgumentNode tail = this;
-
-        protected void reset(){
-            tail = this;
-            this.isClose = false;
-            while(tail.next != null){
-                tail.next.isClose = false;
-                tail = tail.next;
-            }
-            tail = this;
-        }
-
-        protected void setTailClose(){
-            tail.isClose = true;
-        }
-
-        protected boolean addExpression(IExpression expression){
-            boolean result;
-            if(tail.isClose){
-                if(tail.next == null) tail.next = new ArgumentNode();
-                tail = tail.next;
-            }
-            if(tail.expression == null){
-                tail.expression = expression;
-                result = true;
-                len++;
-            }else{
-                IExpression tRoot = tail.expression.assembleTree(expression);
-                if(tRoot == null){
-                    result = false;
-                }else{
-                    tail.expression = tRoot;
-                    result = true;
-                }
-            }
-            return result;
-        }
-
-        protected ArgumentNode copy(){
-            ArgumentNode newNode = new ArgumentNode();
-            newNode.expression = this.expression == null ? null : this.expression.clone();
-            newNode.next = this.next == null ? null : this.next.copy();
-            newNode.len = this.len;
-            newNode.isClose = this.isClose;
-            return newNode;
-        }
+        return this.operator.operate(this.symbol(), context, args.getArguments());
     }
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
-        IExpression[] expressions = this.getArgumentExpressionArray();
+        IExpression[] expressions = this.args.getArguments();
         for(IExpression expression : expressions){
             expression.setExpressionContext(context);
         }

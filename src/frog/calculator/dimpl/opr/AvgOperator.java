@@ -4,7 +4,7 @@ import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 import frog.calculator.express.IExpression;
 import frog.calculator.operator.IOperator;
 
-public class AvgOperator implements IOperator {
+public class AvgOperator extends AbstractOperator {
     @Override
     public IExpression operate(String symbol, IExpression... expressions) {
         if(expressions.length == 0){

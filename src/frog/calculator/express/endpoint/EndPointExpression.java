@@ -31,7 +31,7 @@ public class EndPointExpression extends AbstractExpression {
 
     @Override
     public IExpression interpret() {
-        return operator.operate(this.symbol(), this);
+        return operator.operate(this.symbol(), null, this);
     }
 
     @Override

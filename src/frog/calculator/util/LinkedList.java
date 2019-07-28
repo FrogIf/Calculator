@@ -1,5 +1,10 @@
 package frog.calculator.util;
 
+/**
+ * 链表<br/>
+ * 线程不安全
+ * @param <T>
+ */
 public class LinkedList<T>{
 
     private LinkedNode<T> root = null;
@@ -30,8 +35,6 @@ public class LinkedList<T>{
     public class Iterator{
         private LinkedNode<T> viewNode;
 
-        private LinkedNode<T> preNode;
-
         public Iterator(LinkedNode<T> viewNode) {
             this.viewNode = viewNode;
         }
@@ -41,45 +44,9 @@ public class LinkedList<T>{
         }
 
         public T next(){
-            this.preNode = viewNode;
             this.viewNode = viewNode.next;
             return this.viewNode.data;
         }
-
-        /**
-         * 当前遍历节点前插入
-         * @param t
-         */
-//        public void preInsert(T t){
-//            LinkedNode<T> insertNode = new LinkedNode<>();
-//            if(this.preNode == null){
-//                LinkedNode<T> oldRoot = LinkedList.this.root;
-//                LinkedList.this.root = insertNode;
-//                insertNode.next = oldRoot;
-//            }else{
-//                LinkedNode<T> oldNext = this.preNode.next;
-//                this.preNode.next = insertNode;
-//                insertNode.next = oldNext;
-//            }
-//        }
-
-        /**
-         * 当前遍历节点后插入
-         * @param t
-         */
-//        public void postInsert(T t){
-//            LinkedNode<T> insertNode = new LinkedNode<>();
-//            if(this.viewNode == null){
-//                LinkedNode<T> oldRoot = LinkedList.this.root;
-//                LinkedList.this.root = insertNode;
-//                insertNode.next = oldRoot;
-//            }else{
-//                LinkedNode<T> oldNext = this.viewNode.next;
-//                this.viewNode.next = insertNode;
-//                insertNode.next = oldNext;
-//            }
-//        }
-
     }
 
     private static class LinkedNode<T>{

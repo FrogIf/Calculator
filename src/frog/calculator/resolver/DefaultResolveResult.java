@@ -10,7 +10,7 @@ public class DefaultResolveResult implements IResolverResult {
 
     private String symbol;
 
-    private ExpressionType type = ExpressionType.RUNNABLE;
+    private ResolverResultType type = ResolverResultType.RUNNABLE;
 
     @Override
     public IExpression getExpression() {
@@ -52,12 +52,12 @@ public class DefaultResolveResult implements IResolverResult {
     }
 
     @Override
-    public void setType(ExpressionType type) {
+    public void setType(ResolverResultType type) {
         this.type = type;
     }
 
     @Override
-    public ExpressionType getType() {
+    public ResolverResultType getType() {
         return this.type;
     }
 

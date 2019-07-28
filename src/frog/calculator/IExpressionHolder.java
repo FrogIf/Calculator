@@ -4,14 +4,46 @@ import frog.calculator.express.IExpression;
 
 public interface IExpressionHolder {
 
-    IExpression getSubExpression();
+    /**
+     * 正号表达式
+     * @return
+     */
+    IExpression getPlus();
 
-    IExpression getAddExpression();
+    /**
+     * 负号表达式
+     * @return
+     */
+    IExpression getMinus();
 
-    IExpression[] getInnerExpression();
+    /**
+     * 赋值符号
+     * @return
+     */
+    IExpression getAssign();
 
-    IExpression getSplitorExpression();
+    /**
+     * 声明开始标识符
+     * @return
+     */
+    IExpression getDeclareBegin();
 
-    IExpression getDeclareExpression();
+    /**
+     * 声明结束标识符
+     * @return
+     */
+    IExpression getDelcareEnd();
+
+    /**
+     * 获取内置可执行表达式
+     * @return
+     */
+    IExpression[] getBuiltInExpression();
+
+    /**
+     * 声明结构表达式
+     * @return
+     */
+    IExpression[] getDeclareStruct();
 
 }

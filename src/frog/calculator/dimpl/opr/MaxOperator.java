@@ -4,7 +4,7 @@ import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 import frog.calculator.express.IExpression;
 import frog.calculator.operator.IOperator;
 
-public class MaxOperator implements IOperator {
+public class MaxOperator extends AbstractOperator {
     @Override
     public IExpression operate(String symbol, IExpression... expressions) {
         double max = DoubleOperatorUtil.resultExpressionToDouble(expressions[0].interpret());

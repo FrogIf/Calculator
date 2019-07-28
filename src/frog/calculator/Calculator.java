@@ -1,115 +1,160 @@
 package frog.calculator;
 
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.express.ArgumentExpression;
+import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.container.CustomFunctionExpression;
-import frog.calculator.express.endpoint.VariableExpression;
+import frog.calculator.express.IExpressionContext;
 import frog.calculator.register.IRegister;
 import frog.calculator.register.TreeRegister;
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
+import frog.calculator.resolver.ResolverResultType;
 import frog.calculator.resolver.resolve.*;
 import frog.calculator.resolver.resolve.factory.DefaultNumberExpressionFactory;
+import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
+import frog.calculator.resolver.util.CommonSymbolParse;
+import frog.calculator.util.Stack;
 
 /**
  * 计算器, 计算的解析, 执行, 调度
  */
 public class Calculator {
 
+    // 配置bean
     private ICalculatorConfigure calculatorConfigure;
 
-    private IResolver innerResolver;    // 内置解析器
+    // 解析结果工厂
+    private IResolverResultFactory resolverResultFactory;
 
-    private IResolver declareResolver;  // 变量, 函数声明解析器
+    // 运行解析器
+    private IResolver runnableResolver;
+
+    // 声明解析器
+    private IResolver declareResolver;
 
     public Calculator(ICalculatorConfigure calculatorConfigure) {
-        if(calculatorConfigure == null){
+        if (calculatorConfigure == null) {
             throw new IllegalArgumentException("configure is null.");
         }
         this.calculatorConfigure = calculatorConfigure;
-        this.innerResolver = createResolver();
+        this.resolverResultFactory = calculatorConfigure.getResolverResultFactory();
+
+        this.runnableResolver = createRunnableResolver();
+        this.declareResolver = createDeclareResolver();
     }
 
-    /**
-     * 创建解析器
-     * @return
-     */
-    private IResolver createResolver(){
-        ChainResolver resolverChain = new ChainResolver();
+    // ===============================================初始化start=============================================
 
-        IResolverResultFactory resolverResultFactory = this.calculatorConfigure.getResolverResultFactory();
-
+    private IResolver createRunnableResolver() {
         // 数字解析器
         IResolver numberResolver = new NumberResolver(new DefaultNumberExpressionFactory(), resolverResultFactory);
 
-        // 加, 减解析器; 加减又可以当做正负使用, 所以比较需要单独使用解析器进行解析
-        IResolver addSubResolver = new AddSubResolver(resolverResultFactory,
-                this.calculatorConfigure.getExpressionHolder().getAddExpression(),
-                this.calculatorConfigure.getExpressionHolder().getSubExpression());
+        // 加, 减解析器; 加减又可以当做正负使用, 所以需要单独使用解析器进行解析
+        IResolver addSubResolver = new PMResolver(resolverResultFactory,
+                this.calculatorConfigure.getExpressionHolder().getPlus(),
+                this.calculatorConfigure.getExpressionHolder().getMinus());
 
         // 符号解析器, 用于解析系统内部支持的运算符
         IResolver symbolResolver = new SymbolResolver(resolverResultFactory,
-                createInnerExpressionRegister());
+                createRegister(this.calculatorConfigure.getExpressionHolder().getBuiltInExpression()));
 
-        IResolver lambdaDeclareResolver = new DeclareResolver(resolverResultFactory,
-                this.calculatorConfigure.getExpressionHolder().getDeclareExpression());
+        // 监听声明开始
+        TreeRegister declareStart = new TreeRegister();
+        IExpression declareBeginExpression = this.calculatorConfigure.getExpressionHolder().getDeclareBegin();
+        declareStart.registe(declareBeginExpression.symbol(), declareBeginExpression);
+        IResolver declareStartListenResolver = new SymbolResolver(resolverResultFactory, declareStart, ResolverResultType.DECLARE_BEGIN);
 
-        // 解析器执行顺序: 数字解析 -> 加减解析 -> 符号解析 -> 声明解析器
-        resolverChain.addResolver(numberResolver);
-        resolverChain.addResolver(addSubResolver);
-        resolverChain.addResolver(symbolResolver);
-        resolverChain.addResolver(lambdaDeclareResolver);
+        // 解析器执行顺序: 数字解析 -> 加减解析 -> 符号解析 -> 声明开始监听解析器
+        ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
 
-        return resolverChain;
+        chainResolver.addResolver(numberResolver);
+        chainResolver.addResolver(addSubResolver);
+        chainResolver.addResolver(symbolResolver);
+        chainResolver.addResolver(declareStartListenResolver);
+
+        return chainResolver;
     }
 
-    /**
-     * 注册符号
-     * @return
-     */
-    private IRegister createInnerExpressionRegister(){
-        IExpression[] innerExpression = this.calculatorConfigure.getExpressionHolder().getInnerExpression();
+    private IResolver createDeclareResolver() {
+        IExpression[] declareStruct = this.calculatorConfigure.getExpressionHolder().getDeclareStruct();
+        String[] declareSymbol = new String[declareStruct.length];
+        for(int i = 0; i < declareSymbol.length; i++){
+            declareSymbol[i] = declareStruct[i].symbol();
+        }
+
+        // 声明结构解析器
+        IResolver structResolver = new SymbolResolver(resolverResultFactory, createRegister(declareStruct));
+
+        // 变量解析器
+        IResolver variableResolver = new TruncateResolver(resolverResultFactory, declareSymbol,
+                new VariableExpressionFactory(this.calculatorConfigure.getExpressionHolder().getAssign().symbol()));
+
+        // 声明结束监听解析器
+        TreeRegister declareEnd = new TreeRegister();
+        IExpression declareStartExpression = this.calculatorConfigure.getExpressionHolder().getDelcareEnd();
+        declareEnd.registe(declareStartExpression.symbol(), declareStartExpression);
+        IResolver declareEndListenResolver = new SymbolResolver(resolverResultFactory, declareEnd, ResolverResultType.DECLARE_END);
+
+        ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
+
+        // 解析器执行顺序: 结构解析器 -> 变量解析器 -> 声明结束监听解析器
+        chainResolver.addResolver(structResolver);
+        chainResolver.addResolver(variableResolver);
+        chainResolver.addResolver(this.runnableResolver);
+        chainResolver.addResolver(declareEndListenResolver);
+
+        return chainResolver;
+    }
+
+    private IRegister createRegister(IExpression[] expressions) {
         TreeRegister register = new TreeRegister();
-        for(IExpression exp : innerExpression){
+        for (IExpression exp : expressions) {
             register.registe(exp.symbol(), exp, exp.getOperator());
         }
         return register;
     }
 
-    /**
-     * 构造解析树
-     * @param expression
-     * @return
-     */
-    private IExpression build(String expression, IResolver outerResolver){
+    // ===============================================初始化end=============================================
+
+
+    // ===============================================解析执行start=========================================
+
+    private IExpression build(String expression, ICalculatorSession session) {
+        ResolverHolder resolverHolder = new ResolverHolder();
+        resolverHolder.resolver = this.runnableResolver;
+
+        IExpressionContext context = new DefaultExpressionContext(session);
+
         char[] chars = expression.toCharArray();
         int order = 0;
 
-        IResolverResult rootResult = this.innerResolver.resolve(chars, 0);
-        if(rootResult == null && outerResolver != null){
-            rootResult = outerResolver.resolve(chars, 0);
+        Stack<IRegister> localRegisterStack = new Stack<>(); // 局部注册器栈, 用于存储局部变量
+
+        IResolverResult rootResult = this.resolve(chars, 0, localRegisterStack, resolverHolder, session);
+
+        if (rootResult == null) {
+            throw new IllegalArgumentException("undefined symbol at " + 0);
         }
 
         IExpression root = rootResult.getExpression();
-
+        root.setExpressionContext(context);
         root.setOrder(order++);
 
-        for(int i = rootResult.getEndIndex() + 1; i < chars.length; i++){
-            IResolverResult result = this.innerResolver.resolve(chars, i);
+        for (int i = rootResult.getEndIndex() + 1; i < chars.length; i++) {
+            IResolverResult result = this.resolve(chars, i, localRegisterStack, resolverHolder, session);
 
-            if(result == null && outerResolver != null){
-                result = outerResolver.resolve(chars, i);
+            if (result == null) {
+                throw new IllegalArgumentException("undefined symbol at " + i);
             }
 
             IExpression curExp = result.getExpression();
-
+            curExp.setExpressionContext(context);
             curExp.setOrder(order++);
 
             root = root.assembleTree(curExp);
 
-            if(root == null){
+            if (root == null) {
                 throw new IllegalStateException("tree root lost.");
             }
 
@@ -119,16 +164,49 @@ public class Calculator {
         return root;
     }
 
+    private IResolverResult resolve(char[] chars, int startIndex, Stack<IRegister> registerStack,
+                                    ResolverHolder resolverHolder, ICalculatorSession session) {
+        IResolver resolver = resolverHolder.resolver;
+        IResolverResult result = resolver.resolve(chars, startIndex);
+
+        if(result.getExpression() != null){
+            if (result.getType() != null) {
+                if (result.getType() == ResolverResultType.DECLARE_BEGIN) {
+                    registerStack.push(new TreeRegister()); // 创建一个新的局部变量表
+                    resolverHolder.resolver = this.declareResolver;   // 切换至声明解析器
+                } else if (result.getType() == ResolverResultType.DECLARE_END) {
+                    registerStack.pop();    // 销毁顶端局部变量表
+                    resolverHolder.resolver = this.runnableResolver;  // 切换至执行解析器
+                } else if (result.getType() == ResolverResultType.DECLARE) {   // 声明
+                    IExpression expression = result.getExpression();
+                    registerStack.getTop().registe(expression.symbol(), expression, expression.getOperator());  // 向局部变量表中添加变量
+                }
+            }
+        }else{
+            if (registerStack.isNotEmpty()) {   // 应用局部变量表进行解析(先使用局部解析器, 在使用会话解析器 -- 就近原则)
+                result = CommonSymbolParse.parseExpression(chars, startIndex, registerStack.getTop(), this.resolverResultFactory);
+            }
+            if(result.getExpression() == null){
+                result = CommonSymbolParse.parseExpression(chars, startIndex, session.getUserRegister(), this.resolverResultFactory);
+            }
+            if (result.getExpression() == null) {
+                throw new IllegalArgumentException("undefine symbol at " + startIndex);
+            }
+        }
+
+        return result.getExpression() == null ? null : result;
+    }
+
     /**
      * 执行计算
+     *
      * @param expression 待计算的表达式
-     * @param sessionResolver 会话解析器
-     * @return
+     * @param session    会话
+     * @return 解析结果
      */
-    public String calculate(String expression, IResolver sessionResolver){
-        expression = expression.replaceAll(" ", "");
+    public String calculate(String expression, ICalculatorSession session) {
 
-        IExpression expTree = build(expression, sessionResolver); // 去空格
+        IExpression expTree = build(expression, session); // 构造解析树
 
         IExpression result = expTree.interpret(); // 执行计算
 
@@ -136,32 +214,12 @@ public class Calculator {
     }
 
     /**
-     * @param funOpen
-     * @param args
-     * @param funClose
-     * @param body
-     * @param session
-     * @param splitor
+     * 解析器持有者, 用来记录每一次构造过程中解析器的切换, 有点类似状态模式
      */
-    public void defineFunction(String funOpen, String[] args, String funClose, String body, ICalculatorSession session, String splitor){
-        IRegister outerRegister = session.getRegister();
-
-        IExpression[] argumentExpressions = null;
-        if(args != null && args.length > 0){
-            argumentExpressions = new IExpression[args.length];
-            for(int i = 0, len = args.length; i < len; i++){
-                String arg = args[i];
-                outerRegister.registe(arg, new VariableExpression(arg));
-                argumentExpressions[i] = new ArgumentExpression(arg);
-            }
-        }
-
-        // 解析函数体
-        IExpression funBody = build(body, session.getSessionResolver());
-
-        CustomFunctionExpression cFun = new CustomFunctionExpression(funOpen, funClose, splitor, funBody, argumentExpressions);
-
-        outerRegister.registe(cFun.symbol(), cFun);
+    private static class ResolverHolder {
+        private IResolver resolver;
     }
+
+    // ===============================================解析执行end=========================================
 
 }

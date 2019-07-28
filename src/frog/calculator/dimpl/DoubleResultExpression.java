@@ -1,5 +1,6 @@
 package frog.calculator.dimpl;
 
+import frog.calculator.express.IExpression;
 import frog.calculator.express.endpoint.EndPointExpression;
 import frog.calculator.operator.IOperator;
 
@@ -19,4 +20,8 @@ public class DoubleResultExpression extends EndPointExpression {
         this.doubleValue = doubleValue;
     }
 
+    @Override
+    public IExpression interpret() {
+        return this;
+    }
 }

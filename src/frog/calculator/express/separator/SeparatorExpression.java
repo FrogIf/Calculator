@@ -20,7 +20,7 @@ public class SeparatorExpression extends AbstractExpression {
 
     @Override
     public IExpression interpret() {
-        return this.operator.operate(this.symbol(), this.left, this.right);
+        return this.operator.operate(this.symbol(), null, this.left, this.right);
     }
 
     @Override

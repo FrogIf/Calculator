@@ -4,7 +4,7 @@ import frog.calculator.express.IExpression;
 import frog.calculator.operator.IOperator;
 import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 
-public class SqrtOperator implements IOperator {
+public class SqrtOperator extends AbstractOperator {
     @Override
     public IExpression operate(String symbol, IExpression... expressions) {
         if(expressions.length != 2){

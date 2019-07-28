@@ -1,59 +1,35 @@
 package frog.calculator.express;
 
+import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.util.LinkedList;
 
 public class DefaultExpressionContext implements IExpressionContext {
 
-    // 当前构造因子最大值
-    private int maxBuildFactor = 1;
-
-    // 当前构造因子最小值
-    private int minBuildFactor = 0;
-
     private LinkedList<IExpression> varibleList = new LinkedList<>();
 
-    @Override
-    public int getCurrentMaxBuildFactor() {
-        return maxBuildFactor;
+    private ICalculatorSession session;
+
+    public DefaultExpressionContext(ICalculatorSession session) {
+        this.session = session;
     }
 
     @Override
-    public int getCurrentMinBuildFactor() {
-        return minBuildFactor;
+    public LinkedList<IExpression> getVariables() {
+        return this.varibleList;
     }
 
     @Override
-    public IExpression[] getVariables() {
-        // TODO 改为返回值是LinkedList
-        IExpression[] exps = new IExpression[varibleList.size()];
-        LinkedList<IExpression>.Iterator iterator = varibleList.getIterator();
-        int i = 0;
-        while(iterator.hasNext()){
-            IExpression next = iterator.next();
-            exps[i] = next;
-            i++;
-        }
-        return exps;
+    public ICalculatorSession getSession() {
+        return this.session;
     }
 
     @Override
-    public void addVariables(IExpression expression) {
+    public void addLocalVariables(IExpression expression) {
         varibleList.add(expression);
     }
 
     @Override
-    public void monitor(IExpression expression) {
-        int bf = expression.buildFactor();
-        if(maxBuildFactor < bf){
-            maxBuildFactor = bf;
-        }
-        if(minBuildFactor > bf){
-            minBuildFactor = bf;
-        }
-    }
-
-    @Override
     public IExpressionContext newInstance() {
-        return new DefaultExpressionContext();
+        return new DefaultExpressionContext(this.session);
     }
 }

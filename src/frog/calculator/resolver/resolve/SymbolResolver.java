@@ -4,14 +4,23 @@ import frog.calculator.express.IExpression;
 import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
+import frog.calculator.resolver.ResolverResultType;
 
 public class SymbolResolver extends AbstractResolver {
 
     private IRegister register;
 
-    public SymbolResolver(IResolverResultFactory resolverResultFactory, IRegister innerSymbolRegister) {
+    private ResolverResultType type;
+
+    public SymbolResolver(IResolverResultFactory resolverResultFactory, IRegister innerSymbolRegister, ResolverResultType type) {
         super(resolverResultFactory);
         this.register = innerSymbolRegister;
+        this.type = type;
+    }
+
+    public SymbolResolver(IResolverResultFactory resolverResultFactory, IRegister register) {
+        super(resolverResultFactory);
+        this.register = register;
     }
 
     @Override
@@ -33,6 +42,7 @@ public class SymbolResolver extends AbstractResolver {
             if(completeSymbol != null){
                 resolveResult.setSymbol(completeSymbol);
                 resolveResult.setEndIndex(startIndex + completeSymbol.length() - 1);
+                resolveResult.setType(this.type);
             }
         }
     }

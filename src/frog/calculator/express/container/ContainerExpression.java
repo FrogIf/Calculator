@@ -8,7 +8,7 @@ import frog.calculator.operator.IOperator;
 
 public class ContainerExpression extends AbstractExpression {
 
-    private IExpression content;
+    protected IExpression content;
 
     protected IExpression suspendExpression;
 
@@ -16,8 +16,16 @@ public class ContainerExpression extends AbstractExpression {
 
     protected boolean isClose = false;
 
-    public ContainerExpression(String symbol, IOperator operator, String closeSymbol) {
-        super(symbol, operator);
+    protected IExpressionContext context;
+
+    /**
+     * 容器表达式
+     * @param openSymbol 容器起始位置
+     * @param operator 容器运算器
+     * @param closeSymbol 容器终止位置
+     */
+    public ContainerExpression(String openSymbol, IOperator operator, String closeSymbol) {
+        super(openSymbol, operator);
         if(closeSymbol == null){
             throw new IllegalArgumentException("closeSymbol can not be null.");
         }
@@ -97,7 +105,7 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public IExpression interpret() {
-        return operator.operate(this.symbol(), content, new MarkExpression(closeSymbol));
+        return operator.operate(this.symbol(), context, content, new MarkExpression(closeSymbol));
     }
 
     @Override
@@ -119,6 +127,7 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
+        this.context = context;
         if(this.content != null) this.content.setExpressionContext(context);
     }
 

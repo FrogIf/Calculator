@@ -9,6 +9,9 @@ public abstract class AbstractResolver implements IResolver {
     private IResolverResultFactory resolverResultFactory;
 
     public AbstractResolver(IResolverResultFactory resolverResultFactory) {
+        if(resolverResultFactory == null){
+            throw new IllegalArgumentException("resolverResultFactory is null : " + this.getClass().getName());
+        }
         this.resolverResultFactory = resolverResultFactory;
     }
 

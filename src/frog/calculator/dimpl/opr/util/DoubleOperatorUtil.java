@@ -17,7 +17,6 @@ public class DoubleOperatorUtil {
     }
 
     public static IExpression doubleToResultExpression(double value){
-        // TODO 这里的operator不应该是null
         DoubleResultExpression doubleResultExpression = new DoubleResultExpression(String.valueOf(value), null);
         doubleResultExpression.setDoubleValue(value);
         return doubleResultExpression;

@@ -2,12 +2,19 @@ package frog.calculator.resolver.resolve;
 
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverResult;
+import frog.calculator.resolver.IResolverResultFactory;
 
 public class ChainResolver implements IResolver{
+
+    private IResolverResultFactory resolverResultFactory;
 
     private ChainNode head = new ChainNode();
 
     private ChainNode tail = head;
+
+    public ChainResolver(IResolverResultFactory resolverResultFactory) {
+        this.resolverResultFactory = resolverResultFactory;
+    }
 
     public void addResolver(IResolver resolver) {
         tail.next = new ChainNode();
@@ -27,7 +34,8 @@ public class ChainResolver implements IResolver{
             }
         }
 
-        return null;
+        // 返回空解析结果对象
+        return this.resolverResultFactory.createResolverResultBean();
     }
 
     private static class ChainNode{
