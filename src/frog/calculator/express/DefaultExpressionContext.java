@@ -5,7 +5,7 @@ import frog.calculator.util.LinkedList;
 
 public class DefaultExpressionContext implements IExpressionContext {
 
-    private LinkedList<IExpression> varibleList = new LinkedList<>();
+    private LinkedList<IExpression> localVariableList = new LinkedList<>();
 
     private ICalculatorSession session;
 
@@ -14,8 +14,8 @@ public class DefaultExpressionContext implements IExpressionContext {
     }
 
     @Override
-    public LinkedList<IExpression> getVariables() {
-        return this.varibleList;
+    public LinkedList<IExpression> getLocalVariables() {
+        return this.localVariableList;
     }
 
     @Override
@@ -25,11 +25,14 @@ public class DefaultExpressionContext implements IExpressionContext {
 
     @Override
     public void addLocalVariables(IExpression expression) {
-        varibleList.add(expression);
+        localVariableList.add(expression);
     }
 
     @Override
     public IExpressionContext newInstance() {
-        return new DefaultExpressionContext(this.session);
+        // TODO 应该使用栈结构(Last in First out)
+        DefaultExpressionContext context = new DefaultExpressionContext(this.session);
+        context.localVariableList = this.localVariableList;
+        return context;
     }
 }

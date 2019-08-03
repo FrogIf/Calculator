@@ -9,10 +9,10 @@ import frog.calculator.util.LinkedList;
 public interface IExpressionContext {
 
     /**
-     * 该表达式树的变量池
+     * 获取局部变量表
      * @return
      */
-    LinkedList<IExpression> getVariables();
+    LinkedList<IExpression> getLocalVariables();
 
     /**
      * 获取用户会话

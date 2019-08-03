@@ -12,6 +12,10 @@ public abstract class SingleChildSeparatorExpression extends SeparatorExpression
         super(symbol, buildFactor, operator);
     }
 
+    public SingleChildSeparatorExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
+        super(symbol, buildFactor, operator, fifo);
+    }
+
     protected abstract boolean checkOrder(int selfOrder, int inputOrder);
 
     @Override

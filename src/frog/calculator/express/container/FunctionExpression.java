@@ -11,7 +11,9 @@ public class FunctionExpression extends ContainerExpression{
 
     private String splitSymbol;
 
-    protected ArgumentNode args = new ArgumentNode();
+    private int argumentCount = 0;
+
+    private ArgumentNode args = null;
 
     /**
      * 创建一个内置函数表达式
@@ -40,10 +42,15 @@ public class FunctionExpression extends ContainerExpression{
                 this.suspendExpression = childExpression;
             }else{
                 if(splitSymbol.equals(childExpression.symbol())){
-                    this.args.setTailClose();
-                    return true;
+                    argumentCount++;
+                    args.createNewNode();
+                }else{
+                    if(args == null){
+                        argumentCount++;
+                        args = new ArgumentNode();
+                    }
+                    args.addToCurrentNode(childExpression);
                 }
-                return this.args.addExpression(childExpression);
             }
         }
         return true;
@@ -51,14 +58,34 @@ public class FunctionExpression extends ContainerExpression{
 
     @Override
     public IExpression interpret() {
-        return this.operator.operate(this.symbol(), context, args.getArguments());
+        if(this.argumentCount > 0){
+            ArgumentNode node = this.args;
+            IExpression[] expressions = new IExpression[this.argumentCount];
+
+            int i = 0;
+            while(node != null){
+                expressions[i] = node.expression;
+                node = node.next;
+                i++;
+            }
+
+            return this.operator.operate(this.symbol(), context, expressions);
+
+        }else{
+            return this.operator.operate(this.symbol(), context);
+        }
     }
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
-        IExpression[] expressions = this.args.getArguments();
-        for(IExpression expression : expressions){
-            expression.setExpressionContext(context);
+        if(this.args != null){
+            ArgumentNode node = this.args;
+            while(node != null){
+                if(node.expression != null){
+                    node.expression.setExpressionContext(context);
+                }
+                node = node.next;
+            }
         }
     }
 
@@ -67,5 +94,37 @@ public class FunctionExpression extends ContainerExpression{
         FunctionExpression clone = (FunctionExpression) super.clone();
         clone.args = this.args == null ? null : this.args.copy();
         return clone;
+    }
+
+    private static class ArgumentNode {
+        IExpression expression;
+
+        ArgumentNode next;
+        ArgumentNode tail = this;
+
+        private void createNewNode(){
+            tail.next = new ArgumentNode();
+            tail = tail.next;
+        }
+
+        private void addToCurrentNode(IExpression childExpression) {
+            if(tail.expression == null){
+                tail.expression = childExpression;
+            }else{
+                IExpression expression = tail.expression.assembleTree(childExpression);
+                if(expression == null){
+                    throw new IllegalArgumentException("expression can't assemble.");
+                }else{
+                    tail.expression = expression;
+                }
+            }
+        }
+
+        private ArgumentNode copy(){
+            ArgumentNode newNode = new ArgumentNode();
+            newNode.expression = this.expression == null ? null : this.expression.clone();
+            newNode.next = this.next == null ? null : this.next.copy();
+            return newNode;
+        }
     }
 }

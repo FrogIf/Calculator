@@ -11,11 +11,9 @@ public interface IRegister {
 
     void registe(String exp, IExpression expression);
 
-    IExpression getExpression();
+    IExpression find(String symbol);
 
-    IOperator getOperator();
-
-    IRegister retrieveRegistryInfo(char[] chars, int startIndex);
+    IExpression retrieveRegistryInfo(char[] chars, int startIndex);
 
     boolean remove(String exp);
 

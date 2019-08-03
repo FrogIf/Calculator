@@ -11,9 +11,12 @@ import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.ResolverResultType;
 import frog.calculator.resolver.resolve.*;
+import frog.calculator.resolver.resolve.factory.CustomFunctionExpressionFactory;
 import frog.calculator.resolver.resolve.factory.DefaultNumberExpressionFactory;
+import frog.calculator.resolver.resolve.factory.ICustomSymbolExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
+import frog.calculator.util.LinkedList;
 import frog.calculator.util.Stack;
 
 /**
@@ -77,32 +80,41 @@ public class Calculator {
     }
 
     private IResolver createDeclareResolver() {
-        IExpression[] declareStruct = this.calculatorConfigure.getExpressionHolder().getDeclareStruct();
-        String[] declareSymbol = new String[declareStruct.length];
-        for(int i = 0; i < declareSymbol.length; i++){
-            declareSymbol[i] = declareStruct[i].symbol();
-        }
-
         // 声明结构解析器
-        IResolver structResolver = new SymbolResolver(resolverResultFactory, createRegister(declareStruct));
+        TreeRegister struct = new TreeRegister();
+        IExpressionHolder expressionHolder = this.calculatorConfigure.getExpressionHolder();
+        struct.registe(expressionHolder.getSeparator().symbol(), expressionHolder.getSeparator());
+        struct.registe(expressionHolder.getContainerClose().symbol(), expressionHolder.getContainerClose());
+        IResolver structResolver = new SymbolResolver(resolverResultFactory, struct);
 
-        // 变量解析器
-        IResolver variableResolver = new TruncateResolver(resolverResultFactory, declareSymbol,
-                new VariableExpressionFactory(this.calculatorConfigure.getExpressionHolder().getAssign().symbol()));
-
-        // 声明结束监听解析器
+        // 监听声明结束
         TreeRegister declareEnd = new TreeRegister();
-        IExpression declareStartExpression = this.calculatorConfigure.getExpressionHolder().getDelcareEnd();
-        declareEnd.registe(declareStartExpression.symbol(), declareStartExpression);
+
+        IExpression declareEndExpression = this.calculatorConfigure.getExpressionHolder().getAssign();  // "=" 标记声明结束
+        declareEnd.registe(declareEndExpression.symbol(), declareEndExpression);
+
+        IExpression delegate = this.calculatorConfigure.getExpressionHolder().getDelegate();
+        declareEnd.registe(delegate.symbol(), delegate);
+
         IResolver declareEndListenResolver = new SymbolResolver(resolverResultFactory, declareEnd, ResolverResultType.DECLARE_END);
+
+        ICustomSymbolExpressionFactory customSymbolExpressionFactory = new VariableExpressionFactory();
+
+        // 变量解析器(截断解析器)
+        IResolver variableResolver = new TruncateResolver(resolverResultFactory, new TruncateResolver.TruncateSymbol[]{
+                new TruncateResolver.TruncateSymbol(",", customSymbolExpressionFactory),
+                new TruncateResolver.TruncateSymbol(")", customSymbolExpressionFactory),
+                new TruncateResolver.TruncateSymbol("=", customSymbolExpressionFactory),
+                new TruncateResolver.TruncateSymbol("(", new CustomFunctionExpressionFactory(")", ",", "->"), true)
+        });
+
 
         ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
 
-        // 解析器执行顺序: 结构解析器 -> 变量解析器 -> 声明结束监听解析器
+        // 解析器执行顺序: 声明结束监听解析器 -> 变量解析器
         chainResolver.addResolver(structResolver);
-        chainResolver.addResolver(variableResolver);
-        chainResolver.addResolver(this.runnableResolver);
         chainResolver.addResolver(declareEndListenResolver);
+        chainResolver.addResolver(variableResolver);
 
         return chainResolver;
     }
@@ -120,11 +132,9 @@ public class Calculator {
 
     // ===============================================解析执行start=========================================
 
-    private IExpression build(String expression, ICalculatorSession session) {
+    private IExpression build(String expression, ICalculatorSession session, IExpressionContext context) {
         ResolverHolder resolverHolder = new ResolverHolder();
         resolverHolder.resolver = this.runnableResolver;
-
-        IExpressionContext context = new DefaultExpressionContext(session);
 
         char[] chars = expression.toCharArray();
         int order = 0;
@@ -161,6 +171,8 @@ public class Calculator {
             i = result.getEndIndex();
         }
 
+
+
         return root;
     }
 
@@ -175,7 +187,8 @@ public class Calculator {
                     registerStack.push(new TreeRegister()); // 创建一个新的局部变量表
                     resolverHolder.resolver = this.declareResolver;   // 切换至声明解析器
                 } else if (result.getType() == ResolverResultType.DECLARE_END) {
-                    registerStack.pop();    // 销毁顶端局部变量表
+//                    registerStack.pop();    // 销毁顶端局部变量表
+                    // TODO 临时取消销毁顶部局部变量表
                     resolverHolder.resolver = this.runnableResolver;  // 切换至执行解析器
                 } else if (result.getType() == ResolverResultType.DECLARE) {   // 声明
                     IExpression expression = result.getExpression();
@@ -205,10 +218,20 @@ public class Calculator {
      * @return 解析结果
      */
     public String calculate(String expression, ICalculatorSession session) {
+        IExpressionContext context = new DefaultExpressionContext(session);
 
-        IExpression expTree = build(expression, session); // 构造解析树
+        IExpression expTree = build(expression, session, context); // 构造解析树
 
         IExpression result = expTree.interpret(); // 执行计算
+
+        // 获取顶层表达式的局部变量表, 就是会话变量
+        LinkedList<IExpression> variables = context.getLocalVariables();
+        LinkedList<IExpression>.Iterator iterator = variables.getIterator();
+        IRegister userRegister = session.getUserRegister();
+        while(iterator.hasNext()){
+            IExpression next = iterator.next();
+            userRegister.replace(next.symbol(), next, next.getOperator());
+        }
 
         return result.symbol();    // 计算结果
     }

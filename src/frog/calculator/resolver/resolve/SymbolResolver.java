@@ -28,22 +28,17 @@ public class SymbolResolver extends AbstractResolver {
         if(this.register == null){
             throw new IllegalStateException("there is no register.");
         }
-        IRegister registry = this.register.retrieveRegistryInfo(chars, startIndex);
-        if(registry == null){
+        IExpression expression = this.register.retrieveRegistryInfo(chars, startIndex);
+        if(expression == null){
             return;
-        }else{
-            IExpression expression = registry.getExpression();
-            if(expression == null){
-                return;
-            }
-            IExpression exp = expression.clone();
-            resolveResult.setExpression(exp);
-            String completeSymbol = exp.symbol();
-            if(completeSymbol != null){
-                resolveResult.setSymbol(completeSymbol);
-                resolveResult.setEndIndex(startIndex + completeSymbol.length() - 1);
-                resolveResult.setType(this.type);
-            }
+        }
+        IExpression exp = expression.clone();
+        resolveResult.setExpression(exp);
+        String completeSymbol = exp.symbol();
+        if(completeSymbol != null){
+            resolveResult.setSymbol(completeSymbol);
+            resolveResult.setEndIndex(startIndex + completeSymbol.length() - 1);
+            resolveResult.setType(this.type);
         }
     }
 

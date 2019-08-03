@@ -12,8 +12,17 @@ public class LeftSepatatorExpression extends SingleChildSeparatorExpression {
         super(symbol, buildFactor, operator);
     }
 
+    public LeftSepatatorExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
+        super(symbol, buildFactor, operator, fifo);
+    }
+
     @Override
     protected boolean checkOrder(int selfOrder, int inputOrder) {
         return selfOrder < inputOrder;
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 }

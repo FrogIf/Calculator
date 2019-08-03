@@ -27,20 +27,17 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     @Override
     public void registe(String exp, IExpression expression, IOperator operator) {
-        char[] chars = exp.toCharArray();
-        registe(chars, 0, expression, operator, new TreeRegister(), false);
+        registe(exp, expression, operator, false);
     }
 
     @Override
     public void registe(String exp, IOperator operator) {
-        char[] chars = exp.toCharArray();
-        registe(chars, 0, null, operator, new TreeRegister(), false);
+        registe(exp, null, operator, false);
     }
 
     @Override
     public void registe(String exp, IExpression expression) {
-        char[] chars = exp.toCharArray();
-        registe(chars, 0, expression, null, new TreeRegister(), false);
+        registe(exp, expression, null, false);
     }
 
     private void registe(char[] oprs, int startIndex, IExpression expression, IOperator operator, TreeRegister finder, boolean replace){
@@ -75,26 +72,25 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
     }
 
     @Override
-    public IExpression getExpression() {
-        return this.expression;
+    public IExpression find(String symbol) {
+        IExpression expression = this.retrieveRegistryInfo(symbol.toCharArray(), 0);
+        if(expression != null && symbol.equals(expression.symbol())){
+            return expression;
+        }
+        return null;
     }
 
     @Override
-    public IOperator getOperator() {
-        return this.operator;
-    }
-
-    @Override
-    public IRegister retrieveRegistryInfo(char[] chars, int startIndex) {
+    public IExpression retrieveRegistryInfo(char[] chars, int startIndex) {
         if(chars.length <= startIndex){
-            return this;
+            return this.expression;
         }
         char ch = chars[startIndex];
         TreeRegister treeRegister = nextLetter.find(new TreeRegister(ch));
         if(treeRegister != null){
             return treeRegister.retrieveRegistryInfo(chars, startIndex + 1);
         }else{
-            return this;
+            return this.expression;
         }
     }
 

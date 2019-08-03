@@ -19,17 +19,14 @@ public class CommonSymbolParse {
             throw new IllegalArgumentException("there is no register.");
         }
         IResolverResult resolveResult = resolverResultFactory.createResolverResultBean();
-        IRegister registry = register.retrieveRegistryInfo(chars, startIndex);
-        if(registry != null){
-            IExpression expression = registry.getExpression();
-            if(expression != null){
-                IExpression exp = expression.clone();
-                resolveResult.setExpression(exp);
-                String completeSymbol = exp.symbol();
-                if(completeSymbol != null){
-                    resolveResult.setSymbol(completeSymbol);
-                    resolveResult.setEndIndex(startIndex + completeSymbol.length() - 1);
-                }
+        IExpression expression = register.retrieveRegistryInfo(chars, startIndex);
+        if(expression != null){
+            IExpression exp = expression.clone();
+            resolveResult.setExpression(exp);
+            String completeSymbol = exp.symbol();
+            if(completeSymbol != null){
+                resolveResult.setSymbol(completeSymbol);
+                resolveResult.setEndIndex(startIndex + completeSymbol.length() - 1);
             }
         }
         return resolveResult;

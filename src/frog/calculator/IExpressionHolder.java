@@ -29,10 +29,22 @@ public interface IExpressionHolder {
     IExpression getDeclareBegin();
 
     /**
-     * 声明结束标识符
+     * 分割符
      * @return
      */
-    IExpression getDelcareEnd();
+    IExpression getSeparator();
+
+    /**
+     * 容器开始符
+     * @return
+     */
+    IExpression getContainerOpen();
+
+    /**
+     * 容器关闭符
+     * @return
+     */
+    IExpression getContainerClose();
 
     /**
      * 获取内置可执行表达式
@@ -40,10 +52,6 @@ public interface IExpressionHolder {
      */
     IExpression[] getBuiltInExpression();
 
-    /**
-     * 声明结构表达式
-     * @return
-     */
-    IExpression[] getDeclareStruct();
+    IExpression getDelegate();
 
 }
