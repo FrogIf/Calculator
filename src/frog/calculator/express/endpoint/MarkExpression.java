@@ -8,11 +8,9 @@ public class MarkExpression extends EndPointExpression {
         super(symbol, null);
     }
 
-
     @Override
     public IExpression interpret() {
         throw new IllegalStateException("access illegal.");
     }
-
 
 }

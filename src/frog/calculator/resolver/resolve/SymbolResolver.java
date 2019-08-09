@@ -28,7 +28,7 @@ public class SymbolResolver extends AbstractResolver {
         if(this.register == null){
             throw new IllegalStateException("there is no register.");
         }
-        IExpression expression = this.register.retrieveRegistryInfo(chars, startIndex);
+        IExpression expression = this.register.retrieve(chars, startIndex);
         if(expression == null){
             return;
         }

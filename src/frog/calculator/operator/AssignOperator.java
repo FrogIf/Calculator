@@ -7,17 +7,19 @@ import frog.calculator.express.endpoint.VariableExpression;
 public class AssignOperator implements IOperator {
 
     @Override
-    public IExpression operate(String symbol, IExpressionContext context, IExpression... expressions) {
+    public IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions) {
         IExpression variable = expressions[0];
         IExpression value = expressions[1].interpret();
+
+//        if(!(variable instanceof  VariableExpression)){
+//            variable = variable.interpret();
+//        }
 
         if(variable instanceof VariableExpression){
             ((VariableExpression) variable).assign(value);
         }else{
             throw new IllegalArgumentException("can't support type.");
         }
-
-        context.addLocalVariables(variable);
 
         return value;
     }

@@ -2,13 +2,10 @@ package frog.calculator.express.endpoint;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.util.LinkedList;
 
 public class VariableExpression extends EndPointExpression {
 
     private IExpression valueExpression;    // 值表达式
-
-    private IExpressionContext context;     // 表达式上下文
 
     /**
      * 赋值操作符
@@ -24,35 +21,19 @@ public class VariableExpression extends EndPointExpression {
             return this.valueExpression.interpret();
         }else{
             // 传递过来的是形参, 则需要从变量表中获取值, 需要注意的是, 获取到的值不会赋值给 this.valueExpression
-            IExpression result = null;
-
-            LinkedList<IExpression> variables = context.getLocalVariables();
-            LinkedList<IExpression>.Iterator iterator = variables.getIterator();
-
-            while(iterator.hasNext()){
-                IExpression variable = iterator.next();
-                if(variable.symbol().equals(this.symbol)){
-                    result = variable.interpret();
-                    break;
-                }
+            IExpression localVariable = context.getLocalVariable(this.symbol);
+            if(localVariable != null){
+                return localVariable.interpret();
             }
 
-            if(result == null) {
-                result = context.getSession().getUserRegister().find(this.symbol());
-            }
-
-            if(result == null){
+            IExpression sessionVariable = context.getSession().getSessionVariable(this.symbol);
+            if(sessionVariable == null){
                 throw new IllegalArgumentException("undefine variables");
             }
-            return result.interpret();
+
+            return sessionVariable.interpret();
         }
     }
-
-//    @Override
-//    public IExpression assembleTree(IExpression expression) {
-//        this.valueExpression = expression;
-//        return this;
-//    }
 
     /**
      * 为变量赋值

@@ -2,10 +2,10 @@ package frog.calculator.express.separator;
 
 import frog.calculator.operator.IOperator;
 
-public class RightSepatatorExpression extends SingleChildSeparatorExpression {
+public class RightSeparatorExpression extends SingleChildSeparatorExpression {
 
-    public RightSepatatorExpression(String symbol, int buildFactor, IOperator operator) {
-        super(symbol, buildFactor, operator);
+    public RightSeparatorExpression(String symbol, int buildFactor, IOperator operator) {
+        super(symbol, buildFactor, operator, false);
     }
 
     @Override

@@ -8,15 +8,13 @@ import frog.calculator.operator.IOperator;
 
 public class ContainerExpression extends AbstractExpression {
 
-    protected IExpression content;
+    private IExpression body;
 
     protected IExpression suspendExpression;
 
     protected String closeSymbol;
 
     protected boolean isClose = false;
-
-    protected IExpressionContext context;
 
     /**
      * 容器表达式
@@ -44,14 +42,14 @@ public class ContainerExpression extends AbstractExpression {
             if(this.suspendExpression == null && this.order() > childExpression.order()){
                 this.suspendExpression = childExpression;
             }else{
-                if(this.content == null){
-                    this.content = childExpression;
+                if(this.body == null){
+                    this.body = childExpression;
                 }else{
-                    IExpression root = this.content.assembleTree(childExpression);
+                    IExpression root = this.body.assembleTree(childExpression);
                     if(root == null){
                         return false;
                     }else{
-                        this.content = root;
+                        this.body = root;
                     }
                 }
             }
@@ -90,7 +88,7 @@ public class ContainerExpression extends AbstractExpression {
         return root;
     }
 
-    protected IExpression reversal(){
+    private IExpression reversal(){
         IExpression root = this;
         isClose = true;
         if(this.suspendExpression != null){
@@ -105,7 +103,7 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public IExpression interpret() {
-        return operator.operate(this.symbol(), context, content, new MarkExpression(closeSymbol));
+        return operator.operate(this.symbol(), context, new IExpression[]{body, new MarkExpression(closeSymbol)});
     }
 
     @Override
@@ -121,14 +119,14 @@ public class ContainerExpression extends AbstractExpression {
     @Override
     public IExpression clone() {
         ContainerExpression clone = (ContainerExpression) super.clone();
-        clone.content = this.content == null ? null : this.content.clone();
+        clone.body = this.body == null ? null : this.body.clone();
         return clone;
     }
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
         this.context = context;
-        if(this.content != null) this.content.setExpressionContext(context);
+        if(this.body != null) this.body.setExpressionContext(context);
     }
 
 

@@ -1,6 +1,6 @@
 package frog.calculator.util;
 
-public class AVLTree<T extends Comparable<T>> {
+public class TreeList<T extends Comparable<T>> {
 
     private AVLNode<T> root;
 

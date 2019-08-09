@@ -5,7 +5,7 @@ import frog.calculator.express.IExpressionContext;
 
 public class NoRunOperator implements IOperator {
     @Override
-    public IExpression operate(String symbol, IExpressionContext context, IExpression... expressions) {
+    public IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions) {
         if(expressions.length > 1){
             throw new IllegalStateException("can't deal.");
         }

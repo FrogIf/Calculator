@@ -6,7 +6,7 @@ import frog.calculator.express.IExpression;
 public abstract class LeftNullableOperator extends TwoArgOperator {
 
     @Override
-    public IExpression operate(String symbol, IExpression... expressions) {
+    public IExpression operate(String symbol, IExpression[] expressions) {
         IExpression left = expressions[0];
         IExpression right = expressions[1];
 

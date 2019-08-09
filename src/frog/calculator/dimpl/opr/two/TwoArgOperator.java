@@ -10,7 +10,7 @@ public abstract class TwoArgOperator extends AbstractOperator {
     protected abstract double doubleCalculate(double left, double right);
 
     @Override
-    public IExpression operate(String symbol, IExpression... expressions) {
+    public IExpression operate(String symbol, IExpression[] expressions) {
         if(expressions.length != 2 || expressions[0] == null || expressions[1] == null){
             throw new IllegalArgumentException("input expressions' number is not right.");
         }

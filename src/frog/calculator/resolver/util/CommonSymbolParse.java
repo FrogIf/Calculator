@@ -18,18 +18,28 @@ public class CommonSymbolParse {
         if(register == null){
             throw new IllegalArgumentException("there is no register.");
         }
-        IResolverResult resolveResult = resolverResultFactory.createResolverResultBean();
-        IExpression expression = register.retrieveRegistryInfo(chars, startIndex);
+
+        IExpression expression = register.retrieve(chars, startIndex);
         if(expression != null){
             IExpression exp = expression.clone();
-            resolveResult.setExpression(exp);
-            String completeSymbol = exp.symbol();
-            if(completeSymbol != null){
-                resolveResult.setSymbol(completeSymbol);
-                resolveResult.setEndIndex(startIndex + completeSymbol.length() - 1);
-            }
+            return generateResult(exp, startIndex, resolverResultFactory);
         }
-        return resolveResult;
+        return resolverResultFactory.createResolverResultBean();
+    }
+
+    /**
+     * 将指定的表达是包装成解析结果
+     * @param expression
+     * @param startIndex
+     * @param resolverResultFactory
+     * @return
+     */
+    public static IResolverResult generateResult(IExpression expression, int startIndex, IResolverResultFactory resolverResultFactory){
+        IResolverResult result = resolverResultFactory.createResolverResultBean();
+        result.setEndIndex(startIndex + expression.symbol().length() - 1);
+        result.setExpression(expression);
+        result.setSymbol(expression.symbol());
+        return result;
     }
 
 }

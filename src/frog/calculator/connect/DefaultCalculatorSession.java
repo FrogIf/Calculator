@@ -1,29 +1,26 @@
 package frog.calculator.connect;
 
-import frog.calculator.register.IRegister;
+import frog.calculator.express.IExpression;
 import frog.calculator.register.TreeRegister;
-import frog.calculator.resolver.IResolver;
 
 public class DefaultCalculatorSession implements ICalculatorSession {
 
-    private IResolver currentResolver;  // 记录当前用户使用的解析器
-
     private TreeRegister register = new TreeRegister();
 
+    public DefaultCalculatorSession() { }
+
     @Override
-    public void setCurrentResolver(IResolver resolver) {
-        this.currentResolver = resolver;
+    public void addSessionVariable(IExpression expression) {
+        register.insert(expression);
     }
 
     @Override
-    public IResolver getCurrentResolver() {
-        return this.currentResolver;
+    public IExpression getSessionVariable(String varName) {
+        return register.find(varName);
     }
 
     @Override
-    public IRegister getUserRegister() {
-        return this.register;
+    public IExpression getSessionVariable(char[] expChars, int startIndex) {
+        return register.retrieve(expChars, startIndex);
     }
-
-
 }

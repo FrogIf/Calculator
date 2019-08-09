@@ -1,7 +1,6 @@
 package frog.calculator;
 
 import frog.calculator.resolver.IResolverResultFactory;
-import frog.calculator.resolver.resolve.factory.INumberExpressionFactory;
 
 public interface ICalculatorConfigure {
 
@@ -12,10 +11,5 @@ public interface ICalculatorConfigure {
     IExpressionHolder getExpressionHolder();
 
     void setExpressionHolder(IExpressionHolder expressionHolder);
-
-    INumberExpressionFactory getNumberExpressionFactory();
-
-    void setNumberExpressionFactory(INumberExpressionFactory numberExpressionFactory);
-
 
 }

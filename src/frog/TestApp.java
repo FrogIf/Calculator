@@ -20,11 +20,8 @@ public class TestApp {
 
     public static void main(String[] args){
         init();
-        // 1. @a=(1+2)
-        // 2. 重复定义
-        // 表达式上下文与声明结束
+        // 自定义函数优化
 
-        // 函数, 自定义函数
         // lambda表达式 : @frog(a, b, c, d, e, f, g, h) -> {a+b+c*d}
         //      @ - 声明表达式; frog - 变量表达式; () - 形参表达式; a, b, c - 变量表达式
         // 输出计算过程

@@ -70,14 +70,14 @@ public class FunctionExpression extends ContainerExpression{
             }
 
             return this.operator.operate(this.symbol(), context, expressions);
-
         }else{
-            return this.operator.operate(this.symbol(), context);
+            return this.operator.operate(this.symbol(), context, null);
         }
     }
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
+        this.context = context;
         if(this.args != null){
             ArgumentNode node = this.args;
             while(node != null){

@@ -6,14 +6,10 @@ import frog.calculator.operator.IOperator;
  * 做分隔符表达式<br/>
  * 分割符(即当前表达式)位于子节点的左边
  */
-public class LeftSepatatorExpression extends SingleChildSeparatorExpression {
+public class LeftSeparatorExpression extends SingleChildSeparatorExpression {
 
-    public LeftSepatatorExpression(String symbol, int buildFactor, IOperator operator) {
-        super(symbol, buildFactor, operator);
-    }
-
-    public LeftSepatatorExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
-        super(symbol, buildFactor, operator, fifo);
+    public LeftSeparatorExpression(String symbol, int buildFactor, IOperator operator) {
+        super(symbol, buildFactor, operator, true);
     }
 
     @Override

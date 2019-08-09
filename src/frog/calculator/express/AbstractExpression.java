@@ -10,6 +10,8 @@ public abstract class AbstractExpression implements IExpression{
 
     protected IOperator operator;
 
+    protected IExpressionContext context;
+
     public AbstractExpression(String symbol, IOperator operator) {
         this.symbol = symbol;
         this.operator = operator;

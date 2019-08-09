@@ -3,7 +3,7 @@ package frog.calculator.resolver.resolve.factory;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.container.CustomFunctionExpression;
 
-public class CustomFunctionExpressionFactory implements ICustomSymbolExpressionFactory {
+public class CustomFunctionExpressionFactory implements ISymbolExpressionFactory {
 
     private String closeSymbol;
 
@@ -11,6 +11,12 @@ public class CustomFunctionExpressionFactory implements ICustomSymbolExpressionF
 
     private String delegateSymbol;
 
+    /**
+     * define a custom function expression factory
+     * @param closeSymbol function signature part close symbol
+     * @param splitSymbol function arguments split symbol
+     * @param delegateSymbol function body define start symbol
+     */
     public CustomFunctionExpressionFactory(String closeSymbol, String splitSymbol, String delegateSymbol) {
         this.closeSymbol = closeSymbol;
         this.splitSymbol = splitSymbol;
@@ -19,8 +25,7 @@ public class CustomFunctionExpressionFactory implements ICustomSymbolExpressionF
 
     @Override
     public IExpression createExpression(String symbol) {
-        // 自定义函数
-        return new CustomFunctionExpression(symbol, closeSymbol, splitSymbol, delegateSymbol);
+        return new CustomFunctionExpression(symbol, splitSymbol, closeSymbol, delegateSymbol);
     }
 
 }

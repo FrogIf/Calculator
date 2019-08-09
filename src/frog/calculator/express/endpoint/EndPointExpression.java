@@ -9,6 +9,8 @@ public class EndPointExpression extends AbstractExpression {
 
     private IOperator operator;
 
+    protected IExpressionContext context;
+
     public EndPointExpression(String symbol, IOperator operator) {
         super(symbol, operator);
         this.operator = operator;
@@ -16,7 +18,7 @@ public class EndPointExpression extends AbstractExpression {
 
     @Override
     public final boolean createBranch(IExpression childExpression) {
-        // endpoint 表达式不能创建分支
+        // endpoint can't create branch.
         return false;
     }
 
@@ -31,7 +33,7 @@ public class EndPointExpression extends AbstractExpression {
 
     @Override
     public IExpression interpret() {
-        return operator.operate(this.symbol(), null, this);
+        return operator.operate(this.symbol(), context, new IExpression[]{this});
     }
 
     @Override
@@ -41,6 +43,7 @@ public class EndPointExpression extends AbstractExpression {
 
     @Override
     public int buildFactor() {
+        // because of it is leaf, so this is not important.
         return 1;
     }
 
@@ -51,6 +54,6 @@ public class EndPointExpression extends AbstractExpression {
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
-        // do nothing.
+        this.context = context;
     }
 }

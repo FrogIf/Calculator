@@ -9,22 +9,23 @@ import frog.calculator.util.LinkedList;
 public interface IExpressionContext {
 
     /**
-     * 获取局部变量表
-     * @return
+     * get local variable
+     * @param varName variable name
+     * @return variable's expression
      */
-    LinkedList<IExpression> getLocalVariables();
+    IExpression getLocalVariable(String varName);
+
+    /**
+     * 为当前上下文添加局部变量
+     * @param expression
+     */
+    void addLocalVariable(IExpression expression);
 
     /**
      * 获取用户会话
      * @return
      */
     ICalculatorSession getSession();
-
-    /**
-     * 为当前上下文添加局部变量
-     * @param expression
-     */
-    void addLocalVariables(IExpression expression);
 
     /**
      * 以当前上下文为原型创建新的上下文对象

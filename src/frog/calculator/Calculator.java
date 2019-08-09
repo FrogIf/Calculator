@@ -12,28 +12,24 @@ import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.ResolverResultType;
 import frog.calculator.resolver.resolve.*;
 import frog.calculator.resolver.resolve.factory.CustomFunctionExpressionFactory;
-import frog.calculator.resolver.resolve.factory.DefaultNumberExpressionFactory;
-import frog.calculator.resolver.resolve.factory.ICustomSymbolExpressionFactory;
+import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
+import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
-import frog.calculator.util.LinkedList;
 import frog.calculator.util.Stack;
 
-/**
- * 计算器, 计算的解析, 执行, 调度
- */
 public class Calculator {
 
-    // 配置bean
+    // configure
     private ICalculatorConfigure calculatorConfigure;
 
-    // 解析结果工厂
+    // resolve result factory, used to pack resolver's result
     private IResolverResultFactory resolverResultFactory;
 
-    // 运行解析器
+    // resolve the string which can't run directly.
     private IResolver runnableResolver;
 
-    // 声明解析器
+    // if find the declare symbol, current resolve switch to this.
     private IResolver declareResolver;
 
     public Calculator(ICalculatorConfigure calculatorConfigure) {
@@ -47,28 +43,31 @@ public class Calculator {
         this.declareResolver = createDeclareResolver();
     }
 
-    // ===============================================初始化start=============================================
+    // =============================================== init start =============================================
 
+    // create framework inner defined symbol resolver
     private IResolver createRunnableResolver() {
-        // 数字解析器
-        IResolver numberResolver = new NumberResolver(new DefaultNumberExpressionFactory(), resolverResultFactory);
+        // number resolver
+        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), resolverResultFactory);
 
-        // 加, 减解析器; 加减又可以当做正负使用, 所以需要单独使用解析器进行解析
+        // plus and minus resolver
+        // plus and minus can represent (positive and negative) or (add and sub)
+        // this resolver can operate like python
         IResolver addSubResolver = new PMResolver(resolverResultFactory,
                 this.calculatorConfigure.getExpressionHolder().getPlus(),
                 this.calculatorConfigure.getExpressionHolder().getMinus());
 
-        // 符号解析器, 用于解析系统内部支持的运算符
+        // symbol resolver, can parse symbol which was supported by framework.
         IResolver symbolResolver = new SymbolResolver(resolverResultFactory,
                 createRegister(this.calculatorConfigure.getExpressionHolder().getBuiltInExpression()));
 
-        // 监听声明开始
+        // to check the next symbol is or not the declare symbol, if it is declare current resolver will switch to declare resolver.
         TreeRegister declareStart = new TreeRegister();
         IExpression declareBeginExpression = this.calculatorConfigure.getExpressionHolder().getDeclareBegin();
-        declareStart.registe(declareBeginExpression.symbol(), declareBeginExpression);
+        declareStart.insert(declareBeginExpression);
         IResolver declareStartListenResolver = new SymbolResolver(resolverResultFactory, declareStart, ResolverResultType.DECLARE_BEGIN);
 
-        // 解析器执行顺序: 数字解析 -> 加减解析 -> 符号解析 -> 声明开始监听解析器
+        // parse execute order : number -> plus and minus -> symbol -> declare check.
         ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
 
         chainResolver.addResolver(numberResolver);
@@ -79,39 +78,49 @@ public class Calculator {
         return chainResolver;
     }
 
+    // create declare symbol resolver
     private IResolver createDeclareResolver() {
-        // 声明结构解析器
         TreeRegister struct = new TreeRegister();
         IExpressionHolder expressionHolder = this.calculatorConfigure.getExpressionHolder();
-        struct.registe(expressionHolder.getSeparator().symbol(), expressionHolder.getSeparator());
-        struct.registe(expressionHolder.getContainerClose().symbol(), expressionHolder.getContainerClose());
+
+        String closeSymbol = expressionHolder.getContainerClose().symbol(); // )
+        String assignSymbol = expressionHolder.getAssign().symbol();    // =
+        String splitSymbol = expressionHolder.getSeparator().symbol();  // ,
+        String openSymbol = expressionHolder.getContainerOpen().symbol();   // (
+        String delegateSymbol = expressionHolder.getDelegate().symbol();    // ->
+
+
+        // declare part's structure symbol. the symbol will be recognize to custom symbol which in front of those structure symbol.
+        struct.insert(expressionHolder.getSeparator());
+        struct.insert(expressionHolder.getContainerClose());
         IResolver structResolver = new SymbolResolver(resolverResultFactory, struct);
 
-        // 监听声明结束
+        /*
+         * check declare end.
+         * for example :
+         *      @a = 1; the '=' is the declare end symbol.
+         *      @func1(x, y)-> x + y; the '->' is the declare end symbol.
+         */
         TreeRegister declareEnd = new TreeRegister();
-
-        IExpression declareEndExpression = this.calculatorConfigure.getExpressionHolder().getAssign();  // "=" 标记声明结束
-        declareEnd.registe(declareEndExpression.symbol(), declareEndExpression);
-
-        IExpression delegate = this.calculatorConfigure.getExpressionHolder().getDelegate();
-        declareEnd.registe(delegate.symbol(), delegate);
-
+        IExpression declareEndExpression = expressionHolder.getAssign();
+        IExpression delegate = expressionHolder.getDelegate();
+        declareEnd.insert(declareEndExpression);
+        declareEnd.insert(delegate);
         IResolver declareEndListenResolver = new SymbolResolver(resolverResultFactory, declareEnd, ResolverResultType.DECLARE_END);
 
-        ICustomSymbolExpressionFactory customSymbolExpressionFactory = new VariableExpressionFactory();
-
-        // 变量解析器(截断解析器)
+        ISymbolExpressionFactory variableExpressionFactory = new VariableExpressionFactory();
+        // variable resolver, cooperate with structure symbol resolver. in fact, this is a truncate resolver.
         IResolver variableResolver = new TruncateResolver(resolverResultFactory, new TruncateResolver.TruncateSymbol[]{
-                new TruncateResolver.TruncateSymbol(",", customSymbolExpressionFactory),
-                new TruncateResolver.TruncateSymbol(")", customSymbolExpressionFactory),
-                new TruncateResolver.TruncateSymbol("=", customSymbolExpressionFactory),
-                new TruncateResolver.TruncateSymbol("(", new CustomFunctionExpressionFactory(")", ",", "->"), true)
+                new TruncateResolver.TruncateSymbol(closeSymbol, variableExpressionFactory),
+                new TruncateResolver.TruncateSymbol(assignSymbol, variableExpressionFactory),
+                new TruncateResolver.TruncateSymbol(splitSymbol, variableExpressionFactory),
+                new TruncateResolver.TruncateSymbol(openSymbol, new CustomFunctionExpressionFactory(closeSymbol, splitSymbol, delegateSymbol), true)
         });
 
 
         ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
 
-        // 解析器执行顺序: 声明结束监听解析器 -> 变量解析器
+        // parse execute order : struct resolver -> declare end -> variable.
         chainResolver.addResolver(structResolver);
         chainResolver.addResolver(declareEndListenResolver);
         chainResolver.addResolver(variableResolver);
@@ -122,12 +131,12 @@ public class Calculator {
     private IRegister createRegister(IExpression[] expressions) {
         TreeRegister register = new TreeRegister();
         for (IExpression exp : expressions) {
-            register.registe(exp.symbol(), exp, exp.getOperator());
+            register.insert(exp);
         }
         return register;
     }
 
-    // ===============================================初始化end=============================================
+    // =============================================== init end =============================================
 
 
     // ===============================================解析执行start=========================================
@@ -148,7 +157,6 @@ public class Calculator {
         }
 
         IExpression root = rootResult.getExpression();
-        root.setExpressionContext(context);
         root.setOrder(order++);
 
         for (int i = rootResult.getEndIndex() + 1; i < chars.length; i++) {
@@ -159,7 +167,6 @@ public class Calculator {
             }
 
             IExpression curExp = result.getExpression();
-            curExp.setExpressionContext(context);
             curExp.setOrder(order++);
 
             root = root.assembleTree(curExp);
@@ -171,7 +178,7 @@ public class Calculator {
             i = result.getEndIndex();
         }
 
-
+        root.setExpressionContext(context);
 
         return root;
     }
@@ -192,7 +199,7 @@ public class Calculator {
                     resolverHolder.resolver = this.runnableResolver;  // 切换至执行解析器
                 } else if (result.getType() == ResolverResultType.DECLARE) {   // 声明
                     IExpression expression = result.getExpression();
-                    registerStack.getTop().registe(expression.symbol(), expression, expression.getOperator());  // 向局部变量表中添加变量
+                    registerStack.getTop().insert(expression);  // 向局部变量表中添加变量
                 }
             }
         }else{
@@ -200,10 +207,11 @@ public class Calculator {
                 result = CommonSymbolParse.parseExpression(chars, startIndex, registerStack.getTop(), this.resolverResultFactory);
             }
             if(result.getExpression() == null){
-                result = CommonSymbolParse.parseExpression(chars, startIndex, session.getUserRegister(), this.resolverResultFactory);
+                IExpression sessionVariable = session.getSessionVariable(chars, startIndex);
+                result = CommonSymbolParse.generateResult(sessionVariable, startIndex, this.resolverResultFactory);
             }
             if (result.getExpression() == null) {
-                throw new IllegalArgumentException("undefine symbol at " + startIndex);
+                throw new IllegalArgumentException("undefine symbol : " + chars[startIndex]);
             }
         }
 
@@ -223,15 +231,6 @@ public class Calculator {
         IExpression expTree = build(expression, session, context); // 构造解析树
 
         IExpression result = expTree.interpret(); // 执行计算
-
-        // 获取顶层表达式的局部变量表, 就是会话变量
-        LinkedList<IExpression> variables = context.getLocalVariables();
-        LinkedList<IExpression>.Iterator iterator = variables.getIterator();
-        IRegister userRegister = session.getUserRegister();
-        while(iterator.hasNext()){
-            IExpression next = iterator.next();
-            userRegister.replace(next.symbol(), next, next.getOperator());
-        }
 
         return result.symbol();    // 计算结果
     }

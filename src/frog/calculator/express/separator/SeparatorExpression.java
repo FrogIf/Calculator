@@ -13,8 +13,6 @@ public class SeparatorExpression extends AbstractExpression {
 
     private int buildFactor;
 
-    protected IExpressionContext context;
-
     private boolean fifo = false;   // 指定相同buildFactor的表达式, 是作为当前表达式的根还是子节点
 
     public SeparatorExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
@@ -30,7 +28,7 @@ public class SeparatorExpression extends AbstractExpression {
 
     @Override
     public IExpression interpret() {
-        return this.operator.operate(this.symbol(), this.context, this.left, this.right);
+        return this.operator.operate(this.symbol(), this.context, new IExpression[]{this.left, this.right});
     }
 
     @Override
@@ -72,11 +70,7 @@ public class SeparatorExpression extends AbstractExpression {
             if(fifo){
                 root = this.createBranch(expression) ? this : null;
             }else{
-                if(expression.createBranch(this)){  // 尝试将传入表达式作为根
-                    root = expression;
-                }else{  // 尝试使用当前表达式作为根
-                    throw new IllegalArgumentException("shouldn't access this block.");
-                }
+                root = expression.createBranch(this) ? expression : null;
             }
         }else{
             IExpression low;
@@ -132,5 +126,11 @@ public class SeparatorExpression extends AbstractExpression {
         return this.right == null ? expression : this.right.assembleTree(expression);
     }
 
+    public IExpression getRight() {
+        return right;
+    }
 
+    public IExpression getLeft() {
+        return left;
+    }
 }

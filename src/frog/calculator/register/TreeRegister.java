@@ -1,8 +1,7 @@
 package frog.calculator.register;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.operator.IOperator;
-import frog.calculator.util.AVLTree;
+import frog.calculator.util.TreeList;
 
 public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
@@ -10,9 +9,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     private IExpression expression;
 
-    private IOperator operator;
-
-    private AVLTree<TreeRegister> nextLetter = new AVLTree<>();
+    private TreeList<TreeRegister> nextLetter = new TreeList<>();
 
     public TreeRegister(){ }
 
@@ -20,28 +17,18 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
         this.symbol = symbol;
     }
 
-    private void registe(String exp, IExpression expression, IOperator operator, boolean replace) {
-        char[] chars = exp.toCharArray();
-        registe(chars, 0, expression, operator, new TreeRegister(), replace);
+    @Override
+    public void insert(IExpression expression) {
+        insert(expression.symbol().toCharArray(), 0, expression, new TreeRegister(), false);
     }
 
     @Override
-    public void registe(String exp, IExpression expression, IOperator operator) {
-        registe(exp, expression, operator, false);
+    public void replace(String exp, IExpression expression) {
+        this.insert(exp.toCharArray(), 0, expression, new TreeRegister(), true);
     }
 
-    @Override
-    public void registe(String exp, IOperator operator) {
-        registe(exp, null, operator, false);
-    }
-
-    @Override
-    public void registe(String exp, IExpression expression) {
-        registe(exp, expression, null, false);
-    }
-
-    private void registe(char[] oprs, int startIndex, IExpression expression, IOperator operator, TreeRegister finder, boolean replace){
-        char ch = oprs[startIndex];
+    private void insert(char[] expChars, int startIndex, IExpression expression, TreeRegister finder, boolean replace){
+        char ch = expChars[startIndex];
 
         finder.symbol = ch;
 
@@ -52,20 +39,16 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
             register.symbol = ch;
         }
 
-        if(startIndex == oprs.length - 1){
+        if(startIndex == expChars.length - 1){
             if(!replace){
-                if(register.operator != null && operator != null){
-                    throw new IllegalArgumentException("duplicate define operator.");
-                }
                 if(register.expression != null && expression != null){
                     throw new IllegalArgumentException("duplicate define expression.");
                 }
             }
 
-            register.operator = operator;
             register.expression = expression;
         }else{
-            register.registe(oprs, startIndex + 1, expression, operator, finder, replace);
+            register.insert(expChars, startIndex + 1, expression, finder, replace);
         }
 
         nextLetter.add(register);
@@ -73,7 +56,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     @Override
     public IExpression find(String symbol) {
-        IExpression expression = this.retrieveRegistryInfo(symbol.toCharArray(), 0);
+        IExpression expression = this.retrieve(symbol.toCharArray(), 0);
         if(expression != null && symbol.equals(expression.symbol())){
             return expression;
         }
@@ -81,14 +64,14 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
     }
 
     @Override
-    public IExpression retrieveRegistryInfo(char[] chars, int startIndex) {
+    public IExpression retrieve(char[] chars, int startIndex) {
         if(chars.length <= startIndex){
             return this.expression;
         }
         char ch = chars[startIndex];
         TreeRegister treeRegister = nextLetter.find(new TreeRegister(ch));
         if(treeRegister != null){
-            return treeRegister.retrieveRegistryInfo(chars, startIndex + 1);
+            return treeRegister.retrieve(chars, startIndex + 1);
         }else{
             return this.expression;
         }
@@ -110,17 +93,11 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     }
 
-    @Override
-    public void replace(String exp, IExpression expression, IOperator operator) {
-        this.registe(exp, expression, operator, true);
-    }
-
     private boolean remove(char[] chars, int startIndex){
         boolean result = false;
         if(chars.length == startIndex + 1){
             boolean hasExists = this.expression != null;
             this.expression = null;
-            this.operator = null;
             result = hasExists;
         }else if(chars.length > startIndex){
             TreeRegister register = this.nextLetter.find(new TreeRegister(chars[startIndex + 1]));

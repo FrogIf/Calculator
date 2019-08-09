@@ -1,11 +1,11 @@
 package frog.calculator.express;
 
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.util.LinkedList;
+import frog.calculator.register.TreeRegister;
 
 public class DefaultExpressionContext implements IExpressionContext {
 
-    private LinkedList<IExpression> localVariableList = new LinkedList<>();
+    private TreeRegister register = new TreeRegister();
 
     private ICalculatorSession session;
 
@@ -14,8 +14,13 @@ public class DefaultExpressionContext implements IExpressionContext {
     }
 
     @Override
-    public LinkedList<IExpression> getLocalVariables() {
-        return this.localVariableList;
+    public IExpression getLocalVariable(String varName) {
+        return register.find(varName);
+    }
+
+    @Override
+    public void addLocalVariable(IExpression expression) {
+        register.insert(expression);
     }
 
     @Override
@@ -24,15 +29,10 @@ public class DefaultExpressionContext implements IExpressionContext {
     }
 
     @Override
-    public void addLocalVariables(IExpression expression) {
-        localVariableList.add(expression);
-    }
-
-    @Override
     public IExpressionContext newInstance() {
-        // TODO 应该使用栈结构(Last in First out)
+        // TODO 未完成, 应该使用栈结构(Last in First out), 考虑多层嵌套变量表
         DefaultExpressionContext context = new DefaultExpressionContext(this.session);
-        context.localVariableList = this.localVariableList;
+//        context.localVariableList = this.localVariableList;
         return context;
     }
 }

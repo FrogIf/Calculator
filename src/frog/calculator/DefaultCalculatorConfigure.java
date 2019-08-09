@@ -2,16 +2,12 @@ package frog.calculator;
 
 import frog.calculator.resolver.DefaultResolverResultFactory;
 import frog.calculator.resolver.IResolverResultFactory;
-import frog.calculator.resolver.resolve.factory.DefaultNumberExpressionFactory;
-import frog.calculator.resolver.resolve.factory.INumberExpressionFactory;
 
 public class DefaultCalculatorConfigure implements ICalculatorConfigure {
 
     private IResolverResultFactory resolverResultFactory;
 
     private IExpressionHolder expressionHolder;
-
-    private INumberExpressionFactory numberExpressionFactory;
 
     public DefaultCalculatorConfigure(IExpressionHolder expressionHolder) {
         this.expressionHolder = expressionHolder;
@@ -38,19 +34,6 @@ public class DefaultCalculatorConfigure implements ICalculatorConfigure {
     @Override
     public void setExpressionHolder(IExpressionHolder expressionHolder) {
         // do nothing. 不提供修改expressionHolder的方法, 一经赋值不允许修改(因为修改了, 也不会去重新构建解析器, 所以没有意义)
-    }
-
-    @Override
-    public INumberExpressionFactory getNumberExpressionFactory() {
-        if(this.numberExpressionFactory == null){
-            this.numberExpressionFactory = new DefaultNumberExpressionFactory();
-        }
-        return this.numberExpressionFactory;
-    }
-
-    @Override
-    public void setNumberExpressionFactory(INumberExpressionFactory numberExpressionFactory) {
-        this.numberExpressionFactory = numberExpressionFactory;
     }
 
 }

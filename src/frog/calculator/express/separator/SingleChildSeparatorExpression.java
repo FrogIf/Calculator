@@ -8,9 +8,7 @@ public abstract class SingleChildSeparatorExpression extends SeparatorExpression
 
     private IExpression child;
 
-    public SingleChildSeparatorExpression(String symbol, int buildFactor, IOperator operator) {
-        super(symbol, buildFactor, operator);
-    }
+    private IExpressionContext context;
 
     public SingleChildSeparatorExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
         super(symbol, buildFactor, operator, fifo);
@@ -41,11 +39,12 @@ public abstract class SingleChildSeparatorExpression extends SeparatorExpression
 
     @Override
     public IExpression interpret() {
-        return this.operator.operate(this.symbol(), null, this.child);
+        return this.operator.operate(this.symbol(), context, new IExpression[]{this.child});
     }
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
+        this.context = context;
         if(this.child != null){
             this.child.setExpressionContext(context);
         }

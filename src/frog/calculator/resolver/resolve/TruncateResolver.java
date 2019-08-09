@@ -4,7 +4,7 @@ import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.ResolverResultType;
-import frog.calculator.resolver.resolve.factory.ICustomSymbolExpressionFactory;
+import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 import frog.calculator.util.NumberUtil;
 
 /**
@@ -35,9 +35,7 @@ public class TruncateResolver extends AbstractResolver {
 
     @Override
     protected void resolve(char[] expStr, int startIndex, IResolverResult resolveResult) {
-        if(NumberUtil.isNumber(expStr[startIndex])){
-            return;
-        }else{
+        if(!NumberUtil.isNumber(expStr[startIndex])){
             int[] match = new int[borderSymbolArr.length];
             int start;
             int i = start = startIndex; // 遍历的指针位置
@@ -69,7 +67,7 @@ public class TruncateResolver extends AbstractResolver {
                     sb.append(ts.symbol);
                 }
 
-                IExpression variableExpression = ts.customSymbolExpressionFactory.createExpression(sb.toString());
+                IExpression variableExpression = ts.symbolExpressionFactory.createExpression(sb.toString());
                 resolveResult.setExpression(variableExpression);
                 resolveResult.setType(ResolverResultType.DECLARE);
                 resolveResult.setEndIndex(i - matchCharLen + (ts.contain ? ts.symbol.length : 0));
@@ -80,16 +78,16 @@ public class TruncateResolver extends AbstractResolver {
     public static class TruncateSymbol {
         private boolean contain;
         private char[] symbol;
-        private ICustomSymbolExpressionFactory customSymbolExpressionFactory;
+        private ISymbolExpressionFactory symbolExpressionFactory;
 
-        public TruncateSymbol(String symbol, ICustomSymbolExpressionFactory customSymbolExpressionFactory) {
-            this(symbol, customSymbolExpressionFactory, false);
+        public TruncateSymbol(String symbol, ISymbolExpressionFactory symbolExpressionFactory) {
+            this(symbol, symbolExpressionFactory, false);
         }
 
-        public TruncateSymbol(String symbol, ICustomSymbolExpressionFactory customSymbolExpressionFactory, boolean contain) {
+        public TruncateSymbol(String symbol, ISymbolExpressionFactory symbolExpressionFactory, boolean contain) {
             this.contain = contain;
             this.symbol = symbol.toCharArray();
-            this.customSymbolExpressionFactory = customSymbolExpressionFactory;
+            this.symbolExpressionFactory = symbolExpressionFactory;
         }
     }
 }

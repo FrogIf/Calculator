@@ -9,11 +9,9 @@ import frog.calculator.express.endpoint.VariableExpression;
  */
 public class CustomFunctionExpression extends ContainerExpression{
 
-    private IExpression funBody;    // function body
+    private IExpression funBody;
 
-    private IExpressionContext context;
-
-    private FormatArgumentNode fargs;
+    private FormatArgumentNode formatArgs;
 
     private String splitSymbol;
 
@@ -29,10 +27,11 @@ public class CustomFunctionExpression extends ContainerExpression{
      * 容器起始 [参数1 分割符 参数2 分隔符 ... ] 容器终止
      *
      * @param openSymbol  容器起始位置
-     * @param closeSymbol 容器终止位置
      * @param splitSymbol 参数分割符
+     * @param closeSymbol 容器终止位置
+     * @param delegateSymbol 委托符号
      */
-    public CustomFunctionExpression(String openSymbol, String closeSymbol, String splitSymbol, String delegateSymbol) {
+    public CustomFunctionExpression(String openSymbol, String splitSymbol, String closeSymbol, String delegateSymbol) {
         super(openSymbol, null, closeSymbol);
         this.splitSymbol = splitSymbol;
         this.delegateSymbol = delegateSymbol;
@@ -42,20 +41,20 @@ public class CustomFunctionExpression extends ContainerExpression{
     public IExpression assembleTree(IExpression expression) {
         if(this.isClose){
             defined = true;
-            if(this.fargs != null) this.fargs.back();  // 回到初始位置, 准备实参注入
-            // 定义方法体部分
+            if(this.formatArgs != null) this.formatArgs.waitActualArgument();
+
             if(this.delegateSymbol.equals(expression.symbol())){
                 if(this.funBody != null){
                     throw new IllegalArgumentException("the function body has assigned.");
                 }
                 return super.assembleTree(expression);
             }
+
             if(this.funBody == null){
-                this.funBody = expression;  // 指定函数体
-                this.isClose = false;   // 使其可以继续createBranch
+                this.funBody = expression;
+                this.isClose = false;
                 return this;
             }else{
-                // 接收实参部分
                 if(createBranch(expression)){
                     return this;
                 }else{
@@ -78,13 +77,13 @@ public class CustomFunctionExpression extends ContainerExpression{
                 return true;
             }
             // 实参注入
-            if(this.fargs == null){
+            if(this.formatArgs == null){
                 return false;
             }else{
                 if(this.splitSymbol.equals(childExpression.symbol())){
-                    this.fargs.toNext();
+                    this.formatArgs.toNext();
                 }else{
-                    this.fargs.assign(childExpression);
+                    this.formatArgs.assign(childExpression);
                 }
             }
             return true;
@@ -101,10 +100,10 @@ public class CustomFunctionExpression extends ContainerExpression{
                     waitNext = true;
                 }else if(waitNext){
                     waitNext = false;
-                    if(this.fargs == null){
-                        this.fargs = new FormatArgumentNode(childExpression.symbol());
+                    if(this.formatArgs == null){
+                        this.formatArgs = new FormatArgumentNode(childExpression.symbol());
                     }else{
-                        this.fargs.createNewArgument(childExpression.symbol());
+                        this.formatArgs.createNewArgument(childExpression.symbol());
                     }
                 }else{
                     return false;
@@ -115,23 +114,17 @@ public class CustomFunctionExpression extends ContainerExpression{
     }
 
     @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
-        super.setExpressionContext(context);
-    }
-
-    @Override
     public IExpression interpret() {
         if(this.funBody == null){
             throw new IllegalArgumentException("function body is empty.");
         }
         IExpressionContext context = this.context.newInstance();
-        if(this.fargs != null){
-            FormatArgumentNode node = this.fargs;
+        if(this.formatArgs != null){
+            FormatArgumentNode node = this.formatArgs;
             while(node != null){
                 VariableExpression variableExpression = new VariableExpression(node.symbol);    // TODO 需要解耦
                 if(node.expression != null) variableExpression.assign(node.expression);
-                context.addLocalVariables(variableExpression);
+                context.addLocalVariable(variableExpression);
                 node = node.next;
             }
         }
@@ -142,7 +135,7 @@ public class CustomFunctionExpression extends ContainerExpression{
     @Override
     public IExpression clone() {
         CustomFunctionExpression clone = (CustomFunctionExpression) super.clone();
-        clone.fargs = this.fargs == null ? null : this.fargs.copy();
+        clone.formatArgs = this.formatArgs == null ? null : this.formatArgs.copy();
         return clone;
     }
 
@@ -152,19 +145,21 @@ public class CustomFunctionExpression extends ContainerExpression{
         private FormatArgumentNode tail = this;
         private IExpression expression;
 
-        public FormatArgumentNode(String symbol) {
+        private FormatArgumentNode(String symbol) {
             this.symbol = symbol;
         }
 
         private void createNewArgument(String symbol){
-            tail.next = new FormatArgumentNode(symbol);
-            tail = tail.next;
+            this.tail.next = new FormatArgumentNode(symbol);
+            this.tail = this.tail.next;
         }
+
         private void toNext(){
-            tail = tail.next;
+            this.tail = this.tail.next;
         }
-        private void back(){
-            tail = this;
+
+        private void waitActualArgument(){
+            this.tail = this;
         }
 
         private FormatArgumentNode copy(){
@@ -175,14 +170,14 @@ public class CustomFunctionExpression extends ContainerExpression{
         }
 
         private void assign(IExpression expression){
-            if(tail.expression == null){
-                tail.expression = expression;
+            if(this.tail.expression == null){
+                this.tail.expression = expression;
             }else{
                 IExpression newRoot = tail.expression.assembleTree(expression);
                 if(newRoot == null){
                     throw new IllegalArgumentException("lost root on argument assign.");
                 }else{
-                    tail.expression = newRoot;
+                    this.tail.expression = newRoot;
                 }
             }
         }

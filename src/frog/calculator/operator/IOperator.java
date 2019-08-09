@@ -5,6 +5,6 @@ import frog.calculator.express.IExpressionContext;
 
 public interface IOperator {
 
-    IExpression operate(String symbol, IExpressionContext context, IExpression... expressions);
+    IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions);
 
 }

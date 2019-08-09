@@ -3,7 +3,7 @@ package frog.calculator.resolver.resolve;
 import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
-import frog.calculator.resolver.resolve.factory.INumberExpressionFactory;
+import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 import frog.calculator.util.NumberUtil;
 
 /**
@@ -11,9 +11,9 @@ import frog.calculator.util.NumberUtil;
  */
 public class NumberResolver extends AbstractResolver {
 
-    private INumberExpressionFactory numberExpressionFactory;
+    private ISymbolExpressionFactory numberExpressionFactory;
 
-    public NumberResolver(INumberExpressionFactory numberExpressionFactory, IResolverResultFactory resolverResultFactory) {
+    public NumberResolver(ISymbolExpressionFactory numberExpressionFactory, IResolverResultFactory resolverResultFactory) {
         super(resolverResultFactory);
         this.numberExpressionFactory = numberExpressionFactory;
     }
@@ -41,7 +41,7 @@ public class NumberResolver extends AbstractResolver {
         }
 
         if(numberBuilder.length() != 0){
-            IExpression numberExpression = numberExpressionFactory.createNumberExpression(numberBuilder.toString());
+            IExpression numberExpression = numberExpressionFactory.createExpression(numberBuilder.toString());
             resolveResult.setEndIndex(startIndex - 1);
             resolveResult.setExpression(numberExpression);
             resolveResult.setSymbol(numberExpression.symbol());
