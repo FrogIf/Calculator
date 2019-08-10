@@ -30,30 +30,23 @@ public class FunctionExpression extends ContainerExpression{
     }
 
     @Override
-    public boolean createBranch(IExpression childExpression) {
-        if(isClose){
-            return false;
+    public boolean buildContent(IExpression childExpression) {
+        if(splitSymbol.equals(childExpression.symbol())){
+            argumentCount++;
+            args.createNewNode();
         }else{
-            if(this.closeSymbol.equals(childExpression.symbol())){
-                throw new IllegalStateException("expression error.");
+            if(args == null){
+                argumentCount++;
+                args = new ArgumentNode();
             }
-
-            if(this.suspendExpression == null && this.order() > childExpression.order()){
-                this.suspendExpression = childExpression;
-            }else{
-                if(splitSymbol.equals(childExpression.symbol())){
-                    argumentCount++;
-                    args.createNewNode();
-                }else{
-                    if(args == null){
-                        argumentCount++;
-                        args = new ArgumentNode();
-                    }
-                    args.addToCurrentNode(childExpression);
-                }
-            }
+            args.addToCurrentNode(childExpression);
         }
         return true;
+    }
+
+    public IExpression call(IExpression[] expressions){
+        // TODO 实现调用
+        return this.interpret();
     }
 
     @Override

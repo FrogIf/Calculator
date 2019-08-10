@@ -87,8 +87,6 @@ public class Calculator {
         String assignSymbol = expressionHolder.getAssign().symbol();    // =
         String splitSymbol = expressionHolder.getSeparator().symbol();  // ,
         String openSymbol = expressionHolder.getContainerOpen().symbol();   // (
-        String delegateSymbol = expressionHolder.getDelegate().symbol();    // ->
-
 
         // declare part's structure symbol. the symbol will be recognize to custom symbol which in front of those structure symbol.
         struct.insert(expressionHolder.getSeparator());
@@ -114,7 +112,7 @@ public class Calculator {
                 new TruncateResolver.TruncateSymbol(closeSymbol, variableExpressionFactory),
                 new TruncateResolver.TruncateSymbol(assignSymbol, variableExpressionFactory),
                 new TruncateResolver.TruncateSymbol(splitSymbol, variableExpressionFactory),
-                new TruncateResolver.TruncateSymbol(openSymbol, new CustomFunctionExpressionFactory(closeSymbol, splitSymbol, delegateSymbol), true)
+                new TruncateResolver.TruncateSymbol(openSymbol, new CustomFunctionExpressionFactory(closeSymbol, splitSymbol), true)
         });
 
 

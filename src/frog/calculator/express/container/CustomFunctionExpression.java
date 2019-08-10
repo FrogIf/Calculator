@@ -7,7 +7,7 @@ import frog.calculator.express.endpoint.VariableExpression;
 /**
  * 自定义函数
  */
-public class CustomFunctionExpression extends ContainerExpression{
+public class CustomFunctionExpression extends FunctionExpression{
 
     private IExpression funBody;
 
@@ -15,11 +15,7 @@ public class CustomFunctionExpression extends ContainerExpression{
 
     private String splitSymbol;
 
-    private String delegateSymbol;
-
-    private boolean defined = false;
-
-    private boolean waitNext = true;
+    private boolean hasDelegate = false;
 
     /**
      * 创建一个内置函数表达式
@@ -29,53 +25,15 @@ public class CustomFunctionExpression extends ContainerExpression{
      * @param openSymbol  容器起始位置
      * @param splitSymbol 参数分割符
      * @param closeSymbol 容器终止位置
-     * @param delegateSymbol 委托符号
      */
-    public CustomFunctionExpression(String openSymbol, String splitSymbol, String closeSymbol, String delegateSymbol) {
-        super(openSymbol, null, closeSymbol);
+    public CustomFunctionExpression(String openSymbol, String splitSymbol, String closeSymbol) {
+        super(openSymbol, null, closeSymbol, splitSymbol);
         this.splitSymbol = splitSymbol;
-        this.delegateSymbol = delegateSymbol;
     }
 
     @Override
-    public IExpression assembleTree(IExpression expression) {
-        if(this.isClose){
-            defined = true;
-            if(this.formatArgs != null) this.formatArgs.waitActualArgument();
-
-            if(this.delegateSymbol.equals(expression.symbol())){
-                if(this.funBody != null){
-                    throw new IllegalArgumentException("the function body has assigned.");
-                }
-                return super.assembleTree(expression);
-            }
-
-            if(this.funBody == null){
-                this.funBody = expression;
-                this.isClose = false;
-                return this;
-            }else{
-                if(createBranch(expression)){
-                    return this;
-                }else{
-                    return null;
-                }
-            }
-        }else{
-            return super.assembleTree(expression);
-        }
-    }
-
-    @Override
-    public boolean createBranch(IExpression childExpression) {
-        if(defined){
-            if(this.order > childExpression.order()){
-                if(this.suspendExpression != null){
-                    return false;
-                }
-                this.suspendExpression = childExpression;
-                return true;
-            }
+    public boolean buildContent(IExpression childExpression) {
+        if(hasDelegate){
             // 实参注入
             if(this.formatArgs == null){
                 return false;
@@ -86,31 +44,59 @@ public class CustomFunctionExpression extends ContainerExpression{
                     this.formatArgs.assign(childExpression);
                 }
             }
-            return true;
         }else{
             // 形参构造
-            if(this.closeSymbol.equals(childExpression.symbol())){
-                throw new IllegalStateException("expression error.");
-            }
-
-            if(this.suspendExpression == null && this.order() > childExpression.order()){
-                this.suspendExpression = childExpression;
-            }else{
-                if(this.splitSymbol.equals(childExpression.symbol())){
-                    waitNext = true;
-                }else if(waitNext){
-                    waitNext = false;
-                    if(this.formatArgs == null){
-                        this.formatArgs = new FormatArgumentNode(childExpression.symbol());
-                    }else{
-                        this.formatArgs.createNewArgument(childExpression.symbol());
-                    }
+            if(!this.splitSymbol.equals(childExpression.symbol())){
+                if(this.formatArgs == null){
+                    this.formatArgs = new FormatArgumentNode(childExpression.symbol());
                 }else{
-                    return false;
+                    this.formatArgs.createNewArgument(childExpression.symbol());
                 }
             }
-            return true;
         }
+        return true;
+    }
+
+    public void delegate(IExpression expression){
+        this.hasDelegate = true;
+        if(this.formatArgs != null){
+            this.formatArgs.waitActualArgument();
+        }
+        if(expression == null){
+            throw new IllegalArgumentException("function body is empty.");
+        }
+        this.isClose = false;
+        this.funBody = expression;
+    }
+
+    /**
+     * 调用函数
+     * @param expression
+     * @return
+     */
+    @Override
+    public IExpression call(IExpression[] expression){
+        if(this.funBody == null){
+            throw new IllegalArgumentException("function body is empty.");
+        }
+
+        IExpressionContext context = this.context.newInstance();
+
+        if(this.formatArgs != null){
+            FormatArgumentNode node = this.formatArgs;
+            int i = 0;
+            while(node != null){
+                VariableExpression variableExpression = new VariableExpression(node.symbol);    // TODO 需要解耦
+                if(node.expression != null) variableExpression.assign(expression[i]);
+                context.addLocalVariable(variableExpression);
+                node = node.next;
+                i++;
+            }
+        }
+
+        this.funBody.setExpressionContext(context);
+
+        return this.funBody.interpret();
     }
 
     @Override
@@ -118,6 +104,7 @@ public class CustomFunctionExpression extends ContainerExpression{
         if(this.funBody == null){
             throw new IllegalArgumentException("function body is empty.");
         }
+
         IExpressionContext context = this.context.newInstance();
         if(this.formatArgs != null){
             FormatArgumentNode node = this.formatArgs;
@@ -128,7 +115,9 @@ public class CustomFunctionExpression extends ContainerExpression{
                 node = node.next;
             }
         }
+
         this.funBody.setExpressionContext(context);
+
         return this.funBody.interpret();
     }
 

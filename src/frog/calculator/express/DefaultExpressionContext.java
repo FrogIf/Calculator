@@ -32,7 +32,6 @@ public class DefaultExpressionContext implements IExpressionContext {
     public IExpressionContext newInstance() {
         // TODO 未完成, 应该使用栈结构(Last in First out), 考虑多层嵌套变量表
         DefaultExpressionContext context = new DefaultExpressionContext(this.session);
-//        context.localVariableList = this.localVariableList;
         return context;
     }
 }

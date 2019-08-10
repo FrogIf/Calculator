@@ -30,8 +30,22 @@ public class ContainerExpression extends AbstractExpression {
         this.closeSymbol = closeSymbol;
     }
 
+    protected boolean buildContent(IExpression childExpression){
+        if(this.body == null){
+            this.body = childExpression;
+        }else{
+            IExpression root = this.body.assembleTree(childExpression);
+            if(root == null){
+                return false;
+            }else{
+                this.body = root;
+            }
+        }
+        return true;
+    }
+
     @Override
-    public boolean createBranch(IExpression childExpression) {
+    public final boolean createBranch(IExpression childExpression) {
         if(isClose){
             return false;
         }else{
@@ -39,22 +53,17 @@ public class ContainerExpression extends AbstractExpression {
                 throw new IllegalStateException("expression error.");
             }
 
-            if(this.suspendExpression == null && this.order() > childExpression.order()){
-                this.suspendExpression = childExpression;
-            }else{
-                if(this.body == null){
-                    this.body = childExpression;
+            if(childExpression.order() < this.order()){
+                if(this.suspendExpression == null){
+                    this.suspendExpression = childExpression;
+                    return true;
                 }else{
-                    IExpression root = this.body.assembleTree(childExpression);
-                    if(root == null){
-                        return false;
-                    }else{
-                        this.body = root;
-                    }
+                    return false;
                 }
+            }else{
+                return this.buildContent(childExpression);
             }
         }
-        return true;
     }
 
     @Override

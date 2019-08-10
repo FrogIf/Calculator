@@ -16,11 +16,15 @@ public class DefaultCalculatorSession implements ICalculatorSession {
 
     @Override
     public IExpression getSessionVariable(String varName) {
-        return register.find(varName);
+        IExpression expression = register.find(varName);
+        if(expression != null){ expression = expression.clone(); }
+        return expression;
     }
 
     @Override
     public IExpression getSessionVariable(char[] expChars, int startIndex) {
-        return register.retrieve(expChars, startIndex);
+        IExpression expression = register.retrieve(expChars, startIndex);
+        if(expression != null){ expression = expression.clone();}
+        return expression;
     }
 }

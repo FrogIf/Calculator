@@ -11,10 +11,6 @@ public class AssignOperator implements IOperator {
         IExpression variable = expressions[0];
         IExpression value = expressions[1].interpret();
 
-//        if(!(variable instanceof  VariableExpression)){
-//            variable = variable.interpret();
-//        }
-
         if(variable instanceof VariableExpression){
             ((VariableExpression) variable).assign(value);
         }else{

@@ -53,8 +53,6 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public IExpression clone() {
-        VariableExpression expression = (VariableExpression) super.clone();
-        expression.valueExpression = this.valueExpression == null ? null : this.valueExpression.clone();
-        return expression;
+        return this;
     }
 }
