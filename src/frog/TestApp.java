@@ -20,11 +20,17 @@ public class TestApp {
 
     public static void main(String[] args){
         init();
+        // 创建list类
+        // 创建operator传参对象
+        // 创建list表达式
+
         // 自定义函数优化
 
         // lambda表达式 : @frog(a, b, c, d, e, f, g, h) -> {a+b+c*d}
         //      @ - 声明表达式; frog - 变量表达式; () - 形参表达式; a, b, c - 变量表达式
         // 输出计算过程
+        // 自定义异常
+        
         Scanner sc = new Scanner(System.in);
 
         ICalculatorSession session = new DefaultCalculatorSession();

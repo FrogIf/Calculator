@@ -5,7 +5,7 @@ import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.ResolverResultType;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
-import frog.calculator.util.NumberUtil;
+import frog.calculator.util.CharDiscriminator;
 
 /**
  * 截断解析器<br/>
@@ -35,7 +35,7 @@ public class TruncateResolver extends AbstractResolver {
 
     @Override
     protected void resolve(char[] expStr, int startIndex, IResolverResult resolveResult) {
-        if(!NumberUtil.isNumber(expStr[startIndex])){
+        if(!CharDiscriminator.isNumber(expStr[startIndex])){
             int[] match = new int[borderSymbolArr.length];
             int start;
             int i = start = startIndex; // 遍历的指针位置

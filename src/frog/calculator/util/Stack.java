@@ -1,50 +1,43 @@
 package frog.calculator.util;
 
 /**
- * 简易栈结构
+ * simple stack
  * @param <T>
  */
 public class Stack<T> {
 
-    private Node top;   // 栈顶
+    private Node top;
 
-    /**
-     * 栈中是否为空
-     * @return
-     */
+    private Node bottom;
+
     public boolean isEmpty(){
         return top == null;
     }
 
-    public boolean isNotEmpty(){
-        return top != null;
+    public T top(){
+        return top == null ? null : top.data;
     }
 
-    public T getTop(){
-        return top.data;
+    public void clear(){
+        top = null;
+        bottom = null;
     }
 
-    /**
-     * 出栈
-     * @return
-     */
     public T pop(){
         T result = top.data;
         top = top.next;
+        if(top == null){ bottom = null; }
         return result;
     }
 
-    /**
-     * 入栈
-     * @param t
-     */
     public void push(T t){
         Node newTop = new Node(t);
         newTop.next = top;
         top = newTop;
+        if(bottom == null) { bottom = newTop; }
     }
 
-    private class Node{
+    private class Node {
         private Node(T t){
             this.data = t;
         }

@@ -1,7 +1,7 @@
 package frog.calculator.register;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.util.TreeList;
+import frog.calculator.util.TreeSet;
 
 public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
@@ -9,7 +9,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     private IExpression expression;
 
-    private TreeList<TreeRegister> nextLetter = new TreeList<>();
+    private TreeSet<TreeRegister> nextLetter = new TreeSet<>();
 
     public TreeRegister(){ }
 

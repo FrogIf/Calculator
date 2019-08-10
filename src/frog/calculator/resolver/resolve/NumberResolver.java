@@ -4,7 +4,7 @@ import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
-import frog.calculator.util.NumberUtil;
+import frog.calculator.util.CharDiscriminator;
 
 /**
  * 数字表达式解析器
@@ -27,7 +27,7 @@ public class NumberResolver extends AbstractResolver {
         for(; startIndex < chars.length; startIndex++){
             char ch = chars[startIndex];
 
-            if(NumberUtil.isNumber(ch)){
+            if(CharDiscriminator.isNumber(ch)){
                 numberBuilder.append(ch);
             }else if(isDot(ch)){
                 if(hasDot){

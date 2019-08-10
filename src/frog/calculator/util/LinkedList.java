@@ -5,7 +5,7 @@ package frog.calculator.util;
  * 线程不安全
  * @param <T>
  */
-public class LinkedList<T>{
+public class LinkedList<T> {
 
     private LinkedNode<T> root = null;
 
@@ -13,7 +13,7 @@ public class LinkedList<T>{
 
     private int size = 0;
 
-    public void add(T t){
+    public boolean add(T t){
         if(root == null){
             root = new LinkedNode<>();
             tail = root;
@@ -22,6 +22,7 @@ public class LinkedList<T>{
         tail.next.data = t;
         tail = tail.next;
         size++;
+        return true;
     }
 
     public int size(){
@@ -29,23 +30,31 @@ public class LinkedList<T>{
     }
 
     public Iterator getIterator(){
-        return new Iterator(root);
+        return new LinkedIterator();
     }
 
-    public class Iterator{
+    private class LinkedIterator implements Iterator{
+
         private LinkedNode<T> viewNode;
 
-        public Iterator(LinkedNode<T> viewNode) {
-            this.viewNode = viewNode;
+        public LinkedIterator() {
+            this.viewNode = LinkedList.this.root;
         }
 
+        @Override
         public boolean hasNext(){
             return viewNode != null && viewNode.next != null;
         }
 
+        @Override
         public T next(){
             this.viewNode = viewNode.next;
             return this.viewNode.data;
+        }
+
+        @Override
+        public void remove() {
+            // TODO remove current node.
         }
     }
 

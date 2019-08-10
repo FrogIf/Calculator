@@ -1,20 +1,43 @@
 package frog.calculator.util;
 
-public class TreeList<T extends Comparable<T>> {
+public class TreeSet<T extends Comparable<T>> implements ISet<T>{
 
     private AVLNode<T> root;
 
-    public void add(T t){
+    private int modCount = 0;
+
+    @Override
+    public boolean add(T t){
         if(root == null){
             root = new AVLNode<>();
             root.data = t;
+            modCount = 1;
         }else{
             AVLNode<T> nextTree = new AVLNode<>();
             nextTree.data = t;
-            root = root.create(nextTree);
+            root = root.create(nextTree, this);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean remove(T t){
+        if(root != null){
+            int size = this.modCount;
+            root = root.delete(t, this);
+            return size > this.modCount;
+        }else{
+            return false;
         }
     }
 
+    @Override
+    public void clear() {
+        this.modCount = 0;
+        this.root = null;
+    }
+
+    @Override
     public T find(T t){
         if(root == null){
             return null;
@@ -22,14 +45,88 @@ public class TreeList<T extends Comparable<T>> {
         return root.retrieve(t);
     }
 
-    public void remove(T t){
-        if(root != null){
-            root = root.delete(t);
-        }
+    @Override
+    public int size() {
+        return this.modCount;
     }
 
+    @Override
     public boolean isEmpty(){
-        return root == null;
+        return this.modCount == 0;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new TreeIterator();
+    }
+
+    private class TreeIterator implements Iterator<T> {
+
+        private int expectedModCount = modCount;
+
+        private Stack<AVLNode<T>> stack = new Stack<>();
+
+        private T viewData = null;
+
+        private TreeIterator() {
+            AVLNode<T> cursor = TreeSet.this.root;
+            while(cursor != null){
+                stack.push(cursor);
+                cursor = cursor.left;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        @Override
+        public T next() {
+            AVLNode<T> view = stack.top();
+            this.viewData = view.data;
+
+            if(view.right != null){
+                stack.pop();
+                AVLNode<T> cursor = view.right;
+                while(cursor != null){
+                    stack.push(cursor);
+                    cursor = cursor.left;
+                }
+            }else{
+                stack.pop();
+            }
+
+            return viewData;
+        }
+
+        @Override
+        public void remove() {
+            if(this.expectedModCount != TreeSet.this.modCount){
+                throw new IllegalStateException("concurrent modify exception.");
+            }
+
+            AVLNode<T> cursor = TreeSet.this.root = TreeSet.this.root.delete(viewData, TreeSet.this);
+            this.expectedModCount--;
+
+            T vData = viewData;
+
+            // rebuild the stack
+            stack.clear();
+            while(cursor != null){
+                int mark = vData.compareTo(cursor.data);
+                if(mark < 0){
+                    if(cursor.right == null){
+                        break;
+                    }else{
+                        cursor = cursor.right;
+                    }
+                } else {
+                    stack.push(cursor);
+                    cursor = cursor.left;
+                }
+            }
+        }
     }
 
     private static class AVLNode<T extends Comparable<T>> {
@@ -38,11 +135,16 @@ public class TreeList<T extends Comparable<T>> {
 
         private AVLNode<T> right;
 
-        private int height = 1;   // 默认树高度为1
+        private int height = 1;   // default tree height is 1. because there must be itself.
 
         private T data;
 
-        // 从树中查找某一数据
+        /**
+         * retrieve data by assign data <br/>
+         * because of type parameter is Comparable, so we can by a simple object get the object's more information which is equal to the simple object.
+         * @param t a needed to find object
+         * @return find result. if not find, return null.
+         */
         private T retrieve(T t){
             T result = null;
 
@@ -59,24 +161,32 @@ public class TreeList<T extends Comparable<T>> {
             return result;
         }
 
-        // 向树中插入数据
-        private AVLNode<T> create(AVLNode<T> node){
+        /**
+         * insert node into avl tree
+         * @param node need to insert
+         * @param belong the tree belong to which set, to update belong's modCount. this class is static, so param "belong" is necessary.
+         * @return new tree root
+         */
+        private AVLNode<T> create(AVLNode<T> node, TreeSet<T> belong){
             T t = node.data;
             int mark = data.compareTo(t);
 
             if(mark == 0){
+                // if insert node's is exists, update this.
                 this.data = t;
-            }else if(mark > 0){ // 向左侧插入数据
+            }else if(mark > 0){ // insert into left branch
                 if(this.left == null){
                     this.left = node;
+                    belong.modCount++;
                 }else{
-                    this.left = this.left.create(node);
+                    this.left = this.left.create(node, belong);
                 }
-            }else{  // 向右侧插入数据
+            }else{  // insert into right branch
                 if(this.right == null){
                     this.right = node;
+                    belong.modCount++;
                 }else{
-                    this.right = this.right.create(node);
+                    this.right = this.right.create(node, belong);
                 }
             }
 
@@ -85,33 +195,44 @@ public class TreeList<T extends Comparable<T>> {
             return this.balanceTree();
         }
 
-        private AVLNode<T> delete(T t){
+        /**
+         * delete assign data
+         * @param t aim data
+         * @param belong which tree that current node belong.
+         * @return new tree root.
+         */
+        private AVLNode<T> delete(T t, TreeSet<T> belong){
             int mark = data.compareTo(t);
 
             AVLNode<T> root = this;
-            if(mark == 0){  // 删除中部数据
+            if(mark == 0){  // find it.
                 if(this.left == null && this.right == null){
                     root = null;
+                    belong.modCount--;
                 }else if(this.left == null){
                     root = this.right;
+                    belong.modCount--;
                 }else if(this.right == null){
                     root = this.left;
-                }else{  // 左右节点均不为null
+                    belong.modCount--;
+                }else{  // need to delete mid node. but left and right both is not null.
                     AVLNode<T> lMax = findMax(this.left);
                     T oldData = this.data;
                     this.data = lMax.data;
                     lMax.data = oldData;
-                    this.left = this.left.delete(t);
+                    this.left = this.left.delete(t, belong);
                 }
-            }else if(mark > 0){ // 删除左侧数据
+            }else if(mark > 0){ // delete from left.
                 if(this.left != null){
-                    this.left = this.left.delete(t);
+                    this.left = this.left.delete(t, belong);
                 }
-            }else{  // 删除右侧数据
+            }else{  // delete from right.
                 if(this.right != null){
-                    this.right = this.right.delete(t);
+                    this.right = this.right.delete(t, belong);
                 }
             }
+
+            judgeTreeHeight(this);
 
             if(root != null){
                 root = root.balanceTree();
@@ -137,7 +258,6 @@ public class TreeList<T extends Comparable<T>> {
 
             judgeTreeHeight(root);
             judgeTreeHeight(newRoot);
-
             return newRoot;
         }
 

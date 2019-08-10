@@ -36,9 +36,11 @@ public class CommonSymbolParse {
      */
     public static IResolverResult generateResult(IExpression expression, int startIndex, IResolverResultFactory resolverResultFactory){
         IResolverResult result = resolverResultFactory.createResolverResultBean();
-        result.setEndIndex(startIndex + expression.symbol().length() - 1);
-        result.setExpression(expression);
-        result.setSymbol(expression.symbol());
+        if(expression != null) {
+            result.setEndIndex(startIndex + expression.symbol().length() - 1);
+            result.setExpression(expression);
+            result.setSymbol(expression.symbol());
+        }
         return result;
     }
 

@@ -197,12 +197,12 @@ public class Calculator {
                     resolverHolder.resolver = this.runnableResolver;  // 切换至执行解析器
                 } else if (result.getType() == ResolverResultType.DECLARE) {   // 声明
                     IExpression expression = result.getExpression();
-                    registerStack.getTop().insert(expression);  // 向局部变量表中添加变量
+                    registerStack.top().insert(expression);  // 向局部变量表中添加变量
                 }
             }
         }else{
-            if (registerStack.isNotEmpty()) {   // 应用局部变量表进行解析(先使用局部解析器, 在使用会话解析器 -- 就近原则)
-                result = CommonSymbolParse.parseExpression(chars, startIndex, registerStack.getTop(), this.resolverResultFactory);
+            if (!registerStack.isEmpty()) {   // 应用局部变量表进行解析(先使用局部解析器, 在使用会话解析器 -- 就近原则)
+                result = CommonSymbolParse.parseExpression(chars, startIndex, registerStack.top(), this.resolverResultFactory);
             }
             if(result.getExpression() == null){
                 IExpression sessionVariable = session.getSessionVariable(chars, startIndex);
