@@ -1,6 +1,6 @@
-package frog.calculator.util;
+package frog.calculator.util.collection;
 
-public class TreeSet<T extends Comparable<T>> implements ISet<T>{
+public class TreeSet<T extends Comparable<T>> implements ISet<T> {
 
     private AVLNode<T> root;
 
@@ -56,6 +56,11 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T>{
     }
 
     @Override
+    public boolean contains(T t) {
+        return this.find(t) != null;
+    }
+
+    @Override
     public Iterator<T> iterator() {
         return new TreeIterator();
     }
@@ -64,37 +69,37 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T>{
 
         private int expectedModCount = modCount;
 
-        private Stack<AVLNode<T>> stack = new Stack<>();
+        private Stack<AVLNode<T>> line = new Stack<>();
 
         private T viewData = null;
 
         private TreeIterator() {
             AVLNode<T> cursor = TreeSet.this.root;
             while(cursor != null){
-                stack.push(cursor);
+                line.push(cursor);
                 cursor = cursor.left;
             }
         }
 
         @Override
         public boolean hasNext() {
-            return !stack.isEmpty();
+            return !line.isEmpty();
         }
 
         @Override
         public T next() {
-            AVLNode<T> view = stack.top();
+            AVLNode<T> view = line.top();
             this.viewData = view.data;
 
             if(view.right != null){
-                stack.pop();
+                line.pop();
                 AVLNode<T> cursor = view.right;
                 while(cursor != null){
-                    stack.push(cursor);
+                    line.push(cursor);
                     cursor = cursor.left;
                 }
             }else{
-                stack.pop();
+                line.pop();
             }
 
             return viewData;
@@ -111,8 +116,8 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T>{
 
             T vData = viewData;
 
-            // rebuild the stack
-            stack.clear();
+            // rebuild the line
+            line.clear();
             while(cursor != null){
                 int mark = vData.compareTo(cursor.data);
                 if(mark < 0){
@@ -122,7 +127,7 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T>{
                         cursor = cursor.right;
                     }
                 } else {
-                    stack.push(cursor);
+                    line.push(cursor);
                     cursor = cursor.left;
                 }
             }

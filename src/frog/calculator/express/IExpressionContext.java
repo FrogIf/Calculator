@@ -1,7 +1,6 @@
 package frog.calculator.express;
 
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.util.LinkedList;
 
 /**
  * 表达式上下文

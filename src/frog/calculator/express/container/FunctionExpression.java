@@ -3,17 +3,17 @@ package frog.calculator.express.container;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.operator.IOperator;
+import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.LinkedList;
 
 /**
  * 内置函数表达式
  */
 public class FunctionExpression extends ContainerExpression{
 
-    private String splitSymbol;
+    String splitSymbol;
 
-    private int argumentCount = 0;
-
-    private ArgumentNode args = null;
+    private LinkedList<Argument> args = new LinkedList<>();
 
     /**
      * 创建一个内置函数表达式
@@ -32,14 +32,12 @@ public class FunctionExpression extends ContainerExpression{
     @Override
     public boolean buildContent(IExpression childExpression) {
         if(splitSymbol.equals(childExpression.symbol())){
-            argumentCount++;
-            args.createNewNode();
+            args.add(new Argument());
         }else{
-            if(args == null){
-                argumentCount++;
-                args = new ArgumentNode();
+            if(args.isEmpty()){
+                args.add(new Argument());
             }
-            args.addToCurrentNode(childExpression);
+            args.last().addToCurrentNode(childExpression);
         }
         return true;
     }
@@ -51,17 +49,13 @@ public class FunctionExpression extends ContainerExpression{
 
     @Override
     public IExpression interpret() {
-        if(this.argumentCount > 0){
-            ArgumentNode node = this.args;
-            IExpression[] expressions = new IExpression[this.argumentCount];
-
-            int i = 0;
-            while(node != null){
-                expressions[i] = node.expression;
-                node = node.next;
-                i++;
+        if(!args.isEmpty()){
+            IExpression[] expressions = new IExpression[args.size()];
+            Iterator<Argument> iterator = args.iterator();
+            for(int i = 0; i < args.size(); i++){
+                Argument arg = iterator.next();
+                expressions[i] = arg.argExp;
             }
-
             return this.operator.operate(this.symbol(), context, expressions);
         }else{
             return this.operator.operate(this.symbol(), context, null);
@@ -71,53 +65,37 @@ public class FunctionExpression extends ContainerExpression{
     @Override
     public void setExpressionContext(IExpressionContext context) {
         this.context = context;
-        if(this.args != null){
-            ArgumentNode node = this.args;
-            while(node != null){
-                if(node.expression != null){
-                    node.expression.setExpressionContext(context);
+        if(!this.args.isEmpty()){
+            Iterator<Argument> iterator = this.args.iterator();
+            while (iterator.hasNext()){
+                Argument next = iterator.next();
+                if(next.argExp != null){
+                    next.argExp.setExpressionContext(context);
                 }
-                node = node.next;
             }
         }
     }
 
     @Override
     public IExpression clone() {
-        FunctionExpression clone = (FunctionExpression) super.clone();
-        clone.args = this.args == null ? null : this.args.copy();
-        return clone;
+        FunctionExpression fun = (FunctionExpression) super.clone();
+        fun.args = new LinkedList<>();
+        return fun;
     }
 
-    private static class ArgumentNode {
-        IExpression expression;
+    private static class Argument {
 
-        ArgumentNode next;
-        ArgumentNode tail = this;
-
-        private void createNewNode(){
-            tail.next = new ArgumentNode();
-            tail = tail.next;
-        }
+        private IExpression argExp;
 
         private void addToCurrentNode(IExpression childExpression) {
-            if(tail.expression == null){
-                tail.expression = childExpression;
+            if(argExp == null){
+                argExp = childExpression;
             }else{
-                IExpression expression = tail.expression.assembleTree(childExpression);
-                if(expression == null){
+                argExp = argExp.assembleTree(childExpression);
+                if(argExp == null){
                     throw new IllegalArgumentException("expression can't assemble.");
-                }else{
-                    tail.expression = expression;
                 }
             }
-        }
-
-        private ArgumentNode copy(){
-            ArgumentNode newNode = new ArgumentNode();
-            newNode.expression = this.expression == null ? null : this.expression.clone();
-            newNode.next = this.next == null ? null : this.next.copy();
-            return newNode;
         }
     }
 }

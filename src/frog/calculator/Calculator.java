@@ -16,7 +16,7 @@ import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
-import frog.calculator.util.Stack;
+import frog.calculator.util.collection.Stack;
 
 public class Calculator {
 

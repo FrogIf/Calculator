@@ -1,4 +1,4 @@
-package frog.calculator.util;
+package frog.calculator.util.collection;
 
 public interface Iterator<E> {
 

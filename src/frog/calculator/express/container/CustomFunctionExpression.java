@@ -3,17 +3,21 @@ package frog.calculator.express.container;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.endpoint.VariableExpression;
+import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.LinkedList;
 
 /**
  * 自定义函数
  */
-public class CustomFunctionExpression extends FunctionExpression{
+public class CustomFunctionExpression extends FunctionExpression {
 
     private IExpression funBody;
 
-    private FormatArgumentNode formatArgs;
+    private LinkedList<FormatArgument> args = new LinkedList<>();
 
-    private String splitSymbol;
+    private Iterator<FormatArgument> injectItr = null;
+
+    private FormatArgument currentArg = null;
 
     private boolean hasDelegate = false;
 
@@ -28,30 +32,36 @@ public class CustomFunctionExpression extends FunctionExpression{
      */
     public CustomFunctionExpression(String openSymbol, String splitSymbol, String closeSymbol) {
         super(openSymbol, null, closeSymbol, splitSymbol);
-        this.splitSymbol = splitSymbol;
     }
 
     @Override
     public boolean buildContent(IExpression childExpression) {
         if(hasDelegate){
-            // 实参注入
-            if(this.formatArgs == null){
+            if(this.args.isEmpty()){
                 return false;
             }else{
                 if(this.splitSymbol.equals(childExpression.symbol())){
-                    this.formatArgs.toNext();
+                    if(!this.injectItr.hasNext()){ return false; }
+                    else{
+                        this.currentArg = this.injectItr.next();
+                    }
                 }else{
-                    this.formatArgs.assign(childExpression);
+                    if(currentArg == null){
+                        if(this.injectItr == null) this.injectItr = this.args.iterator();
+
+                        if(!this.injectItr.hasNext()){ return false; }
+                        else{
+                            this.currentArg = this.injectItr.next();
+                        }
+                    }
+
+                    this.currentArg.assign(childExpression);
                 }
             }
         }else{
             // 形参构造
             if(!this.splitSymbol.equals(childExpression.symbol())){
-                if(this.formatArgs == null){
-                    this.formatArgs = new FormatArgumentNode(childExpression.symbol());
-                }else{
-                    this.formatArgs.createNewArgument(childExpression.symbol());
-                }
+                this.args.add(new FormatArgument(childExpression.symbol()));
             }
         }
         return true;
@@ -59,9 +69,6 @@ public class CustomFunctionExpression extends FunctionExpression{
 
     public void delegate(IExpression expression){
         this.hasDelegate = true;
-        if(this.formatArgs != null){
-            this.formatArgs.waitActualArgument();
-        }
         if(expression == null){
             throw new IllegalArgumentException("function body is empty.");
         }
@@ -82,14 +89,14 @@ public class CustomFunctionExpression extends FunctionExpression{
 
         IExpressionContext context = this.context.newInstance();
 
-        if(this.formatArgs != null){
-            FormatArgumentNode node = this.formatArgs;
+        if(!this.args.isEmpty()){
+            Iterator<FormatArgument> iterator = this.args.iterator();
             int i = 0;
-            while(node != null){
-                VariableExpression variableExpression = new VariableExpression(node.symbol);    // TODO 需要解耦
-                if(node.expression != null) variableExpression.assign(expression[i]);
+            while(iterator.hasNext()){
+                FormatArgument next = iterator.next();
+                VariableExpression variableExpression = new VariableExpression(next.symbol);    // TODO 需要解耦
+                if(next.argExp != null) variableExpression.assign(expression[i]);
                 context.addLocalVariable(variableExpression);
-                node = node.next;
                 i++;
             }
         }
@@ -106,13 +113,14 @@ public class CustomFunctionExpression extends FunctionExpression{
         }
 
         IExpressionContext context = this.context.newInstance();
-        if(this.formatArgs != null){
-            FormatArgumentNode node = this.formatArgs;
-            while(node != null){
-                VariableExpression variableExpression = new VariableExpression(node.symbol);    // TODO 需要解耦
-                if(node.expression != null) variableExpression.assign(node.expression);
+
+        if(!this.args.isEmpty()){
+            Iterator<FormatArgument> iterator = this.args.iterator();
+            while(iterator.hasNext()){
+                FormatArgument next = iterator.next();
+                VariableExpression variableExpression = new VariableExpression(next.symbol);    // TODO 需要解耦
+                if(next.argExp != null) variableExpression.assign(next.argExp);
                 context.addLocalVariable(variableExpression);
-                node = node.next;
             }
         }
 
@@ -124,51 +132,32 @@ public class CustomFunctionExpression extends FunctionExpression{
     @Override
     public IExpression clone() {
         CustomFunctionExpression clone = (CustomFunctionExpression) super.clone();
-        clone.formatArgs = this.formatArgs == null ? null : this.formatArgs.copy();
+        if(!this.args.isEmpty()){
+            clone.args = new LinkedList<>();
+            Iterator<FormatArgument> iterator = this.args.iterator();
+            while (iterator.hasNext()){
+                clone.args.add(new FormatArgument(iterator.next().symbol));
+            }
+        }
         return clone;
     }
 
-    private static class FormatArgumentNode {
+    private static class FormatArgument {
         private String symbol;
-        private FormatArgumentNode next;
-        private FormatArgumentNode tail = this;
-        private IExpression expression;
-
-        private FormatArgumentNode(String symbol) {
+        private IExpression argExp;
+        private FormatArgument(String symbol){
             this.symbol = symbol;
         }
-
-        private void createNewArgument(String symbol){
-            this.tail.next = new FormatArgumentNode(symbol);
-            this.tail = this.tail.next;
-        }
-
-        private void toNext(){
-            this.tail = this.tail.next;
-        }
-
-        private void waitActualArgument(){
-            this.tail = this;
-        }
-
-        private FormatArgumentNode copy(){
-            FormatArgumentNode node = new FormatArgumentNode(this.symbol);
-            node.next = this.next == null ? null : next.copy();
-            node.tail = node;
-            return node;
-        }
-
-        private void assign(IExpression expression){
-            if(this.tail.expression == null){
-                this.tail.expression = expression;
+        private void assign(IExpression childExpression){
+            if(argExp == null){
+                argExp = childExpression;
             }else{
-                IExpression newRoot = tail.expression.assembleTree(expression);
-                if(newRoot == null){
+                argExp = argExp.assembleTree(childExpression);
+                if(argExp == null){
                     throw new IllegalArgumentException("lost root on argument assign.");
-                }else{
-                    this.tail.expression = newRoot;
                 }
             }
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package test;
 
-import frog.calculator.util.Iterator;
-import frog.calculator.util.TreeSet;
+import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.TreeSet;
 
 import java.util.Random;
 
