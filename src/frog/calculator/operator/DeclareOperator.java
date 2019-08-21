@@ -4,18 +4,20 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.separator.SeparatorExpression;
+import frog.calculator.space.ISpace;
 
 public class DeclareOperator implements IOperator {
     @Override
-    public IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions) {
-        IExpression exp = expressions[0];
+    public ISpace operate(IExpression exp) {
+        IExpression expression = exp.nextChild();
 
-        IExpression result = exp.interpret();
+        ISpace result = expression.interpret();
 
-        if(exp instanceof SeparatorExpression){
-            SeparatorExpression se = (SeparatorExpression) exp;
+        if(expression instanceof SeparatorExpression){
+            SeparatorExpression se = (SeparatorExpression) expression;
             IExpression variable = se.getLeft();
 
+            IExpressionContext context = expression.getContext();
             ICalculatorSession session = context.getSession();
             session.addSessionVariable(variable);
         }

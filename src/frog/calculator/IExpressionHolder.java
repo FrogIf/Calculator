@@ -38,13 +38,13 @@ public interface IExpressionHolder {
      * 容器开始符
      * @return
      */
-    IExpression getContainerOpen();
+    IExpression getFunArgStart();
 
     /**
      * 容器关闭符
      * @return
      */
-    IExpression getContainerClose();
+    IExpression getFunArgEnd();
 
     /**
      * 获取内置可执行表达式

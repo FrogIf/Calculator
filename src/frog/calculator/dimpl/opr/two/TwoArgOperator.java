@@ -1,29 +1,27 @@
 package frog.calculator.dimpl.opr.two;
 
 import frog.calculator.dimpl.opr.AbstractOperator;
+import frog.calculator.exception.StructureErrorException;
 import frog.calculator.express.IExpression;
-import frog.calculator.operator.IOperator;
-import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
+import frog.calculator.space.ISpace;
 
 public abstract class TwoArgOperator extends AbstractOperator {
 
-    protected abstract double doubleCalculate(double left, double right);
+    protected abstract ISpace doubleCalculate(ISpace left, ISpace right);
 
     @Override
-    public IExpression operate(String symbol, IExpression[] expressions) {
-        if(expressions.length != 2 || expressions[0] == null || expressions[1] == null){
-            throw new IllegalArgumentException("input expressions' number is not right.");
+    public ISpace operate(IExpression exp) {
+        IExpression left = exp.nextChild();
+        IExpression right = exp.nextChild();
+
+        if(exp.hasNextChild()){
+            throw new StructureErrorException(exp.symbol(), exp.order());
         }
 
-        IExpression left = expressions[0];
-        IExpression right = expressions[1];
+        ISpace leftResult = left.interpret();
+        ISpace rightResult = right.interpret();
 
-        IExpression leftResult = left.interpret();
-        IExpression rightResult = right.interpret();
-
-        double result = this.doubleCalculate(DoubleOperatorUtil.resultExpressionToDouble(leftResult), DoubleOperatorUtil.resultExpressionToDouble(rightResult));
-
-        return DoubleOperatorUtil.doubleToResultExpression(result);
+        return this.doubleCalculate(leftResult, rightResult);
     }
 
 

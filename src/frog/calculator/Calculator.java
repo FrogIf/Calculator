@@ -16,6 +16,9 @@ import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
+import frog.calculator.space.CommonCoordinate;
+import frog.calculator.space.ILiteral;
+import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Stack;
 
 public class Calculator {
@@ -47,7 +50,7 @@ public class Calculator {
 
     // create framework inner defined symbol resolver
     private IResolver createRunnableResolver() {
-        // number resolver
+        // value resolver
         IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), resolverResultFactory);
 
         // plus and minus resolver
@@ -67,7 +70,7 @@ public class Calculator {
         declareStart.insert(declareBeginExpression);
         IResolver declareStartListenResolver = new SymbolResolver(resolverResultFactory, declareStart, ResolverResultType.DECLARE_BEGIN);
 
-        // parse execute order : number -> plus and minus -> symbol -> declare check.
+        // parse execute order : value -> plus and minus -> symbol -> declare check.
         ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
 
         chainResolver.addResolver(numberResolver);
@@ -83,14 +86,14 @@ public class Calculator {
         TreeRegister struct = new TreeRegister();
         IExpressionHolder expressionHolder = this.calculatorConfigure.getExpressionHolder();
 
-        String closeSymbol = expressionHolder.getContainerClose().symbol(); // )
+        String closeSymbol = expressionHolder.getFunArgEnd().symbol(); // )
         String assignSymbol = expressionHolder.getAssign().symbol();    // =
         String splitSymbol = expressionHolder.getSeparator().symbol();  // ,
-        String openSymbol = expressionHolder.getContainerOpen().symbol();   // (
+        String openSymbol = expressionHolder.getFunArgStart().symbol();   // (
 
         // declare part's structure symbol. the symbol will be recognize to custom symbol which in front of those structure symbol.
         struct.insert(expressionHolder.getSeparator());
-        struct.insert(expressionHolder.getContainerClose());
+        struct.insert(expressionHolder.getFunArgEnd());
         IResolver structResolver = new SymbolResolver(resolverResultFactory, struct);
 
         /*
@@ -228,9 +231,11 @@ public class Calculator {
 
         IExpression expTree = build(expression, session, context); // 构造解析树
 
-        IExpression result = expTree.interpret(); // 执行计算
+        ISpace result = expTree.interpret(); // 执行计算
 
-        return result.symbol();    // 计算结果
+        ILiteral value = result.getValue(new CommonCoordinate(0));
+
+        return value.value();    // 计算结果
     }
 
     /**

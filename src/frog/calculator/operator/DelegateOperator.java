@@ -1,14 +1,15 @@
 package frog.calculator.operator;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.container.CustomFunctionExpression;
+import frog.calculator.space.CommonSpace;
+import frog.calculator.space.ISpace;
 
 public class DelegateOperator implements IOperator {
     @Override
-    public IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions) {
-        IExpression func = expressions[0];
-        IExpression body = expressions[1];
+    public ISpace operate(IExpression expression) {
+        IExpression func = expression.nextChild();
+        IExpression body = expression.nextChild();
 
         if(func instanceof CustomFunctionExpression){
             CustomFunctionExpression cf = (CustomFunctionExpression) func;
@@ -17,6 +18,6 @@ public class DelegateOperator implements IOperator {
             throw new IllegalArgumentException("can't support expression.");
         }
 
-        return func;
+        return null;
     }
 }

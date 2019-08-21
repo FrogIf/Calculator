@@ -27,11 +27,6 @@ public class SeparatorExpression extends AbstractExpression {
     }
 
     @Override
-    public IExpression interpret() {
-        return this.operator.operate(this.symbol(), this.context, new IExpression[]{this.left, this.right});
-    }
-
-    @Override
     public boolean isLeaf() {
         return false;
     }
@@ -132,5 +127,25 @@ public class SeparatorExpression extends AbstractExpression {
 
     public IExpression getLeft() {
         return left;
+    }
+
+    private int mi = 0;
+
+    @Override
+    public boolean hasNextChild() {
+        return mi < 2;
+    }
+
+    @Override
+    public IExpression nextChild() {
+        if(mi == 0){
+            mi++;
+            return this.left;
+        }else if(mi == 1){
+            mi++;
+            return this.right;
+        }else{
+            return null;
+        }
     }
 }

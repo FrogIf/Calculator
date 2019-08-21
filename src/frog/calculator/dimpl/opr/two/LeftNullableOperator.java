@@ -1,22 +1,29 @@
 package frog.calculator.dimpl.opr.two;
 
-import frog.calculator.dimpl.opr.util.DoubleOperatorUtil;
 import frog.calculator.express.IExpression;
+import frog.calculator.space.ISpace;
 
 public abstract class LeftNullableOperator extends TwoArgOperator {
 
     @Override
-    public IExpression operate(String symbol, IExpression[] expressions) {
-        IExpression left = expressions[0];
-        IExpression right = expressions[1];
+    public ISpace operate(IExpression expression) {
+        IExpression left = expression.nextChild();
+        IExpression right = expression.nextChild();
 
-        double leftNum = left == null ? 0 : DoubleOperatorUtil.resultExpressionToDouble(left.interpret());
         if(right == null){
             throw new IllegalArgumentException("right is null.");
+        }else if(left != null){
+            return this.doubleCalculate(left.interpret(), right.interpret());
         }else{
-            IExpression rightResult = right.interpret();
-            double result = this.doubleCalculate(leftNum, DoubleOperatorUtil.resultExpressionToDouble(rightResult));
-            return DoubleOperatorUtil.doubleToResultExpression(result);
+            // TODO 返回值
+            return null;
         }
+//        double leftNum = left == null ? 0 : DoubleOperatorUtil.resultExpressionToDouble(null);
+//        if(right == null){
+//            throw new IllegalArgumentException("right is null.");
+//        }else{
+//            ISpace rightResult = right.interpret();
+//            return null;
+//        }
     }
 }

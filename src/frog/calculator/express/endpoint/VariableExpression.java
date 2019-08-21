@@ -2,10 +2,11 @@ package frog.calculator.express.endpoint;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
+import frog.calculator.space.ISpace;
 
 public class VariableExpression extends EndPointExpression {
 
-    private IExpression valueExpression;    // 值表达式
+    private ISpace value;
 
     /**
      * 赋值操作符
@@ -16,9 +17,9 @@ public class VariableExpression extends EndPointExpression {
     }
 
     @Override
-    public IExpression interpret() {
-        if(this.valueExpression != null){
-            return this.valueExpression.interpret();
+    public ISpace interpret() {
+        if(this.value != null){
+            return this.value;
         }else{
             // 传递过来的是形参, 则需要从变量表中获取值, 需要注意的是, 获取到的值不会赋值给 this.valueExpression
             IExpression localVariable = context.getLocalVariable(this.symbol);
@@ -37,18 +38,15 @@ public class VariableExpression extends EndPointExpression {
 
     /**
      * 为变量赋值
-     * @param expression
+     * @param value
      */
-    public void assign(IExpression expression){
-        this.valueExpression = expression.interpret();
+    public void assign(ISpace value){
+        this.value = value;
     }
 
     @Override
     public void setExpressionContext(IExpressionContext context) {
         this.context = context;
-        if(this.valueExpression != null){
-            this.valueExpression.setExpressionContext(context);
-        }
     }
 
     @Override

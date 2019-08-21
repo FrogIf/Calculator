@@ -3,6 +3,7 @@ package frog.calculator.express.container;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
@@ -42,13 +43,13 @@ public class FunctionExpression extends ContainerExpression{
         return true;
     }
 
-    public IExpression call(IExpression[] expressions){
+    public ISpace call(IExpression[] expressions){
         // TODO 实现调用
         return this.interpret();
     }
 
     @Override
-    public IExpression interpret() {
+    public ISpace interpret() {
         if(!args.isEmpty()){
             IExpression[] expressions = new IExpression[args.size()];
             Iterator<Argument> iterator = args.iterator();
@@ -56,9 +57,9 @@ public class FunctionExpression extends ContainerExpression{
                 Argument arg = iterator.next();
                 expressions[i] = arg.argExp;
             }
-            return this.operator.operate(this.symbol(), context, expressions);
+            return this.operator.operate(this);
         }else{
-            return this.operator.operate(this.symbol(), context, null);
+            return this.operator.operate(this);
         }
     }
 

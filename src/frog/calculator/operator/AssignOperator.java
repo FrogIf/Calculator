@@ -1,20 +1,26 @@
 package frog.calculator.operator;
 
+import frog.calculator.exception.StructureErrorException;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.endpoint.VariableExpression;
+import frog.calculator.space.ISpace;
+import frog.calculator.util.StringUtils;
 
 public class AssignOperator implements IOperator {
 
     @Override
-    public IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions) {
-        IExpression variable = expressions[0];
-        IExpression value = expressions[1].interpret();
+    public ISpace operate(IExpression exp) {
+        IExpression variable = exp.nextChild();
+        IExpression valueExp = exp.nextChild();
+        if(variable == null || valueExp == null){
+            throw new StructureErrorException(exp.symbol(), exp.order());
+        }
+        ISpace value = valueExp.interpret();
 
         if(variable instanceof VariableExpression){
             ((VariableExpression) variable).assign(value);
         }else{
-            throw new IllegalArgumentException("can't support type.");
+            throw new UnsupportedOperationException(StringUtils.concat(variable.symbol(), "can't be assign a literal."));
         }
 
         return value;

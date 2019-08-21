@@ -3,6 +3,7 @@ package frog.calculator.express.container;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.endpoint.VariableExpression;
+import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
@@ -82,7 +83,7 @@ public class CustomFunctionExpression extends FunctionExpression {
      * @return
      */
     @Override
-    public IExpression call(IExpression[] expression){
+    public ISpace call(IExpression[] expression){
         if(this.funBody == null){
             throw new IllegalArgumentException("function body is empty.");
         }
@@ -95,7 +96,7 @@ public class CustomFunctionExpression extends FunctionExpression {
             while(iterator.hasNext()){
                 FormatArgument next = iterator.next();
                 VariableExpression variableExpression = new VariableExpression(next.symbol);    // TODO 需要解耦
-                if(next.argExp != null) variableExpression.assign(expression[i]);
+                if(next.argExp != null) variableExpression.assign(expression[i].interpret());
                 context.addLocalVariable(variableExpression);
                 i++;
             }
@@ -107,7 +108,7 @@ public class CustomFunctionExpression extends FunctionExpression {
     }
 
     @Override
-    public IExpression interpret() {
+    public ISpace interpret() {
         if(this.funBody == null){
             throw new IllegalArgumentException("function body is empty.");
         }
@@ -119,7 +120,7 @@ public class CustomFunctionExpression extends FunctionExpression {
             while(iterator.hasNext()){
                 FormatArgument next = iterator.next();
                 VariableExpression variableExpression = new VariableExpression(next.symbol);    // TODO 需要解耦
-                if(next.argExp != null) variableExpression.assign(next.argExp);
+                if(next.argExp != null) variableExpression.assign(next.argExp.interpret());
                 context.addLocalVariable(variableExpression);
             }
         }

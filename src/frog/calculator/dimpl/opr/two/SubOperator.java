@@ -1,8 +1,10 @@
 package frog.calculator.dimpl.opr.two;
 
+import frog.calculator.space.ISpace;
+
 public class SubOperator extends LeftNullableOperator {
     @Override
-    protected double doubleCalculate(double left, double right) {
-        return left - right;
+    protected ISpace doubleCalculate(ISpace left, ISpace right) {
+        return null;
     }
 }

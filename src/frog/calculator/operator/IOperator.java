@@ -1,10 +1,10 @@
 package frog.calculator.operator;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
+import frog.calculator.space.ISpace;
 
 public interface IOperator {
 
-    IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions);
+    ISpace operate(IExpression exp);
 
 }

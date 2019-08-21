@@ -4,10 +4,9 @@ import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.ISpace;
 
 public class EndPointExpression extends AbstractExpression {
-
-    private IOperator operator;
 
     protected IExpressionContext context;
 
@@ -32,8 +31,8 @@ public class EndPointExpression extends AbstractExpression {
     }
 
     @Override
-    public IExpression interpret() {
-        return operator.operate(this.symbol(), context, new IExpression[]{this});
+    public ISpace interpret() {
+        return operator.operate(this);
     }
 
     @Override
@@ -55,5 +54,15 @@ public class EndPointExpression extends AbstractExpression {
     @Override
     public void setExpressionContext(IExpressionContext context) {
         this.context = context;
+    }
+
+    @Override
+    public boolean hasNextChild() {
+        return false;
+    }
+
+    @Override
+    public IExpression nextChild() {
+        return null;
     }
 }

@@ -36,12 +36,6 @@ public abstract class SingleChildSeparatorExpression extends SeparatorExpression
         }
     }
 
-
-    @Override
-    public IExpression interpret() {
-        return this.operator.operate(this.symbol(), context, new IExpression[]{this.child});
-    }
-
     @Override
     public void setExpressionContext(IExpressionContext context) {
         this.context = context;

@@ -23,5 +23,4 @@ public class FactorialOperator extends SingleArgOperator {
     private boolean isInteger(double value){
         return value == (int)value;
     }
-
 }

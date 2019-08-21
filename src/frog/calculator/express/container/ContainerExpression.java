@@ -3,7 +3,6 @@ package frog.calculator.express.container;
 import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.express.endpoint.MarkExpression;
 import frog.calculator.operator.IOperator;
 
 public class ContainerExpression extends AbstractExpression {
@@ -111,11 +110,6 @@ public class ContainerExpression extends AbstractExpression {
     }
 
     @Override
-    public IExpression interpret() {
-        return operator.operate(this.symbol(), context, new IExpression[]{body, new MarkExpression(closeSymbol)});
-    }
-
-    @Override
     public boolean isLeaf() {
         return isClose;
     }
@@ -136,6 +130,23 @@ public class ContainerExpression extends AbstractExpression {
     public void setExpressionContext(IExpressionContext context) {
         this.context = context;
         if(this.body != null) this.body.setExpressionContext(context);
+    }
+
+    private int mi = 0;
+
+    @Override
+    public boolean hasNextChild() {
+        return mi == 0;
+    }
+
+    @Override
+    public IExpression nextChild() {
+        if(mi == 0){
+            mi++;
+            return this.body;
+        }else{
+            return null;
+        }
     }
 
 

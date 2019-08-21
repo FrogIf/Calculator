@@ -1,12 +1,12 @@
 package frog.calculator.dimpl.opr.fun;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.ISpace;
 
 public class SigmaOperator implements IOperator {
     @Override
-    public IExpression operate(String symbol, IExpressionContext context, IExpression[] expressions) {
+    public ISpace operate(IExpression exp) {
         return null;
     }
 }

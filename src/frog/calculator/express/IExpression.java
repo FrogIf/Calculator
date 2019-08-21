@@ -1,6 +1,7 @@
 package frog.calculator.express;
 
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.ISpace;
 
 public interface IExpression extends Cloneable {
 
@@ -26,12 +27,6 @@ public interface IExpression extends Cloneable {
      * @return
      */
     String symbol();
-
-    /**
-     * 解释执行表达式
-     * @return
-     */
-    IExpression interpret();
 
     /**
      * 是否是叶子节点
@@ -74,4 +69,16 @@ public interface IExpression extends Cloneable {
      * @param context
      */
     void setExpressionContext(IExpressionContext context);
+
+    /**
+     * 解释执行表达式
+     * @return
+     */
+    ISpace interpret();
+
+    boolean hasNextChild();
+
+    IExpression nextChild();
+
+    IExpressionContext getContext();
 }
