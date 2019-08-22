@@ -42,4 +42,6 @@ public interface ISpace {
      */
     IList<ILiteral> getValues();
 
+    IList<ISpace> getSubspaces();
+
 }

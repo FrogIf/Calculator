@@ -71,6 +71,11 @@ public class CommonSpace implements ISpace {
         return new UnmodifiableList<>(new ArrayList<>(this.values));
     }
 
+    @Override
+    public IList<ISpace> getSubspaces() {
+        return null;
+    }
+
     private int locate(ICoordinate coordinate){
         ICoordinateViewer viewer = coordinate.getViewer();
 

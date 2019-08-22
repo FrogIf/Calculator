@@ -20,6 +20,10 @@ public class TestApp {
 
     public static void main(String[] args){
         init();
+        // +, avg, number
+
+
+        // 交错矩阵怎么办?
         // 创建operator传参对象
         // 创建list表达式
 
