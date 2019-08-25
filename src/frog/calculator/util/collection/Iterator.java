@@ -1,10 +1,5 @@
 package frog.calculator.util.collection;
 
-public interface Iterator<E> {
-
-    boolean hasNext();
-
-    E next();
-
+public interface Iterator<E> extends Itraveller<E> {
     void remove();
 }

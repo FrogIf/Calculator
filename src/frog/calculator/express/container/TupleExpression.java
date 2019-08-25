@@ -110,7 +110,7 @@ public class TupleExpression extends AbstractExpression {
     @Override
     public ISpace interpret() {
         Iterator<Element> iterator = this.elements.iterator();
-        CommonSpaceBuilder builder = new CommonSpaceBuilder();
+        SpaceBuilder builder = new SpaceBuilder();
         builder.setDimension(1);
         builder.setWidth(0, this.elements.size());
         ISpace space = builder.build();
@@ -118,8 +118,8 @@ public class TupleExpression extends AbstractExpression {
         while(iterator.hasNext()){
             Element next = iterator.next();
             ISpace cSpace = next.expression.interpret();
-            ILiteral value = cSpace.getValue(new CommonCoordinate(0));
-            space.addValue(new CommonCoordinate(i), value);
+            IPoint value = cSpace.getPoint(new Coordinate(i));
+            space.addPoint(value);
             i++;
         }
         return space;

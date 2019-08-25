@@ -16,8 +16,8 @@ import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
-import frog.calculator.space.CommonCoordinate;
-import frog.calculator.space.ILiteral;
+import frog.calculator.space.Coordinate;
+import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Stack;
 
@@ -233,9 +233,9 @@ public class Calculator {
 
         ISpace result = expTree.interpret(); // 执行计算
 
-        ILiteral value = result.getValue(new CommonCoordinate(0));
+        IPoint value = result.getPoint(new Coordinate(0));
 
-        return value.value();    // 计算结果
+        return (String) value.intrinsic();    // 计算结果
     }
 
     /**

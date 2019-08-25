@@ -9,18 +9,18 @@ public class AvgOperator extends AbstractOperator {
     public ISpace operate(IExpression exp) {
         IExpression child = exp.nextChild();
         ISpace iSpace = child.interpret();
-        int width = iSpace.width(0);
+        int width = iSpace.width(null);
         double sum = 0;
         for(int i = 0; i < width; i++){
-            ILiteral value = iSpace.getValue(new CommonCoordinate(i));
-            sum += Double.parseDouble(value.value());
+            IPoint value = iSpace.getPoint(new Coordinate(i));
+            sum += Double.parseDouble((String) value.intrinsic());
         }
 
-        ISpaceBuilder builder = new CommonSpaceBuilder();
+        SpaceBuilder builder = new SpaceBuilder();
         builder.setDimension(1);
         builder.setWidth(0, 1);
         ISpace space = builder.build();
-        space.addValue(new CommonCoordinate(0), new CommonLiteral(String.valueOf(sum / width)));
+        space.addPoint(new SymbolPoint(String.valueOf(sum / width), new Coordinate(0)));
         return space;
     }
 }

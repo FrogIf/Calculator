@@ -2,7 +2,6 @@ package frog.calculator.operator;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.container.CustomFunctionExpression;
-import frog.calculator.space.CommonSpace;
 import frog.calculator.space.ISpace;
 
 public class DelegateOperator implements IOperator {
