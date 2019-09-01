@@ -1,21 +1,32 @@
 package frog.calculator.util.collection;
 
-public class TreeSet<T extends Comparable<T>> implements ISet<T> {
+import frog.calculator.util.IComparator;
 
-    private AVLNode<T> root;
+public class TreeSet<T> implements ISet<T> {
+
+    private AVLNode root;
 
     private int modCount = 0;
+
+    private final IComparator<T> comparator;
+
+    public TreeSet(IComparator<T> comparator) {
+        if(comparator == null){
+            throw new IllegalArgumentException("comparator is null.");
+        }
+        this.comparator = comparator;
+    }
 
     @Override
     public boolean add(T t){
         if(root == null){
-            root = new AVLNode<>();
+            root = new AVLNode();
             root.data = t;
             modCount = 1;
         }else{
-            AVLNode<T> nextTree = new AVLNode<>();
+            AVLNode nextTree = new AVLNode();
             nextTree.data = t;
-            root = root.create(nextTree, this);
+            root = root.create(nextTree);
         }
         return true;
     }
@@ -24,7 +35,7 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
     public boolean remove(T t){
         if(root != null){
             int size = this.modCount;
-            root = root.delete(t, this);
+            root = root.delete(t);
             return size > this.modCount;
         }else{
             return false;
@@ -69,12 +80,12 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
 
         private int expectedModCount = modCount;
 
-        private Stack<AVLNode<T>> line = new Stack<>();
+        private Stack<AVLNode> line = new Stack<>();
 
         private T viewData = null;
 
         private TreeIterator() {
-            AVLNode<T> cursor = TreeSet.this.root;
+            AVLNode cursor = TreeSet.this.root;
             while(cursor != null){
                 line.push(cursor);
                 cursor = cursor.left;
@@ -88,12 +99,12 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
 
         @Override
         public T next() {
-            AVLNode<T> view = line.top();
+            AVLNode view = line.top();
             this.viewData = view.data;
 
             if(view.right != null){
                 line.pop();
-                AVLNode<T> cursor = view.right;
+                AVLNode cursor = view.right;
                 while(cursor != null){
                     line.push(cursor);
                     cursor = cursor.left;
@@ -111,7 +122,7 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
                 throw new IllegalStateException("concurrent modify exception.");
             }
 
-            AVLNode<T> cursor = TreeSet.this.root = TreeSet.this.root.delete(viewData, TreeSet.this);
+            AVLNode cursor = TreeSet.this.root = TreeSet.this.root.delete(viewData);
             this.expectedModCount--;
 
             T vData = viewData;
@@ -119,7 +130,8 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
             // rebuild the line
             line.clear();
             while(cursor != null){
-                int mark = vData.compareTo(cursor.data);
+                int mark = comparator.compare(vData, cursor.data);
+//                int mark = vData.compareTo(cursor.data);
                 if(mark < 0){
                     if(cursor.right == null){
                         break;
@@ -134,11 +146,11 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
         }
     }
 
-    private static class AVLNode<T extends Comparable<T>> {
+    private class AVLNode {
 
-        private AVLNode<T> left;
+        private AVLNode left;
 
-        private AVLNode<T> right;
+        private AVLNode right;
 
         private int height = 1;   // default tree height is 1. because there must be itself.
 
@@ -153,7 +165,8 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
         private T retrieve(T t){
             T result = null;
 
-            int mark = t.compareTo(this.data);
+//            int mark = t.compareTo(this.data);
+            int mark = TreeSet.this.comparator.compare(t, this.data);
 
             if(mark == 0){
                 result = this.data;
@@ -169,12 +182,12 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
         /**
          * insert node into avl tree
          * @param node need to insert
-         * @param belong the tree belong to which set, to update belong's modCount. this class is static, so param "belong" is necessary.
          * @return new tree root
          */
-        private AVLNode<T> create(AVLNode<T> node, TreeSet<T> belong){
+        private AVLNode create(AVLNode node){
             T t = node.data;
-            int mark = data.compareTo(t);
+            int mark = TreeSet.this.comparator.compare(data, t);
+//            int mark = data.compareTo(t);
 
             if(mark == 0){
                 // if insert node's is exists, update this.
@@ -182,16 +195,16 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
             }else if(mark > 0){ // insert into left branch
                 if(this.left == null){
                     this.left = node;
-                    belong.modCount++;
+                    TreeSet.this.modCount++;
                 }else{
-                    this.left = this.left.create(node, belong);
+                    this.left = this.left.create(node);
                 }
             }else{  // insert into right branch
                 if(this.right == null){
                     this.right = node;
-                    belong.modCount++;
+                    TreeSet.this.modCount++;
                 }else{
-                    this.right = this.right.create(node, belong);
+                    this.right = this.right.create(node);
                 }
             }
 
@@ -203,37 +216,37 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
         /**
          * delete assign data
          * @param t aim data
-         * @param belong which tree that current node belong.
          * @return new tree root.
          */
-        private AVLNode<T> delete(T t, TreeSet<T> belong){
-            int mark = data.compareTo(t);
+        private AVLNode delete(T t){
+//            int mark = data.compareTo(t);
+            int mark = TreeSet.this.comparator.compare(data, t);
 
-            AVLNode<T> root = this;
+            AVLNode root = this;
             if(mark == 0){  // find it.
                 if(this.left == null && this.right == null){
                     root = null;
-                    belong.modCount--;
+                    TreeSet.this.modCount--;
                 }else if(this.left == null){
                     root = this.right;
-                    belong.modCount--;
+                    TreeSet.this.modCount--;
                 }else if(this.right == null){
                     root = this.left;
-                    belong.modCount--;
+                    TreeSet.this.modCount--;
                 }else{  // need to delete mid node. but left and right both is not null.
-                    AVLNode<T> lMax = findMax(this.left);
+                    AVLNode lMax = findMax(this.left);
                     T oldData = this.data;
                     this.data = lMax.data;
                     lMax.data = oldData;
-                    this.left = this.left.delete(t, belong);
+                    this.left = this.left.delete(t);
                 }
             }else if(mark > 0){ // delete from left.
                 if(this.left != null){
-                    this.left = this.left.delete(t, belong);
+                    this.left = this.left.delete(t);
                 }
             }else{  // delete from right.
                 if(this.right != null){
-                    this.right = this.right.delete(t, belong);
+                    this.right = this.right.delete(t);
                 }
             }
 
@@ -245,8 +258,8 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
             return root;
         }
 
-        private AVLNode<T> rRotate(AVLNode<T> root){
-            AVLNode<T> newRoot = root.left;
+        private AVLNode rRotate(AVLNode root){
+            AVLNode newRoot = root.left;
             root.left = newRoot.right;
             newRoot.right = root;
 
@@ -256,8 +269,8 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
             return newRoot;
         }
 
-        private AVLNode<T> lRotate(AVLNode<T> root){
-            AVLNode<T> newRoot = root.right;
+        private AVLNode lRotate(AVLNode root){
+            AVLNode newRoot = root.right;
             root.right = newRoot.left;
             newRoot.left = root;
 
@@ -267,19 +280,19 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
         }
 
         // 获取当前树左右子树高度中更高的那一个的高度
-        private static int maxHigh(AVLNode nodeA, AVLNode nodeB){
+        private int maxHigh(AVLNode nodeA, AVLNode nodeB){
             int aH = height(nodeA);
             int bH = height(nodeB);
             return aH > bH ? aH : bH;
         }
 
-        private static int balanceFactor(AVLNode nodeA, AVLNode nodeB){
+        private int balanceFactor(AVLNode nodeA, AVLNode nodeB){
             return height(nodeA) - height(nodeB);
         }
 
         // 树自平衡调整
         // 每插入或删除一个节点就调用一次进行自平衡
-        private AVLNode<T> balanceTree(){
+        private AVLNode balanceTree(){
             /*
              * 由于每一次插入或删除都会检查平衡性
              * 所以有:
@@ -290,7 +303,7 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
              *
              * 该平衡操作是自下而上的, 所以平衡只需要关注当前节点树即可, 下级树肯定是保证平衡的
              */
-            AVLNode<T> root = this;
+            AVLNode root = this;
 
             int bf = balanceFactor(this.left, this.right);  // 实际上每个增删操作只会使树的高度变化为1, 所以bf的取值范围是 bf >= -2 && bf <= 2
 
@@ -318,15 +331,15 @@ public class TreeSet<T extends Comparable<T>> implements ISet<T> {
         }
 
         // 判断树高度
-        private static void judgeTreeHeight(AVLNode root){
+        private void judgeTreeHeight(AVLNode root){
             root.height = maxHigh(root.left, root.right) + 1;
         }
 
-        private static int height(AVLNode root){
+        private int height(AVLNode root){
             return root == null ? 0 : root.height;
         }
 
-        private static <K extends Comparable<K>> AVLNode<K> findMax(AVLNode<K> root){
+        private AVLNode findMax(AVLNode root){
             if(root.right != null){
                 return findMax(root.right);
             }else{

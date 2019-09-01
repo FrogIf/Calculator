@@ -54,7 +54,7 @@ public class ArrayList<E> implements IList<E> {
 
     private void ensureCapacityInternal(int needCapacity){
         if(needCapacity > array.length){
-            Object[] newArr = new Object[array.length + array.length >> 1];
+            Object[] newArr = new Object[array.length + (array.length >> 1)];
             for(int i = 0; i < array.length; i++){
                 newArr[i] = array[i];
             }

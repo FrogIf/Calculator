@@ -12,4 +12,10 @@ public interface ICoordinate {
     int dimension();
 
     Itraveller<Integer> traveller();
+
+    /**
+     * 判断是否是原点
+     * @return
+     */
+    boolean isOrigin();
 }

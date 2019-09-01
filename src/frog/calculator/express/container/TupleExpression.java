@@ -119,7 +119,7 @@ public class TupleExpression extends AbstractExpression {
             Element next = iterator.next();
             ISpace cSpace = next.expression.interpret();
             IPoint value = cSpace.getPoint(new Coordinate(i));
-            space.addPoint(value);
+            space.addPoint(value, new Coordinate(i));
             i++;
         }
         return space;

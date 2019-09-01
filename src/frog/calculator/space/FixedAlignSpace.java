@@ -58,35 +58,47 @@ public class FixedAlignSpace<T> implements ISpace<T> {
     @Override
     @SuppressWarnings("unchecked")
     public ISpace<T> getSubspace(ICoordinate coordinate) {
-        int di = coordinate.dimension();
-        if(di > this.dimension){
+        int dim = coordinate.dimension();
+        if(dim > this.dimension){
             throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
                     + this.dimension + ", input dimension : " + coordinate.dimension());
         }
 
         Itraveller<Integer> traveller = coordinate.traveller();
 
-        int offset = locate(traveller);
+
+        int offset = 0;
+        int di = 0;
+        int len = values.length;
+        int w;
+        int p = traveller.hasNext() ? traveller.next() : 0;
+
+        while(traveller.hasNext()){
+            w = widthInfo[di];
+
+            if(p >= w){
+                return null;
+            }
+
+            len = len / w;
+            offset += len * p;
+
+            di++;
+
+            p = traveller.next();
+        }
 
         if(offset == -1){ return null; }
 
         int l = 1;
         int[] widths = new int[this.dimension - di];
-        for(int m = di, i = 0; m < this.widthInfo.length; m++, i++){
+        for(int m = di, i = 0; m < this.dimension; m++, i++){
             l *= widths[i] = widthInfo[m];
         }
 
+        // TODO 使得对子空间的修改可以反映到父空间
         return new FixedAlignSpace<T>(widths, new ArrayList<>(Arrays.copy(this.values, new IPoint[l], offset, offset + l - 1)));
     }
-
-    @Override
-    public ISpace<T> getNextLevelSubspace(int index) {
-        if(this.dimension <= 1){
-            return null;
-        }
-        return this.getSubspace(new Coordinate(index));
-    }
-
 
     @Override
     public int dimension() {
@@ -110,12 +122,11 @@ public class FixedAlignSpace<T> implements ISpace<T> {
     }
 
     @Override
-    public void addPoint(IPoint<T> point) {
-        if(point == null || point.getCoordinate() == null){
+    public void addPoint(IPoint<T> point, ICoordinate coordinate) {
+        if(point == null || coordinate == null){
             throw new IllegalArgumentException("point info is null.");
         }
 
-        ICoordinate coordinate = point.getCoordinate();
         if(coordinate.dimension() > this.dimension){
             throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
                     + this.dimension + ", input dimension : " + coordinate.dimension());

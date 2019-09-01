@@ -4,9 +4,8 @@ public class SymbolPoint extends AbstractPoint<String> {
 
     private String symbol;
 
-    public SymbolPoint(String symbol, ICoordinate coordinate) {
+    public SymbolPoint(String symbol) {
         this.symbol = symbol;
-        this.coordinate = coordinate;
     }
 
     @Override
@@ -15,8 +14,13 @@ public class SymbolPoint extends AbstractPoint<String> {
     }
 
     @Override
-    public ICoordinate getCoordinate() {
-        return this.coordinate;
+    public int getAxialValue() {
+        return this.axialValue;
+    }
+
+    @Override
+    public void setAxialValue(int val) {
+        this.axialValue = val;
     }
 
     @Override

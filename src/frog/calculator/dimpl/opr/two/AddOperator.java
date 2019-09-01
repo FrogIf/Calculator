@@ -48,7 +48,7 @@ public class AddOperator extends LeftNullableOperator{
             double lvv = lv == null ? 0 : Double.parseDouble((String) lv.intrinsic());
             double rvv = rv == null ? 0 : Double.parseDouble((String) rv.intrinsic());
 
-            result.add(i, new SymbolPoint(String.valueOf(lvv + rvv), (lv == null ? rv.getCoordinate() : lv.getCoordinate())));
+            result.add(i, new SymbolPoint(String.valueOf(lvv + rvv)));
         }
 
         return builder.build();

@@ -15,7 +15,7 @@ public class NumberDoubleOperator extends AbstractOperator {
         builder.setWidth(0, 1);
         ISpace space = builder.build();
 
-        space.addPoint(new SymbolPoint(expression.symbol(), new Coordinate(0)));
+        space.addPoint(new SymbolPoint(expression.symbol()), AbstractCoordinate.ORIGIN);
 
         return space;
     }

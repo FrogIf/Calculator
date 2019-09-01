@@ -20,7 +20,7 @@ public class AvgOperator extends AbstractOperator {
         builder.setDimension(1);
         builder.setWidth(0, 1);
         ISpace space = builder.build();
-        space.addPoint(new SymbolPoint(String.valueOf(sum / width), new Coordinate(0)));
+        space.addPoint(new SymbolPoint(String.valueOf(sum / width)), AbstractCoordinate.ORIGIN);
         return space;
     }
 }

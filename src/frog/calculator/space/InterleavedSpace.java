@@ -1,12 +1,13 @@
 package frog.calculator.space;
 
+import frog.calculator.util.ComparableComparator;
 import frog.calculator.util.collection.*;
 
 public class InterleavedSpace<T> implements ISpace<T> {
 
-    private ISet<XSpace<T>> subspaces = new TreeSet<>();
+    private ISet<XSpace<T>> subspaces = new TreeSet<>(ComparableComparator.<XSpace<T>>getInstance());
 
-    private ISet<IPoint<T>> points = new TreeSet<>();
+    private ISet<IPoint<T>> points = new TreeSet<>(PointComparator.getInstance());
 
     private int dimension;
 
@@ -16,26 +17,39 @@ public class InterleavedSpace<T> implements ISpace<T> {
             throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
                     + this.dimension + ", input dimension : " + coordinate.dimension());
         }
+
         Itraveller<Integer> traveller = coordinate.traveller();
-        if(traveller.hasNext()){
-            int n = traveller.next();
-            ISpace<T> space = this;
-            if(traveller.hasNext()){
-                while(traveller.hasNext() && space != null){
-                    if(n == 0){
-                        n = traveller.next();
-                        continue;
-                    }
-                    space = space.getNextLevelSubspace(n);
-                    n = traveller.next();
-                }
-                return space == null ? null : space.getPoint(new Coordinate(n));
-            }else{
-                XPoint<T> xPoint = new XPoint<>(coordinate);
-                return points.find(xPoint);
+        int pos = 0;
+        int di = this.dimension;
+        while(traveller.hasNext()){
+            di--;
+            if((pos = traveller.next()) != 0){
+                break;
             }
+        }
+
+        XSpace<T> finder = new XSpace<>(pos);
+
+        if(di > 0 || traveller.hasNext()){
+            XSpace<T> xSpace = this.subspaces.find(finder);
+            if(xSpace == null){ return null; }
+            ISpace<T> space = xSpace.space;
+            while(traveller.hasNext()){
+                di--;
+                if((pos = traveller.next()) != 0){
+                    if(!(space instanceof InterleavedSpace)){ break; }
+                    else if(traveller.hasNext()){
+                        finder.index = pos;
+                        xSpace = ((InterleavedSpace<T>) space).subspaces.find(finder);
+                        if(xSpace == null){ return null; }
+                        else{ space = xSpace.space; }
+                    }
+                }
+            }
+
+            return space.getPoint(new Coordinate(di == 0 ? pos : 0));
         }else{
-            XPoint<T> xPoint = new XPoint<>(coordinate);
+            XPoint<T> xPoint = new XPoint<>(pos);
             return points.find(xPoint);
         }
     }
@@ -50,16 +64,35 @@ public class InterleavedSpace<T> implements ISpace<T> {
         Itraveller<Integer> traveller = coordinate.traveller();
         ISpace<T> space = this;
 
-        while(traveller.hasNext() && space != null){
-            space = space.getNextLevelSubspace(traveller.next());
+        int pos = 0;
+        int di = 0;
+        while(traveller.hasNext() && (pos = traveller.next()) == 0){
+            di++;
+        }
+
+        if(pos != 0 && traveller.hasNext()){
+            XSpace<T> finder = new XSpace<>(pos);
+            XSpace<T> xSpace;
+            space = this;
+
+            while(traveller.hasNext()){
+                if(pos != 0){
+                    if(!(space instanceof InterleavedSpace)){
+                        space = space.getSubspace(new ContinueCoordinate(traveller, this.dimension - di));
+                    }else{
+                        finder.index = pos;
+                        xSpace = ((InterleavedSpace<T>) space).subspaces.find(finder);
+                        if(xSpace == null){ return null; }
+                        else{ space = xSpace.space; }
+                    }
+                }
+
+                di++;
+                pos = traveller.next();
+            }
         }
 
         return space;
-    }
-
-    @Override
-    public ISpace<T> getNextLevelSubspace(int index) {
-        return this.getSubspace(index);
     }
 
     @Override
@@ -69,65 +102,58 @@ public class InterleavedSpace<T> implements ISpace<T> {
 
     @Override
     public int width(ICoordinate coordinate) {
-        Itraveller<Integer> traveller = coordinate.traveller();
-        if(traveller.hasNext()){
-            ISpace subspace = this.getSubspace(coordinate);
-            return subspace == null ? -1 : subspace.width(Coordinate.EMPTY);
+        ISpace<T> space = this.getSubspace(coordinate);
+        if(space == null){
+            return 0;
         }else{
-            return this.subspaces.size() + 1;
+            if(space instanceof InterleavedSpace){
+                if(coordinate.dimension() == this.dimension){
+                    return ((InterleavedSpace)space).points.size();
+                }else{
+                    return ((InterleavedSpace)space).subspaces.size() + 1;
+                }
+            }else{
+                return space.width(Coordinate.ORIGIN);
+            }
         }
     }
 
     @Override
-    public void addPoint(IPoint<T> point) {
-        if(point == null || point.getCoordinate() == null){
+    public void addPoint(IPoint<T> point, ICoordinate coordinate) {
+        if(point == null || coordinate == null){
             throw new IllegalArgumentException("point info is null.");
         }
 
-        ICoordinate coordinate = point.getCoordinate();
         if(coordinate.dimension() > this.dimension){
             this.dimension = coordinate.dimension();
         }
 
         Itraveller<Integer> traveller = coordinate.traveller();
-        if(traveller.hasNext()){
-            int n = traveller.next();
-            ISpace<T> space = this;
-            if(traveller.hasNext()){
-                while(traveller.hasNext()){
-                    if(n == 0){
-                        n = traveller.next();
-                        continue;
-                    }
-                    ISpace<T> s = space.getNextLevelSubspace(n);
-                    if(s == null) { break; }
-                    space = s;
-                    n = traveller.next();
-                }
-                if(!traveller.hasNext()) {
-                    space.addPoint(new ReduceDimensionPoint<>(point, new Coordinate(n)));
-                }else{
-                    if(!(space instanceof InterleavedSpace)){
-                        throw new IllegalStateException("not support space extend.");
-                    }
-                    while(traveller.hasNext()){
-                        ISpace<T> s = new InterleavedSpace<>();
-                        ((InterleavedSpace<T>)space).subspaces.add(new XSpace<>(n, s));
-                        space = s;
-                        n = traveller.next();
-                    }
-                    ((InterleavedSpace<T>)space).points.add(point);
-                }
-            }else{
-                if(!points.add(point)){
-                    throw new IllegalStateException("the point has exists.");
-                }
-            }
-        }else{
-            if(!points.add(point)){
-                throw new IllegalStateException("the point has exists.");
+        int pos = 0;
+        int di = 0;
+        while(traveller.hasNext()){
+            di++;
+            if((pos = traveller.next()) != 0){
+                break;
             }
         }
+
+        if(!traveller.hasNext()){
+            point.setAxialValue(pos);
+            if(!this.points.add(point)){
+                throw new IllegalStateException("the point has exists.");
+            }
+        }else{
+            XSpace<T> space = this.subspaces.find(new XSpace<>(pos));
+            if(space != null){
+                space.space.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
+            }else{
+                ISpace<T> subSpace = new InterleavedSpace<>();
+                subSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
+                this.subspaces.add(new XSpace<>(pos, subSpace));
+            }
+        }
+
     }
 
     @Override
@@ -152,36 +178,36 @@ public class InterleavedSpace<T> implements ISpace<T> {
         return new UnmodifiableList<>(result);
     }
 
-    private ISpace<T> getSubspace(int index){
-        Iterator<XSpace<T>> iterator = this.subspaces.iterator();
-        while(iterator.hasNext()){
-            XSpace<T> xspace = iterator.next();
-            if(index == xspace.index){
-                return xspace.space;
-            }
-        }
-        return null;
-    }
+    private static class ContinueCoordinate extends AbstractCoordinate{
 
-    private static class ReduceDimensionPoint<T> extends AbstractPoint<T>{
+        private Itraveller<Integer> traveller;
 
-        private IPoint<T> point;
+        private int dimension;
 
-        private ICoordinate coordinate;
-
-        private ReduceDimensionPoint(IPoint<T> point, ICoordinate coordinate) {
-            this.point = point;
-            this.coordinate = coordinate;
+        private ContinueCoordinate(Itraveller<Integer> traveller, int dimension) {
+            this.traveller = traveller;
+            this.dimension = dimension;
         }
 
         @Override
-        public T intrinsic() {
-            return point.intrinsic();
+        public void add(int axialValue) {
+            throw new IllegalStateException("this object can't support this method.");
         }
 
         @Override
-        public ICoordinate getCoordinate() {
-            return coordinate;
+        public int dimension() {
+            return this.dimension;
+        }
+
+        @Override
+        public Itraveller<Integer> traveller() {
+            return traveller;
+        }
+
+        @Override
+        public boolean isOrigin() {
+            // 判断是否是原点
+            return false;
         }
     }
 
@@ -193,6 +219,10 @@ public class InterleavedSpace<T> implements ISpace<T> {
             this.space = space;
         }
 
+        private XSpace(int index){
+            this.index = index;
+        }
+
         @Override
         public int compareTo(XSpace<T> o) {
             return this.index - o.index;
@@ -201,10 +231,10 @@ public class InterleavedSpace<T> implements ISpace<T> {
 
     private static class XPoint<T> extends AbstractPoint<T> {
 
-        private ICoordinate coordinate;
+        private final int axialValue;
 
-        private XPoint(ICoordinate coordinate) {
-            this.coordinate = coordinate;
+        public XPoint(int axialValue) {
+            this.axialValue = axialValue;
         }
 
         @Override
@@ -213,8 +243,13 @@ public class InterleavedSpace<T> implements ISpace<T> {
         }
 
         @Override
-        public ICoordinate getCoordinate() {
-            return this.coordinate;
+        public int getAxialValue() {
+            return this.axialValue;
+        }
+
+        @Override
+        public void setAxialValue(int val) {
+            // do nothing.
         }
 
     }
