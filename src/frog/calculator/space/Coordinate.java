@@ -38,9 +38,4 @@ public class Coordinate extends AbstractCoordinate {
         return this.list.iterator();
     }
 
-    @Override
-    public boolean isOrigin() {
-        return this.isOrigin;
-    }
-
 }

@@ -28,10 +28,5 @@ public abstract class AbstractCoordinate implements ICoordinate {
                 }
             };
         }
-
-        @Override
-        public boolean isOrigin() {
-            return true;
-        }
     };
 }

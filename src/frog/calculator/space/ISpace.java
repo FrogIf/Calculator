@@ -46,6 +46,4 @@ public interface ISpace<T> {
      */
     ISpace<T> getSubspace(ICoordinate coordinate);
 
-//    ISpace<T> getNextLevelSubspace(int index);
-
 }
