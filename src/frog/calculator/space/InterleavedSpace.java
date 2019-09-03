@@ -22,17 +22,31 @@ public class InterleavedSpace<T> implements ISpace<T> {
         }
 
         Itraveller<Integer> traveller = coordinate.traveller();
-        int pos = 0;
+        int pos = traveller.hasNext() ? traveller.next() : 0;
         int di = 0;
 
         XSpace<T> finder = new XSpace<>(pos);
         InterleavedSpace<T> pointSpace = this;
-        ISet<IPoint<T>> axialPoints = this.points;
+        ISet<IPoint<T>> axialPoints = pointSpace.points;
+
+        ISet<IPoint<T>> movePoints = null;
+
 
         // 确定点所在子空间
         while(traveller.hasNext()){
-            pos = traveller.next();
-            di++;
+            if(!pointSpace.points.isEmpty()){   // 将坐标寻址时, 沿途所有将低维度的点向高维度移动(不足维度的位置是使用0坐标)
+                if(movePoints == null){
+                    movePoints = pointSpace.points;
+                }else{
+                    Iterator<IPoint<T>> iterator = pointSpace.points.iterator();
+                    while (iterator.hasNext()){
+                        IPoint<T> upDimensionPoint = iterator.next();
+                        upDimensionPoint.setAxialValue(0);
+                        movePoints.add(upDimensionPoint);
+                    }
+                    pointSpace.points.clear();
+                }
+            }
 
             finder.index = pos;
             XSpace<T> xSpace = pointSpace.subspaces.find(finder);
@@ -52,12 +66,15 @@ public class InterleavedSpace<T> implements ISpace<T> {
                 pointSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
                 return;
             }
+
+            pos = traveller.next();
+            di++;
         }
 
         // 向子空间中添加点
         point.setAxialValue(pos);
         if(!axialPoints.add(point)){
-            throw new IllegalStateException("this coordinate's point has exists.");
+            throw new IllegalStateException("this coordinate's point has exists. point : " + point.intrinsic());
         }
     }
 
@@ -139,9 +156,7 @@ public class InterleavedSpace<T> implements ISpace<T> {
                 return space.getSubspace(new ContinueCoordinate(traveller, this.dimension - di));
             }
 
-            if(pos != 0){
-                result = space;
-            }
+            result = space;
         }
 
         if(traveller.hasNext()){

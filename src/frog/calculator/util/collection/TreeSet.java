@@ -19,6 +19,7 @@ public class TreeSet<T> implements ISet<T> {
 
     @Override
     public boolean add(T t){
+        int oldCount = modCount;
         if(root == null){
             root = new AVLNode();
             root.data = t;
@@ -28,7 +29,7 @@ public class TreeSet<T> implements ISet<T> {
             nextTree.data = t;
             root = root.create(nextTree);
         }
-        return true;
+        return modCount > oldCount;
     }
 
     @Override
@@ -187,7 +188,6 @@ public class TreeSet<T> implements ISet<T> {
         private AVLNode create(AVLNode node){
             T t = node.data;
             int mark = TreeSet.this.comparator.compare(data, t);
-//            int mark = data.compareTo(t);
 
             if(mark == 0){
                 // if insert node's is exists, update this.
