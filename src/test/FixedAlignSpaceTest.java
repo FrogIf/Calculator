@@ -36,71 +36,76 @@ public class FixedAlignSpaceTest {
 
         ISpace<String> space = spaceBuilder.build();
 
-        space.addPoint(new SymbolPoint("1"), new Coordinate(0));
+
+//        space.addPoint(new SymbolPoint("k"), new Coordinate(0));
+//        space.addPoint(new SymbolPoint("p"), new Coordinate(0, 0, 0, 0, 0, 1));
+
+
+        space.addPoint(new SymbolPoint("1"), new Coordinate(0, 0, 0));
+        space.addPoint(new SymbolPoint("5"), new Coordinate(0, 1, 0));     // 一会要试下有0, 和没0的
+        space.addPoint(new SymbolPoint("9"), new Coordinate(0, 2, 0));
         space.addPoint(new SymbolPoint("2"), new Coordinate(0, 0, 1));
-//        space.addPoint(new SymbolPoint("3"), new Coordinate(0, 0, 2));
-//        space.addPoint(new SymbolPoint("4"), new Coordinate(0, 0, 3));
-//
-//        space.addPoint(new SymbolPoint("5"), new Coordinate(0, 1));// 一会要试下有0, 和没0的
-//        space.addPoint(new SymbolPoint("6"), new Coordinate(0, 1, 1));
-//        space.addPoint(new SymbolPoint("7"), new Coordinate(0, 1, 2));
-//        space.addPoint(new SymbolPoint("8"), new Coordinate(0, 1, 3));
-//
-//        space.addPoint(new SymbolPoint("9"), new Coordinate(0, 2));
-//        space.addPoint(new SymbolPoint("10"), new Coordinate(0, 2, 1));
-//        space.addPoint(new SymbolPoint("11"), new Coordinate(0, 2, 2));
-//        space.addPoint(new SymbolPoint("12"), new Coordinate(0, 2, 3));
-//
-//        space.addPoint(new SymbolPoint("13"), new Coordinate(0, 3));
-//        space.addPoint(new SymbolPoint("14"), new Coordinate(0, 3, 1));
-//        space.addPoint(new SymbolPoint("15"), new Coordinate(0, 3, 2));
-//        space.addPoint(new SymbolPoint("16"), new Coordinate(0, 3, 3));
+        space.addPoint(new SymbolPoint("3"), new Coordinate(0, 0, 2));
+        space.addPoint(new SymbolPoint("4"), new Coordinate(0, 0, 3));
 
-//        space.addPoint(new SymbolPoint("17"), new Coordinate(1));
-//        space.addPoint(new SymbolPoint("18"), new Coordinate(1, 0, 1));
-//        space.addPoint(new SymbolPoint("19"), new Coordinate(1, 0, 2));
-//        space.addPoint(new SymbolPoint("20"), new Coordinate(1, 0, 3));
+        space.addPoint(new SymbolPoint("6"), new Coordinate(0, 1, 1));
+        space.addPoint(new SymbolPoint("7"), new Coordinate(0, 1, 2));
+        space.addPoint(new SymbolPoint("8"), new Coordinate(0, 1, 3));
 
-//        space.addPoint(new SymbolPoint("21"), new Coordinate(1, 1));
+        space.addPoint(new SymbolPoint("10"), new Coordinate(0, 2, 1));
+        space.addPoint(new SymbolPoint("11"), new Coordinate(0, 2, 2));
+        space.addPoint(new SymbolPoint("12"), new Coordinate(0, 2, 3));
+
+        space.addPoint(new SymbolPoint("13"), new Coordinate(0, 3, 0));
+        space.addPoint(new SymbolPoint("14"), new Coordinate(0, 3, 1));
+        space.addPoint(new SymbolPoint("15"), new Coordinate(0, 3, 2));
+        space.addPoint(new SymbolPoint("16"), new Coordinate(0, 3, 3));
+
+        space.addPoint(new SymbolPoint("17"), new Coordinate(1, 0, 0));
+        space.addPoint(new SymbolPoint("18"), new Coordinate(1, 0, 1));
+        space.addPoint(new SymbolPoint("19"), new Coordinate(1, 0, 2));
+        space.addPoint(new SymbolPoint("20"), new Coordinate(1, 0, 3));
+
+        space.addPoint(new SymbolPoint("21"), new Coordinate(1, 1, 0));
         space.addPoint(new SymbolPoint("22"), new Coordinate(1, 1, 1));
         space.addPoint(new SymbolPoint("23"), new Coordinate(1, 1, 2));
         space.addPoint(new SymbolPoint("24"), new Coordinate(1, 1, 3));
 
-//        space.addPoint(new SymbolPoint("25"), new Coordinate(1, 2));
+        space.addPoint(new SymbolPoint("25"), new Coordinate(1, 2, 0));
         space.addPoint(new SymbolPoint("26"), new Coordinate(1, 2, 1));
         space.addPoint(new SymbolPoint("27"), new Coordinate(1, 2, 2));
         space.addPoint(new SymbolPoint("28"), new Coordinate(1, 2, 3));
 
-//        space.addPoint(new SymbolPoint("29"), new Coordinate(1, 3));
+        space.addPoint(new SymbolPoint("29"), new Coordinate(1, 3, 0));
         space.addPoint(new SymbolPoint("30"), new Coordinate(1, 3, 1));
         space.addPoint(new SymbolPoint("31"), new Coordinate(1, 3, 2));
         space.addPoint(new SymbolPoint("32"), new Coordinate(1, 3, 3));
 
 //        IPoint<String> pointp = space.getPoint(new Coordinate(1, 1));
-        IPoint<String> pointp = space.getPoint(new Coordinate(1, 0, 0));
-        System.out.println(pointp == null ? null : pointp.intrinsic());
-
-        for(int x = 0; x < space.width(new Coordinate(0)); x++){
-            System.out.println("(");
-            for(int y = 0; y < space.width(new Coordinate(0, 1)); y++){
-                System.out.print("    (");
-                for(int z = 0; z < space.width(new Coordinate(0, 0, 1)); z++){
-                    IPoint point = space.getPoint(new Coordinate(x, y, z));
-                    if(z != 0){System.out.print(",");}
-                    if(point != null) System.out.print(point.intrinsic());
-                    else System.out.print("?");
-                }
-                System.out.println("),");
-            }
-            System.out.print("),");
-        }
+//        IPoint<String> pointp = space.getPoint(new Coordinate(1, 0, 0));
+//        System.out.println(pointp == null ? null : pointp.intrinsic());
+//
+//        for(int x = 0; x < space.width(new Coordinate(0)); x++){
+//            System.out.println("(");
+//            for(int y = 0; y < space.width(new Coordinate(0, 1)); y++){
+//                System.out.print("    (");
+//                for(int z = 0; z < space.width(new Coordinate(0, 0, 1)); z++){
+//                    IPoint point = space.getPoint(new Coordinate(x, y, z));
+//                    if(z != 0){System.out.print(",");}
+//                    if(point != null) System.out.print(point.intrinsic());
+//                    else System.out.print("?");
+//                }
+//                System.out.println("),");
+//            }
+//            System.out.print("),");
+//        }
 //
         System.out.println();
         TestUtil.showList(space.getPoints());
         System.out.println();
 
 //        ISpace subspace = space.getSubspace(new Coordinate());
-        ISpace subspace = space.getSubspace(new Coordinate(0));
+        ISpace subspace = space.getSubspace(new Coordinate(1, 0));
 //        System.out.println(subspace.dimension());
         TestUtil.showList(subspace.getPoints());
     }
