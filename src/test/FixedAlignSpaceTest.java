@@ -85,6 +85,20 @@ public class FixedAlignSpaceTest {
 //        IPoint<String> pointp = space.getPoint(new Coordinate(1, 0, 0));
 //        System.out.println(pointp == null ? null : pointp.intrinsic());
 //
+        for(int x = 0; x < 2; x++){
+            System.out.println("(");
+            for(int y = 0; y < 4; y++){
+                System.out.print("    (");
+                for(int z = 0; z < 4; z++){
+                    IPoint point = space.getPoint(new Coordinate(x, y, z));
+                    if(z != 0){System.out.print(",");}
+                    if(point != null) System.out.print(point.intrinsic());
+                    else System.out.print("?");
+                }
+                System.out.println("),");
+            }
+            System.out.print("),");
+        }
 //        for(int x = 0; x < space.width(new Coordinate(0)); x++){
 //            System.out.println("(");
 //            for(int y = 0; y < space.width(new Coordinate(0, 1)); y++){

@@ -13,11 +13,10 @@ public final class InterleavedSpace<T> implements ISpace<T> {
 
     /**
      * 特点:
-     *      1. 对齐存放
+     *      1. 维度发生扩展时: 对齐存放
      *            如果两个点的坐标只有最后一位不同, 那么他们一定存放在同一个points中
-     *      2. 最小高度存放
-     *            如果一个点的坐标最后若干为都是0, 那么会忽略所有0, 保证整棵树的高度最低
-     * ("对齐存放"的优先级高于"最小高度存放", 也就是说优先满足对齐存放, 如果没有需要满足的"对齐", 则需要满足"最小高度")
+     *      2. 新增点时: 对齐存放, 最小高度存放
+     *            最小高度存放 : 如果一个点的坐标最后若干为都是0, 那么会忽略所有0, 保证整棵树的高度最低
      * @param point
      * @param coordinate
      */
@@ -45,6 +44,7 @@ public final class InterleavedSpace<T> implements ISpace<T> {
         int pp = -1;    // pre pos
         InterleavedSpace<T> prePointSpace;
 
+        // TODO 使用链表, 去除可能存在的冗余空间
 
         while(traveller.hasNext()){
             pf.axialValue = pos;
@@ -68,6 +68,9 @@ public final class InterleavedSpace<T> implements ISpace<T> {
             }else{  // 如果该空间已经变成了别的类型的空间, 调用该空间的addPoint方法
                 // TODO 移入movePoint
                 pointSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
+                if(movePoint != null){
+                    pointSpace.addPoint(movePoint, AbstractCoordinate.ORIGIN);
+                }
                 return;
             }
 
@@ -276,33 +279,28 @@ public final class InterleavedSpace<T> implements ISpace<T> {
 
         Itraveller<Integer> traveller = coordinate.traveller();
 
-        int pos = 0;
-        int prepos = 0;
+        int pos = traveller.hasNext() ? traveller.next() : 0;
+        int pp = 0;
         int di = 0;
         XSpace<T> finder = new XSpace<>(pos);
+        XPoint<T> pf = new XPoint<>(pos);
 
         ISet<IPoint<T>> axialPoints = this.points;
         InterleavedSpace<T> pointSpace = this;
+        IPoint<T> result = null;
 
         while(traveller.hasNext()){
-            pos = traveller.next();
-            di++;
-
             finder.index = pos;
             XSpace<T> xSpace = pointSpace.subspaces.find(finder);
 
             if(xSpace == null){
-                if(traveller.hasNext()){
-                    return null;
-                }else{
-                    break;
-                }
+                return null;
             }else{
                 ISpace<T> subSpace = xSpace.space;
                 if(subSpace instanceof InterleavedSpace){
                     pointSpace = (InterleavedSpace<T>) subSpace;
                     if(pos != 0){
-                        prepos = pos;
+                        pp = pos;
                         axialPoints = pointSpace.points;
                     }
                 }else{
@@ -310,10 +308,16 @@ public final class InterleavedSpace<T> implements ISpace<T> {
                 }
             }
 
+            pos = traveller.next();
+            di++;
         }
 
-        pos = pos == 0 ? prepos : pos;
-        return axialPoints.find(new XPoint<>(pos));
+        pos = pos == 0 ? pp : pos;
+        result = axialPoints.find(new XPoint<>(pos));
+        while(result == null){
+            pointSpace.subspaces
+        }
+        return result;
     }
 
     @Override
