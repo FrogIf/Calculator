@@ -101,8 +101,9 @@ public class FixedAlignSpaceTest {
         System.out.println();
 
 //        ISpace subspace = space.getSubspace(new Coordinate());
-        ISpace subspace = space.getSubspace(new Coordinate(0, 0));
+        ISpace<String> subspace = space.getSubspace(new Coordinate(0, 3));
 //        System.out.println(subspace.dimension());
+        subspace.addPoint(new SymbolPoint("15"), new Coordinate(2));
         TestUtil.showList(subspace.getPoints());
     }
 

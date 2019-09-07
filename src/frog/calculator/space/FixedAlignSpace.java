@@ -1,6 +1,5 @@
 package frog.calculator.space;
 
-import frog.calculator.util.Arrays;
 import frog.calculator.util.collection.*;
 
 public class FixedAlignSpace<T> implements ISpace<T> {
@@ -53,51 +52,6 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         }
         int offset = locate(coordinate.traveller());
         return offset >= 0 ? values[offset] : null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public ISpace<T> getSubspace(ICoordinate coordinate) {
-        int dim = coordinate.dimension();
-        if(dim > this.dimension){
-            throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
-                    + this.dimension + ", input dimension : " + coordinate.dimension());
-        }
-
-        Itraveller<Integer> traveller = coordinate.traveller();
-
-
-        int offset = 0;
-        int di = 0;
-        int len = values.length;
-        int w;
-        int p = traveller.hasNext() ? traveller.next() : 0;
-
-        while(traveller.hasNext()){
-            w = widthInfo[di];
-
-            if(p >= w){
-                return null;
-            }
-
-            len = len / w;
-            offset += len * p;
-
-            di++;
-
-            p = traveller.next();
-        }
-
-        if(offset == -1){ return null; }
-
-        int l = 1;
-        int[] widths = new int[this.dimension - di];
-        for(int m = di, i = 0; m < this.dimension; m++, i++){
-            l *= widths[i] = widthInfo[m];
-        }
-
-        // TODO 使得对子空间的修改可以反映到父空间
-        return new FixedAlignSpace<T>(widths, new ArrayList<>(Arrays.copy(this.values, new IPoint[l], offset, offset + l - 1)));
     }
 
     @Override
@@ -170,6 +124,127 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         }
 
         return offset;
+    }
+
+    @Override
+    public ISpace<T> getSubspace(ICoordinate coordinate) {
+        int dim = coordinate.dimension();
+        if(dim > this.dimension){
+            throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
+                    + this.dimension + ", input dimension : " + coordinate.dimension());
+        }
+
+        Itraveller<Integer> traveller = coordinate.traveller();
+        ICoordinate subPos = new Coordinate();
+
+        int offset = 0;
+        int di = 0;
+        int len = values.length;
+        int w;
+        int p;
+
+        while(traveller.hasNext()){
+            p = traveller.next();
+            subPos.add(p);
+
+            w = widthInfo[di];
+
+            if(p >= w){
+                return null;
+            }
+
+            len = len / w;
+            offset += len * p;
+
+            di++;
+        }
+
+        if(offset == -1){ return null; }
+
+        int l = 1;
+        for(int m = di, i = 0; m < this.dimension; m++, i++){
+            l *= widthInfo[m];
+        }
+
+
+        Subspace subspace = new Subspace();
+        subspace.start = offset;
+        subspace.end = offset + l - 1;
+        subspace.pos = subPos;
+
+        return subspace;
+    }
+
+    private class Subspace implements ISpace<T>{
+
+        private ICoordinate pos;
+
+        private int start;
+
+        private int end;
+
+        private IList<IPoint<T>> points = null;
+
+        @Override
+        public int dimension() {
+            return dimension - pos.dimension();
+        }
+
+        @Override
+        public int width(ICoordinate coordinate) {
+            if(coordinate.dimension() == 0){
+                return widthInfo[pos.dimension()];
+            }
+
+            if(coordinate.dimension() > dimension - pos.dimension()){
+                return -1;
+            }
+
+            return widthInfo[pos.dimension() + coordinate.dimension()];
+        }
+
+        @Override
+        public void addPoint(IPoint<T> point, ICoordinate coordinate) {
+            FixedAlignSpace.this.addPoint(point, realCoordinate(coordinate));
+        }
+
+        @Override
+        public IList<IPoint<T>> getPoints() {
+            if(points == null){
+                IPoint<T>[] values = FixedAlignSpace.this.values;
+                points = new ArrayList<>(end - start + 1);
+                for(int i = start; i <= end; i++){
+                    points.add(values[i]);
+                }
+                points = new UnmodifiableList<>(points);
+            }
+            return points;
+        }
+
+        @Override
+        public IPoint<T> getPoint(ICoordinate coordinate) {
+            return FixedAlignSpace.this.getPoint(realCoordinate(coordinate));
+        }
+
+        @Override
+        public ISpace<T> getSubspace(ICoordinate coordinate) {
+            return FixedAlignSpace.this.getSubspace(realCoordinate(coordinate));
+        }
+
+        private ICoordinate realCoordinate(ICoordinate coordinate){
+            if(coordinate == null){ return pos; }
+
+            ICoordinate realPos = new Coordinate();
+            Itraveller<Integer> traveller = pos.traveller();
+            while(traveller.hasNext()){
+                realPos.add(traveller.next());
+            }
+            Itraveller<Integer> inputPos = coordinate.traveller();
+            while(inputPos.hasNext()){
+                realPos.add(inputPos.next());
+            }
+            return realPos;
+        }
     }
 
 }
