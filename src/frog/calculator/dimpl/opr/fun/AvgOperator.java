@@ -16,7 +16,7 @@ public class AvgOperator extends AbstractOperator {
             sum += Double.parseDouble((String) value.intrinsic());
         }
 
-        SpaceBuilder builder = new SpaceBuilder();
+        FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(1);
         builder.setWidth(0, 1);
         ISpace space = builder.build();

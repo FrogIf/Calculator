@@ -2,11 +2,11 @@ package frog.calculator.space;
 
 import frog.calculator.util.collection.IList;
 
-public class SpaceBuilder {
+public class FixedAlignSpaceBuilder<T> {
 
     private int[] info;
 
-    private IList<IPoint> elements;
+    private IList<IPoint<T>> elements;
 
     public void setDimension(int dimension) {
         if(info != null){
@@ -22,17 +22,15 @@ public class SpaceBuilder {
         info[dimension] = width;
     }
 
-    public void initElements(IList<IPoint> elements){
+    public void initElements(IList<IPoint<T>> elements){
         this.elements = elements;
     }
 
-    public ISpace build() {
+    public FixedAlignSpace<T> build() {
         if(this.elements == null){
-//            return new InterleavedSpace();
-            return new FixedAlignSpace(info);
+            return new FixedAlignSpace<>(info);
         }else{
-//            return new InterleavedSpace();
-            return new FixedAlignSpace(info, this.elements);
+            return new FixedAlignSpace<>(info, this.elements);
         }
     }
 }

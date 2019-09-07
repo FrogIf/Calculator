@@ -10,7 +10,7 @@ public class NumberDoubleOperator extends AbstractOperator {
 
     @Override
     public ISpace operate(IExpression expression) {
-        SpaceBuilder builder = new SpaceBuilder();
+        FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(DIMENSION);
         builder.setWidth(0, 1);
         ISpace space = builder.build();

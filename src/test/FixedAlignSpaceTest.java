@@ -10,12 +10,6 @@ public class FixedAlignSpaceTest {
     }
 
     private static void testThreeDimension(){
-        SpaceBuilder spaceBuilder = new SpaceBuilder();
-        spaceBuilder.setDimension(3);
-        spaceBuilder.setWidth(0, 2);
-        spaceBuilder.setWidth(1, 4);
-        spaceBuilder.setWidth(2, 4);
-
         /*
          * widthInfos = [2, 4, 4]
          * (
@@ -34,7 +28,13 @@ public class FixedAlignSpaceTest {
          * )
          */
 
-        ISpace<String> space = spaceBuilder.build();
+//        FixedAlignSpaceBuilder<String> spaceBuilder = new FixedAlignSpaceBuilder<>();
+//        spaceBuilder.setDimension(3);
+//        spaceBuilder.setWidth(0, 2);
+//        spaceBuilder.setWidth(1, 4);
+//        spaceBuilder.setWidth(2, 4);
+//        ISpace<String> space = spaceBuilder.build();
+        ISpace<String> space = new InterleavedSpace<>();
 
 
 //        space.addPoint(new SymbolPoint("k"), new Coordinate(0));
@@ -107,8 +107,8 @@ public class FixedAlignSpaceTest {
         TestUtil.showList(subspace.getPoints());
     }
 
-    private static void testTwoDimension(){
-        SpaceBuilder spaceBuilder = new SpaceBuilder();
+    private static ISpace<String> testTwoDimension(){
+        FixedAlignSpaceBuilder<String> spaceBuilder = new FixedAlignSpaceBuilder<String>();
         spaceBuilder.setDimension(2);
         spaceBuilder.setWidth(0, 3);
         spaceBuilder.setWidth(1, 4);
@@ -170,6 +170,8 @@ public class FixedAlignSpaceTest {
         space.addPoint(new SymbolPoint("uuu"), new Coordinate(1, 2, 3));
         System.out.println(space.dimension());
         System.out.println(space.getPoint(new Coordinate(1, 2, 3)));
+
+        return space;
     }
 
 }

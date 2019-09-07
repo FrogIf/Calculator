@@ -3,7 +3,7 @@ package frog.calculator.space;
 import frog.calculator.util.ComparableComparator;
 import frog.calculator.util.collection.*;
 
-public final class InterleavedSpace<T> implements ISpace<T> {
+public final class InterleavedSpace<T> extends MergeableSpace<T> {
 
     private ISet<XSpace<T>> subspaces = new TreeSet<>(ComparableComparator.<XSpace<T>>getInstance());
 
@@ -268,6 +268,71 @@ public final class InterleavedSpace<T> implements ISpace<T> {
         }
 
         return new UnmodifiableList<>(result);
+    }
+
+    @Override
+    public void addSubspace(ICoordinate coordinate, ISpace<T> space) {
+        if(coordinate == null || coordinate.dimension() == 0){
+            throw new IllegalArgumentException("can't locate space.");
+        }
+        InterleavedSpace<T> sub = this;
+        Itraveller<Integer> traveller = coordinate.traveller();
+        XSpace<T> sf = new XSpace<>(traveller.next());
+        XPoint<T> pf = new XPoint<>(sf.index);
+
+        InterleavedSpace<T> pointSpace = null;
+        IPoint<T> movePoint = null;
+        boolean hasNew = false;
+
+        int di = 1;
+        while(traveller.hasNext()){
+            XSpace<T> spaceX = sub.subspaces.find(sf);
+            if(spaceX == null){
+                InterleavedSpace<T> subSpace = new InterleavedSpace<>();
+                subSpace.dimension = coordinate.dimension() - di;
+                spaceX = new XSpace<>(sf.index, subSpace);
+                sub.subspaces.add(spaceX);
+                hasNew = true;
+            }
+            ISpace<T> tiSpace = spaceX.space;
+            if(tiSpace instanceof MergeableSpace){
+                if(tiSpace instanceof InterleavedSpace){
+                    sub = (InterleavedSpace<T>) tiSpace;
+                    if(!hasNew && (pf.axialValue != 0 || movePoint == null)){
+                        if(movePoint != null){
+                            pointSpace.points.remove(movePoint);
+                            movePoint.setAxialValue(0);
+                            if(!sub.points.add(movePoint)){
+                                throw new IllegalStateException("the point has exist.");
+                            }
+                        }
+                        pointSpace = sub;
+                        movePoint = pointSpace.points.find(pf);
+                    }
+                }else{
+                    ContinueCoordinate continueCoordinate = new ContinueCoordinate(traveller, this.dimension - di);
+                    sub.addSubspace(continueCoordinate, space);
+                    if(movePoint != null){
+                        sub.addPoint(movePoint, continueCoordinate);
+                    }
+                    return;
+                }
+            }else{
+                throw new IllegalStateException("parent space can't support merge.");
+            }
+            sf.index = traveller.next();
+            di++;
+        }
+
+        sf.space = space;
+        if(!sub.subspaces.add(sf)){
+            throw new IllegalArgumentException("the space has exist.");
+        }else{
+            if(movePoint != null){
+                pointSpace.points.remove(movePoint);
+                space.addPoint(movePoint, AbstractCoordinate.ORIGIN);
+            }
+        }
     }
 
     private static class ContinueCoordinate extends AbstractCoordinate{

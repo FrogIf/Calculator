@@ -110,7 +110,7 @@ public class TupleExpression extends AbstractExpression {
     @Override
     public ISpace interpret() {
         Iterator<Element> iterator = this.elements.iterator();
-        SpaceBuilder builder = new SpaceBuilder();
+        FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(1);
         builder.setWidth(0, this.elements.size());
         ISpace space = builder.build();

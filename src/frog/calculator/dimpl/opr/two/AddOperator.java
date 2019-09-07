@@ -2,7 +2,7 @@ package frog.calculator.dimpl.opr.two;
 
 import frog.calculator.exception.UnsupportDimensionException;
 import frog.calculator.exception.UnsupportOperateException;
-import frog.calculator.space.SpaceBuilder;
+import frog.calculator.space.FixedAlignSpaceBuilder;
 import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 import frog.calculator.space.SymbolPoint;
@@ -18,7 +18,7 @@ public class AddOperator extends LeftNullableOperator{
             throw new UnsupportDimensionException(left.toString(), left.dimension());
         }
 
-        SpaceBuilder builder = new SpaceBuilder();
+        FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(left.dimension());
 
         for(int i = 0, len = left.dimension(); i < len; i++){
