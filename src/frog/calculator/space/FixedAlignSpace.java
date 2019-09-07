@@ -118,7 +118,7 @@ public class FixedAlignSpace<T> implements ISpace<T> {
             return -1;
         }
 
-        return widthInfo[coordinate.dimension() - 1];
+        return widthInfo[coordinate.dimension()];
     }
 
     @Override

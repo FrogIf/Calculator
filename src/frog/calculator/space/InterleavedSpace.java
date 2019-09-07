@@ -17,8 +17,8 @@ public final class InterleavedSpace<T> implements ISpace<T> {
      *            如果两个点的坐标只有最后一位不同, 那么他们一定存放在同一个points中
      *      2. 新增点时: 对齐存放, 最小高度存放
      *            最小高度存放 : 如果一个点的坐标最后若干为都是0, 那么会忽略所有0, 保证整棵树的高度最低
-     * @param point
-     * @param coordinate
+     * @param point 待插入的点
+     * @param coordinate 待插入点应插入的位置
      */
     @Override
     public void addPoint(IPoint<T> point, ICoordinate coordinate) {
@@ -26,9 +26,8 @@ public final class InterleavedSpace<T> implements ISpace<T> {
             throw new IllegalArgumentException("point info is null.");
         }
 
-        if(coordinate.dimension() > this.dimension){
-            this.dimension = coordinate.dimension();
-        }
+        coordinate.trimRight();
+        this.dimension = coordinate.dimension() > this.dimension ? coordinate.dimension() : this.dimension;
 
         Itraveller<Integer> traveller = coordinate.traveller();
 
@@ -38,13 +37,12 @@ public final class InterleavedSpace<T> implements ISpace<T> {
         XSpace<T> sf = new XSpace<>(pos);
         XPoint<T> pf = new XPoint<>(pos);
         InterleavedSpace<T> pointSpace = this;
-        ISet<IPoint<T>> axialPoints = pointSpace.points;
+        InterleavedSpace<T> cursorSpace = this;
 
         IPoint<T> movePoint;
-        int pp = -1;    // pre pos
         InterleavedSpace<T> prePointSpace;
 
-        // TODO 使用链表, 去除可能存在的冗余空间
+        boolean hasNew = false;
 
         while(traveller.hasNext()){
             pf.axialValue = pos;
@@ -52,12 +50,13 @@ public final class InterleavedSpace<T> implements ISpace<T> {
 
             // 为待添加的点寻找/开辟空间
             sf.index = pos;
-            XSpace<T> xSpace = pointSpace.subspaces.find(sf);
+            XSpace<T> xSpace = hasNew ? null : pointSpace.subspaces.find(sf);
             if(xSpace == null){
                 InterleavedSpace<T> subSpace = new InterleavedSpace<>();
                 subSpace.dimension = coordinate.dimension() - di;
                 xSpace = new XSpace<>(pos, subSpace);
                 pointSpace.subspaces.add(xSpace);
+                hasNew = true;
             }
 
             ISpace<T> subspace = xSpace.space;
@@ -66,7 +65,6 @@ public final class InterleavedSpace<T> implements ISpace<T> {
                 prePointSpace = pointSpace;
                 pointSpace = ((InterleavedSpace<T>)subspace);   // 以该子空间为基准, 准备下一轮寻址
             }else{  // 如果该空间已经变成了别的类型的空间, 调用该空间的addPoint方法
-                // TODO 移入movePoint
                 pointSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
                 if(movePoint != null){
                     pointSpace.addPoint(movePoint, AbstractCoordinate.ORIGIN);
@@ -74,249 +72,100 @@ public final class InterleavedSpace<T> implements ISpace<T> {
                 return;
             }
 
-            if(pos != 0){   // 现在不等于0, 才会移动到现在, 否则就不移动
-                // 在切换坐标轴之前, 找一下有没有可以带到新的坐标轴上的元素
+            cursorSpace = pointSpace;   // 切换至新的空间
+
+            if(movePoint != null){
                 prePointSpace.points.remove(pf);
-
-                axialPoints = pointSpace.points;    // 切换至新的坐标轴
-
-                if(movePoint != null){
-                    movePoint.setAxialValue(0);
-                    if(!axialPoints.add(movePoint)){
-                        throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.intrinsic());
-                    }
+                movePoint.setAxialValue(0);
+                if(!cursorSpace.points.add(movePoint)){
+                    throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.intrinsic());
                 }
             }
 
-            pp = pos;
             pos = traveller.next(); // 获取将要去往的空间编号
             di++;
         }
 
-        if(pos != 0){
-            pf.axialValue = pp;
-            movePoint = axialPoints.find(pf);
-            axialPoints.remove(pf);
-
-            axialPoints = pointSpace.points;
-
-            if(movePoint != null){
-                if(!axialPoints.add(movePoint)){
-                    throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.intrinsic());
-                }
-            }
-        }
-
         // 向下继续填0继续寻找空间
-        sf.index = pos;
-        XSpace<T> xSpace = pointSpace.subspaces.find(sf);
-        if(xSpace != null){
-            pos = 0;
-            while(xSpace != null){
-                ISpace<T> subspace = xSpace.space;
-                if(subspace instanceof InterleavedSpace) {
-                    pointSpace = ((InterleavedSpace<T>)subspace);
-                    axialPoints = pointSpace.points;
-                    xSpace = pointSpace.subspaces.find(sf);
-                }else{
-                    // TODO 移入movePoint, 此时movePoint一定是(x1, x2, ... 0)
-                    pointSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
-                    return;
+        if(!hasNew){
+            sf.index = pos;
+            XSpace<T> xSpace = pointSpace.subspaces.find(sf);
+            if(xSpace != null){
+                pos = 0;
+                while(xSpace != null){
+                    ISpace<T> subspace = xSpace.space;
+                    if(subspace instanceof InterleavedSpace) {
+                        pointSpace = ((InterleavedSpace<T>)subspace);
+                        cursorSpace = pointSpace;
+                        xSpace = pointSpace.subspaces.find(sf);
+                    }else{
+                        pointSpace.addPoint(point, AbstractCoordinate.ORIGIN);
+                        return;
+                    }
                 }
             }
         }
 
         // 向子空间中添加点
         point.setAxialValue(pos);
-        if(!axialPoints.add(point)){
+        if(!cursorSpace.points.add(point)){
             throw new IllegalStateException("this coordinate's point has exists. point : " + point.intrinsic());
         }
     }
 
-//    @Override
-//    public void addPoint(IPoint<T> point, ICoordinate coordinate) {
-//        if(point == null || coordinate == null){
-//            throw new IllegalArgumentException("point info is null.");
-//        }
-//
-//        if(coordinate.dimension() > this.dimension){
-//            this.dimension = coordinate.dimension();
-//        }
-//
-//        Itraveller<Integer> traveller = coordinate.traveller();
-////        if(coordinate.dimension() <= 1){
-////            int pos = traveller.hasNext() ? traveller.next() : 0;
-////            point.setAxialValue(pos);
-////            this.points.add(point);
-////            return;
-////        }
-//
-//        int pos = traveller.hasNext() ? traveller.next() : 0;
-//        int di = 1;
-//
-//        XSpace<T> sf = new XSpace<>(pos);
-//        XPoint<T> pf = new XPoint<>(pos);
-//        InterleavedSpace<T> pointSpace = this;
-//        ISet<IPoint<T>> axialPoints = pointSpace.points;
-//        ISet<IPoint<T>> preAxialPoints = axialPoints;
-//
-//        IPoint<T> movePoint = axialPoints.find(pf);
-//
-//        while(traveller.hasNext()){
-//            // 这个位置的pos是将要去的子空间的编号
-//
-//            /*
-//             * 循环不变式:
-//             *      1. 尾部0去除
-//             *          如果一个坐标最后几位全是0, 则会去掉.
-//             *          例如:
-//             *              (x1, x2, 0, 0, 0)与(x1, x2)是等价的
-//             *      2. 对齐存放
-//             *          如果两个坐标除最后一位以外, 其余各位均相同, 则这两个坐标点放在会存储在同一个points内
-//             *          例如:
-//             *              (x1, x2, 1)和(x1, x2, 2)会存放在同一个points里, 并且编号是1和2
-//             */
-//
-//            // 为待添加的点寻找/开辟空间
-//            sf.index = pos;
-//            XSpace<T> xSpace = pointSpace.subspaces.find(sf);
-//            if(xSpace == null){
-//                InterleavedSpace<T> subSpace = new InterleavedSpace<>();
-//                subSpace.dimension = coordinate.dimension() - di;
-//                xSpace = new XSpace<>(pos, subSpace);
-//                pointSpace.subspaces.add(xSpace);
-//            }
-//
-//            ISpace<T> subspace = xSpace.space;
-//
-//            if(subspace instanceof InterleavedSpace) {
-//                pointSpace = ((InterleavedSpace<T>)subspace);   // 以该子空间为基准, 准备下一轮寻址
-//            }else{  // 如果该空间已经变成了别的类型的空间, 调用该空间的addPoint方法
-//                // TODO 移入movePoint
-//                pointSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
-//                return;
-//            }
-//
-//            /*
-//             * 程序执行到这一步所处的状态:
-//             * 1. 根据坐标, 空间已经切换至新的空间
-//             * 2. 坐标轴依旧是旧的坐标轴, 没有切换过来
-//             *
-//             * 这时, 需要判断坐标轴是否需要切换
-//             * 1. 如果新的空间依旧是0号空间, 不需要切换坐标轴(为了保证循环不变式1)
-//             * 2. 如果新的空间不再是0号空间, 需要切换坐标轴
-//             */
-//            if(pos != 0){   // 现在不等于0, 才会移动到现在, 否则就不移动
-//                preAxialPoints = axialPoints;
-//                axialPoints = pointSpace.points;    // 使用新的坐标轴
-//            }
-//
-//            pos = traveller.next();
-//            di++;
-//
-//            /*
-//             * 这里可以看出:
-//             *      movePoint重新摆放的时机: 将要去往的空间不是0号空间了
-//             *             为什么这时候需要重新摆放pos?
-//             *                  因为movePoint是从上级空间中一点点移动到这里的, movePoint重新摆放, 坐标会发生变化,
-//             *                  但是如果尾部的坐标均是0, 则相当于没有变化, 当去往空间不再是0号空间, 这时如果不重新摆放movePoint
-//             *                  那么movePoint摆放到下一级空间的话, movePoint坐标尾部就不再是0了, 导致坐标发生变化了, 所以需要重新摆放
-//             *      movePoint重新存入的位置: 当前子空间(pointSpace)的points的0位置中
-//             *
-//             *
-//             * 当前程序执行的状态:
-//             *      获取到pos将要去往的下级空间编号
-//             *      这时, 判断本级空间中有没有可以去往下级空间的点, 如果有, 指定为movePoint
-//             *
-//             * 讨论:
-//             *  新的movePoint会不会覆盖旧的movePoint?
-//             *  这里令旧的movePoint为P1, 新的movePoint为P2
-//             *
-//             *  首先, 讨论movePoint覆盖的前提是pos == 0
-//             *      这是因为如果pos != 0, 下面的代码中已经将P1放入该空间中了, 即使覆盖了也没有关系
-//             *
-//             *  如果存在P1和P2覆盖的情况, 则
-//             *      P1与P2前几级坐标全部相等, 由于P1, P2都不是新加入空间中的点, 所以根据循环不变式的对齐存放, 这P1, P2必定存放在同一个points中
-//             *      显然这与当前P1, P2假定的情况相互矛盾, 所以不存在P1, P2覆盖的情况
-//             */
-//            if(pos != 0 && movePoint != null){
-//                /*
-//                 * 如果新的空间不是0号空间, 从上一级带过来的点应该放入该空间的0点位置
-//                 */
-//                preAxialPoints.remove(movePoint);
-//                movePoint.setAxialValue(0);
-//                if(!pointSpace.points.add(movePoint)){  // 将点放入现在的空间
-//                    throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.intrinsic());
-//                }
-//            }
-//            pf.axialValue = pos;
-//            movePoint = axialPoints.find(pf);
-//        }
-//
-//        if(pos != 0){
-//            if(movePoint != null){
-//                axialPoints.remove(movePoint);
-//                if(!pointSpace.points.add(movePoint)){
-//                    throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.intrinsic());
-//                }
-//            }
-//            axialPoints = pointSpace.points;
-//        }
-//
-//        // 向子空间中添加点
-//        point.setAxialValue(pos);
-//        if(!axialPoints.add(point)){
-//            throw new IllegalStateException("this coordinate's point has exists. point : " + point.intrinsic());
-//        }
-//    }
-
     @Override
     public IPoint<T> getPoint(ICoordinate coordinate) {
-        if(coordinate.dimension() > this.dimension){
-            throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
-                    + this.dimension + ", input dimension : " + coordinate.dimension());
+        if(coordinate == null){
+            throw new IllegalArgumentException("coordinate is null.");
         }
 
         Itraveller<Integer> traveller = coordinate.traveller();
 
-        int pos = traveller.hasNext() ? traveller.next() : 0;
-        int pp = 0;
-        int di = 0;
-        XSpace<T> finder = new XSpace<>(pos);
-        XPoint<T> pf = new XPoint<>(pos);
-
-        ISet<IPoint<T>> axialPoints = this.points;
-        InterleavedSpace<T> pointSpace = this;
+        int pos = -1;
         IPoint<T> result = null;
+        InterleavedSpace<T> cursorSpace = this;
+        XPoint<T> pf = new XPoint<>(pos);
+        XSpace<T> sf = new XSpace<>(pos);
+        int di = 0;
 
         while(traveller.hasNext()){
-            finder.index = pos;
-            XSpace<T> xSpace = pointSpace.subspaces.find(finder);
-
-            if(xSpace == null){
-                return null;
-            }else{
-                ISpace<T> subSpace = xSpace.space;
-                if(subSpace instanceof InterleavedSpace){
-                    pointSpace = (InterleavedSpace<T>) subSpace;
-                    if(pos != 0){
-                        pp = pos;
-                        axialPoints = pointSpace.points;
-                    }
-                }else{
-                    return subSpace.getPoint(new ContinueCoordinate(traveller, this.dimension - di));
-                }
-            }
-
             pos = traveller.next();
             di++;
+            pf.axialValue = pos;
+            IPoint<T> point = cursorSpace.points.find(pf);
+
+            if(point != null){
+                result = point;
+            }
+
+            sf.index = pos;
+            XSpace<T> xSpace = cursorSpace.subspaces.find(sf);
+            if(xSpace == null){
+                break;
+            }else if(xSpace.space instanceof InterleavedSpace){
+                cursorSpace = (InterleavedSpace<T>) xSpace.space;
+            }else{
+                return xSpace.space.getPoint(new ContinueCoordinate(traveller, coordinate.dimension() - di));
+            }
         }
 
-        pos = pos == 0 ? pp : pos;
-        result = axialPoints.find(new XPoint<>(pos));
-        while(result == null){
-            pointSpace.subspaces
+        if(result == null){
+            pf.axialValue = 0;
+            sf.index = 0;
+            while(true){
+                XSpace<T> xSpace = cursorSpace.subspaces.find(sf);
+                if(xSpace == null){ break; }
+                else if(xSpace.space instanceof InterleavedSpace){
+                    cursorSpace = (InterleavedSpace<T>) xSpace.space;
+                    result = cursorSpace.points.find(pf);
+                }else{
+                    return xSpace.space.getPoint(AbstractCoordinate.ORIGIN);
+                }
+                if(result != null){ break; }
+            }
         }
+
+
         return result;
     }
 
@@ -371,18 +220,30 @@ public final class InterleavedSpace<T> implements ISpace<T> {
 
     @Override
     public int width(ICoordinate coordinate) {
-        ISpace<T> space = this.getSubspace(coordinate);
-        if(space == null){
-            return 0;
+        if(coordinate == null || coordinate.dimension() == 0){
+            return this.subspaces.size() + (this.points.size() > 0 ? 1 : 0);
         }else{
-            if(space instanceof InterleavedSpace){
-                if(coordinate.dimension() == this.dimension){
-                    return ((InterleavedSpace)space).points.size();
+            Itraveller<Integer> traveller = coordinate.traveller();
+            InterleavedSpace<T> space = this;
+            int di = 0;
+            XSpace<T> sf = new XSpace<>(-1);
+            while(traveller.hasNext()){
+                sf.index = traveller.next();
+                di++;
+                XSpace<T> xSpace = space.subspaces.find(sf);
+                if(xSpace == null){
+                    return 0;
+                }else if(xSpace.space instanceof InterleavedSpace){
+                    space = (InterleavedSpace<T>) xSpace.space;
                 }else{
-                    return ((InterleavedSpace)space).subspaces.size();
+                    return xSpace.space.width(new ContinueCoordinate(traveller, this.dimension - di));
                 }
+            }
+            int w = space.subspaces.size();
+            if(w == 0){
+                return space.points.size();
             }else{
-                return space.width(Coordinate.ORIGIN);
+                return w + (space.points.size() > 0 ? 1 : 0);
             }
         }
     }
@@ -433,6 +294,11 @@ public final class InterleavedSpace<T> implements ISpace<T> {
         @Override
         public Itraveller<Integer> traveller() {
             return traveller;
+        }
+
+        @Override
+        public void trimRight() {
+            // do nothing
         }
     }
 

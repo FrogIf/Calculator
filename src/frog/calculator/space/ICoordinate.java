@@ -13,4 +13,9 @@ public interface ICoordinate {
 
     Itraveller<Integer> traveller();
 
+    /**
+     * 删除右侧的坐标, 直到遇见第一个不为0的数字
+     */
+    void trimRight();
+
 }

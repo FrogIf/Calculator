@@ -28,5 +28,10 @@ public abstract class AbstractCoordinate implements ICoordinate {
                 }
             };
         }
+
+        @Override
+        public void trimRight() {
+            // do nothing
+        }
     };
 }

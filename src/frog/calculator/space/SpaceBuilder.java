@@ -28,11 +28,11 @@ public class SpaceBuilder {
 
     public ISpace build() {
         if(this.elements == null){
-            return new InterleavedSpace();
-//            return new FixedAlignSpace(info);
+//            return new InterleavedSpace();
+            return new FixedAlignSpace(info);
         }else{
-            return new InterleavedSpace();
-//            return new FixedAlignSpace(info, this.elements);
+//            return new InterleavedSpace();
+            return new FixedAlignSpace(info, this.elements);
         }
     }
 }

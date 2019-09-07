@@ -9,12 +9,17 @@ public class Coordinate extends AbstractCoordinate {
 
     private boolean isOrigin = true;
 
+    private int endZero = -1;
+
+    private boolean canModify = true;
+
     public Coordinate(int... coordinates) {
         for(int i : coordinates){
             if(i < 0){
                 throw new IllegalArgumentException("coordinate can't be negative.");
             }
             this.isOrigin = this.isOrigin && (i == 0);
+            endZero = (i == 0) ? (endZero == -1 ? list.size() : endZero) : -1;
             list.add(i);
         }
     }
@@ -24,7 +29,11 @@ public class Coordinate extends AbstractCoordinate {
         if(axialValue < 0){
             throw new IllegalArgumentException("coordinate can't be negative.");
         }
+        if(!canModify){
+            throw new IllegalStateException("coordinate can't be changed.");
+        }
         this.isOrigin = this.isOrigin && (axialValue == 0);
+        endZero = (axialValue == 0) ? (endZero == -1 ? list.size() : endZero) : -1;
         list.add(axialValue);
     }
 
@@ -36,6 +45,17 @@ public class Coordinate extends AbstractCoordinate {
     @Override
     public Itraveller<Integer> traveller() {
         return this.list.iterator();
+    }
+
+    @Override
+    public void trimRight() {
+        canModify = false;
+        if(endZero >= 0){
+            for(int i = 0, r = list.size() - endZero; i < r; i++){
+                list.postRemove();
+            }
+            endZero = -1;
+        }
     }
 
 }
