@@ -1,15 +1,14 @@
 package frog.calculator;
 
-import frog.calculator.dimpl.opr.two.AddOperator;
-import frog.calculator.dimpl.opr.two.SubOperator;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.container.ContainerExpression;
 import frog.calculator.express.container.FunctionExpression;
 import frog.calculator.express.container.TupleExpression;
 import frog.calculator.express.endpoint.MarkExpression;
 import frog.calculator.express.separator.LeftSeparatorExpression;
 import frog.calculator.express.separator.SeparatorExpression;
-import frog.calculator.operator.*;
+import frog.calculator.operator.common.AssignOperator;
+import frog.calculator.operator.common.DeclareOperator;
+import frog.calculator.operator.common.DelegateOperator;
 
 public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
@@ -30,12 +29,6 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
     // 左括号
     private IExpression bracketOpen = new TupleExpression("(", separator.symbol(), bracketClose.symbol());
-
-    // 正
-    private IExpression plus = new SeparatorExpression("-", 1, new SubOperator());
-
-    // 负
-    private IExpression minus = new SeparatorExpression("+", 1, new AddOperator());
 
     // list 结束
     private IExpression listEnd = new MarkExpression("]");
@@ -98,13 +91,4 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
         return delegate;
     }
 
-    @Override
-    public IExpression getPlus() {
-        return plus;
-    }
-
-    @Override
-    public IExpression getMinus() {
-        return this.minus;
-    }
 }

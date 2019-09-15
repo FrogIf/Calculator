@@ -31,4 +31,14 @@ public class DoubleExpressionHolder extends AbstractExpressionHolder {
                 new FunctionExpression("sigma(", new SigmaOperator(), ")", ",")
         };
     }
+
+    @Override
+    public IExpression getPlus() {
+        return null;
+    }
+
+    @Override
+    public IExpression getMinus() {
+        return null;
+    }
 }

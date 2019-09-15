@@ -12,18 +12,8 @@ public abstract class LeftNullableOperator extends TwoArgOperator {
 
         if(right == null){
             throw new IllegalArgumentException("right is null.");
-        }else if(left != null){
-            return this.doubleCalculate(left.interpret(), right.interpret());
         }else{
-            // TODO 返回值
-            return null;
+            return this.doubleCalculate(left == null ? null : left.interpret(), right.interpret());
         }
-//        double leftNum = left == null ? 0 : DoubleOperatorUtil.resultExpressionToDouble(null);
-//        if(right == null){
-//            throw new IllegalArgumentException("right is null.");
-//        }else{
-//            ISpace rightResult = right.interpret();
-//            return null;
-//        }
     }
 }

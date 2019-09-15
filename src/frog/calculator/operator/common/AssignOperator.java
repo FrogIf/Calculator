@@ -1,12 +1,14 @@
-package frog.calculator.operator;
+package frog.calculator.operator.common;
 
 import frog.calculator.exception.StructureErrorException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.endpoint.VariableExpression;
+import frog.calculator.operator.AbstractOperator;
+import frog.calculator.operator.IOperator;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.StringUtils;
 
-public class AssignOperator implements IOperator {
+public class AssignOperator extends AbstractOperator {
 
     @Override
     public ISpace operate(IExpression exp) {

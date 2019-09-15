@@ -1,12 +1,14 @@
-package frog.calculator.operator;
+package frog.calculator.operator.common;
 
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.separator.SeparatorExpression;
+import frog.calculator.operator.AbstractOperator;
+import frog.calculator.operator.IOperator;
 import frog.calculator.space.ISpace;
 
-public class DeclareOperator implements IOperator {
+public class DeclareOperator extends AbstractOperator {
     @Override
     public ISpace operate(IExpression exp) {
         IExpression expression = exp.nextChild();

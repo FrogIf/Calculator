@@ -5,8 +5,14 @@ import frog.calculator.space.*;
 public class FixedAlignSpaceTest {
 
     public static void main(String[] args){
-//        testTwoDimension();
-        testThreeDimension();
+        ISpace<String> space = testTwoDimension();
+        InterleavedSpace<String> ilSpace = new InterleavedSpace<>();
+        ilSpace.addSubspace(new Coordinate(0), space);
+        System.out.println();
+        TestUtil.showList(ilSpace.getPoints());
+        IPoint<String> point = ilSpace.getPoint(new Coordinate(0, 1, 1));
+        System.out.println(point.intrinsic());
+//        testThreeDimension();
     }
 
     private static void testThreeDimension(){
@@ -150,8 +156,8 @@ public class FixedAlignSpaceTest {
         System.out.println(space.getPoint(new Coordinate(2, 0)));
 
         System.out.println("--- width ---");
+        System.out.println(space.width(new Coordinate()));
         System.out.println(space.width(new Coordinate(1)));
-        System.out.println(space.width(new Coordinate(1, 1)));
 
         for(int i = 0; i < space.width(new Coordinate()); i++){
             for(int j = 0; j < space.width(new Coordinate(0)); j++){
@@ -166,10 +172,10 @@ public class FixedAlignSpaceTest {
         System.out.println(subspace.dimension());
         TestUtil.showList(subspace.getPoints());
 
-        System.out.println();
-        space.addPoint(new SymbolPoint("uuu"), new Coordinate(1, 2, 3));
-        System.out.println(space.dimension());
-        System.out.println(space.getPoint(new Coordinate(1, 2, 3)));
+//        System.out.println();
+//        space.addPoint(new SymbolPoint("uuu"), new Coordinate(1, 2, 3));
+//        System.out.println(space.dimension());
+//        System.out.println(space.getPoint(new Coordinate(1, 2, 3)));
 
         return space;
     }
