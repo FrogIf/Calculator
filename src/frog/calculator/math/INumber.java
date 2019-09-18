@@ -1,4 +1,4 @@
-package frog.calculator.number;
+package frog.calculator.math;
 
 public interface INumber {
 
