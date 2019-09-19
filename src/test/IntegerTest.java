@@ -11,7 +11,7 @@ public class IntegerTest {
 //        BigInteger b = new BigInteger("456");
 //        BigInteger remainder = a.remainder(b);
 //        System.out.println(remainder);
-//        assignTest(-569062871, 1072174604);
+//        assignBaseTest(-569062871, 1072174604);
 //        randomTest();
 //        System.out.println(gcd(12, 6));
 //        randomTestHalf();
@@ -19,9 +19,43 @@ public class IntegerTest {
 //            System.out.println(i);
 //            testHalfAssign(i * 2);
 //        }
-        testGCD();
+//        testGCD();
 //        assignGCDTest(0, 4);
 //        assignGCDTest(1009079744, 200842384);
+//        assignDivTest(1009079744, 2008);
+        assignDivTest(100000, 5);
+//        testDivRandom();
+//        randomBaseTest();
+//        assignBaseTest(784966712, 9604737);
+    }
+
+    private static void testDivRandom(){
+        Random r = new Random();
+        for(int i = 0; i < 1000000; i++){
+            int left = r.nextInt(Integer.MAX_VALUE >> 1);
+            int right = r.nextInt(200);
+            if(left == 0 || right == 0) continue;
+            int max, min;
+            if(left > right){
+                max = left;
+                min = right;
+            }else{
+                max = right;
+                min = left;
+            }
+            assignDivTest(max, min);
+        }
+    }
+
+    private static void assignDivTest(int division, int divisor){
+        int r = division / divisor;
+        IntegerNumber a = new IntegerNumber(String.valueOf(division));
+        IntegerNumber b = new IntegerNumber(String.valueOf(divisor));
+        IntegerNumber result = a.divFloor(b);
+        System.out.println(division + " / " + divisor + " = " + r);
+        if(!result.toString().equals(String.valueOf(r))){
+            throw new IllegalArgumentException(division + " / " + divisor + " = " + r + " != " + result.toString());
+        }
     }
 
     private static void testGCD(){
@@ -59,23 +93,23 @@ public class IntegerTest {
         }
     }
 
-    public static void assignTest(long left, long right){
+    public static void assignBaseTest(long left, long right){
         IntegerNumber a = new IntegerNumber(String.valueOf(left));
         IntegerNumber b = new IntegerNumber(String.valueOf(right));
 
-        System.out.println(left + " + " + right + " = ");
-        IntegerNumber add = a.add(b);
-        System.out.println(add.toString());
-        if(!add.toString().equals(String.valueOf(left + right))){
-            throw new IllegalStateException("计算不正确:" + add.toString() + " 不等于 " + (left + right));
-        }
-
-        System.out.println(left + " - " + right + " = ");
-        IntegerNumber sub = a.sub(b);
-        System.out.println(sub.toString());
-        if(!sub.toString().equals(String.valueOf(left - right))){
-            throw new IllegalStateException("计算不正确:" + sub.toString() + " 不等于 " + (left - right));
-        }
+//        System.out.println(left + " + " + right + " = ");
+//        IntegerNumber add = a.add(b);
+//        System.out.println(add.toString());
+//        if(!add.toString().equals(String.valueOf(left + right))){
+//            throw new IllegalStateException("计算不正确:" + add.toString() + " 不等于 " + (left + right));
+//        }
+//
+//        System.out.println(left + " - " + right + " = ");
+//        IntegerNumber sub = a.sub(b);
+//        System.out.println(sub.toString());
+//        if(!sub.toString().equals(String.valueOf(left - right))){
+//            throw new IllegalStateException("计算不正确:" + sub.toString() + " 不等于 " + (left - right));
+//        }
 
         IntegerNumber mult = a.mult(b);
         System.out.println(left + " * " + right + " = ");
@@ -85,29 +119,13 @@ public class IntegerTest {
         }
     }
 
-    private static void testHalfAssign(int num){
-//        String result = IntegerNumber.floorHalf(new StringBuilder(String.valueOf(num)).reverse()).reverse().toString();
-//        if(!result.equals(String.valueOf(num / 2))){
-//            throw new IllegalStateException(result + " != " + (num / 2));
-//        }
-    }
-
-    public static void randomTestHalf(){
-        Random r = new Random();
-        for(int i = 0; i < 1000000; i++){
-            int a = r.nextInt(Integer.MAX_VALUE >> 1) << 1; // 随机生成一个偶数
-            System.out.println(a + "/" + 2);
-            testHalfAssign(a);
-        }
-    }
-
-    public static void randomTest(){
+    public static void randomBaseTest(){
         Random r = new Random();
         for(int i = 0; i < 1000000; i++){
             int left = r.nextInt(Integer.MAX_VALUE >> 1) - ((Integer.MAX_VALUE >> 1) * r.nextInt(2));
             int right = r.nextInt(Integer.MAX_VALUE >> 1) - ((Integer.MAX_VALUE >> 1) * r.nextInt(2));
 
-            assignTest(left, right);
+            assignBaseTest(left, right);
         }
     }
 

@@ -1,6 +1,9 @@
 package frog.calculator.math.INT;
 
-class IntegerUtil {
+/**
+ * 正整数基本运算
+ */
+class PositiveIntegerUtil {
     /**
      * 大于0, 则a大
      * 小于0, 则b大
@@ -28,9 +31,6 @@ class IntegerUtil {
 
     /**
      * 无符号字符串相加
-     * @param left
-     * @param right
-     * @return
      */
     static StringBuilder add(StringBuilder left, StringBuilder right){
         StringBuilder large;
@@ -76,9 +76,6 @@ class IntegerUtil {
     /**
      * 无符号相减
      * 并且, 调用者保证left一定大于right(因为不会返回负数)
-     * @param left
-     * @param right
-     * @return
      */
     static StringBuilder subtract(StringBuilder left, StringBuilder right){
         StringBuilder sb = new StringBuilder();
@@ -119,7 +116,7 @@ class IntegerUtil {
             sb.append(r);
         }
 
-        sb = sb.delete(sb.length() - z, sb.length());
+        sb.delete(sb.length() - z, sb.length());
 
         if(sb.length() == 0){
             sb = IntegerNumber.ZERO_STR;
@@ -130,9 +127,6 @@ class IntegerUtil {
 
     /**
      * 无符号相乘
-     * @param left
-     * @param right
-     * @return
      */
     static StringBuilder multiply(StringBuilder left, StringBuilder right){
         if(left == IntegerNumber.ONE_STR){ return right; }
@@ -142,34 +136,32 @@ class IntegerUtil {
 
     /**
      * 模拟手算乘法
-     * @param left
-     * @param right
-     * @return
      */
     private static StringBuilder ordinaryMultiply(StringBuilder left, StringBuilder right){
-        int ll = left.length();
         int rl = right.length();
 
         StringBuilder result = new StringBuilder("0");
         StringBuilder fill = new StringBuilder();
 
+        StringBuilder[] pr = new StringBuilder[9];
+        pr[0] = left;
         for(int i = 0; i < rl; i++){
             int r = right.charAt(i) - '0';
-            int carry = 0;
-            StringBuilder sb = new StringBuilder(fill);
-            for(int j = 0; j < ll; j++){
-                int l = left.charAt(j) - '0';
-                int res = r * l + carry;
-                carry = res / 10;
-                sb.append(res % 10);
+            if(r == 0) { continue; }
+            if(pr[r - 1] == null){
+                pr[r - 1] = simpleMultiply(left, r);
+            }
+        }
+
+        for(int i = 0; i < rl; i++){
+            int r = right.charAt(i) - '1';
+            if(r < 0) {
+                fill.append("0");
+                continue;
             }
 
-            if(carry > 0){
-                while(carry != 0){
-                    sb.append(carry % 10);
-                    carry /= 10;
-                }
-            }
+            StringBuilder sb = new StringBuilder(fill);
+            sb.append(pr[r]);
 
             result = add(result, sb);
             fill.append("0");
@@ -178,16 +170,14 @@ class IntegerUtil {
         return result;
     }
 
-    /**
-     * 一个数乘以2
-     * @param num
-     * @return
+    /*
+     * 一个大数与另一个10以内(不包括10)的数相乘
      */
-    private static StringBuilder doubleNum(StringBuilder num){
+    private static StringBuilder simpleMultiply(StringBuilder num, int m){
         int carry = 0;
         StringBuilder result = new StringBuilder();
         for(int i = 0, len = num.length(); i < len; i++){
-            int res = (num.charAt(i) - '0') * 2 + carry;
+            int res = (num.charAt(i) - '0') * m + carry;
             carry = res / 10;
             result.append(res % 10);
         }
@@ -201,9 +191,61 @@ class IntegerUtil {
     }
 
     /**
+     * 除法
+     * 向下取整
+     */
+    static StringBuilder division(StringBuilder dividend, StringBuilder divisor){
+        // 预计算
+        StringBuilder[] stepMulti = new StringBuilder[9];    // x1, x2, x3, x4, x5, x6, x7, x8, x9
+        stepMulti[0] = new StringBuilder(divisor);
+        for(int i = 2; i < 10; i++){
+            stepMulti[i - 1] = simpleMultiply(divisor, i);
+        }
+
+        // 补0
+        int fl = dividend.length() - divisor.length();
+        StringBuilder fill = new StringBuilder(fl);
+        for(int i = 0; i < fl; i++){
+            fill.append('0');
+        }
+        for (StringBuilder c : stepMulti) {
+            c.insert(0, fill);
+        }
+
+        // 计算
+        StringBuilder quotient = new StringBuilder();
+        int n = dividend.length() - divisor.length();   // 商的位数
+        boolean unZero = false;
+        for(; n > -1; n--){
+            int q = 0;
+            StringBuilder trueSub = null;
+            for (int i = 8; i >= 0; i--){   // 估商
+                StringBuilder subtrahend = stepMulti[i];
+                if(q == 0){
+                    int r = compare(dividend, subtrahend);
+                    if(r >= 0){
+                        q = i + 1;
+                        trueSub = subtrahend;
+                        continue;
+                    }
+                }
+                subtrahend.deleteCharAt(0);
+            }
+
+            if(trueSub != null){
+                dividend = subtract(dividend, trueSub);
+                unZero = unZero || q > 0;
+                trueSub.deleteCharAt(0);
+            }
+
+            if(unZero) { quotient.append(q); }
+        }
+
+        return quotient.reverse();
+    }
+
+    /**
      * 除以2
-     * @param num
-     * @return
      */
     private static StringBuilder floorHalf(StringBuilder num){
         if(num == IntegerNumber.ZERO_STR){return IntegerNumber.ZERO_STR;}
@@ -228,8 +270,6 @@ class IntegerUtil {
 
     /**
      * 判断是偶数还是奇数
-     * @param num
-     * @return
      */
     static boolean isOdd(StringBuilder num){
         return (num.charAt(0) - '0') % 2 == 1;
@@ -237,9 +277,6 @@ class IntegerUtil {
 
     /**
      * 求最大公约数
-     * @param left
-     * @param right
-     * @return
      */
     static StringBuilder gcd(StringBuilder left, StringBuilder right){
         StringBuilder a = left;
@@ -263,7 +300,7 @@ class IntegerUtil {
             }else if(bIsOdd){
                 a = floorHalf(a);
             }else{
-                d = doubleNum(d);
+                d = simpleMultiply(d, 2);
                 a = floorHalf(a);
                 b = floorHalf(b);
             }
@@ -271,10 +308,6 @@ class IntegerUtil {
 
         if(a == IntegerNumber.ZERO_STR){ return multiply(d, b); }
         else{ return multiply(d, a); }
-    }
-
-    public static void main(String[] args){
-
     }
 
 

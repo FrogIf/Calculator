@@ -77,19 +77,19 @@ public class IntegerNumber {
 
         if((left.sign ^ right.sign) == operator){
             result = new IntegerNumber();
-            result.number = IntegerUtil.add(left.number, right.number);
+            result.number = PositiveIntegerUtil.add(left.number, right.number);
             result.sign = left.sign;
         }else{
-            int fa = IntegerUtil.compare(left.number, right.number);
+            int fa = PositiveIntegerUtil.compare(left.number, right.number);
             if(fa == 0){
                 return ZERO;
             }else {
                 result = new IntegerNumber();
                 if(fa < 0){
-                    result.number = IntegerUtil.subtract(right.number, left.number);
+                    result.number = PositiveIntegerUtil.subtract(right.number, left.number);
                     result.sign = NEGATIVE;
                 }else{
-                    result.number = IntegerUtil.subtract(left.number, right.number);
+                    result.number = PositiveIntegerUtil.subtract(left.number, right.number);
                 }
             }
             result.sign = (byte) (left.sign ^ result.sign);
@@ -107,7 +107,7 @@ public class IntegerNumber {
     }
 
     public IntegerNumber mult(IntegerNumber r){
-        StringBuilder resultSb = IntegerUtil.multiply(this.number, r.number);
+        StringBuilder resultSb = PositiveIntegerUtil.multiply(this.number, r.number);
         IntegerNumber result = new IntegerNumber();
         result.number = resultSb;
         result.sign = (byte) (1 & (this.sign ^ r.sign));
@@ -115,7 +115,10 @@ public class IntegerNumber {
     }
 
     public IntegerNumber divFloor(IntegerNumber r){
-        return null;
+        IntegerNumber result = new IntegerNumber();
+        result.number = PositiveIntegerUtil.division(this.number, r.number);
+        result.sign = (byte) (1 & (this.sign ^ r.sign));
+        return result;
     }
 
     /**
@@ -125,7 +128,7 @@ public class IntegerNumber {
      * @return
      */
     public IntegerNumber greatestCommonDivisor(IntegerNumber num){
-        StringBuilder gcd = IntegerUtil.gcd(num.number, this.number);
+        StringBuilder gcd = PositiveIntegerUtil.gcd(num.number, this.number);
         IntegerNumber result = new IntegerNumber();
         result.number = gcd;
         return result;
