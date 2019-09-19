@@ -49,9 +49,9 @@ public class IntegerTest {
 
     private static void assignDivTest(int division, int divisor){
         int r = division / divisor;
-        IntegerNumber a = new IntegerNumber(String.valueOf(division));
-        IntegerNumber b = new IntegerNumber(String.valueOf(divisor));
-        IntegerNumber result = a.divFloor(b);
+        IntegerNumber a = IntegerNumber.convertToInteger(String.valueOf(division));
+        IntegerNumber b = IntegerNumber.convertToInteger(String.valueOf(divisor));
+        IntegerNumber result = a.div(b);
         System.out.println(division + " / " + divisor + " = " + r);
         if(!result.toString().equals(String.valueOf(r))){
             throw new IllegalArgumentException(division + " / " + divisor + " = " + r + " != " + result.toString());
@@ -70,8 +70,8 @@ public class IntegerTest {
 
     private static void assignGCDTest(int left, int right){
         int gcd = gcd(left, right);
-        IntegerNumber a = new IntegerNumber(String.valueOf(left));
-        IntegerNumber b = new IntegerNumber(String.valueOf(right));
+        IntegerNumber a = IntegerNumber.convertToInteger(String.valueOf(left));
+        IntegerNumber b = IntegerNumber.convertToInteger(String.valueOf(right));
         System.out.println(left + ", " + right + " --> " + gcd);
         IntegerNumber res = a.greatestCommonDivisor(b);
         if(!res.toString().equals(String.valueOf(gcd))){
@@ -94,8 +94,8 @@ public class IntegerTest {
     }
 
     public static void assignBaseTest(long left, long right){
-        IntegerNumber a = new IntegerNumber(String.valueOf(left));
-        IntegerNumber b = new IntegerNumber(String.valueOf(right));
+        IntegerNumber a = IntegerNumber.convertToInteger(String.valueOf(left));
+        IntegerNumber b = IntegerNumber.convertToInteger(String.valueOf(right));
 
 //        System.out.println(left + " + " + right + " = ");
 //        IntegerNumber add = a.add(b);

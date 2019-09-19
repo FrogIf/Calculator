@@ -1,6 +1,9 @@
 package frog.calculator.math.INT;
 
-public class IntegerNumber {
+/**
+ * 整数
+ */
+public final class IntegerNumber implements Comparable<IntegerNumber>{
 
     private static final byte POSITIVE = 0;
 
@@ -27,18 +30,19 @@ public class IntegerNumber {
 
     private IntegerNumber(){ }
 
-    public IntegerNumber(String number){
+
+    public static IntegerNumber convertToInteger(String number){
         number = fixNumber(number);
         if("0".equals(number) || "-0".equals(number)){
-            this.number = ZERO_STR;
-            this.literal = "0";
-            return;
+            return ZERO;
         }else if("1".equals(number)){
-            this.number = ONE_STR;
-            this.literal = "1";
-            return;
+            return ONE;
+        }else{
+            return new IntegerNumber(number);
         }
+    }
 
+    private IntegerNumber(String number){
         this.sign = number.charAt(0) != '-' ? POSITIVE : NEGATIVE;
 
         int len = number.length();
@@ -60,7 +64,7 @@ public class IntegerNumber {
         this.number = new StringBuilder(this.literal).reverse();
     }
 
-    private String fixNumber(String number){
+    private static String fixNumber(String number){
         if(number == null){
             throw new IllegalArgumentException("input number is blank.");
         }else{
@@ -114,7 +118,7 @@ public class IntegerNumber {
         return result;
     }
 
-    public IntegerNumber divFloor(IntegerNumber r){
+    public IntegerNumber div(IntegerNumber r){
         IntegerNumber result = new IntegerNumber();
         result.number = PositiveIntegerUtil.division(this.number, r.number);
         result.sign = (byte) (1 & (this.sign ^ r.sign));
@@ -146,5 +150,27 @@ public class IntegerNumber {
         return this.literal;
     }
 
+    /**
+     * 绝对值比较大小
+     */
+    public int absCompareTo(IntegerNumber o){
+        return PositiveIntegerUtil.compare(this.number, o.number);
+    }
 
+    @Override
+    public int compareTo(IntegerNumber o) {
+        if(this.sign == o.sign){
+            if(this.sign == POSITIVE){
+                return PositiveIntegerUtil.compare(this.number, o.number);
+            }else {
+                return -PositiveIntegerUtil.compare(this.number, o.number);
+            }
+        }else{
+            if(this.sign == POSITIVE){
+                return 1;
+            }else{
+                return -1;
+            }
+        }
+    }
 }
