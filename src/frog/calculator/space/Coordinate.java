@@ -7,10 +7,12 @@ public class Coordinate extends AbstractCoordinate {
 
     private LinkedList<Integer> list = new LinkedList<>();
 
+    // 标记该坐标是否是原点(0, 0, ...)
     private boolean isOrigin = true;
 
-    private int endZero = -1;
+//    private int endZero = -1;
 
+    // 指示该坐标是否可以修改
     private boolean canModify = true;
 
     public Coordinate(int... coordinates) {
@@ -19,7 +21,7 @@ public class Coordinate extends AbstractCoordinate {
                 throw new IllegalArgumentException("coordinate can't be negative.");
             }
             this.isOrigin = this.isOrigin && (i == 0);
-            endZero = (i == 0) ? (endZero == -1 ? list.size() : endZero) : -1;
+//            endZero = (i == 0) ? (endZero == -1 ? list.size() : endZero) : -1;
             list.add(i);
         }
     }
@@ -33,7 +35,7 @@ public class Coordinate extends AbstractCoordinate {
             throw new IllegalStateException("coordinate can't be changed.");
         }
         this.isOrigin = this.isOrigin && (axialValue == 0);
-        endZero = (axialValue == 0) ? (endZero == -1 ? list.size() : endZero) : -1;
+//        endZero = (axialValue == 0) ? (endZero == -1 ? list.size() : endZero) : -1;
         list.add(axialValue);
     }
 
@@ -50,12 +52,26 @@ public class Coordinate extends AbstractCoordinate {
     @Override
     public void trimRight() {
         canModify = false;
-        if(endZero >= 0){
-            for(int i = 0, r = list.size() - endZero; i < r; i++){
-                list.postRemove();
+        for(int i = list.size() - 1; i > 0; i--){
+            Integer num = list.postRemove();
+            if(num != 0){
+                list.add(num);
+                break;
             }
-            endZero = -1;
         }
+//        if(endZero >= 0){
+//            for(int i = 0, r = list.size() - endZero; i < r; i++){
+//                list.postRemove();
+//            }
+//            endZero = -1;
+//        }
+    }
+
+    @Override
+    public void clear() {
+        canModify = true;
+        list.clear();
+//        endZero = -1;
     }
 
 }

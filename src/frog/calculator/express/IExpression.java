@@ -1,6 +1,8 @@
 package frog.calculator.express;
 
+import frog.calculator.math.INumber;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 
 public interface IExpression extends Cloneable {
@@ -74,7 +76,7 @@ public interface IExpression extends Cloneable {
      * 解释执行表达式
      * @return
      */
-    ISpace interpret();
+    ISpace<IPoint<INumber>> interpret();
 
     boolean hasNextChild();
 

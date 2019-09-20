@@ -3,7 +3,9 @@ package frog.calculator.express.endpoint;
 import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
+import frog.calculator.math.INumber;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 
 public class EndPointExpression extends AbstractExpression {
@@ -31,7 +33,7 @@ public class EndPointExpression extends AbstractExpression {
     }
 
     @Override
-    public ISpace interpret() {
+    public ISpace<IPoint<INumber>> interpret() {
         return operator.operate(this);
     }
 

@@ -3,6 +3,7 @@ package frog.calculator.express.container;
 import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
+import frog.calculator.math.INumber;
 import frog.calculator.space.*;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
@@ -108,7 +109,7 @@ public class TupleExpression extends AbstractExpression {
     }
 
     @Override
-    public ISpace interpret() {
+    public ISpace<IPoint<INumber>> interpret() {
         Iterator<Element> iterator = this.elements.iterator();
         FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(1);

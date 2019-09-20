@@ -32,4 +32,8 @@ public class RealNumber implements INumber {
         return null;
     }
 
+    @Override
+    public int compareTo(INumber o) {
+        return 0;
+    }
 }

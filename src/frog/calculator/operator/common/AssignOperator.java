@@ -3,15 +3,17 @@ package frog.calculator.operator.common;
 import frog.calculator.exception.StructureErrorException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.endpoint.VariableExpression;
+import frog.calculator.math.INumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.StringUtils;
 
 public class AssignOperator extends AbstractOperator {
 
     @Override
-    public ISpace operate(IExpression exp) {
+    public ISpace<IPoint<INumber>> operate(IExpression exp) {
         IExpression variable = exp.nextChild();
         IExpression valueExp = exp.nextChild();
         if(variable == null || valueExp == null){

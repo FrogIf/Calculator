@@ -18,4 +18,5 @@ public interface ICoordinate {
      */
     void trimRight();
 
+    void clear();
 }

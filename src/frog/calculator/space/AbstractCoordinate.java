@@ -33,5 +33,10 @@ public abstract class AbstractCoordinate implements ICoordinate {
         public void trimRight() {
             // do nothing
         }
+
+        @Override
+        public void clear() {
+            // do nothing
+        }
     };
 }

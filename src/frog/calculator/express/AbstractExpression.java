@@ -1,6 +1,8 @@
 package frog.calculator.express;
 
+import frog.calculator.math.INumber;
 import frog.calculator.operator.IOperator;
+import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 
 public abstract class AbstractExpression implements IExpression{
@@ -59,7 +61,7 @@ public abstract class AbstractExpression implements IExpression{
     }
 
     @Override
-    public ISpace interpret() {
+    public ISpace<IPoint<INumber>> interpret() {
         return this.operator.operate(this);
     }
 }

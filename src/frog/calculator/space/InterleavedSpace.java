@@ -365,6 +365,11 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         public void trimRight() {
             // do nothing
         }
+
+        @Override
+        public void clear() {
+            // do nothing
+        }
     }
 
     private static class XSpace<T> implements Comparable<XSpace<T>> {

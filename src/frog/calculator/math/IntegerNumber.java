@@ -157,20 +157,25 @@ public final class IntegerNumber extends RationalNumber{
         return PositiveIntegerUtil.compare(this.number, o.number);
     }
 
-//    @Override
-//    public int compareTo(IntegerNumber o) {
-//        if(this.sign == o.sign){
-//            if(this.sign == POSITIVE){
-//                return PositiveIntegerUtil.compare(this.number, o.number);
-//            }else {
-//                return -PositiveIntegerUtil.compare(this.number, o.number);
-//            }
-//        }else{
-//            if(this.sign == POSITIVE){
-//                return 1;
-//            }else{
-//                return -1;
-//            }
-//        }
-//    }
+    @Override
+    public int compareTo(INumber num) {
+        if(num instanceof IntegerNumber){
+            IntegerNumber o = (IntegerNumber) num;
+            if(this.sign == o.sign){
+                if(this.sign == POSITIVE){
+                    return PositiveIntegerUtil.compare(this.number, o.number);
+                }else {
+                    return -PositiveIntegerUtil.compare(this.number, o.number);
+                }
+            }else{
+                if(this.sign == POSITIVE){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            }
+        }else{
+            throw new IllegalArgumentException("can't compare this object");
+        }
+    }
 }

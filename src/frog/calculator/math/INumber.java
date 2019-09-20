@@ -1,6 +1,6 @@
 package frog.calculator.math;
 
-public interface INumber {
+public interface INumber extends Comparable<INumber>{
 
     INumber add(INumber number);
 
