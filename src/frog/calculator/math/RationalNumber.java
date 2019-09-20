@@ -1,16 +1,17 @@
 package frog.calculator.math;
 
-import frog.calculator.math.INT.IntegerNumber;
 import frog.calculator.util.StringUtils;
 
 /**
  * 有理数
  */
-public class RationalNumber {
+public class RationalNumber extends RealNumber {
 
     private IntegerNumber numerator = IntegerNumber.ZERO;    // 分子
 
     private IntegerNumber denominator = IntegerNumber.ONE;  // 分母
+
+    protected RationalNumber(){}
 
     public RationalNumber(String numerator, String denominator){
         if(StringUtils.isNotBlank(numerator)){
@@ -27,6 +28,10 @@ public class RationalNumber {
             throw new IllegalArgumentException("decimal is blank.");
         }
         int pos = decimal.indexOf(".");
+        convertDecimal(decimal, pos);
+    }
+
+    private void convertDecimal(String decimal, int pos){
         if(pos < 0){
             this.numerator = IntegerNumber.convertToInteger(decimal);
         }else{
@@ -50,23 +55,29 @@ public class RationalNumber {
      * @param repetend 小数循环节开始的位置(从0计)
      */
     public RationalNumber(String decimal, int repetend){
+        if(StringUtils.isBlank(decimal)){
+            throw new IllegalArgumentException("decimal is blank.");
+        }
 
-    }
+        int pos = decimal.indexOf(".");
+        if(pos < 0){
+            convertDecimal(decimal, pos);
+        }else{
+            /*
+             * 循环小数转分数:
+             * 分子 = (b + a * (10 ^ m - 1))
+             * 分母 = ((10 ^ m - 1) * 10 ^ n)
+             * a -- 小数的不循环部分
+             * b -- 小数的循环部分
+             * n -- 不循环部分的位数
+             * m -- 循环部分的位数
+             */
+            if(repetend == 0){  // 纯循环小数 n = 0, a = 0 --> b / (10 ^ m - 1)
 
-    public RationalNumber add(RationalNumber r){
-        return null;
-    }
+            }else{  // 混循环小数
 
-    public RationalNumber sub(RationalNumber r){
-        return null;
-    }
-
-    public RationalNumber mult(RationalNumber r){
-        return null;
-    }
-
-    public RationalNumber div(RationalNumber r){
-        return null;
+            }
+        }
     }
 
     // 约分
@@ -78,4 +89,23 @@ public class RationalNumber {
         }
     }
 
+    @Override
+    public INumber add(INumber number) {
+        return null;
+    }
+
+    @Override
+    public INumber sub(INumber number) {
+        return null;
+    }
+
+    @Override
+    public INumber mult(INumber number) {
+        return null;
+    }
+
+    @Override
+    public INumber div(INumber number) {
+        return null;
+    }
 }

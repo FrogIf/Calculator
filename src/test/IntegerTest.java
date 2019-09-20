@@ -1,6 +1,6 @@
 package test;
 
-import frog.calculator.math.INT.IntegerNumber;
+import frog.calculator.math.IntegerNumber;
 
 import java.util.Random;
 

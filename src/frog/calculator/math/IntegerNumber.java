@@ -1,9 +1,9 @@
-package frog.calculator.math.INT;
+package frog.calculator.math;
 
 /**
  * 整数
  */
-public final class IntegerNumber implements Comparable<IntegerNumber>{
+public final class IntegerNumber extends RationalNumber{
 
     private static final byte POSITIVE = 0;
 
@@ -157,20 +157,20 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
         return PositiveIntegerUtil.compare(this.number, o.number);
     }
 
-    @Override
-    public int compareTo(IntegerNumber o) {
-        if(this.sign == o.sign){
-            if(this.sign == POSITIVE){
-                return PositiveIntegerUtil.compare(this.number, o.number);
-            }else {
-                return -PositiveIntegerUtil.compare(this.number, o.number);
-            }
-        }else{
-            if(this.sign == POSITIVE){
-                return 1;
-            }else{
-                return -1;
-            }
-        }
-    }
+//    @Override
+//    public int compareTo(IntegerNumber o) {
+//        if(this.sign == o.sign){
+//            if(this.sign == POSITIVE){
+//                return PositiveIntegerUtil.compare(this.number, o.number);
+//            }else {
+//                return -PositiveIntegerUtil.compare(this.number, o.number);
+//            }
+//        }else{
+//            if(this.sign == POSITIVE){
+//                return 1;
+//            }else{
+//                return -1;
+//            }
+//        }
+//    }
 }
