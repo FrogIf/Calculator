@@ -3,33 +3,31 @@ package frog.calculator.math;
 /**
  * 整数
  */
-public final class IntegerNumber extends RationalNumber{
+public final class IntegerNumber implements Comparable<IntegerNumber>{
 
     private static final byte POSITIVE = 0;
 
     private static final byte NEGATIVE = 1;
 
-    public static final IntegerNumber ZERO = new IntegerNumber();
-
-    public static final IntegerNumber ONE = new IntegerNumber();
-
     static final StringBuilder ZERO_STR = new StringBuilder("0");
 
     static final StringBuilder ONE_STR = new StringBuilder("1");
 
-    static {
-        ZERO.number = ZERO_STR;
-        ONE.number = ONE_STR;
-    }
+    private final byte sign;
 
-    private byte sign;
-
-    private StringBuilder number;   // 最低位在前
+    private final StringBuilder number;   // 最低位在前
 
     private String literal;
 
-    private IntegerNumber(){ }
+    private IntegerNumber(StringBuilder number, byte sign){
+        super();
+        this.number = number;
+        this.sign = sign;
+    }
 
+    public static final IntegerNumber ZERO = new IntegerNumber(ZERO_STR, POSITIVE);
+
+    public static final IntegerNumber ONE = new IntegerNumber(ONE_STR, POSITIVE);
 
     public static IntegerNumber convertToInteger(String number){
         number = fixNumber(number);
@@ -80,23 +78,23 @@ public final class IntegerNumber extends RationalNumber{
         IntegerNumber result;
 
         if((left.sign ^ right.sign) == operator){
-            result = new IntegerNumber();
-            result.number = PositiveIntegerUtil.add(left.number, right.number);
-            result.sign = left.sign;
+            StringBuilder number = PositiveIntegerUtil.add(left.number, right.number);
+            result = new IntegerNumber(number, left.sign);
         }else{
             int fa = PositiveIntegerUtil.compare(left.number, right.number);
             if(fa == 0){
                 return ZERO;
             }else {
-                result = new IntegerNumber();
+                StringBuilder number;
+                byte sign = POSITIVE;
                 if(fa < 0){
-                    result.number = PositiveIntegerUtil.subtract(right.number, left.number);
-                    result.sign = NEGATIVE;
+                    number = PositiveIntegerUtil.subtract(right.number, left.number);
+                    sign = NEGATIVE;
                 }else{
-                    result.number = PositiveIntegerUtil.subtract(left.number, right.number);
+                    number = PositiveIntegerUtil.subtract(left.number, right.number);
                 }
+                result = new IntegerNumber(number, (byte) (left.sign ^ sign));
             }
-            result.sign = (byte) (left.sign ^ result.sign);
         }
 
         return result;
@@ -111,18 +109,11 @@ public final class IntegerNumber extends RationalNumber{
     }
 
     public IntegerNumber mult(IntegerNumber r){
-        StringBuilder resultSb = PositiveIntegerUtil.multiply(this.number, r.number);
-        IntegerNumber result = new IntegerNumber();
-        result.number = resultSb;
-        result.sign = (byte) (1 & (this.sign ^ r.sign));
-        return result;
+        return new IntegerNumber(PositiveIntegerUtil.multiply(this.number, r.number), (byte) (1 & (this.sign ^ r.sign)));
     }
 
     public IntegerNumber div(IntegerNumber r){
-        IntegerNumber result = new IntegerNumber();
-        result.number = PositiveIntegerUtil.division(this.number, r.number);
-        result.sign = (byte) (1 & (this.sign ^ r.sign));
-        return result;
+        return new IntegerNumber(PositiveIntegerUtil.division(this.number, r.number), (byte) (1 & (this.sign ^ r.sign)));
     }
 
     /**
@@ -132,10 +123,7 @@ public final class IntegerNumber extends RationalNumber{
      * @return
      */
     public IntegerNumber greatestCommonDivisor(IntegerNumber num){
-        StringBuilder gcd = PositiveIntegerUtil.gcd(num.number, this.number);
-        IntegerNumber result = new IntegerNumber();
-        result.number = gcd;
-        return result;
+        return new IntegerNumber(PositiveIntegerUtil.gcd(num.number, this.number), POSITIVE);
     }
 
     @Override
@@ -158,24 +146,26 @@ public final class IntegerNumber extends RationalNumber{
     }
 
     @Override
-    public int compareTo(INumber num) {
-        if(num instanceof IntegerNumber){
-            IntegerNumber o = (IntegerNumber) num;
-            if(this.sign == o.sign){
-                if(this.sign == POSITIVE){
-                    return PositiveIntegerUtil.compare(this.number, o.number);
-                }else {
-                    return -PositiveIntegerUtil.compare(this.number, o.number);
-                }
-            }else{
-                if(this.sign == POSITIVE){
-                    return 1;
-                }else{
-                    return -1;
-                }
+    public int compareTo(IntegerNumber o) {
+        if(o == null){
+            throw new IllegalArgumentException("compare object is null.");
+        }
+        if(this.sign == o.sign){
+            if(this.sign == POSITIVE){
+                return PositiveIntegerUtil.compare(this.number, o.number);
+            }else {
+                return -PositiveIntegerUtil.compare(this.number, o.number);
             }
         }else{
-            throw new IllegalArgumentException("can't compare this object");
+            if(this.sign == POSITIVE){
+                return 1;
+            }else{
+                return -1;
+            }
         }
+    }
+
+    public byte getSign() {
+        return sign;
     }
 }

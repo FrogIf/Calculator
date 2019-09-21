@@ -7,20 +7,42 @@ import frog.calculator.util.StringUtils;
  */
 public class RationalNumber extends RealNumber {
 
-    private IntegerNumber numerator = IntegerNumber.ZERO;    // 分子
+    private final IntegerNumber numerator;    // 分子
 
-    private IntegerNumber denominator = IntegerNumber.ONE;  // 分母
+    private final IntegerNumber denominator;  // 分母
 
-    protected RationalNumber(){}
+    private final byte sign;
+
+    private RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
+        this.numerator = numerator;
+        this.denominator = denominator;
+        this.sign = (byte) (1 & (numerator.getSign() ^ denominator.getSign()));
+    }
 
     public RationalNumber(String numerator, String denominator){
+        IntegerNumber top;
+        IntegerNumber bottom;
+
         if(StringUtils.isNotBlank(numerator)){
-            this.numerator = IntegerNumber.convertToInteger(numerator);
+            top = IntegerNumber.convertToInteger(numerator);
+        }else{
+            top = IntegerNumber.ZERO;
         }
         if(StringUtils.isNotBlank(denominator)){
-            this.numerator = IntegerNumber.convertToInteger(denominator);
+            bottom = IntegerNumber.convertToInteger(denominator);
+        }else{
+            bottom = IntegerNumber.ONE;
         }
-        this.reduce();
+
+        IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+        if(gcd != IntegerNumber.ONE){
+            top = top.div(gcd);
+            bottom = bottom.div(gcd);
+        }
+
+        this.numerator = top;
+        this.denominator = bottom;
+        this.sign = (byte) (1 & (top.getSign() ^ bottom.getSign()));
     }
 
     public RationalNumber(String decimal){
@@ -28,14 +50,12 @@ public class RationalNumber extends RealNumber {
             throw new IllegalArgumentException("decimal is blank.");
         }
         int pos = decimal.indexOf(".");
-        convertDecimal(decimal, pos);
-    }
-
-    private void convertDecimal(String decimal, int pos){
+        IntegerNumber top;
+        IntegerNumber bottom = IntegerNumber.ONE;
         if(pos < 0){
-            this.numerator = IntegerNumber.convertToInteger(decimal);
+            top = IntegerNumber.convertToInteger(decimal);
         }else{
-            this.numerator = IntegerNumber.convertToInteger(decimal.replace(".", ""));
+            top = IntegerNumber.convertToInteger(decimal.replace(".", ""));
 
             int len = decimal.length() - pos - 1;
             StringBuilder denominator = new StringBuilder(len + 1);
@@ -43,9 +63,17 @@ public class RationalNumber extends RealNumber {
             for(int i = 0; i < len; i++){
                 denominator.append('0');
             }
-            this.denominator = IntegerNumber.convertToInteger(denominator.toString());
-            this.reduce();
+            bottom = IntegerNumber.convertToInteger(denominator.toString());
+
+            IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+            if(gcd != IntegerNumber.ONE){
+                top = top.div(gcd);
+                bottom = bottom.div(gcd);
+            }
         }
+        this.numerator = top;
+        this.denominator = bottom;
+        this.sign = (byte) (1 & (top.getSign() ^ bottom.getSign()));
     }
 
     /**
@@ -61,7 +89,9 @@ public class RationalNumber extends RealNumber {
 
         int pos = decimal.indexOf(".");
         if(pos < 0){
-            convertDecimal(decimal, pos);
+            this.numerator = IntegerNumber.convertToInteger(decimal);
+            this.denominator = IntegerNumber.ONE;
+            this.sign = this.numerator.getSign();
         }else{
             /*
              * 循环小数转分数:
@@ -77,35 +107,42 @@ public class RationalNumber extends RealNumber {
             }else{  // 混循环小数
 
             }
+            this.numerator = null;
+            this.denominator = null;
+            this.sign = 1;
         }
     }
 
-    // 约分
-    private void reduce(){
-        IntegerNumber gcd = this.numerator.greatestCommonDivisor(denominator);
-        if(gcd != IntegerNumber.ONE){
-            this.numerator = this.numerator.div(gcd);
-            this.denominator = this.denominator.div(gcd);
+    public RationalNumber add(RationalNumber number){
+        IntegerNumber top;
+        IntegerNumber bottom;
+
+        if(this.compareTo(number) == 0){
+            top = number.numerator.add(this.numerator);
+            bottom = number.denominator;
+        }else{
+            bottom = this.denominator.mult(number.denominator);
+            top = this.denominator.mult(number.numerator).add(number.denominator.mult(this.numerator));
+
+            IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+            if(gcd != IntegerNumber.ONE){
+                top = top.div(gcd);
+                bottom = bottom.div(gcd);
+            }
         }
+
+        return new RationalNumber(top, bottom);
     }
 
-    @Override
-    public INumber add(INumber number) {
+    public RationalNumber sub(RationalNumber number){
         return null;
     }
 
-    @Override
-    public INumber sub(INumber number) {
+    public RationalNumber mult(RationalNumber number){
         return null;
     }
 
-    @Override
-    public INumber mult(INumber number) {
-        return null;
-    }
-
-    @Override
-    public INumber div(INumber number) {
+    public RationalNumber div(RationalNumber number){
         return null;
     }
 }
