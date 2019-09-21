@@ -93,36 +93,71 @@ public class RationalNumber extends RealNumber {
             this.denominator = IntegerNumber.ONE;
             this.sign = this.numerator.getSign();
         }else{
+            int start = pos + repetend + 1;
+            if(start >= decimal.length()){
+                throw new IllegalArgumentException("decimal is not enough.");
+            }
+
+            boolean negative = decimal.startsWith("-");
+            decimal = decimal.replace(".", "");
+            if(negative){
+                decimal = decimal.substring(1);
+            }
+            start--;
+            repetend--;
             /*
              * 循环小数转分数:
-             * 分子 = (b + a * (10 ^ m - 1))
-             * 分母 = ((10 ^ m - 1) * 10 ^ n)
-             * a -- 小数的不循环部分
-             * b -- 小数的循环部分
-             * n -- 不循环部分的位数
-             * m -- 循环部分的位数
+             * 123.456 (56循环)
+             * --> 分子 = 123456 - 1234
+             *     分母 = 990 (9的个数与循环节位数相同, 0的位数与不循环部分相同)
              */
-            if(repetend == 0){  // 纯循环小数 n = 0, a = 0 --> b / (10 ^ m - 1)
+            IntegerNumber top;
+            IntegerNumber bottom;
+            IntegerNumber a = IntegerNumber.convertToInteger(decimal);
+            IntegerNumber b = IntegerNumber.convertToInteger(decimal.substring(0, start));
 
-            }else{  // 混循环小数
+            top = a.sub(b);
 
+            StringBuilder nineSb = new StringBuilder();
+            for(int i = 0, len = decimal.length() - start; i < len; i++){
+                nineSb.append('9');
             }
-            this.numerator = null;
-            this.denominator = null;
-            this.sign = 1;
+            for(int i = 0, len = repetend + 1; i < len; i++){
+                nineSb.append('0');
+            }
+
+            bottom = IntegerNumber.convertToInteger(nineSb.toString());
+
+            IntegerNumber gcd = top.greatestCommonDivisor(bottom);
+            if(gcd != IntegerNumber.ONE){
+                top = top.div(gcd);
+                bottom = bottom.div(gcd);
+            }
+
+            this.numerator = top;
+            this.denominator = bottom;
+            this.sign = negative ? IntegerNumber.NEGATIVE : IntegerNumber.POSITIVE;
         }
     }
 
-    public RationalNumber add(RationalNumber number){
+    public RationalNumber not(){
+        return new RationalNumber(this.numerator.not(), this.denominator);
+    }
+
+    public RationalNumber upend(){
+        return new RationalNumber(this.denominator, this.numerator);
+    }
+
+    public RationalNumber add(RationalNumber num){
         IntegerNumber top;
         IntegerNumber bottom;
 
-        if(this.compareTo(number) == 0){
-            top = number.numerator.add(this.numerator);
-            bottom = number.denominator;
+        if(this.compareTo(num) == 0){
+            top = num.numerator.add(this.numerator);
+            bottom = num.denominator;
         }else{
-            bottom = this.denominator.mult(number.denominator);
-            top = this.denominator.mult(number.numerator).add(number.denominator.mult(this.numerator));
+            bottom = this.denominator.mult(num.denominator);
+            top = this.denominator.mult(num.numerator).add(num.denominator.mult(this.numerator));
 
             IntegerNumber gcd = bottom.greatestCommonDivisor(top);
             if(gcd != IntegerNumber.ONE){
@@ -134,15 +169,47 @@ public class RationalNumber extends RealNumber {
         return new RationalNumber(top, bottom);
     }
 
-    public RationalNumber sub(RationalNumber number){
-        return null;
+    public RationalNumber sub(RationalNumber num){
+        return this.add(num.not());
     }
 
-    public RationalNumber mult(RationalNumber number){
-        return null;
+    public RationalNumber mult(RationalNumber num){
+        IntegerNumber top = this.numerator.mult(num.numerator);
+        IntegerNumber bottom = this.denominator.mult(num.denominator);
+        IntegerNumber gcd = top.greatestCommonDivisor(bottom);
+        if(gcd != IntegerNumber.ONE){
+            top = top.div(gcd);
+            bottom = bottom.div(gcd);
+        }
+        return new RationalNumber(top, bottom);
     }
 
     public RationalNumber div(RationalNumber number){
-        return null;
+        return this.mult(number.upend());
+    }
+
+    @Override
+    public byte getSign() {
+        return sign;
+    }
+
+    @Override
+    public String toDecimal(int count) {
+        IntegerNumber leftMove = this.numerator.decLeftMove(count + 1);
+        IntegerNumber div = leftMove.div(this.denominator);
+        String s = div.toString();
+        int a = s.length() - count - 1;
+        int last = s.charAt(s.length() - 1) - '0';
+        if(last > 4){
+            div = div.add(IntegerNumber.ONE.decLeftMove(1));
+            s = div.toString();
+        }
+        s = s.substring(0, a) + '.' + s.substring(a, s.length() - 1);
+        return s;
+    }
+
+    @Override
+    public String toString() {
+        return (this.sign == IntegerNumber.NEGATIVE ? "-" : "") + numerator.toString() + "/" + denominator.toString();
     }
 }

@@ -5,9 +5,9 @@ package frog.calculator.math;
  */
 public final class IntegerNumber implements Comparable<IntegerNumber>{
 
-    private static final byte POSITIVE = 0;
+    public static final byte POSITIVE = 0;
 
-    private static final byte NEGATIVE = 1;
+    public static final byte NEGATIVE = 1;
 
     static final StringBuilder ZERO_STR = new StringBuilder("0");
 
@@ -124,6 +124,24 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
      */
     public IntegerNumber greatestCommonDivisor(IntegerNumber num){
         return new IntegerNumber(PositiveIntegerUtil.gcd(num.number, this.number), POSITIVE);
+    }
+
+    public IntegerNumber not(){
+        return new IntegerNumber(this.number, (byte) (1 ^ this.sign));
+    }
+
+    /**
+     * 10进制左移
+     * @param b 左移的位数
+     * @return 左移后的结果
+     */
+    public IntegerNumber decLeftMove(int b){
+        StringBuilder n = new StringBuilder(this.number).reverse();
+        for(int i = 0; i < b; i++){
+            n.append('0');
+        }
+        n.reverse();
+        return new IntegerNumber(n, this.sign);
     }
 
     @Override

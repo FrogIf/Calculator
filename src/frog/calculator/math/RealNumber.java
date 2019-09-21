@@ -13,6 +13,11 @@ public class RealNumber implements INumber {
     private INumber functionNumber;
 
     @Override
+    public byte getSign() {
+        return 0;
+    }
+
+    @Override
     public INumber add(INumber number) {
         return null;
     }
@@ -29,6 +34,11 @@ public class RealNumber implements INumber {
 
     @Override
     public INumber div(INumber number) {
+        return null;
+    }
+
+    @Override
+    public String toDecimal(int count) {
         return null;
     }
 
