@@ -3,11 +3,7 @@ package frog.calculator.math;
 /**
  * 整数
  */
-public final class IntegerNumber implements Comparable<IntegerNumber>{
-
-    public static final byte POSITIVE = 0;
-
-    public static final byte NEGATIVE = 1;
+public final class IntegerNumber extends RealNumber implements IRationalNumber{
 
     static final StringBuilder ZERO_STR = new StringBuilder("0");
 
@@ -20,14 +16,13 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
     private String literal;
 
     private IntegerNumber(StringBuilder number, byte sign){
-        super();
         this.number = number;
         this.sign = sign;
     }
 
-    public static final IntegerNumber ZERO = new IntegerNumber(ZERO_STR, POSITIVE);
+    public static final IntegerNumber ZERO = new IntegerNumber(ZERO_STR, NumberConstant.POSITIVE);
 
-    public static final IntegerNumber ONE = new IntegerNumber(ONE_STR, POSITIVE);
+    public static final IntegerNumber ONE = new IntegerNumber(ONE_STR, NumberConstant.POSITIVE);
 
     public static IntegerNumber convertToInteger(String number){
         number = fixNumber(number);
@@ -41,7 +36,7 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
     }
 
     private IntegerNumber(String number){
-        this.sign = number.charAt(0) != '-' ? POSITIVE : NEGATIVE;
+        this.sign = number.charAt(0) != '-' ? NumberConstant.POSITIVE : NumberConstant.NEGATIVE;
 
         int len = number.length();
         boolean pz = true;  // 是否存在前置0
@@ -58,8 +53,7 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
             }
         }
 
-        this.literal = number.substring(this.sign + zero);
-        this.number = new StringBuilder(this.literal).reverse();
+        this.number = new StringBuilder(number.substring(this.sign + zero)).reverse();
     }
 
     private static String fixNumber(String number){
@@ -86,10 +80,10 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
                 return ZERO;
             }else {
                 StringBuilder number;
-                byte sign = POSITIVE;
+                byte sign = NumberConstant.POSITIVE;
                 if(fa < 0){
                     number = PositiveIntegerUtil.subtract(right.number, left.number);
-                    sign = NEGATIVE;
+                    sign = NumberConstant.NEGATIVE;
                 }else{
                     number = PositiveIntegerUtil.subtract(left.number, right.number);
                 }
@@ -101,19 +95,19 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
     }
 
     public IntegerNumber add(IntegerNumber r){
-        return add(this, r, POSITIVE);
+        return add(this, r, NumberConstant.POSITIVE);
     }
 
     public IntegerNumber sub(IntegerNumber r){
-        return add(this, r, NEGATIVE);
+        return add(this, r, NumberConstant.NEGATIVE);
     }
 
     public IntegerNumber mult(IntegerNumber r){
-        return new IntegerNumber(PositiveIntegerUtil.multiply(this.number, r.number), (byte) (1 & (this.sign ^ r.sign)));
+        return new IntegerNumber(PositiveIntegerUtil.multiply(this.number, r.number), (byte) (this.sign ^ r.sign));
     }
 
     public IntegerNumber div(IntegerNumber r){
-        return new IntegerNumber(PositiveIntegerUtil.division(this.number, r.number), (byte) (1 & (this.sign ^ r.sign)));
+        return new IntegerNumber(PositiveIntegerUtil.division(this.number, r.number), (byte) (this.sign ^ r.sign));
     }
 
     /**
@@ -123,13 +117,20 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
      * @return
      */
     public IntegerNumber greatestCommonDivisor(IntegerNumber num){
-        return new IntegerNumber(PositiveIntegerUtil.gcd(num.number, this.number), POSITIVE);
+        return new IntegerNumber(PositiveIntegerUtil.gcd(num.number, this.number), NumberConstant.POSITIVE);
     }
 
     public IntegerNumber not(){
         return new IntegerNumber(this.number, (byte) (1 ^ this.sign));
     }
 
+    public IntegerNumber abs() {
+        if(this.sign == NumberConstant.NEGATIVE){
+            return new IntegerNumber(this.number, NumberConstant.POSITIVE);
+        }else{
+            return this;
+        }
+    }
     /**
      * 10进制左移
      * @param b 左移的位数
@@ -148,7 +149,7 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
     public String toString() {
         if(this.literal == null){
             StringBuilder temp = new StringBuilder(this.number);
-            if(this.sign == NEGATIVE){
+            if(this.sign == NumberConstant.NEGATIVE){
                 temp.append('-');
             }
             this.literal = temp.reverse().toString();
@@ -164,18 +165,19 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
     }
 
     @Override
-    public int compareTo(IntegerNumber o) {
-        if(o == null){
+    public int compareTo(INumber o) {
+        if(!(o instanceof IntegerNumber)){
             throw new IllegalArgumentException("compare object is null.");
         }
-        if(this.sign == o.sign){
-            if(this.sign == POSITIVE){
-                return PositiveIntegerUtil.compare(this.number, o.number);
+        IntegerNumber num = (IntegerNumber) o;
+        if(this.sign == num.sign){
+            if(this.sign == NumberConstant.POSITIVE){
+                return PositiveIntegerUtil.compare(this.number, num.number);
             }else {
-                return -PositiveIntegerUtil.compare(this.number, o.number);
+                return -PositiveIntegerUtil.compare(this.number, num.number);
             }
         }else{
-            if(this.sign == POSITIVE){
+            if(this.sign == NumberConstant.POSITIVE){
                 return 1;
             }else{
                 return -1;
@@ -185,5 +187,15 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
 
     public byte getSign() {
         return sign;
+    }
+
+    @Override
+    public IntegerNumber getNumerator() {
+        return null;
+    }
+
+    @Override
+    public IntegerNumber getDenominator() {
+        return null;
     }
 }

@@ -5,7 +5,7 @@ import frog.calculator.util.StringUtils;
 /**
  * 有理数
  */
-public class RationalNumber extends RealNumber {
+public class RationalNumber extends ComplexNumber implements IRationalNumber {
 
     private final IntegerNumber numerator;    // 分子
 
@@ -13,10 +13,16 @@ public class RationalNumber extends RealNumber {
 
     private final byte sign;
 
+    protected RationalNumber(){
+        this.numerator = null;
+        this.denominator = null;
+        this.sign = NumberConstant.POSITIVE;
+    }
+
     private RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
-        this.numerator = numerator;
-        this.denominator = denominator;
-        this.sign = (byte) (1 & (numerator.getSign() ^ denominator.getSign()));
+        this.numerator = numerator.abs();
+        this.denominator = denominator.abs();
+        this.sign = (byte) (numerator.getSign() ^ denominator.getSign());
     }
 
     public RationalNumber(String numerator, String denominator){
@@ -40,9 +46,9 @@ public class RationalNumber extends RealNumber {
             bottom = bottom.div(gcd);
         }
 
-        this.numerator = top;
-        this.denominator = bottom;
-        this.sign = (byte) (1 & (top.getSign() ^ bottom.getSign()));
+        this.numerator = top.abs();
+        this.denominator = bottom.abs();
+        this.sign = (byte) (top.getSign() ^ bottom.getSign());
     }
 
     public RationalNumber(String decimal){
@@ -71,9 +77,9 @@ public class RationalNumber extends RealNumber {
                 bottom = bottom.div(gcd);
             }
         }
-        this.numerator = top;
-        this.denominator = bottom;
-        this.sign = (byte) (1 & (top.getSign() ^ bottom.getSign()));
+        this.numerator = top.abs();
+        this.denominator = bottom.abs();
+        this.sign = (byte) (top.getSign() ^ bottom.getSign());
     }
 
     /**
@@ -89,7 +95,7 @@ public class RationalNumber extends RealNumber {
 
         int pos = decimal.indexOf(".");
         if(pos < 0){
-            this.numerator = IntegerNumber.convertToInteger(decimal);
+            this.numerator = IntegerNumber.convertToInteger(decimal).abs();
             this.denominator = IntegerNumber.ONE;
             this.sign = this.numerator.getSign();
         }else{
@@ -134,18 +140,10 @@ public class RationalNumber extends RealNumber {
                 bottom = bottom.div(gcd);
             }
 
-            this.numerator = top;
-            this.denominator = bottom;
-            this.sign = negative ? IntegerNumber.NEGATIVE : IntegerNumber.POSITIVE;
+            this.numerator = top.abs();
+            this.denominator = bottom.abs();
+            this.sign = negative ? NumberConstant.NEGATIVE : NumberConstant.POSITIVE;
         }
-    }
-
-    public RationalNumber not(){
-        return new RationalNumber(this.numerator.not(), this.denominator);
-    }
-
-    public RationalNumber upend(){
-        return new RationalNumber(this.denominator, this.numerator);
     }
 
     public RationalNumber add(RationalNumber num){
@@ -184,8 +182,16 @@ public class RationalNumber extends RealNumber {
         return new RationalNumber(top, bottom);
     }
 
-    public RationalNumber div(RationalNumber number){
-        return this.mult(number.upend());
+    public RationalNumber div(RationalNumber num){
+        return this.mult(num.upend());
+    }
+
+    public RationalNumber not(){
+        return new RationalNumber(this.numerator.not(), this.denominator);
+    }
+
+    public RationalNumber upend(){
+        return new RationalNumber(this.denominator, this.numerator);
     }
 
     @Override
@@ -210,6 +216,31 @@ public class RationalNumber extends RealNumber {
 
     @Override
     public String toString() {
-        return (this.sign == IntegerNumber.NEGATIVE ? "-" : "") + numerator.toString() + "/" + denominator.toString();
+        return (this.sign == NumberConstant.NEGATIVE ? "-" : "") + numerator.toString() + "/" + denominator.toString();
+    }
+
+    @Override
+    public IntegerNumber getNumerator() {
+        return this.numerator;
+    }
+
+    @Override
+    public IntegerNumber getDenominator() {
+        return this.denominator;
+    }
+
+    @Override
+    public RationalNumber getRationalPart() {
+        return null;
+    }
+
+    @Override
+    public IrrationalNumber getIrrationalPart() {
+        return null;
+    }
+
+    @Override
+    public RealNumber getNext() {
+        return null;
     }
 }

@@ -4,13 +4,13 @@ public interface INumber extends Comparable<INumber>{
 
     byte getSign();
 
-    INumber add(INumber number);
+    INumber add(INumber num);
 
-    INumber sub(INumber number);
+    INumber sub(INumber num);
 
-    INumber mult(INumber number);
+    INumber mult(INumber num);
 
-    INumber div(INumber number);
+    INumber div(INumber num);
 
     /**
      * 转换为小数形式(四舍五入)

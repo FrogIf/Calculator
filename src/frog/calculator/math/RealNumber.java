@@ -1,40 +1,53 @@
 package frog.calculator.math;
 
-public class RealNumber implements INumber {
+public class RealNumber extends ComplexNumber implements IRealNumber {
 
     /*
-     * 一个实数 = 加数 + 因数 * 函数
+     * 一个实数 = 有理数 * 无理数 + 另一个实数
+     * 也就是一个多项式
      */
 
-    private INumber addend;
+    private RationalNumber rationalPart;
 
-    private INumber coefficient;
+    private IrrationalNumber irrationalPart;
 
-    private INumber functionNumber;
+    private RealNumber next;
+
+    protected RealNumber(){ }
+
+    public RealNumber(RealNumber realPart) {
+
+    }
 
     @Override
     public byte getSign() {
         return 0;
     }
 
-    @Override
-    public INumber add(INumber number) {
+    public RealNumber add(RealNumber num) {
+        return null;
+    }
+
+    public RealNumber sub(RealNumber number) {
+        return null;
+    }
+
+    public RealNumber mult(RealNumber number) {
+        return null;
+    }
+
+    public RealNumber div(RealNumber number) {
         return null;
     }
 
     @Override
-    public INumber sub(INumber number) {
-        return null;
+    public RealNumber getRealPart() {
+        return this;
     }
 
     @Override
-    public INumber mult(INumber number) {
-        return null;
-    }
-
-    @Override
-    public INumber div(INumber number) {
-        return null;
+    public RealNumber getImaginaryPart() {
+        return IntegerNumber.ZERO;
     }
 
     @Override
@@ -45,5 +58,17 @@ public class RealNumber implements INumber {
     @Override
     public int compareTo(INumber o) {
         return 0;
+    }
+
+    public RationalNumber getRationalPart() {
+        return rationalPart;
+    }
+
+    public IrrationalNumber getIrrationalPart() {
+        return irrationalPart;
+    }
+
+    public RealNumber getNext() {
+        return next;
     }
 }

@@ -23,10 +23,10 @@ public class IntegerTest {
 //        assignGCDTest(0, 4);
 //        assignGCDTest(1009079744, 200842384);
 //        assignDivTest(1009079744, 2008);
-        assignDivTest(100000, 5);
-//        testDivRandom();
+//        assignDivTest(100000, 5);
+        testDivRandom();
 //        randomBaseTest();
-//        assignBaseTest(784966712, 9604737);
+//        assignBaseTest(-100410706, 620168482);
     }
 
     private static void testDivRandom(){
@@ -112,7 +112,7 @@ public class IntegerTest {
 //        }
 
         IntegerNumber mult = a.mult(b);
-        System.out.println(left + " * " + right + " = ");
+        System.out.println(a.toString() + " * " + b.toString() + " = ");
         System.out.println(mult.toString());
         if(!mult.toString().equals(String.valueOf(left * right))){
             throw new IllegalStateException("计算不正确:" + mult.toString() + " 不等于 " + (left * right));
