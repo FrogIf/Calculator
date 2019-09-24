@@ -4,6 +4,7 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
+import frog.calculator.math.INumber;
 import frog.calculator.register.IRegister;
 import frog.calculator.register.TreeRegister;
 import frog.calculator.resolver.IResolver;
@@ -12,12 +13,11 @@ import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.ResolverResultType;
 import frog.calculator.resolver.resolve.*;
 import frog.calculator.resolver.resolve.factory.CustomFunctionExpressionFactory;
-import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
+import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
 import frog.calculator.space.Coordinate;
-import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Stack;
 
@@ -50,8 +50,9 @@ public class Calculator {
 
     // create framework inner defined symbol resolver
     private IResolver createRunnableResolver() {
+        IExpressionHolder holder = this.calculatorConfigure.getExpressionHolder();
         // value resolver
-        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), resolverResultFactory);
+        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(holder.getNumberOperator()), resolverResultFactory);
 
         // plus and minus resolver
         // plus and minus can represent (positive and negative) or (add and sub)
@@ -62,11 +63,11 @@ public class Calculator {
 
         // symbol resolver, can parse symbol which was supported by framework.
         IResolver symbolResolver = new SymbolResolver(resolverResultFactory,
-                createRegister(this.calculatorConfigure.getExpressionHolder().getBuiltInExpression()));
+                createRegister(holder.getBuiltInExpression()));
 
         // to check the next symbol is or not the declare symbol, if it is declare current resolver will switch to declare resolver.
         TreeRegister declareStart = new TreeRegister();
-        IExpression declareBeginExpression = this.calculatorConfigure.getExpressionHolder().getDeclareBegin();
+        IExpression declareBeginExpression = holder.getDeclareBegin();
         declareStart.insert(declareBeginExpression);
         IResolver declareStartListenResolver = new SymbolResolver(resolverResultFactory, declareStart, ResolverResultType.DECLARE_BEGIN);
 
@@ -231,11 +232,11 @@ public class Calculator {
 
         IExpression expTree = build(expression, session, context); // 构造解析树
 
-        ISpace result = expTree.interpret(); // 执行计算
+        ISpace<INumber> result = expTree.interpret(); // 执行计算
 
-        IPoint value = result.getPoint(new Coordinate(0));
+        INumber value = result.get(new Coordinate(0));
 
-        return (String) value.intrinsic();    // 计算结果
+        return value.toString();    // 计算结果
     }
 
     /**

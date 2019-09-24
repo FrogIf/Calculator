@@ -1,7 +1,6 @@
 package frog.calculator.express.endpoint;
 
 import frog.calculator.math.INumber;
-import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 
 public class MarkExpression extends EndPointExpression {
@@ -11,7 +10,7 @@ public class MarkExpression extends EndPointExpression {
     }
 
     @Override
-    public ISpace<IPoint<INumber>> interpret() {
+    public ISpace<INumber> interpret() {
         throw new IllegalStateException("access illegal.");
     }
 

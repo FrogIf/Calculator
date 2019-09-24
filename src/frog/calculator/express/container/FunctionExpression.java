@@ -4,7 +4,6 @@ import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.math.INumber;
 import frog.calculator.operator.IOperator;
-import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
@@ -51,7 +50,7 @@ public class FunctionExpression extends ContainerExpression{
     }
 
     @Override
-    public ISpace<IPoint<INumber>> interpret() {
+    public ISpace<INumber> interpret() {
         if(!args.isEmpty()){
             IExpression[] expressions = new IExpression[args.size()];
             Iterator<Argument> iterator = args.iterator();

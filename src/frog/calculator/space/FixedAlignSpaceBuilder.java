@@ -6,7 +6,7 @@ public class FixedAlignSpaceBuilder<T> {
 
     private int[] info;
 
-    private IList<IPoint<T>> elements;
+    private IList<T> elements;
 
     public void setDimension(int dimension) {
         if(info != null){
@@ -22,7 +22,7 @@ public class FixedAlignSpaceBuilder<T> {
         info[dimension] = width;
     }
 
-    public void initElements(IList<IPoint<T>> elements){
+    public void initElements(IList<T> elements){
         this.elements = elements;
     }
 

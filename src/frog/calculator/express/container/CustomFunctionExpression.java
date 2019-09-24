@@ -4,7 +4,6 @@ import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.endpoint.VariableExpression;
 import frog.calculator.math.INumber;
-import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
@@ -85,7 +84,7 @@ public class CustomFunctionExpression extends FunctionExpression {
      * @return
      */
     @Override
-    public ISpace<IPoint<INumber>> call(IExpression[] expression){
+    public ISpace<INumber> call(IExpression[] expression){
         if(this.funBody == null){
             throw new IllegalArgumentException("function body is empty.");
         }
@@ -110,7 +109,7 @@ public class CustomFunctionExpression extends FunctionExpression {
     }
 
     @Override
-    public ISpace<IPoint<INumber>> interpret() {
+    public ISpace<INumber> interpret() {
         if(this.funBody == null){
             throw new IllegalArgumentException("function body is empty.");
         }

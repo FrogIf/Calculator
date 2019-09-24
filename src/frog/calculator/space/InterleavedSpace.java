@@ -1,13 +1,17 @@
 package frog.calculator.space;
 
 import frog.calculator.util.ComparableComparator;
+import frog.calculator.util.IComparator;
 import frog.calculator.util.collection.*;
 
 public final class InterleavedSpace<T> extends MergeableSpace<T> {
 
+    private static final PointComparator comparator = new PointComparator();
+
     private ISet<XSpace<T>> subspaces = new TreeSet<>(ComparableComparator.<XSpace<T>>getInstance());
 
-    private ISet<IPoint<T>> points = new TreeSet<>(PointComparator.getInstance());
+    @SuppressWarnings("unchecked")
+    private ISet<XPoint<T>> points = new TreeSet<>(comparator);
 
     private int dimension;
 
@@ -17,12 +21,12 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
      *            如果两个点的坐标只有最后一位不同, 那么他们一定存放在同一个points中
      *      2. 新增点时: 对齐存放, 最小高度存放
      *            最小高度存放 : 如果一个点的坐标最后若干为都是0, 那么会忽略所有0, 保证整棵树的高度最低
-     * @param point 待插入的点
+     * @param val 待插入的点
      * @param coordinate 待插入点应插入的位置
      */
     @Override
-    public void addPoint(IPoint<T> point, ICoordinate coordinate) {
-        if(point == null || coordinate == null){
+    public void add(T val, ICoordinate coordinate) {
+        if(val == null || coordinate == null){
             throw new IllegalArgumentException("point info is null.");
         }
 
@@ -39,7 +43,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         InterleavedSpace<T> pointSpace = this;
         InterleavedSpace<T> cursorSpace = this;
 
-        IPoint<T> movePoint;
+        XPoint<T> movePoint;
         InterleavedSpace<T> prePointSpace;
 
         boolean hasNew = false;
@@ -65,9 +69,9 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
                 prePointSpace = pointSpace;
                 pointSpace = ((InterleavedSpace<T>)subspace);   // 以该子空间为基准, 准备下一轮寻址
             }else{  // 如果该空间已经变成了别的类型的空间, 调用该空间的addPoint方法
-                pointSpace.addPoint(point, new ContinueCoordinate(traveller, coordinate.dimension() - di));
+                pointSpace.add(val, new ContinueCoordinate(traveller, coordinate.dimension() - di));
                 if(movePoint != null){
-                    pointSpace.addPoint(movePoint, AbstractCoordinate.ORIGIN);
+                    pointSpace.add(movePoint.val, AbstractCoordinate.ORIGIN);
                 }
                 return;
             }
@@ -76,9 +80,9 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
 
             if(movePoint != null){
                 prePointSpace.points.remove(pf);
-                movePoint.setAxialValue(0);
+                movePoint.axialValue = 0;
                 if(!cursorSpace.points.add(movePoint)){
-                    throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.intrinsic());
+                    throw new IllegalStateException("this coordinate's point has exists. point : " + movePoint.val);
                 }
             }
 
@@ -99,7 +103,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
                         cursorSpace = pointSpace;
                         xSpace = pointSpace.subspaces.find(sf);
                     }else{
-                        pointSpace.addPoint(point, AbstractCoordinate.ORIGIN);
+                        pointSpace.add(val, AbstractCoordinate.ORIGIN);
                         return;
                     }
                 }
@@ -107,14 +111,15 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         }
 
         // 向子空间中添加点
-        point.setAxialValue(pos);
+        XPoint<T> point = new XPoint<>(pos);
+        point.val = val;
         if(!cursorSpace.points.add(point)){
-            throw new IllegalStateException("this coordinate's point has exists. point : " + point.intrinsic());
+            throw new IllegalStateException("this coordinate's point has exists. point : " + point.val);
         }
     }
 
     @Override
-    public IPoint<T> getPoint(ICoordinate coordinate) {
+    public T get(ICoordinate coordinate) {
         if(coordinate == null){
             throw new IllegalArgumentException("coordinate is null.");
         }
@@ -122,7 +127,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         Itraveller<Integer> traveller = coordinate.traveller();
 
         int pos = -1;
-        IPoint<T> result = null;
+        T result = null;
         InterleavedSpace<T> cursorSpace = this;
         XPoint<T> pf = new XPoint<>(pos);
         XSpace<T> sf = new XSpace<>(pos);
@@ -132,10 +137,10 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
             pos = traveller.next();
             di++;
             pf.axialValue = pos;
-            IPoint<T> point = cursorSpace.points.find(pf);
+            XPoint<T> point = cursorSpace.points.find(pf);
 
             if(point != null){
-                result = point;
+                result = point.val;
             }
 
             sf.index = pos;
@@ -145,7 +150,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
             }else if(xSpace.space instanceof InterleavedSpace){
                 cursorSpace = (InterleavedSpace<T>) xSpace.space;
             }else{
-                return xSpace.space.getPoint(new ContinueCoordinate(traveller, coordinate.dimension() - di));
+                return xSpace.space.get(new ContinueCoordinate(traveller, coordinate.dimension() - di));
             }
         }
 
@@ -157,9 +162,10 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
                 if(xSpace == null){ break; }
                 else if(xSpace.space instanceof InterleavedSpace){
                     cursorSpace = (InterleavedSpace<T>) xSpace.space;
-                    result = cursorSpace.points.find(pf);
+                    XPoint<T> txPoint = cursorSpace.points.find(pf);
+                    result = txPoint == null ? null : txPoint.val;
                 }else{
-                    return xSpace.space.getPoint(AbstractCoordinate.ORIGIN);
+                    return xSpace.space.get(AbstractCoordinate.ORIGIN);
                 }
                 if(result != null){ break; }
             }
@@ -214,54 +220,29 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
     }
 
     @Override
-    public int dimension() {
-        return this.dimension;
+    public IRange getRange() {
+        return null;
     }
 
     @Override
-    public int width(ICoordinate coordinate) {
-        if(coordinate == null || coordinate.dimension() == 0){
-            return this.subspaces.size() + (this.points.size() > 0 ? 1 : 0);
-        }else{
-            Itraveller<Integer> traveller = coordinate.traveller();
-            InterleavedSpace<T> space = this;
-            int di = 0;
-            XSpace<T> sf = new XSpace<>(-1);
-            while(traveller.hasNext()){
-                sf.index = traveller.next();
-                di++;
-                XSpace<T> xSpace = space.subspaces.find(sf);
-                if(xSpace == null){
-                    return 0;
-                }else if(xSpace.space instanceof InterleavedSpace){
-                    space = (InterleavedSpace<T>) xSpace.space;
-                }else{
-                    return xSpace.space.width(new ContinueCoordinate(traveller, this.dimension - di));
-                }
-            }
-            int w = space.subspaces.size();
-            if(w == 0){
-                return space.points.size();
-            }else{
-                return w + (space.points.size() > 0 ? 1 : 0);
-            }
-        }
-    }
-
-    @Override
-    public IList<IPoint<T>> getPoints() {
-        IList<IPoint<T>> result = new ArrayList<>();
-        Iterator<IPoint<T>> iterator = this.points.iterator();
+    public IList<T> getElements() {
+        IList<T> result = new ArrayList<>();
+        Iterator<XPoint<T>> iterator = this.points.iterator();
         while(iterator.hasNext()){
-            result.add(iterator.next());
+            XPoint<T> next = iterator.next();
+            if(next != null){
+                result.add(next.val);
+            }else {
+                result.add(null);
+            }
         }
 
         Iterator<XSpace<T>> spaceIterator = this.subspaces.iterator();
         while(spaceIterator.hasNext()){
             XSpace<T> space = spaceIterator.next();
             ISpace<T> s = space.space;
-            IList<IPoint<T>> points = s.getPoints();
-            Iterator<IPoint<T>> pi = points.iterator();
+            IList<T> points = s.getElements();
+            Iterator<T> pi = points.iterator();
             while(pi.hasNext()){
                 result.add(pi.next());
             }
@@ -281,7 +262,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         XPoint<T> pf = new XPoint<>(sf.index);
 
         InterleavedSpace<T> pointSpace = null;
-        IPoint<T> movePoint = null;
+        XPoint<T> movePoint = null;
         boolean hasNew = false;
 
         int di = 1;
@@ -301,7 +282,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
                     if(!hasNew && (pf.axialValue != 0 || movePoint == null)){
                         if(movePoint != null){
                             pointSpace.points.remove(movePoint);
-                            movePoint.setAxialValue(0);
+                            movePoint.axialValue = 0;
                             if(!sub.points.add(movePoint)){
                                 throw new IllegalStateException("the point has exist.");
                             }
@@ -313,7 +294,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
                     ContinueCoordinate continueCoordinate = new ContinueCoordinate(traveller, this.dimension - di);
                     sub.addSubspace(continueCoordinate, space);
                     if(movePoint != null){
-                        sub.addPoint(movePoint, continueCoordinate);
+                        sub.add(movePoint.val, continueCoordinate);
                     }
                     return;
                 }
@@ -330,7 +311,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         }else{
             if(movePoint != null){
                 pointSpace.points.remove(movePoint);
-                space.addPoint(movePoint, AbstractCoordinate.ORIGIN);
+                space.add(movePoint.val, AbstractCoordinate.ORIGIN);
             }
         }
     }
@@ -390,28 +371,22 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         }
     }
 
-    private static class XPoint<T> extends AbstractPoint<T> {
+    private static class XPoint<T> {
 
         private int axialValue;
+
+        private T val;
 
         private XPoint(int axialValue) {
             this.axialValue = axialValue;
         }
 
-        @Override
-        public T intrinsic() {
-            return null;
-        }
+    }
 
+    private static class PointComparator<T> implements IComparator<XPoint<T>>{
         @Override
-        public int getAxialValue() {
-            return this.axialValue;
+        public int compare(XPoint<T> a, XPoint<T> b) {
+            return a.axialValue - b.axialValue;
         }
-
-        @Override
-        public void setAxialValue(int val) {
-            // do nothing.
-        }
-
     }
 }

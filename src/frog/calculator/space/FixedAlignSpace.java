@@ -8,9 +8,14 @@ public class FixedAlignSpace<T> implements ISpace<T> {
 
     private final int[] widthInfo;
 
-    private final IPoint<T>[] values;
+    private final Object[] values;
 
-    @SuppressWarnings("unchecked")
+    private IRange range = null;
+
+    public FixedAlignSpace(IRange range){
+        this(range.maxWidths());
+    }
+
     FixedAlignSpace(int[] widths) {
         this.dimension = widths.length;
         this.widthInfo = widths;
@@ -20,11 +25,10 @@ public class FixedAlignSpace<T> implements ISpace<T> {
             totalWidth *= width;
         }
 
-        values = new IPoint[totalWidth];
+        values = new Object[totalWidth];
     }
 
-    @SuppressWarnings("unchecked")
-    FixedAlignSpace(int[] widths, IList<IPoint<T>> values){
+    FixedAlignSpace(int[] widths, IList<T> values){
         this.dimension = widths.length;
         this.widthInfo = widths;
         int totalWidth = 1;
@@ -32,8 +36,8 @@ public class FixedAlignSpace<T> implements ISpace<T> {
             totalWidth *= width;
         }
         if(values.size() <= totalWidth){
-            this.values = new IPoint[totalWidth];
-            Iterator<IPoint<T>> iterator = values.iterator();
+            this.values = new Object[totalWidth];
+            Iterator<T> iterator = values.iterator();
             int i = 0;
             while(iterator.hasNext()){
                 this.values[i] = iterator.next();
@@ -45,38 +49,24 @@ public class FixedAlignSpace<T> implements ISpace<T> {
     }
 
     @Override
-    public IPoint<T> getPoint(ICoordinate coordinate) {
+    @SuppressWarnings("unchecked")
+    public T get(ICoordinate coordinate) {
         if(coordinate.dimension() > this.dimension){
             throw new IllegalArgumentException("coordinate dimension is error. current dimension : "
                     + this.dimension + ", input dimension : " + coordinate.dimension());
         }
         int offset = locate(coordinate.traveller());
-        return offset >= 0 ? values[offset] : null;
+        return offset >= 0 ? (T) values[offset] : null;
     }
 
-    @Override
-    public int dimension() {
-        return this.dimension;
-    }
-
-    /*
-     * 就是下级子空间数量
-     */
-    @Override
-    public int width(ICoordinate coordinate) {
-        if(coordinate.dimension() == 0){
-            return widthInfo[0];
+    public void add(T val, int index){
+        if(this.values[index] != null){
+            throw new IllegalStateException("the point has exists.");
         }
-
-        if(coordinate.dimension() > this.dimension){
-            return -1;
-        }
-
-        return widthInfo[coordinate.dimension()];
     }
 
     @Override
-    public void addPoint(IPoint<T> point, ICoordinate coordinate) {
+    public void add(T point, ICoordinate coordinate) {
         if(point == null || coordinate == null){
             throw new IllegalArgumentException("point info is null.");
         }
@@ -98,8 +88,9 @@ public class FixedAlignSpace<T> implements ISpace<T> {
     }
 
     @Override
-    public IList<IPoint<T>> getPoints() {
-        return new UnmodifiableList<>(new ArrayList<>(this.values));
+    @SuppressWarnings("unchecked")
+    public IList<T> getElements() {
+        return new UnmodifiableList<>((IList<T>) new ArrayList<Object>(this.values));
     }
 
     private int locate(Itraveller<Integer> traveller){
@@ -175,6 +166,16 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         return subspace;
     }
 
+    @Override
+    public IRange getRange() {
+        if(this.range == null){
+            SpaceRange range = new SpaceRange();
+            range.setMaxWidths(this.widthInfo.clone());
+            this.range = range;
+        }
+        return this.range;
+    }
+
     private class Subspace implements ISpace<T>{
 
         private ICoordinate pos;
@@ -183,38 +184,21 @@ public class FixedAlignSpace<T> implements ISpace<T> {
 
         private int end;
 
-        private IList<IPoint<T>> points = null;
+        private IList<T> points = null;
 
         @Override
-        public int dimension() {
-            return dimension - pos.dimension();
+        public void add(T val, ICoordinate coordinate) {
+            FixedAlignSpace.this.add(val, realCoordinate(coordinate));
         }
 
         @Override
-        public int width(ICoordinate coordinate) {
-            if(coordinate.dimension() == 0){
-                return widthInfo[pos.dimension()];
-            }
-
-            if(coordinate.dimension() > dimension - pos.dimension()){
-                return -1;
-            }
-
-            return widthInfo[pos.dimension() + coordinate.dimension()];
-        }
-
-        @Override
-        public void addPoint(IPoint<T> point, ICoordinate coordinate) {
-            FixedAlignSpace.this.addPoint(point, realCoordinate(coordinate));
-        }
-
-        @Override
-        public IList<IPoint<T>> getPoints() {
+        @SuppressWarnings("unchecked")
+        public IList<T> getElements() {
             if(points == null){
-                IPoint<T>[] values = FixedAlignSpace.this.values;
+                Object[] values = FixedAlignSpace.this.values;
                 points = new ArrayList<>(end - start + 1);
                 for(int i = start; i <= end; i++){
-                    points.add(values[i]);
+                    points.add((T) values[i]);
                 }
                 points = new UnmodifiableList<>(points);
             }
@@ -222,13 +206,18 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         }
 
         @Override
-        public IPoint<T> getPoint(ICoordinate coordinate) {
-            return FixedAlignSpace.this.getPoint(realCoordinate(coordinate));
+        public T get(ICoordinate coordinate) {
+            return FixedAlignSpace.this.get(realCoordinate(coordinate));
         }
 
         @Override
         public ISpace<T> getSubspace(ICoordinate coordinate) {
             return FixedAlignSpace.this.getSubspace(realCoordinate(coordinate));
+        }
+
+        @Override
+        public IRange getRange() {
+            return null;
         }
 
         private ICoordinate realCoordinate(ICoordinate coordinate){

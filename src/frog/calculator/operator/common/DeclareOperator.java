@@ -6,13 +6,11 @@ import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.separator.SeparatorExpression;
 import frog.calculator.math.INumber;
 import frog.calculator.operator.AbstractOperator;
-import frog.calculator.operator.IOperator;
-import frog.calculator.space.IPoint;
 import frog.calculator.space.ISpace;
 
 public class DeclareOperator extends AbstractOperator {
     @Override
-    public ISpace<IPoint<INumber>> operate(IExpression exp) {
+    public ISpace<INumber> operate(IExpression exp) {
         IExpression expression = exp.nextChild();
 
         ISpace result = expression.interpret();

@@ -3,9 +3,9 @@ package test;
 import frog.calculator.Calculator;
 import frog.calculator.DefaultCalculatorConfigure;
 import frog.calculator.ICalculatorConfigure;
+import frog.calculator.OriginExpressionHolder;
 import frog.calculator.connect.DefaultCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.dimpl.DoubleExpressionHolder;
 
 import java.util.Scanner;
 
@@ -14,7 +14,7 @@ public class TestApp {
     private static Calculator calculator;
 
     private static void init(){
-        ICalculatorConfigure calculatorConfigure = new DefaultCalculatorConfigure(new DoubleExpressionHolder());
+        ICalculatorConfigure calculatorConfigure = new DefaultCalculatorConfigure(new OriginExpressionHolder());
         calculator = new Calculator(calculatorConfigure);
     }
 

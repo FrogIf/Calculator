@@ -15,6 +15,7 @@ import frog.calculator.express.container.FunctionExpression;
 import frog.calculator.express.separator.AdjacencyLeftExpression;
 import frog.calculator.express.separator.RightSeparatorExpression;
 import frog.calculator.express.separator.SeparatorExpression;
+import frog.calculator.operator.IOperator;
 
 public class DoubleExpressionHolder extends AbstractExpressionHolder {
 
@@ -39,6 +40,11 @@ public class DoubleExpressionHolder extends AbstractExpressionHolder {
 
     @Override
     public IExpression getMinus() {
+        return null;
+    }
+
+    @Override
+    public IOperator getNumberOperator() {
         return null;
     }
 }

@@ -109,7 +109,7 @@ public class TupleExpression extends AbstractExpression {
     }
 
     @Override
-    public ISpace<IPoint<INumber>> interpret() {
+    public ISpace<INumber> interpret() {
         Iterator<Element> iterator = this.elements.iterator();
         FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(1);
@@ -118,9 +118,9 @@ public class TupleExpression extends AbstractExpression {
         int i = 0;
         while(iterator.hasNext()){
             Element next = iterator.next();
-            ISpace cSpace = next.expression.interpret();
-            IPoint value = cSpace.getPoint(new Coordinate(i));
-            space.addPoint(value, new Coordinate(i));
+            ISpace<INumber> cSpace = next.expression.interpret();
+            INumber value = cSpace.get(new Coordinate(i));
+            space.add(value, new Coordinate(i));
             i++;
         }
         return space;
