@@ -1,53 +1,39 @@
 package frog.calculator.math;
 
-public class RealNumber extends ComplexNumber implements IRealNumber {
+public class RealNumber extends AbstractRealNumber {
 
     /*
      * 一个实数 = 有理数 * 无理数 + 另一个实数
      * 也就是一个多项式
      */
 
-    private RationalNumber rationalPart;
+    private final RationalNumber rationalPart;
 
-    private IrrationalNumber irrationalPart;
+    private final AbstractIrrationalNumber irrationalPart;
 
-    private RealNumber next;
+    private final AbstractRealNumber next;
 
-    protected RealNumber(){ }
+    protected RealNumber(){
+        this.rationalPart = null;
+        this.irrationalPart = null;
+        this.next = null;
+    }
 
-    public RealNumber(RealNumber realPart) {
+    RealNumber(RationalNumber rationalPart, AbstractRealNumber next) {
+        this.rationalPart = rationalPart;
+        this.next = next;
+        this.irrationalPart = null;
+    }
 
+    RealNumber(RationalNumber rationalPart, AbstractIrrationalNumber irrationalNumber, AbstractRealNumber next) {
+        this.rationalPart = rationalPart;
+        this.irrationalPart = irrationalNumber;
+        this.next = next;
     }
 
     @Override
     public byte getSign() {
         return 0;
-    }
-
-    public RealNumber add(RealNumber num) {
-        return null;
-    }
-
-    public RealNumber sub(RealNumber number) {
-        return null;
-    }
-
-    public RealNumber mult(RealNumber number) {
-        return null;
-    }
-
-    public RealNumber div(RealNumber number) {
-        return null;
-    }
-
-    @Override
-    public RealNumber getRealPart() {
-        return this;
-    }
-
-    @Override
-    public RealNumber getImaginaryPart() {
-        return IntegerNumber.ZERO;
     }
 
     @Override
@@ -60,15 +46,32 @@ public class RealNumber extends ComplexNumber implements IRealNumber {
         return 0;
     }
 
-    public RationalNumber getRationalPart() {
+    protected RationalNumber getRationalPart() {
         return rationalPart;
     }
 
-    public IrrationalNumber getIrrationalPart() {
+    protected AbstractIrrationalNumber getIrrationalPart() {
         return irrationalPart;
     }
 
-    public RealNumber getNext() {
-        return next;
+    protected AbstractRealNumber getNext() {
+        return this.next;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if(this.rationalPart != null){
+            result.append(this.rationalPart.toString());
+        }
+        if(this.irrationalPart != null){
+            if(result.length() > 0) { result.append('*'); }
+            result.append(this.irrationalPart.toString());
+        }
+        if(this.next != null){
+            if(result.length() > 0) { result.append('+'); }
+            result.append(this.next.toString());
+        }
+        return result.toString();
     }
 }

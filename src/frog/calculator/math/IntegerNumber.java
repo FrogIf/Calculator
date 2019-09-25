@@ -3,7 +3,7 @@ package frog.calculator.math;
 /**
  * 整数
  */
-public final class IntegerNumber extends RealNumber implements IRationalNumber{
+public final class IntegerNumber implements Comparable<IntegerNumber>{
 
     static final StringBuilder ZERO_STR = new StringBuilder("0");
 
@@ -164,17 +164,17 @@ public final class IntegerNumber extends RealNumber implements IRationalNumber{
         return PositiveIntegerUtil.compare(this.number, o.number);
     }
 
+    public byte getSign() {
+        return sign;
+    }
+
     @Override
-    public int compareTo(INumber o) {
-        if(!(o instanceof IntegerNumber)){
-            throw new IllegalArgumentException("compare object is null.");
-        }
-        IntegerNumber num = (IntegerNumber) o;
-        if(this.sign == num.sign){
+    public int compareTo(IntegerNumber o) {
+        if(this.sign == o.sign){
             if(this.sign == NumberConstant.POSITIVE){
-                return PositiveIntegerUtil.compare(this.number, num.number);
+                return PositiveIntegerUtil.compare(this.number, o.number);
             }else {
-                return -PositiveIntegerUtil.compare(this.number, num.number);
+                return -PositiveIntegerUtil.compare(this.number, o.number);
             }
         }else{
             if(this.sign == NumberConstant.POSITIVE){
@@ -183,19 +183,5 @@ public final class IntegerNumber extends RealNumber implements IRationalNumber{
                 return -1;
             }
         }
-    }
-
-    public byte getSign() {
-        return sign;
-    }
-
-    @Override
-    public IntegerNumber getNumerator() {
-        return null;
-    }
-
-    @Override
-    public IntegerNumber getDenominator() {
-        return null;
     }
 }

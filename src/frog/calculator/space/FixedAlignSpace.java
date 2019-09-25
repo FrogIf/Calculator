@@ -59,12 +59,6 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         return offset >= 0 ? (T) values[offset] : null;
     }
 
-    public void add(T val, int index){
-        if(this.values[index] != null){
-            throw new IllegalStateException("the point has exists.");
-        }
-    }
-
     @Override
     public void add(T point, ICoordinate coordinate) {
         if(point == null || coordinate == null){
@@ -170,8 +164,8 @@ public class FixedAlignSpace<T> implements ISpace<T> {
     public IRange getRange() {
         if(this.range == null){
             SpaceRange range = new SpaceRange();
-            range.setMaxWidths(this.widthInfo.clone());
-            this.range = range;
+            range.setMaxWidths(widthInfo);
+            this.range = new UnmodifySpaceRange(range);
         }
         return this.range;
     }

@@ -13,10 +13,9 @@ public class SpaceRange implements IRange {
         return this.maxWidths.length;
     }
 
-
     @Override
     public int[] maxWidths() {
-        return maxWidths.clone();
+        return maxWidths;
     }
 
     @Override

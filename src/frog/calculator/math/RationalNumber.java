@@ -5,7 +5,7 @@ import frog.calculator.util.StringUtils;
 /**
  * 有理数
  */
-public class RationalNumber extends ComplexNumber implements IRationalNumber {
+public class RationalNumber extends AbstractRealNumber {
 
     private final IntegerNumber numerator;    // 分子
 
@@ -220,27 +220,22 @@ public class RationalNumber extends ComplexNumber implements IRationalNumber {
     }
 
     @Override
-    public IntegerNumber getNumerator() {
-        return this.numerator;
+    protected RationalNumber getRationalPart() {
+        return this;
     }
 
     @Override
-    public IntegerNumber getDenominator() {
-        return this.denominator;
-    }
-
-    @Override
-    public RationalNumber getRationalPart() {
+    protected AbstractIrrationalNumber getIrrationalPart() {
         return null;
     }
 
     @Override
-    public IrrationalNumber getIrrationalPart() {
+    protected RealNumber getNext() {
         return null;
     }
 
     @Override
-    public RealNumber getNext() {
-        return null;
+    public int compareTo(INumber o) {
+        return 0;
     }
 }

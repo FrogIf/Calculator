@@ -2,9 +2,8 @@ package frog.calculator.math;
 
 public class NumberParsor {
 
-
     public static INumber parseNumber(String symbol){
-        return null;
+        return new RationalNumber(symbol);
     }
 
 }

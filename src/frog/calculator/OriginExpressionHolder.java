@@ -12,7 +12,7 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
     private IExpression plus = new SeparatorExpression("+", 1, new AddOperator());
 
     // 负
-    private IExpression minus = new SeparatorExpression("+", 1, new AddOperator());
+    private IExpression minus = new SeparatorExpression("-", 1, new AddOperator());
 
     private IOperator numberOperator = new NumberOperator();
 
