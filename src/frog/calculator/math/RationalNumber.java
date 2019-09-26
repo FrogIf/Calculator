@@ -13,12 +13,6 @@ public class RationalNumber extends AbstractRealNumber {
 
     private final byte sign;
 
-    protected RationalNumber(){
-        this.numerator = null;
-        this.denominator = null;
-        this.sign = NumberConstant.POSITIVE;
-    }
-
     private RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
         this.numerator = numerator.abs();
         this.denominator = denominator.abs();
@@ -150,7 +144,7 @@ public class RationalNumber extends AbstractRealNumber {
         IntegerNumber top;
         IntegerNumber bottom;
 
-        if(this.compareTo(num) == 0){
+        if(this.denominator.compareTo(num.denominator) == 0){
             top = num.numerator.add(this.numerator);
             bottom = num.denominator;
         }else{

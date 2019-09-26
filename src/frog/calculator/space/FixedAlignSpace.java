@@ -61,8 +61,8 @@ public class FixedAlignSpace<T> implements ISpace<T> {
 
     @Override
     public void add(T point, ICoordinate coordinate) {
-        if(point == null || coordinate == null){
-            throw new IllegalArgumentException("point info is null.");
+        if(coordinate == null){
+            throw new IllegalArgumentException("coordinate is null.");
         }
 
         if(coordinate.dimension() > this.dimension){

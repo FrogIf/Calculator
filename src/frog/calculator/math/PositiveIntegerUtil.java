@@ -271,7 +271,7 @@ class PositiveIntegerUtil {
     /**
      * 判断是偶数还是奇数
      */
-    static boolean isOdd(StringBuilder num){
+    private static boolean isOdd(StringBuilder num){
         return (num.charAt(0) - '0') % 2 == 1;
     }
 

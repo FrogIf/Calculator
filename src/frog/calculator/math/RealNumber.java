@@ -13,12 +13,6 @@ public class RealNumber extends AbstractRealNumber {
 
     private final AbstractRealNumber next;
 
-    protected RealNumber(){
-        this.rationalPart = null;
-        this.irrationalPart = null;
-        this.next = null;
-    }
-
     RealNumber(RationalNumber rationalPart, AbstractRealNumber next) {
         this.rationalPart = rationalPart;
         this.next = next;

@@ -17,11 +17,6 @@ public class ComplexNumber extends AbstractComplexNumber {
         return this.imaginaryPart;
     }
 
-    protected ComplexNumber(){
-        this.realPart = null;
-        this.imaginaryPart = null;
-    }
-
     public ComplexNumber(AbstractRealNumber realPart, AbstractRealNumber imaginaryPart) {
         this.realPart = realPart;
         this.imaginaryPart = imaginaryPart;

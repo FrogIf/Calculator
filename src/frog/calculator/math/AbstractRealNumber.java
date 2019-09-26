@@ -48,7 +48,8 @@ public abstract class AbstractRealNumber extends AbstractComplexNumber {
         }
     }
 
-    public final AbstractRealNumber sub(AbstractRealNumber number) {
+    public final AbstractRealNumber sub(AbstractRealNumber num) {
+
         return null;
     }
 
