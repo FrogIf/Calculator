@@ -2,8 +2,6 @@ package frog.calculator.math;
 
 public interface INumber extends Comparable<INumber>{
 
-    byte getSign();
-
     INumber add(INumber num);
 
     INumber sub(INumber num);

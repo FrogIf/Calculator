@@ -3,7 +3,7 @@ package frog.calculator.math;
 public class RealNumber extends AbstractRealNumber {
 
     /*
-     * 一个实数 = 有理数 * 无理数 + 另一个实数
+     * 一个实数 = 有理数 * 无理数
      * 也就是一个多项式
      */
 
@@ -11,23 +11,14 @@ public class RealNumber extends AbstractRealNumber {
 
     private final AbstractIrrationalNumber irrationalPart;
 
-    private final AbstractRealNumber next;
-
-    RealNumber(RationalNumber rationalPart, AbstractRealNumber next) {
-        this.rationalPart = rationalPart;
-        this.next = next;
-        this.irrationalPart = null;
-    }
-
-    RealNumber(RationalNumber rationalPart, AbstractIrrationalNumber irrationalNumber, AbstractRealNumber next) {
+    RealNumber(RationalNumber rationalPart, AbstractIrrationalNumber irrationalNumber) {
         this.rationalPart = rationalPart;
         this.irrationalPart = irrationalNumber;
-        this.next = next;
     }
 
-    @Override
-    public byte getSign() {
-        return 0;
+    protected RealNumber() {
+        this.rationalPart = null;
+        this.irrationalPart = null;
     }
 
     @Override
@@ -40,16 +31,32 @@ public class RealNumber extends AbstractRealNumber {
         return 0;
     }
 
-    protected RationalNumber getRationalPart() {
+    public RationalNumber getRationalPart() {
         return rationalPart;
     }
 
-    protected AbstractIrrationalNumber getIrrationalPart() {
+    public AbstractIrrationalNumber getIrrationalPart() {
         return irrationalPart;
     }
 
-    protected AbstractRealNumber getNext() {
-        return this.next;
+    @Override
+    public AbstractRealNumber add(AbstractRealNumber num) {
+        return PolynomialNumber.createPolynomial(this).add(num);
+    }
+
+    @Override
+    public AbstractRealNumber sub(AbstractRealNumber num) {
+        return null;
+    }
+
+    @Override
+    public AbstractRealNumber mult(AbstractRealNumber num) {
+        return null;
+    }
+
+    @Override
+    public AbstractRealNumber div(AbstractRealNumber num) {
+        return null;
     }
 
     @Override
@@ -61,10 +68,6 @@ public class RealNumber extends AbstractRealNumber {
         if(this.irrationalPart != null){
             if(result.length() > 0) { result.append('*'); }
             result.append(this.irrationalPart.toString());
-        }
-        if(this.next != null){
-            if(result.length() > 0) { result.append('+'); }
-            result.append(this.next.toString());
         }
         return result.toString();
     }

@@ -7,9 +7,8 @@ public abstract class AbstractComplexNumber extends AbstractNumber {
     protected abstract AbstractRealNumber getImaginaryPart();
 
     public AbstractComplexNumber add(AbstractComplexNumber num) {
-        AbstractRealNumber rp = this.getRealPart().add(num.getRealPart());
-        RealNumber ip = null;
-//        RealNumber ip = this.getImaginaryPart().add(num.getImaginaryPart());
+        AbstractRealNumber rp = this.getRealPart() == null ? num.getRealPart() : this.getRealPart().add(num.getRealPart());
+        AbstractRealNumber ip = this.getImaginaryPart() == null ? num.getImaginaryPart() : this.getImaginaryPart().add(num.getImaginaryPart());
         return new ComplexNumber(rp, ip);
     }
 

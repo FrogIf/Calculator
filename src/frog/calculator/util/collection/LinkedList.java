@@ -200,6 +200,10 @@ public class LinkedList<E> implements IList<E>{
         return -1;
     }
 
+    public void join(LinkedList<E> list){
+        this.tail.next = list.head.next;
+    }
+
     private class LinkedIterator implements Iterator<E> {
 
         private Node<E> pre;

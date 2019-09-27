@@ -23,11 +23,6 @@ public class ComplexNumber extends AbstractComplexNumber {
     }
 
     @Override
-    public byte getSign() {
-        return 0;
-    }
-
-    @Override
     public String toDecimal(int count) {
         return this.getRealPart().toDecimal(count) + "+" + this.getRealPart().toDecimal(count) + "i";
     }

@@ -5,13 +5,17 @@ import frog.calculator.util.StringUtils;
 /**
  * 有理数
  */
-public class RationalNumber extends AbstractRealNumber {
+public class RationalNumber extends RealNumber {
 
     private final IntegerNumber numerator;    // 分子
 
     private final IntegerNumber denominator;  // 分母
 
     private final byte sign;
+
+    public static final RationalNumber ZERO = new RationalNumber(IntegerNumber.ZERO, IntegerNumber.ONE);
+
+    public static final RationalNumber ONE = new RationalNumber(IntegerNumber.ONE, IntegerNumber.ONE);
 
     private RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
         this.numerator = numerator.abs();
@@ -188,7 +192,6 @@ public class RationalNumber extends AbstractRealNumber {
         return new RationalNumber(this.denominator, this.numerator);
     }
 
-    @Override
     public byte getSign() {
         return sign;
     }
@@ -214,17 +217,12 @@ public class RationalNumber extends AbstractRealNumber {
     }
 
     @Override
-    protected RationalNumber getRationalPart() {
+    public RationalNumber getRationalPart() {
         return this;
     }
 
     @Override
-    protected AbstractIrrationalNumber getIrrationalPart() {
-        return null;
-    }
-
-    @Override
-    protected RealNumber getNext() {
+    public AbstractIrrationalNumber getIrrationalPart() {
         return null;
     }
 
