@@ -2,6 +2,6 @@ package frog.calculator.operator.util;
 
 import frog.calculator.math.INumber;
 
-public interface ISingleElementDealer {
+public interface ILeftRightMapDealer {
     INumber deal(INumber left, INumber right);
 }

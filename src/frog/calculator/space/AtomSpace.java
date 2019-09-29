@@ -13,7 +13,7 @@ public class AtomSpace<T> implements ISpace<T> {
 
     @Override
     public void add(T point, ICoordinate coordinate) {
-        throw new IllegalStateException("atom space can't support this operate.");
+        throw new IllegalStateException("atom space can't support this transform.");
     }
 
     @Override

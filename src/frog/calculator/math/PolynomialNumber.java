@@ -1,11 +1,12 @@
 package frog.calculator.math;
 
 import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.Itraveller;
 import frog.calculator.util.collection.LinkedList;
 
-public final class PolynomialNumber extends AbstractRealNumber {
+public final class PolynomialNumber extends AbstractIrrationalNumber {
 
-    private final LinkedList<RealNumber> realNumbers = new LinkedList<>();
+    private final LinkedList<RealNumber> nomials = new LinkedList<>();
 
     public static PolynomialNumber createPolynomial(AbstractRealNumber realNumber){
         if(realNumber instanceof PolynomialNumber){
@@ -21,7 +22,7 @@ public final class PolynomialNumber extends AbstractRealNumber {
         if(realNumber == null){
             throw new IllegalArgumentException("nomial is null.");
         }
-        this.realNumbers.add(realNumber);
+        this.nomials.add(realNumber);
     }
 
     PolynomialNumber(LinkedList<RealNumber> polynomials) {
@@ -30,27 +31,29 @@ public final class PolynomialNumber extends AbstractRealNumber {
         }
         Iterator<RealNumber> iterator = polynomials.iterator();
         while(iterator.hasNext()){
-            realNumbers.add(iterator.next());
+            nomials.add(iterator.next());
         }
     }
 
-    private PolynomialNumber add(PolynomialNumber num){
+    private PolynomialNumber(){ }
+
+    private AbstractRealNumber add(PolynomialNumber num){
         LinkedList<RealNumber> realNumbers = new LinkedList<>();
-        Iterator<RealNumber> iterator = num.realNumbers.iterator();
+        Iterator<RealNumber> iterator = num.nomials.iterator();
         while(iterator.hasNext()){
             realNumbers.add(iterator.next());
         }
-        realNumbers.join(this.realNumbers);
+        realNumbers.join(this.nomials);
         return aggregate(realNumbers);
     }
 
     // 改方法内部不会修改出入参数realNumbers
-    private static PolynomialNumber aggregate(LinkedList<RealNumber> realNumbers) {
+    private static AbstractRealNumber aggregate(LinkedList<RealNumber> realNumbers) {
         RationalNumber rationalPart = RationalNumber.ZERO;
-        LinkedList<RealNumber> realNums = new LinkedList<>();    // 循环结束前, 这里面存入的一定是存在无理数的项
-        Iterator<RealNumber> realItr = realNumbers.iterator();
-        while(realItr.hasNext()){
-            RealNumber nomial = realItr.next();
+        LinkedList<RealNumber> irrationals = new LinkedList<>();    // 循环结束前, 这里面存入的一定是存在无理数的项
+        Itraveller<RealNumber> traveller = realNumbers.iterator();
+        while(traveller.hasNext()){
+            RealNumber nomial = traveller.next();
             if(nomial == RationalNumber.ZERO){ continue; }
 
             AbstractIrrationalNumber irrationalNumber = nomial.getIrrationalPart();
@@ -58,7 +61,7 @@ public final class PolynomialNumber extends AbstractRealNumber {
                 rationalPart = rationalPart.add(nomial.getRationalPart());
             }else{                                              // 如果该项是一个无理数项
                 RationalNumber rp = nomial.getRationalPart();
-                Iterator<RealNumber> iterator = realNums.iterator();
+                Iterator<RealNumber> iterator = irrationals.iterator();
                 boolean unMerge = true;
                 while(iterator.hasNext()){
                     AbstractRealNumber number = iterator.next();
@@ -73,7 +76,7 @@ public final class PolynomialNumber extends AbstractRealNumber {
                                 if(tryRational != null){
                                     rp = rp == null ? tryRational : rp.mult(tryRational);
                                 }
-                                realNums.add(new RealNumber(rp, tryIrrational));
+                                irrationals.add(new RealNumber(rp, tryIrrational));
                             }else{
                                 // 如果这里tryRes.getRationalPart()为null, 那么上面的运算肯定是不正确的, 因为两个实数相加得null是不可能的. 这里就不捕捉异常了, 直接抛空指针吧
                                 rationalPart = tryRes.getRationalPart().add(rationalPart);
@@ -84,31 +87,36 @@ public final class PolynomialNumber extends AbstractRealNumber {
                     }
                 }
                 if(unMerge){
-                    realNums.add(nomial);
+                    irrationals.add(nomial);
                 }
             }
         }
-        if(rationalPart != RationalNumber.ZERO){
-            realNums.add(rationalPart);
-        }
 
-        return new PolynomialNumber(realNums);
+        if(irrationals.isEmpty()){
+            return rationalPart;
+        }else{
+            if(rationalPart != RationalNumber.ZERO) {
+                irrationals.add(rationalPart);
+            }else if(irrationals.size() == 1){
+                return irrationals.get(0);
+            }
+            return new PolynomialNumber(irrationals);
+        }
     }
 
     @Override
     public RationalNumber getRationalPart() {
-        throw new IllegalArgumentException("access illegal.");
+        return null;
     }
 
     @Override
     public AbstractIrrationalNumber getIrrationalPart() {
-        throw new IllegalArgumentException("access illegal.");
+        return this;
     }
 
     @Override
     public AbstractRealNumber add(AbstractRealNumber num) {
-        PolynomialNumber polynomial = createPolynomial(num);
-        return this.add(polynomial);
+        return this.add(createPolynomial(num));
     }
 
     @Override
@@ -139,12 +147,43 @@ public final class PolynomialNumber extends AbstractRealNumber {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        Iterator<RealNumber> iterator = this.realNumbers.iterator();
+        Iterator<RealNumber> iterator = this.nomials.iterator();
         sb.append(iterator.next().toString());
         while(iterator.hasNext()){
-            sb.append("+");
+            sb.append('+');
             sb.append(iterator.next().toString());
         }
         return sb.toString();
+    }
+
+    @Override
+    public AbstractRealNumber tryAdd(AbstractIrrationalNumber num) {
+        return this.add(num);
+    }
+
+    @Override
+    public AbstractRealNumber trySub(AbstractIrrationalNumber num) {
+        return this.add(num.not());
+    }
+
+    @Override
+    public AbstractRealNumber tryMult(AbstractIrrationalNumber num) {
+        return null;
+    }
+
+    @Override
+    public AbstractRealNumber tryDiv(AbstractIrrationalNumber num) {
+        return null;
+    }
+
+    @Override
+    public AbstractRealNumber not() {
+        PolynomialNumber result = new PolynomialNumber();
+        Itraveller<RealNumber> traveller = this.nomials.iterator();
+        while(traveller.hasNext()){
+            RealNumber nomial = traveller.next();
+            result.nomials.add(nomial.not());
+        }
+        return result;
     }
 }

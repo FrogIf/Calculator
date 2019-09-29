@@ -4,13 +4,13 @@ import frog.calculator.exception.UnrightExpressionException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.INumber;
 import frog.calculator.operator.AbstractOperator;
-import frog.calculator.operator.util.ISingleElementDealer;
+import frog.calculator.operator.util.ILeftRightMapDealer;
 import frog.calculator.operator.util.OperateUtil;
 import frog.calculator.space.ISpace;
 
 public class AddOperator extends AbstractOperator {
 
-    private static final ISingleElementDealer addDealer = new AddDealer();
+    private static final ILeftRightMapDealer addDealer = new AddDealer();
 
     @Override
     public ISpace<INumber> operate(IExpression exp) {
@@ -27,11 +27,11 @@ public class AddOperator extends AbstractOperator {
             ISpace<INumber> ls = left.interpret();
             ISpace<INumber> rs = right.interpret();
 
-            return OperateUtil.operate(ls, rs, addDealer);
+            return OperateUtil.transform(ls, rs, addDealer);
         }
     }
 
-    private static class AddDealer implements ISingleElementDealer {
+    private static class AddDealer implements ILeftRightMapDealer {
         @Override
         public INumber deal(INumber ln, INumber rn) {
             if(ln != null || rn != null){

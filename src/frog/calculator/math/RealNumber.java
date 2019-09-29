@@ -55,11 +55,10 @@ public class RealNumber extends AbstractRealNumber {
             }else if(leftIrrational != null && rightIrrational != null){ // 无理数 + 无理数
                 if((leftRational == null && rightRational == null) || (leftRational != null && leftRational.equals(rightRational))) {
                     AbstractRealNumber tryRes = leftIrrational.tryAdd(rightIrrational);
-                    if(tryRes != null){   // 可合并
-                        AbstractIrrationalNumber resultIrrational = null;
+                    if(tryRes != null){   // 可加
                         RationalNumber resultRational = leftRational;
                         RationalNumber tryRation = tryRes.getRationalPart();
-                        AbstractIrrationalNumber irrationalPart = tryRes.getIrrationalPart();
+                        AbstractIrrationalNumber tryIrrational = tryRes.getIrrationalPart();
                         if(tryRation != null){
                             if(resultRational != null){
                                 resultRational = resultRational.mult(tryRation);
@@ -67,10 +66,12 @@ public class RealNumber extends AbstractRealNumber {
                                 resultRational = tryRation;
                             }
                         }
-                        if(irrationalPart != null){
 
+                        if(tryIrrational == null){
+                            return resultRational;
+                        }else{
+                            return new RealNumber(resultRational, tryIrrational);
                         }
-                        return new RealNumber(resultRational, resultIrrational);
                     }
                 }
 
@@ -92,7 +93,7 @@ public class RealNumber extends AbstractRealNumber {
 
     @Override
     public AbstractRealNumber sub(AbstractRealNumber num) {
-        return null;
+        return this.add(num.not());
     }
 
     @Override
@@ -116,5 +117,12 @@ public class RealNumber extends AbstractRealNumber {
             result.append(this.irrationalPart.toString());
         }
         return result.toString();
+    }
+
+    @Override
+    public RealNumber not() {
+        RationalNumber rationalPart = this.getRationalPart();
+        rationalPart = rationalPart == null ? RationalNumber.ONE.not() : rationalPart.not();
+        return new RealNumber(rationalPart, this.getIrrationalPart());
     }
 }

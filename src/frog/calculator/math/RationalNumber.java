@@ -11,16 +11,16 @@ public class RationalNumber extends RealNumber {
 
     private final IntegerNumber denominator;  // 分母
 
-    private final byte sign;
-
     public static final RationalNumber ZERO = new RationalNumber(IntegerNumber.ZERO, IntegerNumber.ONE);
 
     public static final RationalNumber ONE = new RationalNumber(IntegerNumber.ONE, IntegerNumber.ONE);
 
+    public static final RationalNumber N_ONE = new RationalNumber(IntegerNumber.ONE.not(), IntegerNumber.ONE);
+
     private RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
-        this.numerator = numerator.abs();
         this.denominator = denominator.abs();
-        this.sign = (byte) (numerator.getSign() ^ denominator.getSign());
+        byte sign = (byte) (numerator.getSign() ^ denominator.getSign());
+        this.numerator = sign == numerator.getSign() ? numerator : numerator.not();
     }
 
     public RationalNumber(String numerator, String denominator){
@@ -44,9 +44,9 @@ public class RationalNumber extends RealNumber {
             bottom = bottom.div(gcd);
         }
 
-        this.numerator = top.abs();
+        byte sign = (byte) (top.getSign() ^ bottom.getSign());
+        this.numerator = top.getSign() == sign ? top : top.not();
         this.denominator = bottom.abs();
-        this.sign = (byte) (top.getSign() ^ bottom.getSign());
     }
 
     public RationalNumber(String decimal){
@@ -75,9 +75,9 @@ public class RationalNumber extends RealNumber {
                 bottom = bottom.div(gcd);
             }
         }
-        this.numerator = top.abs();
+        byte sign = (byte) (top.getSign() ^ bottom.getSign());
+        this.numerator = top.getSign() == sign ? top : top.not();
         this.denominator = bottom.abs();
-        this.sign = (byte) (top.getSign() ^ bottom.getSign());
     }
 
     /**
@@ -93,9 +93,8 @@ public class RationalNumber extends RealNumber {
 
         int pos = decimal.indexOf(".");
         if(pos < 0){
-            this.numerator = IntegerNumber.convertToInteger(decimal).abs();
+            this.numerator = IntegerNumber.convertToInteger(decimal);
             this.denominator = IntegerNumber.ONE;
-            this.sign = this.numerator.getSign();
         }else{
             int start = pos + repetend + 1;
             if(start >= decimal.length()){
@@ -138,9 +137,9 @@ public class RationalNumber extends RealNumber {
                 bottom = bottom.div(gcd);
             }
 
-            this.numerator = top.abs();
+            byte sign = negative ? NumberConstant.NEGATIVE : NumberConstant.POSITIVE;
+            this.numerator = top.getSign() == sign ? top : top.abs();
             this.denominator = bottom.abs();
-            this.sign = negative ? NumberConstant.NEGATIVE : NumberConstant.POSITIVE;
         }
     }
 
@@ -185,15 +184,19 @@ public class RationalNumber extends RealNumber {
     }
 
     public RationalNumber not(){
-        return new RationalNumber(this.numerator.not(), this.denominator);
+        if(this == ONE){
+            return N_ONE;
+        }else if(this == N_ONE){
+            return ONE;
+        }else if(this == ZERO){
+            return this;
+        }else{
+            return new RationalNumber(this.numerator.not(), this.denominator);
+        }
     }
 
-    public RationalNumber upend(){
+    private RationalNumber upend(){
         return new RationalNumber(this.denominator, this.numerator);
-    }
-
-    public byte getSign() {
-        return sign;
     }
 
     @Override
@@ -213,7 +216,7 @@ public class RationalNumber extends RealNumber {
 
     @Override
     public String toString() {
-        return (this.sign == NumberConstant.NEGATIVE ? "-" : "") + numerator.toString() + "/" + denominator.toString();
+        return numerator.toString() + "/" + denominator.toString();
     }
 
     @Override

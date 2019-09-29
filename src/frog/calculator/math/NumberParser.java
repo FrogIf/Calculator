@@ -1,6 +1,6 @@
 package frog.calculator.math;
 
-public class NumberParsor {
+public class NumberParser {
 
     public static INumber parseNumber(String symbol){
         return new RationalNumber(symbol);

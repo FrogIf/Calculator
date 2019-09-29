@@ -12,6 +12,8 @@ public abstract class AbstractRealNumber extends AbstractComplexNumber implement
         return null;
     }
 
+    public abstract AbstractRealNumber not();
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof AbstractRealNumber){

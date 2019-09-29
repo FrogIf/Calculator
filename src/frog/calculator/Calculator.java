@@ -56,7 +56,7 @@ public class Calculator {
 
         // plus and minus resolver
         // plus and minus can represent (positive and negative) or (add and sub)
-        // this resolver can operate like python
+        // this resolver can transform like python
         IResolver addSubResolver = new PMResolver(resolverResultFactory,
                 this.calculatorConfigure.getExpressionHolder().getPlus(),
                 this.calculatorConfigure.getExpressionHolder().getMinus());

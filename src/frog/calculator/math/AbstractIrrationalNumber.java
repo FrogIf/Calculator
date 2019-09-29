@@ -14,6 +14,4 @@ public abstract class AbstractIrrationalNumber extends AbstractRealNumber{
 
     public abstract AbstractRealNumber tryDiv(AbstractIrrationalNumber num);
 
-    public abstract AbstractRealNumber not();
-
 }
