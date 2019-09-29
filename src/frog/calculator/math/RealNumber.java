@@ -1,5 +1,7 @@
 package frog.calculator.math;
 
+import frog.calculator.util.collection.LinkedList;
+
 public class RealNumber extends AbstractRealNumber {
 
     /*
@@ -41,7 +43,51 @@ public class RealNumber extends AbstractRealNumber {
 
     @Override
     public AbstractRealNumber add(AbstractRealNumber num) {
-        return PolynomialNumber.createPolynomial(this).add(num);
+        if(num instanceof RealNumber){
+            AbstractIrrationalNumber leftIrrational = this.getIrrationalPart();
+            AbstractIrrationalNumber rightIrrational = num.getIrrationalPart();
+
+            RationalNumber leftRational = this.getRationalPart();
+            RationalNumber rightRational = num.getRationalPart();
+
+            if(leftIrrational == null && rightIrrational == null){       // 有理数 + 有理数
+                return leftRational.add(rightRational);
+            }else if(leftIrrational != null && rightIrrational != null){ // 无理数 + 无理数
+                if((leftRational == null && rightRational == null) || (leftRational != null && leftRational.equals(rightRational))) {
+                    AbstractRealNumber tryRes = leftIrrational.tryAdd(rightIrrational);
+                    if(tryRes != null){   // 可合并
+                        AbstractIrrationalNumber resultIrrational = null;
+                        RationalNumber resultRational = leftRational;
+                        RationalNumber tryRation = tryRes.getRationalPart();
+                        AbstractIrrationalNumber irrationalPart = tryRes.getIrrationalPart();
+                        if(tryRation != null){
+                            if(resultRational != null){
+                                resultRational = resultRational.mult(tryRation);
+                            }else{
+                                resultRational = tryRation;
+                            }
+                        }
+                        if(irrationalPart != null){
+
+                        }
+                        return new RealNumber(resultRational, resultIrrational);
+                    }
+                }
+
+                // 不可合并的情况下会执行这里
+                LinkedList<RealNumber> polynomial = new LinkedList<>();
+                polynomial.add(this);
+                polynomial.add((RealNumber) num);
+                return new PolynomialNumber(polynomial);
+            }else{                                                      // 有理数 + 无理数
+                LinkedList<RealNumber> polynomial = new LinkedList<>();
+                polynomial.add(this);
+                polynomial.add((RealNumber) num);
+                return new PolynomialNumber(polynomial);
+            }
+        }else{
+            return PolynomialNumber.createPolynomial(this).add(num);
+        }
     }
 
     @Override

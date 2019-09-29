@@ -3,7 +3,7 @@ package frog.calculator.math;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
-public class PolynomialNumber extends AbstractRealNumber {
+public final class PolynomialNumber extends AbstractRealNumber {
 
     private final LinkedList<RealNumber> realNumbers = new LinkedList<>();
 
@@ -24,7 +24,7 @@ public class PolynomialNumber extends AbstractRealNumber {
         this.realNumbers.add(realNumber);
     }
 
-    private PolynomialNumber(LinkedList<RealNumber> polynomials) {
+    PolynomialNumber(LinkedList<RealNumber> polynomials) {
         if(polynomials == null || polynomials.isEmpty()){
             throw new IllegalArgumentException("polynomial is empty.");
         }
@@ -64,7 +64,7 @@ public class PolynomialNumber extends AbstractRealNumber {
                     AbstractRealNumber number = iterator.next();
                     RationalNumber nextRp = number.getRationalPart();
                     if((rp == null && nextRp == null) || (rp != null && rp.equals(nextRp))){
-                        AbstractRealNumber tryRes = number.getIrrationalPart().tryAdd(irrationalNumber);
+                        AbstractRealNumber tryRes = number.getIrrationalPart().tryAdd(irrationalNumber);    // 这里number不用判空, 因为他是从realNums中取出的, 所以无理数部分肯定不为空
                         if(tryRes != null){
                             iterator.remove();
                             AbstractIrrationalNumber tryIrrational = tryRes.getIrrationalPart();
