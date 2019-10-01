@@ -2,6 +2,10 @@ package frog.calculator.math;
 
 public abstract class AbstractRealNumber extends AbstractComplexNumber implements IRealNumber {
 
+    protected abstract RationalNumber tryConvertToRational();
+
+    protected abstract AbstractIrrationalNumber tryConvertToIrrational();
+
     @Override
     public final AbstractRealNumber getRealPart() {
         return this;

@@ -5,7 +5,7 @@ import frog.calculator.util.StringUtils;
 /**
  * 有理数
  */
-public class RationalNumber extends RealNumber {
+public class RationalNumber extends AbstractRealNumber {
 
     private final IntegerNumber numerator;    // 分子
 
@@ -144,24 +144,30 @@ public class RationalNumber extends RealNumber {
     }
 
     public RationalNumber add(RationalNumber num){
-        IntegerNumber top;
-        IntegerNumber bottom;
-
-        if(this.denominator.compareTo(num.denominator) == 0){
-            top = num.numerator.add(this.numerator);
-            bottom = num.denominator;
+        if(this == ZERO){
+            return num;
+        }else if(num == ZERO){
+            return this;
         }else{
-            bottom = this.denominator.mult(num.denominator);
-            top = this.denominator.mult(num.numerator).add(num.denominator.mult(this.numerator));
+            IntegerNumber top;
+            IntegerNumber bottom;
 
-            IntegerNumber gcd = bottom.greatestCommonDivisor(top);
-            if(gcd != IntegerNumber.ONE){
-                top = top.div(gcd);
-                bottom = bottom.div(gcd);
+            if(this.denominator.compareTo(num.denominator) == 0){
+                top = num.numerator.add(this.numerator);
+                bottom = num.denominator;
+            }else{
+                bottom = this.denominator.mult(num.denominator);
+                top = this.denominator.mult(num.numerator).add(num.denominator.mult(this.numerator));
+
+                IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+                if(gcd != IntegerNumber.ONE){
+                    top = top.div(gcd);
+                    bottom = bottom.div(gcd);
+                }
             }
-        }
 
-        return new RationalNumber(top, bottom);
+            return new RationalNumber(top, bottom);
+        }
     }
 
     public RationalNumber sub(RationalNumber num){
@@ -169,18 +175,36 @@ public class RationalNumber extends RealNumber {
     }
 
     public RationalNumber mult(RationalNumber num){
-        IntegerNumber top = this.numerator.mult(num.numerator);
-        IntegerNumber bottom = this.denominator.mult(num.denominator);
-        IntegerNumber gcd = top.greatestCommonDivisor(bottom);
-        if(gcd != IntegerNumber.ONE){
-            top = top.div(gcd);
-            bottom = bottom.div(gcd);
+        if(this == ZERO || num == ZERO){ return ZERO; }
+
+        if(this == ONE){
+            return num;
+        }else if(num == ONE){
+            return this;
+        }else{
+            IntegerNumber top = this.numerator.mult(num.numerator);
+            IntegerNumber bottom = this.denominator.mult(num.denominator);
+            IntegerNumber gcd = top.greatestCommonDivisor(bottom);
+            if(gcd != IntegerNumber.ONE){
+                top = top.div(gcd);
+                bottom = bottom.div(gcd);
+            }
+            return new RationalNumber(top, bottom);
         }
-        return new RationalNumber(top, bottom);
     }
 
     public RationalNumber div(RationalNumber num){
         return this.mult(num.upend());
+    }
+
+    @Override
+    protected RationalNumber tryConvertToRational() {
+        return this;
+    }
+
+    @Override
+    protected AbstractCombineIrrationalNumber tryConvertToIrrational() {
+        return null;
     }
 
     public RationalNumber not(){
@@ -220,12 +244,22 @@ public class RationalNumber extends RealNumber {
     }
 
     @Override
-    public RationalNumber getRationalPart() {
-        return this;
+    public AbstractRealNumber add(AbstractRealNumber num) {
+        return null;
     }
 
     @Override
-    public AbstractIrrationalNumber getIrrationalPart() {
+    public AbstractRealNumber sub(AbstractRealNumber num) {
+        return null;
+    }
+
+    @Override
+    public AbstractRealNumber mult(AbstractRealNumber num) {
+        return null;
+    }
+
+    @Override
+    public AbstractRealNumber div(AbstractRealNumber num) {
         return null;
     }
 
