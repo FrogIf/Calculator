@@ -14,6 +14,7 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
      */
     private final LinkedList<Fraction> polynomial = new LinkedList<>();
 
+    // 可以为null
     private final RationalNumber rationalNumber;
 
     public static PolynomialNumber createPolynomial(AbstractRealNumber realNumber){
@@ -46,25 +47,6 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
         this.rationalNumber = rationalNumber;
     }
 
-    private AbstractRealNumber add(PolynomialNumber num){
-        LinkedList<Fraction> realNumbers = new LinkedList<>();
-        Iterator<Fraction> iterator = num.polynomial.iterator();
-        while(iterator.hasNext()){
-            realNumbers.add(iterator.next());
-        }
-        realNumbers.join(this.polynomial);
-
-        RationalNumber resultRational = this.rationalNumber;
-        if(num.rationalNumber != null){
-            if(resultRational == null){
-                resultRational = num.rationalNumber;
-            }else{
-                resultRational = resultRational.add(num.rationalNumber);
-            }
-        }
-
-        return aggregate(resultRational, realNumbers);
-    }
 
     // 该方法内部不会修改入参数realNumbers
     private static AbstractRealNumber aggregate(RationalNumber rationalNumber, LinkedList<Fraction> realNumbers) {
@@ -74,6 +56,11 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
         Itraveller<Fraction> traveller = realNumbers.iterator();
         while(traveller.hasNext()){
             Fraction fraction = traveller.next();
+            RationalNumber rational = fraction.tryConvertToRational();
+            if(rational != null){
+                resultRational.add(rational);
+                continue;
+            }
             Iterator<Fraction> irrationalItr = irrationals.iterator();
             boolean unMerge = true;
             while(irrationalItr.hasNext()){
@@ -117,9 +104,81 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
         }
     }
 
+    private AbstractRealNumber polynomialAdd(PolynomialNumber num){
+        LinkedList<Fraction> realNumbers = new LinkedList<>();
+        Iterator<Fraction> iterator = num.polynomial.iterator();
+        while(iterator.hasNext()){
+            realNumbers.add(iterator.next());
+        }
+        realNumbers.join(this.polynomial);
+
+        RationalNumber resultRational = this.rationalNumber;
+        if(num.rationalNumber != null){
+            if(resultRational == null){
+                resultRational = num.rationalNumber;
+            }else{
+                resultRational = resultRational.add(num.rationalNumber);
+            }
+        }
+
+        return aggregate(resultRational, realNumbers);
+    }
+
+    private static void rationNomialMultWithPolynomial(RationalNumber rationalFactor, LinkedList<Fraction> polynomial, LinkedList<Fraction> resultList){
+        Itraveller<Fraction> traveller = polynomial.iterator();
+        while(traveller.hasNext()){
+            Fraction fraction = traveller.next();
+            Product product = fraction.numerator;
+            RationalNumber rational = product.rationalNumber.mult(rationalFactor);
+
+            Product resProduct = new Product(rational);
+            resProduct.factorList = product.factorList;
+
+            resultList.add(new Fraction(resProduct, fraction.denominator));
+        }
+    }
+
+    private AbstractRealNumber polynomialMult(PolynomialNumber num){
+        LinkedList<Fraction> resultPolynomial = new LinkedList<>();
+
+        // 处理有理部分
+        RationalNumber resultRational = this.rationalNumber;
+        if(resultRational == null){
+            resultRational = num.rationalNumber;
+        }else if(num.rationalNumber != null){
+            resultRational = resultRational.mult(num.rationalNumber);
+        }
+        if(resultRational == null){
+            resultRational = RationalNumber.ZERO;
+        }
+
+        if(this.rationalNumber != null){
+            rationNomialMultWithPolynomial(this.rationalNumber, num.polynomial, resultPolynomial);
+        }
+
+        if(num.rationalNumber != null){
+            rationNomialMultWithPolynomial(num.rationalNumber, this.polynomial, resultPolynomial);
+        }
+
+        // 处理无理部分
+        Iterator<Fraction> leftTraveller = this.polynomial.iterator();
+        Itraveller<Fraction> rightTraveller = num.polynomial.iterator();
+
+        while(leftTraveller.hasNext()){
+            Fraction leftFraction = leftTraveller.next();
+            while(rightTraveller.hasNext()){
+                Fraction rightFraction = rightTraveller.next();
+                Fraction resultFraction = leftFraction.mult(rightFraction);
+                resultPolynomial.add(resultFraction);
+            }
+        }
+
+        return aggregate(resultRational, resultPolynomial);
+    }
+
     @Override
     public AbstractRealNumber add(AbstractRealNumber num) {
-        return this.add(createPolynomial(num));
+        return this.polynomialAdd(createPolynomial(num));
     }
 
     @Override
@@ -129,47 +188,7 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
 
     @Override
     public AbstractRealNumber mult(AbstractRealNumber num) {
-//        PolynomialNumber polynomial = createPolynomial(num);
-//
-//        Iterator<Fraction> leftTraveller = this.polynomial.iterator();
-//        Itraveller<Fraction> rightTraveller = polynomial.polynomial.iterator();
-//
-//        LinkedList<Fraction> resultPolynomial = new LinkedList<>();
-//
-//        while(leftTraveller.hasNext()){
-//            Fraction leftNomial = leftTraveller.next();
-//            RationalNumber leftRational = leftNomial.getRationalPart();
-//            AbstractCombineIrrationalNumber leftIrrational = leftNomial.getIrrationalPart();
-//            if(leftRational == null){ leftRational = RationalNumber.ONE; }
-//
-//            while(rightTraveller.hasNext()){
-//                RealNumber rightNomial = rightTraveller.next();
-//                RationalNumber rightRational = rightNomial.getRationalPart();
-//                AbstractCombineIrrationalNumber rightIrrational = rightNomial.getIrrationalPart();
-//
-//                RationalNumber resultRational = leftRational;
-//                AbstractCombineIrrationalNumber resultIrrational = leftIrrational;
-//                if(rightRational != null){
-//                    resultRational = resultRational.mult(rightRational);
-//                }
-//                if(rightIrrational != null){
-//                    if(resultIrrational == null){
-//                        resultIrrational = rightIrrational;
-//                    }else{
-//                        AbstractRealNumber mult = resultIrrational.mult(rightIrrational);
-//                        resultIrrational = mult.getIrrationalPart();
-//                        if(mult.getRationalPart() != null){
-//                            resultRational = resultRational.mult(mult.getRationalPart());
-//                        }
-//                    }
-//                }
-//
-//                resultPolynomial.add(new RealNumber(resultRational, resultIrrational));
-//            }
-//        }
-//
-//        return aggregate(resultPolynomial);
-        return null;
+        return this.polynomialMult(createPolynomial(num));
     }
 
     @Override
@@ -189,15 +208,24 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
 
     @Override
     public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        Iterator<RealNumber> iterator = this.factorList.iterator();
-//        sb.append(iterator.next().toString());
-//        while(iterator.hasNext()){
-//            sb.append('+');
-//            sb.append(iterator.next().toString());
-//        }
-//        return sb.toString();
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+        if(this.rationalNumber != null){
+            sb.append(this.rationalNumber.toString());
+        }
+        if(!this.polynomial.isEmpty()){
+            if(sb.length() > 0){
+                sb.append('+');
+            }
+            Itraveller<Fraction> traveller = this.polynomial.iterator();
+            sb.append(traveller.next().toString());
+            while(traveller.hasNext()){
+                sb.append('+');
+                sb.append(traveller.next().toString());
+            }
+        }
+
+        return sb.toString();
     }
 
     @Override
@@ -253,15 +281,7 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
         Itraveller<Fraction> traveller = this.polynomial.iterator();
         while(traveller.hasNext()){
             Fraction nomial = traveller.next();
-
-            RationalNumber rationalNumber = nomial.numerator.rationalNumber;
-            if(rationalNumber == null){
-                rationalNumber = RationalNumber.N_ONE;
-            }else{
-                rationalNumber = rationalNumber.not();
-            }
-
-            Product product = new Product(rationalNumber);
+            Product product = new Product(nomial.numerator.rationalNumber.not());
             product.factorList = nomial.numerator.factorList;
             Fraction fraction = new Fraction(product, nomial.denominator);
             result.polynomial.add(fraction);
@@ -488,11 +508,11 @@ public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
             if(!factorList.isEmpty()){
                 Itraveller<AbstractIrrationalNumber> traveller = factorList.iterator();
                 if(sb.length() > 0){
-                    sb.append('+');
+                    sb.append('*');
                 }
                 sb.append(traveller.next().toString());
                 while(traveller.hasNext()){
-                    sb.append('+');
+                    sb.append('*');
                     sb.append(traveller.next().toString());
                 }
             }

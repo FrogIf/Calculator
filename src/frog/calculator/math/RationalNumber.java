@@ -260,12 +260,20 @@ public final class RationalNumber extends AbstractRealNumber {
 
     @Override
     public AbstractRealNumber mult(AbstractRealNumber num) {
-        return null;
+        if(num.getClass() == RationalNumber.class){
+            return this.mult((RationalNumber)num);
+        }else{
+            return PolynomialNumber.createPolynomial(num).mult(this);
+        }
     }
 
     @Override
     public AbstractRealNumber div(AbstractRealNumber num) {
-        return null;
+        if(num.getClass() == RationalNumber.class){
+            return this.mult((RationalNumber)num);
+        }else{
+            return PolynomialNumber.createPolynomial(num).mult(this);
+        }
     }
 
     @Override
