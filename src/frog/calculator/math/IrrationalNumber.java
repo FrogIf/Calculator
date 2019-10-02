@@ -10,8 +10,4 @@ public interface IrrationalNumber {
 
     AbstractRealNumber tryDiv(AbstractIrrationalNumber num);
 
-    // 尝试提取无理数中的有理数因子
-//    RationalNumber tryGetRationalFactor();
-//
-//    AbstractIrrationalNumber tryGetIrrationalFactor();
 }

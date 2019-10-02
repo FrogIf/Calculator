@@ -1,11 +1,12 @@
 package frog.calculator.math;
 
 import frog.calculator.util.StringUtils;
+import frog.calculator.util.collection.LinkedList;
 
 /**
  * 有理数
  */
-public class RationalNumber extends AbstractRealNumber {
+public final class RationalNumber extends AbstractRealNumber {
 
     private final IntegerNumber numerator;    // 分子
 
@@ -197,14 +198,14 @@ public class RationalNumber extends AbstractRealNumber {
         return this.mult(num.upend());
     }
 
-    @Override
-    protected RationalNumber tryConvertToRational() {
-        return this;
-    }
+    private FactorObject factorObject = null;
 
     @Override
-    protected AbstractCombineIrrationalNumber tryConvertToIrrational() {
-        return null;
+    protected FactorObject factorization() {
+        if(this.factorObject == null){
+            this.factorObject = new FactorObject(this, null);
+        }
+        return this.factorObject;
     }
 
     public RationalNumber not(){
@@ -245,12 +246,16 @@ public class RationalNumber extends AbstractRealNumber {
 
     @Override
     public AbstractRealNumber add(AbstractRealNumber num) {
-        return null;
+        if(num.getClass() == RationalNumber.class){
+            return this.add((RationalNumber)num);
+        }else {
+            return PolynomialNumber.createPolynomial(num).add(this);
+        }
     }
 
     @Override
     public AbstractRealNumber sub(AbstractRealNumber num) {
-        return null;
+        return this.add(num.not());
     }
 
     @Override

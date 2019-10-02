@@ -1,11 +1,12 @@
 package frog.calculator.math;
 
+import frog.calculator.util.StringUtils;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.Itraveller;
 import frog.calculator.util.collection.LinkedList;
 import frog.calculator.util.collection.UnmodifiableList;
 
-public final class StructureNumber extends AbstractCombineIrrationalNumber {
+public final class PolynomialNumber extends AbstractCombineIrrationalNumber {
 
     /*
      * 单一结构式的结构如下:
@@ -15,11 +16,22 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
 
     private final RationalNumber rationalNumber;
 
-    public static StructureNumber createPolynomial(AbstractRealNumber realNumber){
-        return (StructureNumber) realNumber;
+    public static PolynomialNumber createPolynomial(AbstractRealNumber realNumber){
+        if(realNumber.getClass() == PolynomialNumber.class){
+            return (PolynomialNumber) realNumber;
+        }else if(realNumber instanceof RationalNumber){
+            return new PolynomialNumber((RationalNumber) realNumber);
+        }else{
+            FactorObject factorObject = realNumber.factorization();
+            Product product = new Product(factorObject.getRationalPart(), factorObject.getIrrationalPart());
+            Fraction fraction = new Fraction(product, null);
+            LinkedList<Fraction> polynomials = new LinkedList<>();
+            polynomials.add(fraction);
+            return new PolynomialNumber(null, polynomials);
+        }
     }
 
-    StructureNumber(RationalNumber rationalNumber, LinkedList<Fraction> polynomials) {
+    PolynomialNumber(RationalNumber rationalNumber, LinkedList<Fraction> polynomials) {
         if(polynomials == null || polynomials.isEmpty()){
             throw new IllegalArgumentException("polynomial is empty.");
         }
@@ -30,11 +42,11 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
         this.rationalNumber = rationalNumber;
     }
 
-    private StructureNumber(RationalNumber rationalNumber){
+    private PolynomialNumber(RationalNumber rationalNumber){
         this.rationalNumber = rationalNumber;
     }
 
-    private AbstractRealNumber add(StructureNumber num){
+    private AbstractRealNumber add(PolynomialNumber num){
         LinkedList<Fraction> realNumbers = new LinkedList<>();
         Iterator<Fraction> iterator = num.polynomial.iterator();
         while(iterator.hasNext()){
@@ -101,7 +113,7 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
                     return number;
                 }
             }
-            return new StructureNumber(rationalNumber, polynomial);
+            return new PolynomialNumber(rationalNumber, polynomial);
         }
     }
 
@@ -117,7 +129,7 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
 
     @Override
     public AbstractRealNumber mult(AbstractRealNumber num) {
-//        StructureNumber polynomial = createPolynomial(num);
+//        PolynomialNumber polynomial = createPolynomial(num);
 //
 //        Iterator<Fraction> leftTraveller = this.polynomial.iterator();
 //        Itraveller<Fraction> rightTraveller = polynomial.polynomial.iterator();
@@ -208,35 +220,36 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
         return null;
     }
 
-//    @Override
-//    public RationalNumber tryGetRationalFactor() {
-//        if((this.rationalNumber == null || RationalNumber.ZERO.equals(this.rationalNumber)) && this.polynomial.size() == 1){
-//            Fraction fraction = this.polynomial.get(0);
-//            return fraction.tryConvertToRational();
-//        }else if(this.polynomial.isEmpty()){
-//            return this.rationalNumber;
-//        }
-//        return null;
-//    }
-//
-//    @Override
-//    public AbstractIrrationalNumber tryGetIrrationalFactor() {
-//        return null;
-//    }
+    private FactorObject factorObject = null;
 
     @Override
-    protected RationalNumber tryConvertToRational() {
-        return null;
-    }
+    protected FactorObject factorization() {
+        if(this.factorObject == null){
+            if(this.polynomial.isEmpty()){
+                this.factorObject = new FactorObject(this.rationalNumber, null);
+            }else if((this.rationalNumber == null || RationalNumber.ZERO.equals(this.rationalNumber)) && this.polynomial.size() == 1){
+                Fraction fraction = this.polynomial.get(0);
 
-    @Override
-    protected AbstractCombineIrrationalNumber tryConvertToIrrational() {
-        return null;
+                RationalNumber resultRational = null;
+                AbstractIrrationalNumber resultIrrational = null;
+
+                if(fraction.numerator.factorList.isEmpty() && fraction.denominator.factorList.isEmpty()){
+                    resultRational = fraction.numerator.rationalNumber.div(fraction.denominator.rationalNumber);
+                }else{
+                    resultIrrational = this;
+                }
+
+                this.factorObject = new FactorObject(resultRational, resultIrrational);
+            }else{
+                this.factorObject = new FactorObject(null, this);
+            }
+        }
+        return this.factorObject;
     }
 
     @Override
     public AbstractRealNumber not() {
-        StructureNumber result = new StructureNumber(this.rationalNumber);
+        PolynomialNumber result = new PolynomialNumber(this.rationalNumber);
         Itraveller<Fraction> traveller = this.polynomial.iterator();
         while(traveller.hasNext()){
             Fraction nomial = traveller.next();
@@ -278,30 +291,14 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
             this.rationalNumber = rationalNumber;
         }
 
-        private Product(LinkedList<AbstractIrrationalNumber> factorList) {
-            if(factorList == null){
+        private Product(RationalNumber rational, AbstractIrrationalNumber irrational){
+            if(rational == null && irrational == null){
                 throw new IllegalArgumentException("can't define a empty product.");
             }
-            rationalNumber = RationalNumber.ONE;
-            LinkedList<AbstractIrrationalNumber> resultFactorListList = new LinkedList<>();
-            syncNomial(factorList, resultFactorListList);
-            if(resultFactorListList.isEmpty()){
-                throw new IllegalArgumentException("can't define a empty product.");
-            }
-            this.factorList = new UnmodifiableList<>(resultFactorListList);
-        }
-
-        private Product(RationalNumber rationalNumber, LinkedList<AbstractIrrationalNumber> factorList) {
-            if(rationalNumber == null && factorList == null){
-                throw new IllegalArgumentException("can't define a empty product.");
-            }
-            this.rationalNumber = rationalNumber;
-            LinkedList<AbstractIrrationalNumber> resultFactorListList = new LinkedList<>();
-            syncNomial(factorList, resultFactorListList);
-            if(resultFactorListList.isEmpty()){
-                throw new IllegalArgumentException("can't define a empty product.");
-            }
-            this.factorList = new UnmodifiableList<>(resultFactorListList);
+            this.rationalNumber = rational == null ? RationalNumber.ONE : rational;
+            LinkedList<AbstractIrrationalNumber> factorList = new LinkedList<>();
+            factorList.add(irrational);
+            this.factorList = new UnmodifiableList<>(factorList);
         }
 
         private static void syncNomial(LinkedList<AbstractIrrationalNumber> fromList, LinkedList<AbstractIrrationalNumber> toList){
@@ -374,19 +371,15 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
                             }
                             i++;
                         }
-                        RationalNumber tryRational = tryResult.tryConvertToRational();
+                        FactorObject factorObject = tryResult.factorization();
+
+                        RationalNumber tryRational = factorObject.getRationalPart();
                         if(tryRational != null){
                             resultRational = resultRational.mult(tryRational);
-                        }else{
-                            AbstractIrrationalNumber tryIrrational = tryResult.tryConvertToIrrational();
-                            if(tryIrrational == null){
-                                throw new IllegalStateException("two number's add's result is null.");
-                            }
-                            RationalNumber rationalFactor = tryIrrational.tryGetRationalFactor();
-                            if(rationalFactor != null){
-                                resultRational = resultRational.mult(rationalFactor);
-                            }
-                            resultIrrationalList.add(tryIrrational.tryGetIrrationalFactor());
+                        }
+                        AbstractIrrationalNumber tryIrrational = factorObject.getIrrationalPart();
+                        if(tryIrrational != null){
+                            resultIrrationalList.add(tryIrrational);
                         }
                         Product result = new Product(resultRational);
                         result.factorList = new UnmodifiableList<>(resultIrrationalList);
@@ -426,14 +419,15 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
                         AbstractRealNumber real = leftIrrational.tryMult(rightIrrational);
                         if(real != null){
                             resultIterator.remove();
-                            AbstractIrrationalNumber tryIrrational = real.tryConvertToIrrational();
-                            RationalNumber tryRational = real.tryConvertToRational();
+                            FactorObject factorObject = real.factorization();
+
+                            AbstractIrrationalNumber tryIrrational = factorObject.getIrrationalPart();
+                            RationalNumber tryRational = factorObject.getRationalPart();
                             if(tryRational != null){
                                 resultRational = resultRational.mult(tryRational);
-                            }else{
-                                if(tryIrrational == null){
-                                    throw new IllegalStateException("two number multiply's result is null.");
-                                }
+                            }
+
+                            if(tryIrrational != null){
                                 resultIrrationalList.add(tryIrrational);
                             }
                         }
@@ -482,6 +476,27 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
                     }
                 }
             }
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            if(rationalNumber != null){
+                sb.append(rationalNumber.toString());
+            }
+
+            if(!factorList.isEmpty()){
+                Itraveller<AbstractIrrationalNumber> traveller = factorList.iterator();
+                if(sb.length() > 0){
+                    sb.append('+');
+                }
+                sb.append(traveller.next().toString());
+                while(traveller.hasNext()){
+                    sb.append('+');
+                    sb.append(traveller.next().toString());
+                }
+            }
+            return sb.toString();
         }
     }
 
@@ -594,6 +609,15 @@ public final class StructureNumber extends AbstractCombineIrrationalNumber {
             denominator.factorList = new UnmodifiableList<>(resultBottomFactorList);
 
             return new Fraction(numerator, denominator);
+        }
+
+        @Override
+        public String toString() {
+            if(denominator != null){
+                return StringUtils.concat(numerator.toString(), "/", denominator.toString());
+            }else{
+                return numerator.toString();
+            }
         }
     }
 

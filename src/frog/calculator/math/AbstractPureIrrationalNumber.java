@@ -2,13 +2,13 @@ package frog.calculator.math;
 
 public abstract class AbstractPureIrrationalNumber extends AbstractIrrationalNumber {
 
-    @Override
-    public final RationalNumber tryGetRationalFactor() {
-        return null;
-    }
+    private FactorObject factorObject = null;
 
     @Override
-    public final AbstractIrrationalNumber tryGetIrrationalFactor() {
-        return this;
+    protected final FactorObject factorization() {
+        if(this.factorObject == null){
+            this.factorObject = new FactorObject(null, this);
+        }
+        return this.factorObject;
     }
 }
