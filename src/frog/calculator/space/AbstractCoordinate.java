@@ -1,6 +1,6 @@
 package frog.calculator.space;
 
-import frog.calculator.util.collection.Itraveller;
+import frog.calculator.util.collection.ITraveller;
 
 public abstract class AbstractCoordinate implements ICoordinate {
     public static final ICoordinate ORIGIN = new ICoordinate() {
@@ -15,8 +15,8 @@ public abstract class AbstractCoordinate implements ICoordinate {
         }
 
         @Override
-        public Itraveller<Integer> traveller() {
-            return new Itraveller<Integer>() {
+        public ITraveller<Integer> traveller() {
+            return new ITraveller<Integer>() {
                 @Override
                 public boolean hasNext() {
                     return false;

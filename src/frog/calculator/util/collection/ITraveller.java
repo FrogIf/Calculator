@@ -1,6 +1,6 @@
 package frog.calculator.util.collection;
 
-public interface Itraveller<E> {
+public interface ITraveller<E> {
 
     boolean hasNext();
 

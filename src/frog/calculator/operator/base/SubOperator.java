@@ -1,8 +1,7 @@
 package frog.calculator.operator.base;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.math.INumber;
-import frog.calculator.math.RationalNumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.operator.util.ILeftRightMapDealer;
 import frog.calculator.operator.util.IOneElementDealer;
@@ -16,16 +15,16 @@ public class SubOperator extends AbstractOperator {
     private static final IOneElementDealer notDealer = new NotDealer();
 
     @Override
-    public ISpace<INumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression left = exp.nextChild();
         IExpression right = exp.nextChild();
 
         if(left == null){
-            ISpace<INumber> rightSpace = right.interpret();
+            ISpace<BaseNumber> rightSpace = right.interpret();
             return OperateUtil.transform(rightSpace, notDealer);
         }else{
-            ISpace<INumber> ls = left.interpret();
-            ISpace<INumber> rs = right.interpret();
+            ISpace<BaseNumber> ls = left.interpret();
+            ISpace<BaseNumber> rs = right.interpret();
             return OperateUtil.transform(ls, rs, subDealer);
         }
     }
@@ -33,9 +32,9 @@ public class SubOperator extends AbstractOperator {
     private static class NotDealer implements IOneElementDealer{
 
         @Override
-        public INumber deal(INumber num) {
+        public BaseNumber deal(BaseNumber num) {
             if(num != null){
-                return RationalNumber.ZERO.sub(num);
+                return BaseNumber.ZERO.sub(num);
             }
             return null;
         }
@@ -43,7 +42,7 @@ public class SubOperator extends AbstractOperator {
 
     private static class SubDealer implements ILeftRightMapDealer {
         @Override
-        public INumber deal(INumber ln, INumber rn) {
+        public BaseNumber deal(BaseNumber ln, BaseNumber rn) {
             if(ln != null || rn != null){
                 if(ln == null){
                     return rn;

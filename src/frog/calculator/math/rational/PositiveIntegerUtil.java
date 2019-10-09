@@ -1,4 +1,4 @@
-package frog.calculator.math;
+package frog.calculator.math.rational;
 
 /**
  * 正整数基本运算

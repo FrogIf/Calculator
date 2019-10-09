@@ -8,9 +8,9 @@ import frog.calculator.operator.util.ILeftRightMapDealer;
 import frog.calculator.operator.util.OperateUtil;
 import frog.calculator.space.ISpace;
 
-public class DivOperator extends AbstractOperator {
+public class MultOperator extends AbstractOperator {
 
-    private static final DivMapDealer dealer = new DivMapDealer();
+    private static final MapMultDealer dealer = new MapMultDealer();
 
     @Override
     public ISpace<BaseNumber> operate(IExpression exp) {
@@ -23,11 +23,11 @@ public class DivOperator extends AbstractOperator {
         return OperateUtil.transform(left.interpret(), right.interpret(), dealer);
     }
 
-    private static class DivMapDealer implements ILeftRightMapDealer{
+    public static class MapMultDealer implements ILeftRightMapDealer{
 
         @Override
         public BaseNumber deal(BaseNumber left, BaseNumber right) {
-            return left.div(right);
+            return left.mult(right);
         }
     }
 }

@@ -2,7 +2,7 @@ package frog.calculator.operator.base;
 
 import frog.calculator.exception.UnrightExpressionException;
 import frog.calculator.express.IExpression;
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.operator.util.ILeftRightMapDealer;
 import frog.calculator.operator.util.OperateUtil;
@@ -13,7 +13,7 @@ public class AddOperator extends AbstractOperator {
     private static final ILeftRightMapDealer addDealer = new AddDealer();
 
     @Override
-    public ISpace<INumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression left = exp.nextChild();
         IExpression right = exp.nextChild();
 
@@ -24,8 +24,8 @@ public class AddOperator extends AbstractOperator {
         if(left == null){
             return right.interpret();
         }else{
-            ISpace<INumber> ls = left.interpret();
-            ISpace<INumber> rs = right.interpret();
+            ISpace<BaseNumber> ls = left.interpret();
+            ISpace<BaseNumber> rs = right.interpret();
 
             return OperateUtil.transform(ls, rs, addDealer);
         }
@@ -33,7 +33,7 @@ public class AddOperator extends AbstractOperator {
 
     private static class AddDealer implements ILeftRightMapDealer {
         @Override
-        public INumber deal(INumber ln, INumber rn) {
+        public BaseNumber deal(BaseNumber ln, BaseNumber rn) {
             if(ln != null || rn != null){
                 if(ln == null){
                     return rn;

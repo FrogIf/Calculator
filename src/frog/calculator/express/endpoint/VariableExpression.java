@@ -2,12 +2,12 @@ package frog.calculator.express.endpoint;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.space.ISpace;
 
 public class VariableExpression extends EndPointExpression {
 
-    private ISpace<INumber> value;
+    private ISpace<BaseNumber> value;
 
     /**
      * 赋值操作符
@@ -18,7 +18,7 @@ public class VariableExpression extends EndPointExpression {
     }
 
     @Override
-    public ISpace<INumber> interpret() {
+    public ISpace<BaseNumber> interpret() {
         if(this.value != null){
             return this.value;
         }else{

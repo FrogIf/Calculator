@@ -3,9 +3,7 @@ package frog.calculator;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.separator.SeparatorExpression;
 import frog.calculator.operator.IOperator;
-import frog.calculator.operator.base.AddOperator;
-import frog.calculator.operator.base.NumberOperator;
-import frog.calculator.operator.base.SubOperator;
+import frog.calculator.operator.base.*;
 
 public class OriginExpressionHolder extends AbstractExpressionHolder{
 
@@ -19,7 +17,10 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
 
     @Override
     protected IExpression[] getRunnableExpression() {
-        return new IExpression[0];
+        return new IExpression[]{
+                new SeparatorExpression("*", 2, new MultOperator()),
+                new SeparatorExpression("/", 2, new DivOperator())
+        };
     }
 
     @Override

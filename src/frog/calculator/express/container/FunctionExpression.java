@@ -2,7 +2,7 @@ package frog.calculator.express.container;
 
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.IOperator;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Iterator;
@@ -50,7 +50,7 @@ public class FunctionExpression extends ContainerExpression{
     }
 
     @Override
-    public ISpace<INumber> interpret() {
+    public ISpace<BaseNumber> interpret() {
         if(!args.isEmpty()){
             IExpression[] expressions = new IExpression[args.size()];
             Iterator<Argument> iterator = args.iterator();

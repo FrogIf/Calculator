@@ -236,6 +236,8 @@ public class LinkedList<E> implements IList<E>{
 
             pre.next = view.next;
             view = pre;
+            expectedModCount--;
+            modCount--;
         }
     }
 

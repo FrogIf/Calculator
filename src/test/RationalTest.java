@@ -1,6 +1,6 @@
 package test;
 
-import frog.calculator.math.RationalNumber;
+import frog.calculator.math.rational.RationalNumber;
 
 public class RationalTest {
 

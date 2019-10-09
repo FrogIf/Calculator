@@ -33,7 +33,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         coordinate.trimRight();
         this.dimension = coordinate.dimension() > this.dimension ? coordinate.dimension() : this.dimension;
 
-        Itraveller<Integer> traveller = coordinate.traveller();
+        ITraveller<Integer> traveller = coordinate.traveller();
 
         int pos = traveller.hasNext() ? traveller.next() : 0;
         int di = 1;
@@ -124,7 +124,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
             throw new IllegalArgumentException("coordinate is null.");
         }
 
-        Itraveller<Integer> traveller = coordinate.traveller();
+        ITraveller<Integer> traveller = coordinate.traveller();
 
         int pos = -1;
         T result = null;
@@ -182,7 +182,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
                     + this.dimension + ", input dimension : " + coordinate.dimension());
         }
 
-        Itraveller<Integer> traveller = coordinate.traveller();
+        ITraveller<Integer> traveller = coordinate.traveller();
         ISpace<T> space = this;
         ISpace<T> result = space;
 
@@ -257,7 +257,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
             throw new IllegalArgumentException("can't locate space.");
         }
         InterleavedSpace<T> sub = this;
-        Itraveller<Integer> traveller = coordinate.traveller();
+        ITraveller<Integer> traveller = coordinate.traveller();
         XSpace<T> sf = new XSpace<>(traveller.next());
         XPoint<T> pf = new XPoint<>(sf.index);
 
@@ -318,11 +318,11 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
 
     private static class ContinueCoordinate extends AbstractCoordinate{
 
-        private Itraveller<Integer> traveller;
+        private ITraveller<Integer> traveller;
 
         private int dimension;
 
-        private ContinueCoordinate(Itraveller<Integer> traveller, int dimension) {
+        private ContinueCoordinate(ITraveller<Integer> traveller, int dimension) {
             this.traveller = traveller;
             this.dimension = dimension;
         }
@@ -338,7 +338,7 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
         }
 
         @Override
-        public Itraveller<Integer> traveller() {
+        public ITraveller<Integer> traveller() {
             return traveller;
         }
 

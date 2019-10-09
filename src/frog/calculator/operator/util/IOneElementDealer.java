@@ -1,7 +1,7 @@
 package frog.calculator.operator.util;
 
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 
 public interface IOneElementDealer {
-    INumber deal(INumber num);
+    BaseNumber deal(BaseNumber num);
 }

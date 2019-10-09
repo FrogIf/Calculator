@@ -1,6 +1,6 @@
 package frog.calculator.space;
 
-import frog.calculator.util.collection.Itraveller;
+import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.LinkedList;
 
 public class Coordinate extends AbstractCoordinate {
@@ -41,7 +41,7 @@ public class Coordinate extends AbstractCoordinate {
     }
 
     @Override
-    public Itraveller<Integer> traveller() {
+    public ITraveller<Integer> traveller() {
         return this.list.iterator();
     }
 

@@ -4,7 +4,7 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.register.IRegister;
 import frog.calculator.register.TreeRegister;
 import frog.calculator.resolver.IResolver;
@@ -232,9 +232,9 @@ public class Calculator {
 
         IExpression expTree = build(expression, session, context); // 构造解析树
 
-        ISpace<INumber> result = expTree.interpret(); // 执行计算
+        ISpace<BaseNumber> result = expTree.interpret(); // 执行计算
 
-        INumber value = result.get(new Coordinate(0));
+        BaseNumber value = result.get(new Coordinate(0));
 
         return value.toString();    // 计算结果
     }

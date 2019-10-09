@@ -1,9 +1,12 @@
-package frog.calculator.math;
+package frog.calculator.math.rational;
+
+import frog.calculator.math.INumber;
+import frog.calculator.math.NumberConstant;
 
 /**
  * 整数
  */
-public final class IntegerNumber implements Comparable<IntegerNumber>{
+public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
     static final StringBuilder ZERO_STR = new StringBuilder("0");
 
@@ -124,6 +127,11 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
         return new IntegerNumber(this.number, (byte) (1 ^ this.sign));
     }
 
+    @Override
+    public String toDecimal(int count) {
+        return null;
+    }
+
     public IntegerNumber abs() {
         if(this.sign == NumberConstant.NEGATIVE){
             return new IntegerNumber(this.number, NumberConstant.POSITIVE);
@@ -184,4 +192,5 @@ public final class IntegerNumber implements Comparable<IntegerNumber>{
             }
         }
     }
+
 }

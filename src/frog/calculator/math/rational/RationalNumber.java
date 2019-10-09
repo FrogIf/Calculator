@@ -1,12 +1,13 @@
-package frog.calculator.math;
+package frog.calculator.math.rational;
 
+import frog.calculator.math.INumber;
+import frog.calculator.math.NumberConstant;
 import frog.calculator.util.StringUtils;
-import frog.calculator.util.collection.LinkedList;
 
 /**
  * 有理数
  */
-public final class RationalNumber extends AbstractRealNumber {
+public final class RationalNumber implements INumber, Comparable<RationalNumber> {
 
     private final IntegerNumber numerator;    // 分子
 
@@ -145,9 +146,9 @@ public final class RationalNumber extends AbstractRealNumber {
     }
 
     public RationalNumber add(RationalNumber num){
-        if(this == ZERO){
+        if(this.equals(ZERO)){
             return num;
-        }else if(num == ZERO){
+        }else if(num.equals(ZERO)){
             return this;
         }else{
             IntegerNumber top;
@@ -176,11 +177,11 @@ public final class RationalNumber extends AbstractRealNumber {
     }
 
     public RationalNumber mult(RationalNumber num){
-        if(this == ZERO || num == ZERO){ return ZERO; }
+        if(this.equals(ZERO) || num.equals(ZERO)){ return ZERO; }
 
-        if(this == ONE){
+        if(this.equals(ONE)){
             return num;
-        }else if(num == ONE){
+        }else if(num.equals(ONE)){
             return this;
         }else{
             IntegerNumber top = this.numerator.mult(num.numerator);
@@ -198,23 +199,13 @@ public final class RationalNumber extends AbstractRealNumber {
         return this.mult(num.upend());
     }
 
-    private FactorObject factorObject = null;
-
-    @Override
-    protected FactorObject factorization() {
-        if(this.factorObject == null){
-            this.factorObject = new FactorObject(this, null);
-        }
-        return this.factorObject;
-    }
-
     public RationalNumber not(){
-        if(this == ONE){
+        if(this.equals(ONE)){
             return N_ONE;
-        }else if(this == N_ONE){
+        }else if(this.equals(N_ONE)){
             return ONE;
-        }else if(this == ZERO){
-            return this;
+        }else if(this.equals(ZERO)){
+            return ZERO;
         }else{
             return new RationalNumber(this.numerator.not(), this.denominator);
         }
@@ -245,39 +236,26 @@ public final class RationalNumber extends AbstractRealNumber {
     }
 
     @Override
-    public AbstractRealNumber add(AbstractRealNumber num) {
-        if(num.getClass() == RationalNumber.class){
-            return this.add((RationalNumber)num);
-        }else {
-            return PolynomialNumber.createPolynomial(num).add(this);
-        }
-    }
-
-    @Override
-    public AbstractRealNumber sub(AbstractRealNumber num) {
-        return this.add(num.not());
-    }
-
-    @Override
-    public AbstractRealNumber mult(AbstractRealNumber num) {
-        if(num.getClass() == RationalNumber.class){
-            return this.mult((RationalNumber)num);
+    public int compareTo(RationalNumber o) {
+        byte sign = this.numerator.getSign();
+        if(sign != o.numerator.getSign()){
+            if(sign == NumberConstant.POSITIVE){
+                return 1;
+            }else{
+                return -1;
+            }
         }else{
-            return PolynomialNumber.createPolynomial(num).mult(this);
+            int mark;
+            if(this.denominator.equals(o.denominator)){
+                mark = this.numerator.compareTo(o.numerator);
+            }else{
+                mark = this.numerator.mult(o.denominator).compareTo(o.numerator.mult(this.denominator));
+            }
+            if(sign == NumberConstant.NEGATIVE){
+                mark = -mark;
+            }
+            return mark;
         }
     }
 
-    @Override
-    public AbstractRealNumber div(AbstractRealNumber num) {
-        if(num.getClass() == RationalNumber.class){
-            return this.mult((RationalNumber)num);
-        }else{
-            return PolynomialNumber.createPolynomial(num).mult(this);
-        }
-    }
-
-    @Override
-    public int compareTo(INumber o) {
-        return 0;
-    }
 }

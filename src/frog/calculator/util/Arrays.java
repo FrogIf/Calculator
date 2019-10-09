@@ -1,6 +1,6 @@
 package frog.calculator.util;
 
-import frog.calculator.util.collection.Itraveller;
+import frog.calculator.util.collection.ITraveller;
 
 public class Arrays {
 
@@ -19,15 +19,15 @@ public class Arrays {
         return desc;
     }
 
-    public static Itraveller<Integer> traveller(int[] array){
+    public static ITraveller<Integer> traveller(int[] array){
         return new IntegerArrayTraveller(array);
     }
 
-    public static <T> Itraveller<T> traveller(T[] array){
+    public static <T> ITraveller<T> traveller(T[] array){
         return new ArrayTraveller<>(array);
     }
 
-    private static class ArrayTraveller<E> implements Itraveller<E>{
+    private static class ArrayTraveller<E> implements ITraveller<E> {
 
         private E[] array;
 
@@ -49,7 +49,7 @@ public class Arrays {
     }
 
 
-    private static class IntegerArrayTraveller implements Itraveller<Integer>{
+    private static class IntegerArrayTraveller implements ITraveller<Integer> {
 
         private int[] array;
 

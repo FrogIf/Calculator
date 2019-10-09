@@ -1,6 +1,6 @@
 package frog.calculator.express;
 
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.IOperator;
 import frog.calculator.space.ISpace;
 
@@ -75,7 +75,7 @@ public interface IExpression extends Cloneable {
      * 解释执行表达式
      * @return
      */
-    ISpace<INumber> interpret();
+    ISpace<BaseNumber> interpret();
 
     boolean hasNextChild();
 

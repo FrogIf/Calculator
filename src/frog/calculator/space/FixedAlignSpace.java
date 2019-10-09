@@ -87,7 +87,7 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         return new UnmodifiableList<>((IList<T>) new ArrayList<Object>(this.values));
     }
 
-    private int locate(Itraveller<Integer> traveller){
+    private int locate(ITraveller<Integer> traveller){
         int di = 0;
         int len = values.length;
         int w;
@@ -119,7 +119,7 @@ public class FixedAlignSpace<T> implements ISpace<T> {
                     + this.dimension + ", input dimension : " + coordinate.dimension());
         }
 
-        Itraveller<Integer> traveller = coordinate.traveller();
+        ITraveller<Integer> traveller = coordinate.traveller();
         ICoordinate subPos = new Coordinate();
 
         int offset = 0;
@@ -218,11 +218,11 @@ public class FixedAlignSpace<T> implements ISpace<T> {
             if(coordinate == null){ return pos; }
 
             ICoordinate realPos = new Coordinate();
-            Itraveller<Integer> traveller = pos.traveller();
+            ITraveller<Integer> traveller = pos.traveller();
             while(traveller.hasNext()){
                 realPos.add(traveller.next());
             }
-            Itraveller<Integer> inputPos = coordinate.traveller();
+            ITraveller<Integer> inputPos = coordinate.traveller();
             while(inputPos.hasNext()){
                 realPos.add(inputPos.next());
             }

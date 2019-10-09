@@ -3,8 +3,10 @@ package frog.calculator.express.container;
 import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
-import frog.calculator.math.INumber;
-import frog.calculator.space.*;
+import frog.calculator.math.BaseNumber;
+import frog.calculator.space.Coordinate;
+import frog.calculator.space.FixedAlignSpaceBuilder;
+import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
@@ -109,7 +111,7 @@ public class TupleExpression extends AbstractExpression {
     }
 
     @Override
-    public ISpace<INumber> interpret() {
+    public ISpace<BaseNumber> interpret() {
         Iterator<Element> iterator = this.elements.iterator();
         FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
         builder.setDimension(1);
@@ -118,8 +120,8 @@ public class TupleExpression extends AbstractExpression {
         int i = 0;
         while(iterator.hasNext()){
             Element next = iterator.next();
-            ISpace<INumber> cSpace = next.expression.interpret();
-            INumber value = cSpace.get(new Coordinate(i));
+            ISpace<BaseNumber> cSpace = next.expression.interpret();
+            BaseNumber value = cSpace.get(new Coordinate(i));
             space.add(value, new Coordinate(i));
             i++;
         }

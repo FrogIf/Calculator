@@ -4,13 +4,13 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.separator.SeparatorExpression;
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.space.ISpace;
 
 public class DeclareOperator extends AbstractOperator {
     @Override
-    public ISpace<INumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression expression = exp.nextChild();
 
         ISpace result = expression.interpret();

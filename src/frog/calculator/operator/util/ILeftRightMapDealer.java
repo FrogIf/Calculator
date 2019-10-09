@@ -1,7 +1,7 @@
 package frog.calculator.operator.util;
 
-import frog.calculator.math.INumber;
+import frog.calculator.math.BaseNumber;
 
 public interface ILeftRightMapDealer {
-    INumber deal(INumber left, INumber right);
+    BaseNumber deal(BaseNumber left, BaseNumber right);
 }
