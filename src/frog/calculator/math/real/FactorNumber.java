@@ -71,11 +71,7 @@ final class FactorNumber extends AbstractStructureNumber implements Comparable<F
         return 0;
     }
 
-    public FactorNumber add(FactorNumber num) {
-        return null;
-    }
-
-    public FactorNumber sub(FactorNumber num) {
+    public FactorNumber tryAdd(FactorNumber num) {
         return null;
     }
 

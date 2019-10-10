@@ -69,19 +69,112 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
     }
 
     FractionNumber tryAdd(FractionNumber num) {
-//        boolean denominatorPolyEqual = (this.denominatorPolynomial == null && num.denominatorPolynomial == null) || (this.denominatorPolynomial != null && this.denominatorPolynomial.equals(num.denominatorPolynomial));
-//        boolean denominatorEqual = (this.denominator == null && num.denominator == null) || (this.denominator != null && this.denominator.equals(num.denominator));
-//
-//        if(denominatorEqual && denominatorPolyEqual){   // 分母相等
-//            if(this.numerator.equals(num.numerator)){
-//                // 可以相加
-//            }else if()
-//        }else{
-//
-//        }
-//
+        boolean denominatorPolyEqual = (this.denominatorPolynomial == null && num.denominatorPolynomial == null) || (this.denominatorPolynomial != null && this.denominatorPolynomial.equals(num.denominatorPolynomial));
+        boolean denominatorEqual = (this.denominator == null && num.denominator == null) || (this.denominator != null && this.denominator.equals(num.denominator));
+
+        if(denominatorEqual && denominatorPolyEqual){   // 分母相等
+            return tryToAddNumerator(this,  num);
+        }else{
+            FactorNumber leftResultNumerator = this.numerator;
+            FactorNumber rightResultNumerator = num.numerator;
+            PolynomialNumber leftResultNumeratorPolynomial = this.numeratorPolynomial;
+            PolynomialNumber rightResultNumeratorPolynomial = num.numeratorPolynomial;
+
+            FactorNumber resultDenominator;
+            PolynomialNumber resultDenominatorPolynomial;
+            if(denominatorEqual){
+                resultDenominator = this.denominator;
+            }else{
+                resultDenominator = this.denominator;
+                if(num.denominator != null){
+                    if(resultDenominator == null){
+                        resultDenominator = num.denominator;
+                    }else{
+                        resultDenominator = resultDenominator.mult(num.denominator);
+                        rightResultNumerator = rightResultNumerator.mult(num.denominator);
+                    }
+                    leftResultNumerator = leftResultNumerator.mult(num.denominator);
+                }else{
+                    rightResultNumerator = rightResultNumerator.mult(resultDenominator);
+                }
+            }
+
+            if(denominatorPolyEqual){
+                resultDenominatorPolynomial = this.denominatorPolynomial;
+            }else{
+                resultDenominatorPolynomial = this.denominatorPolynomial;
+                if(num.denominatorPolynomial != null){
+                    if(resultDenominatorPolynomial == null){
+                        resultDenominatorPolynomial = num.denominatorPolynomial;
+                    }else{
+                        resultDenominatorPolynomial = resultDenominatorPolynomial.multiply(num.denominatorPolynomial);
+                        if(rightResultNumeratorPolynomial == null){
+                            rightResultNumeratorPolynomial = num.denominatorPolynomial;
+                        }else{
+                            rightResultNumeratorPolynomial = rightResultNumeratorPolynomial.multiply(num.denominatorPolynomial);
+                        }
+                    }
+                    if(leftResultNumeratorPolynomial == null){
+                        leftResultNumeratorPolynomial = num.denominatorPolynomial;
+                    }else{
+                        leftResultNumeratorPolynomial = leftResultNumeratorPolynomial.multiply(num.denominatorPolynomial);
+                    }
+                }else{
+                    rightResultNumeratorPolynomial = rightResultNumeratorPolynomial.multiply(resultDenominatorPolynomial);
+                }
+            }
+
+            return tryToAddNumerator(new FractionNumber(leftResultNumerator, resultDenominator, leftResultNumeratorPolynomial, resultDenominatorPolynomial),
+                    new FractionNumber(rightResultNumerator, resultDenominator, rightResultNumeratorPolynomial, resultDenominatorPolynomial));
+        }
+    }
+
+
+    private static FractionNumber tryToAddNumerator(FractionNumber left, FractionNumber right){
+        if(left.numerator.equals(right.numerator)){
+            PolynomialNumber resultNumeratorPolynomial = left.numeratorPolynomial;
+            if(right.numeratorPolynomial != null){
+                if(resultNumeratorPolynomial == null){
+                    resultNumeratorPolynomial = right.numeratorPolynomial;
+                }else{
+                    resultNumeratorPolynomial = resultNumeratorPolynomial.add(right.numeratorPolynomial);
+                }
+            }
+            return new FractionNumber(left.numerator, left.denominator, resultNumeratorPolynomial, left.denominatorPolynomial);
+        }else if(left.numeratorPolynomial == null && right.numeratorPolynomial == null){
+            FactorNumber tryRes = left.numerator.tryAdd(right.numerator);
+            if(tryRes != null){
+                return new FractionNumber(tryRes, left.denominator, null, null);
+            }
+        }else{
+            PolynomialNumber resultNumeratorPolynomial = null;
+            if(left.numeratorPolynomial != null){
+                if(FactorNumber.ONE.equals(left.numerator)){
+                    resultNumeratorPolynomial = left.numeratorPolynomial;
+                }else{
+                    FractionNumber tempFraction = new FractionNumber(left.numerator, null, null, null);
+                    resultNumeratorPolynomial = left.numeratorPolynomial.multiply(new PolynomialNumber(tempFraction));
+                }
+            }
+            if(right.numeratorPolynomial != null){
+                PolynomialNumber midResultPolynomial;
+                if(FactorNumber.ONE.equals(right.numerator)){
+                    midResultPolynomial = right.numeratorPolynomial;
+                }else{
+                    FractionNumber tempFraction = new FractionNumber(right.numerator, null, null, null);
+                    midResultPolynomial = right.numeratorPolynomial.multiply(new PolynomialNumber(tempFraction));
+                }
+                if(resultNumeratorPolynomial == null){
+                    resultNumeratorPolynomial = midResultPolynomial;
+                }else{
+                    resultNumeratorPolynomial = resultNumeratorPolynomial.add(midResultPolynomial);
+                }
+            }
+            return new FractionNumber(null, left.denominator, resultNumeratorPolynomial, left.denominatorPolynomial);
+        }
         return null;
     }
+
 
     FractionNumber mult(FractionNumber num) {
         FactorNumber resultNumerator = this.numerator.mult(num.numerator);
@@ -166,11 +259,6 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
     }
 
     @Override
-    public String toDecimal(int count) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.numerator.toString());
@@ -191,6 +279,11 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
             sb.append(this.denominatorPolynomial.toString());
         }
         return sb.toString();
+    }
+
+    @Override
+    public String toDecimal(int count) {
+        return null;
     }
 
     @Override

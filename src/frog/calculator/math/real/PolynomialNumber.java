@@ -6,7 +6,7 @@ import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
 // 多项式
-public final class PolynomialNumber extends AbstractStructureNumber {
+public final class PolynomialNumber extends AbstractStructureNumber implements Comparable<PolynomialNumber>{
 
     // 有理项
     private final RationalNumber rationalNomial;
@@ -42,6 +42,15 @@ public final class PolynomialNumber extends AbstractStructureNumber {
         }
     }
 
+    PolynomialNumber(FractionNumber fractionNumber){
+        if(fractionNumber == null){
+            throw new IllegalArgumentException("can't define a empty polynomial");
+        }
+        this.rationalNomial = null;
+        this.fractionNomial = new LinkedList<>();
+        this.fractionNomial.add(fractionNumber);
+    }
+
     /**
      * if fractionNomial is null, will throw NullPointerException
      */
@@ -67,7 +76,6 @@ public final class PolynomialNumber extends AbstractStructureNumber {
                         resultIterator.remove();
 
                         RationalNumber rational = tryResult.tryConvertToRational();
-
                         if(rational == null){
                             resultFractionNomial.add(tryResult);
                         }else{
@@ -265,11 +273,7 @@ public final class PolynomialNumber extends AbstractStructureNumber {
                 resultFractionList.add(fraction);
             }
         }else{
-            PolynomialNumber result = new PolynomialNumber(null);
-            LinkedList<FractionNumber> fraction = new LinkedList<>();
-            fraction.add(new FractionNumber(null,null, this, num));
-            result.fractionNomial = fraction;
-            return result;
+            return new PolynomialNumber(new FractionNumber(null,null, this, num));
         }
 
         PolynomialNumber polynomialResult = new PolynomialNumber(resultRational);
@@ -277,27 +281,13 @@ public final class PolynomialNumber extends AbstractStructureNumber {
         return polynomialResult;
     }
 
-//    public FractionNumber tryConvertToFraction(){
-//        if(this.rationalNomial == null && this.fractionNomial.size() == 1){
-//            return fractionNomial.get(0);
-//        }
-//        return null;
-//    }
-
-//    public FactorNumber tryConvertToFactor(){
-//        FractionNumber fraction = this.tryConvertToFraction();
-//        if(fraction != null){
-//            return fraction.tryConvertToFactor();
-//        }
-//        return null;
-//    }
-//
-//    public RationalNumber tryConvertToRational(){
-//        if (fractionNomial == null || fractionNomial.isEmpty()) {
-//            return this.rationalNomial;
-//        }
-//        return null;
-//    }
+    @Override
+    protected RationalNumber tryConvertToRational(){
+        if (fractionNomial == null || fractionNomial.isEmpty()) {
+            return this.rationalNomial;
+        }
+        return null;
+    }
 
 
     @Override
@@ -344,7 +334,7 @@ public final class PolynomialNumber extends AbstractStructureNumber {
     }
 
     @Override
-    protected RationalNumber tryConvertToRational() {
-        return null;
+    public int compareTo(PolynomialNumber o) {
+        return 0;
     }
 }
