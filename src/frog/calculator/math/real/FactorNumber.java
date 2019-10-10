@@ -5,12 +5,14 @@ import frog.calculator.math.rational.RationalNumber;
 import frog.calculator.util.collection.*;
 
 // 因式
-public final class FactorNumber extends AbstractStructureNumber implements Comparable<FactorNumber> {
+final class FactorNumber extends AbstractStructureNumber implements Comparable<FactorNumber> {
+
+    static final FactorNumber ONE = new FactorNumber(RationalNumber.ONE, null);
 
     // 无理数因子
     private UnmodifiableList<AbstractIrrationalNumber> irrationalFactor;
 
-    // 有理数因子
+    // 有理数因子, 不为null
     private final RationalNumber rationalFactor;
 
     private FactorNumber(RationalNumber rationalFactor){
@@ -96,5 +98,10 @@ public final class FactorNumber extends AbstractStructureNumber implements Compa
         FactorNumber factorNumber = new FactorNumber(this.rationalFactor.div(num));
         factorNumber.irrationalFactor = this.irrationalFactor;
         return factorNumber;
+    }
+
+    @Override
+    protected RationalNumber tryConvertToRational() {
+        return null;
     }
 }

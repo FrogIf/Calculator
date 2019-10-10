@@ -43,9 +43,7 @@ public final class PolynomialNumber extends AbstractStructureNumber {
     }
 
     /**
-     * @param rationalNumber
-     * @param fractionNomial if fractionNomial is null, will throw NullPointerException
-     * @return
+     * if fractionNomial is null, will throw NullPointerException
      */
     private static PolynomialNumber aggregate(RationalNumber rationalNumber, LinkedList<FractionNumber> fractionNomial){
         RationalNumber resultRational = rationalNumber == null ? RationalNumber.ZERO : rationalNumber;
@@ -244,46 +242,62 @@ public final class PolynomialNumber extends AbstractStructureNumber {
     }
 
     public PolynomialNumber divide(PolynomialNumber num) {
+        RationalNumber resultRational = null;
+        LinkedList<FractionNumber> resultFractionList = null;
+
         if((this.fractionNomial == null || this.fractionNomial.isEmpty()) && (num.fractionNomial == null || num.fractionNomial.isEmpty())){
-            return new PolynomialNumber(this.rationalNomial.div(num.rationalNomial));
+            resultRational = this.rationalNomial.div(num.rationalNomial);
         }else if(num.fractionNomial == null || num.fractionNomial.isEmpty()){
-            RationalNumber resultRational = this.rationalNomial == null ? RationalNumber.ONE.div(num.rationalNomial) : this.rationalNomial.div(num.rationalNomial);
-            LinkedList<FractionNumber> resultFraction = new LinkedList<>();
+            resultRational = this.rationalNomial == null ? RationalNumber.ONE.div(num.rationalNomial) : this.rationalNomial.div(num.rationalNomial);
             ITraveller<FractionNumber> traveller = this.fractionNomial.iterator();
+            resultFractionList = new LinkedList<>();
             while(traveller.hasNext()){
                 FractionNumber fraction = traveller.next();
-                fraction.div(this.rationalNomial);
+                resultFractionList.add(fraction.div(this.rationalNomial));
             }
-            PolynomialNumber result = new PolynomialNumber(resultRational);
-            result.fractionNomial = resultFraction;
-            return result;
+        }else if(this.rationalNomial == null && num.rationalNomial == null && this.fractionNomial.size() == 1 && num.fractionNomial.size() == 1){
+            FractionNumber fraction = this.fractionNomial.get(0).div(num.fractionNomial.get(0));
+            RationalNumber rational = fraction.tryConvertToRational();
+            if(rational != null){
+                resultRational = rational;
+            }else{
+                resultFractionList = new LinkedList<>();
+                resultFractionList.add(fraction);
+            }
         }else{
-            // TODO
+            PolynomialNumber result = new PolynomialNumber(null);
+            LinkedList<FractionNumber> fraction = new LinkedList<>();
+            fraction.add(new FractionNumber(null,null, this, num));
+            result.fractionNomial = fraction;
+            return result;
         }
-        return null;
+
+        PolynomialNumber polynomialResult = new PolynomialNumber(resultRational);
+        polynomialResult.fractionNomial = resultFractionList;
+        return polynomialResult;
     }
 
-    public FractionNumber tryConvertToFraction(){
-        if(this.rationalNomial == null && this.fractionNomial.size() == 1){
-            return fractionNomial.get(0);
-        }
-        return null;
-    }
+//    public FractionNumber tryConvertToFraction(){
+//        if(this.rationalNomial == null && this.fractionNomial.size() == 1){
+//            return fractionNomial.get(0);
+//        }
+//        return null;
+//    }
 
-    public FactorNumber tryConvertToFactor(){
-        FractionNumber fraction = this.tryConvertToFraction();
-        if(fraction != null){
-            return fraction.tryConvertToFactor();
-        }
-        return null;
-    }
-
-    public RationalNumber tryConvertToRational(){
-        if (fractionNomial == null || fractionNomial.isEmpty()) {
-            return this.rationalNomial;
-        }
-        return null;
-    }
+//    public FactorNumber tryConvertToFactor(){
+//        FractionNumber fraction = this.tryConvertToFraction();
+//        if(fraction != null){
+//            return fraction.tryConvertToFactor();
+//        }
+//        return null;
+//    }
+//
+//    public RationalNumber tryConvertToRational(){
+//        if (fractionNomial == null || fractionNomial.isEmpty()) {
+//            return this.rationalNomial;
+//        }
+//        return null;
+//    }
 
 
     @Override
@@ -326,6 +340,11 @@ public final class PolynomialNumber extends AbstractStructureNumber {
 
     @Override
     public String toDecimal(int count) {
+        return null;
+    }
+
+    @Override
+    protected RationalNumber tryConvertToRational() {
         return null;
     }
 }
