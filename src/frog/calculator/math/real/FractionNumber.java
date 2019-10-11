@@ -258,6 +258,11 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
         return new FractionNumber(this.numerator.div(rational), this.denominator, this.numeratorPolynomial, this.denominatorPolynomial);
     }
 
+    private FractionNumber reduce(){
+        // TODO 约分
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
