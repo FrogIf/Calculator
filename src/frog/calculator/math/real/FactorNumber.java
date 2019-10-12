@@ -9,7 +9,7 @@ public final class FactorNumber extends AbstractStructureNumber implements Compa
 
     static final FactorNumber ONE = new FactorNumber(RationalNumber.ONE);
 
-    // 无理数因子
+    // 无理数因子, 代码内部保证该集合中任意两个元素之间不可乘, 即调用aggregateSelf方法不会有任何效果
     private UnmodifiableList<AbstractIrrationalNumber> irrationalFactor;
 
     // 有理数因子, 不为null
@@ -164,22 +164,115 @@ public final class FactorNumber extends AbstractStructureNumber implements Compa
     }
 
     private static FactorNumber aggregate(RationalNumber rational, IList<AbstractIrrationalNumber> left, IList<AbstractIrrationalNumber> right){
-        return null;
+        RationalNumber resultRational = rational == null ? RationalNumber.ONE : rational;
+        LinkedList<AbstractIrrationalNumber> resultIrrational = new LinkedList<>();
+
+        ITraveller<AbstractIrrationalNumber> leftTraveller = left.iterator();
+        boolean unMerge = true;
+        while(leftTraveller.hasNext()){
+            AbstractIrrationalNumber leftIrrational = leftTraveller.next();
+            ITraveller<AbstractIrrationalNumber> rightTraveller = right.iterator();
+            while(rightTraveller.hasNext()){
+                AbstractIrrationalNumber rightIrrational = rightTraveller.next();
+                FactorNumber factorTempResult = leftIrrational.mult(rightIrrational);
+                if(factorTempResult.irrationalFactor == null){
+                    resultRational = resultRational.mult(factorTempResult.rationalFactor);
+                    unMerge = false;
+                }else if(factorTempResult.irrationalFactor.size() == 1){
+                    resultRational = resultRational.mult(factorTempResult.rationalFactor);
+                    resultIrrational.add(factorTempResult.irrationalFactor.get(0));
+                    unMerge = false;
+                }else if(factorTempResult.irrationalFactor.isEmpty()){
+                    resultRational = resultRational.mult(factorTempResult.rationalFactor);
+                    unMerge = false;
+                }else{
+                    resultIrrational.add(rightIrrational);
+                }
+            }
+            if(unMerge){
+                resultIrrational.add(leftIrrational);
+            }
+            unMerge = true;
+        }
+
+        if(resultIrrational.size() < (left.size() + right.size())){
+            RationalNumber midRational = aggregateSelf(resultIrrational);
+            resultRational = midRational.mult(resultRational);
+        }
+
+        FactorNumber factorResult = new FactorNumber(resultRational);
+        factorResult.irrationalFactor = new UnmodifiableList<>(resultIrrational);
+        return factorResult;
     }
 
     // 聚合所有因子, 提取出有理数因子, 将可以相乘的无理数乘在一起
-    private static RationalNumber aggregateSelf(IList<AbstractIrrationalNumber> irrationalFactor){
-        return null;
+    private static RationalNumber aggregateSelf(LinkedList<AbstractIrrationalNumber> irrationalFactor){
+        RationalNumber resultRational = RationalNumber.ONE;
+        LinkedList<AbstractIrrationalNumber> tempList = new LinkedList<>();
+        LinkedList<AbstractIrrationalNumber> cursor = irrationalFactor;
+
+        int i = 0;
+        ITraveller<AbstractIrrationalNumber> outerTraveller = cursor.iterator();
+        boolean merge = false;
+        while(outerTraveller.hasNext()){
+            AbstractIrrationalNumber outerNext = outerTraveller.next();
+            ITraveller<AbstractIrrationalNumber> innerTraveller = cursor.iterator();
+            int j = 0;
+            while(innerTraveller.hasNext()){
+                AbstractIrrationalNumber innerNext = innerTraveller.next();
+                if(i == j){ continue; }
+
+                FactorNumber tempResult = outerNext.mult(innerNext);
+                if(tempResult.irrationalFactor == null){
+                    resultRational = resultRational.mult(tempResult.rationalFactor);
+                    merge = true;
+                }else if(tempResult.irrationalFactor.isEmpty()){
+                    resultRational = resultRational.mult(tempResult.rationalFactor);
+                    merge = true;
+                }else if(tempResult.irrationalFactor.size() == 1){
+                    resultRational = resultRational.mult(tempResult.rationalFactor);
+                    outerNext = tempResult.irrationalFactor.get(0);
+                    merge = true;
+                }else{
+                    tempList.add(innerNext);
+                }
+
+                j++;
+            }
+
+            if(merge){
+                LinkedList<AbstractIrrationalNumber> midTemp = cursor;
+                cursor = tempList;
+                tempList = midTemp;
+
+                tempList.clear();
+                outerTraveller = cursor.iterator();
+                merge = false;
+                i = 0;
+            }else{
+                i++;
+            }
+        }
+
+        if(irrationalFactor != cursor){
+            irrationalFactor.clear();
+            ITraveller<AbstractIrrationalNumber> traveller = cursor.iterator();
+            while(traveller.hasNext()){
+                irrationalFactor.add(traveller.next());
+            }
+        }
+
+        return resultRational;
     }
 
-    public FactorNumber mult(RationalNumber num){
+    FactorNumber mult(RationalNumber num){
         RationalNumber resultRational = this.rationalFactor.mult(num);
         FactorNumber factorNumber = new FactorNumber(resultRational);
         factorNumber.irrationalFactor = this.irrationalFactor;
         return factorNumber;
     }
 
-    public FactorNumber div(RationalNumber num){
+    FactorNumber div(RationalNumber num){
         FactorNumber factorNumber = new FactorNumber(this.rationalFactor.div(num));
         factorNumber.irrationalFactor = this.irrationalFactor;
         return factorNumber;

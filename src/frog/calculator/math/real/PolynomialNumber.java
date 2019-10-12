@@ -92,8 +92,10 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
                 unMerge = true;
             }
 
-            RationalNumber number = aggregateSelf(resultFractionNomial);
-            resultRational = resultRational.add(number);
+            if(resultFractionNomial.size() < fractionNomial.size()){
+                RationalNumber number = aggregateSelf(resultFractionNomial);
+                resultRational = resultRational.add(number);
+            }
         }
 
         PolynomialNumber result = new PolynomialNumber(resultRational);
@@ -122,7 +124,7 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
                 FractionNumber tryRes = frL.tryAdd(frR);
                 if(tryRes != null){
                     merge = true;
-                    innerItr.remove();
+//                    innerItr.remove();
 
                     RationalNumber tryRational = tryRes.tryConvertToRational();
                     if(tryRational != null){
@@ -144,11 +146,12 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
             if(merge){
                 LinkedList<FractionNumber> temp = cursor;
                 cursor = tempResult;
-
                 tempResult = temp;
+
                 tempResult.clear();
 
                 outerTraveller = cursor.iterator();
+                merge = false;
                 i = 0;
             }else{
                 i++;

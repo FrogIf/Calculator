@@ -14,9 +14,9 @@ public abstract class AbstractIrrationalNumber implements INumber {
 
     public abstract FactorNumber trySub(AbstractIrrationalNumber num);
 
-    public abstract FactorNumber mult(AbstractIrrationalNumber num);
-
     public abstract FactorNumber tryDiv(AbstractIrrationalNumber num);
+
+    public abstract FactorNumber mult(AbstractIrrationalNumber num);
 
     public abstract AbstractIrrationalNumber tryAbsorb(RationalNumber rational);
 }
