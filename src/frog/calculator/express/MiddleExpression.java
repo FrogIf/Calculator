@@ -1,29 +1,19 @@
-package frog.calculator.express.separator;
+package frog.calculator.express;
 
-import frog.calculator.express.AbstractExpression;
-import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.operator.IOperator;
 
-public class SeparatorExpression extends AbstractExpression {
+public class MiddleExpression extends AbstractBlockExpression{
 
     private IExpression right;
 
     private IExpression left;
 
-    private int buildFactor;
-
-    private boolean fifo = false;   // 指定相同buildFactor的表达式, 是作为当前表达式的根还是子节点
-
-    public SeparatorExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
-        super(symbol, operator);
-        this.buildFactor = buildFactor;
-        this.fifo = fifo;
+    public MiddleExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
+        super(symbol, buildFactor, operator, fifo);
     }
 
-    public SeparatorExpression(String symbol, int buildFactor, IOperator operator) {
-        super(symbol, operator);
-        this.buildFactor = buildFactor;
+    public MiddleExpression(String symbol, int buildFactor, IOperator operator) {
+        super(symbol, buildFactor, operator, false);
     }
 
     @Override
@@ -32,13 +22,8 @@ public class SeparatorExpression extends AbstractExpression {
     }
 
     @Override
-    public int buildFactor() {
-        return this.buildFactor;
-    }
-
-    @Override
     public IExpression clone() {
-        SeparatorExpression clone = (SeparatorExpression) super.clone();
+        MiddleExpression clone = (MiddleExpression) super.clone();
 
         clone.left = this.left == null ? null : this.left.clone();
         clone.right = this.right == null ? null : this.right.clone();
@@ -55,35 +40,6 @@ public class SeparatorExpression extends AbstractExpression {
             this.right.setExpressionContext(context);
         }
         this.context = context;
-    }
-
-    @Override
-    public IExpression assembleTree(IExpression expression) {
-        IExpression root;
-        boolean inputLeaf = expression.isLeaf();
-        if(!inputLeaf && this.buildFactor() == expression.buildFactor()){   // 如果两个表达式的优先级相等
-            if(fifo){
-                root = this.createBranch(expression) ? this : null;
-            }else{
-                root = expression.createBranch(this) ? expression : null;
-            }
-        }else{
-            IExpression low;
-            IExpression high;
-
-            // 这里没有判断this是否是leaf, 因为所有SeparatorExpression都不可能是leaf
-            if(inputLeaf || this.buildFactor() < expression.buildFactor()){
-                low = this;
-                high = expression;
-            }else{
-                low = expression;
-                high = this;
-            }
-
-            // 使用低优先级作为解析树的根
-            root = low.createBranch(high) ? low : null;
-        }
-        return root;
     }
 
     @Override
@@ -107,14 +63,14 @@ public class SeparatorExpression extends AbstractExpression {
         return buildSuccess;
     }
 
-    protected IExpression assembleLeftTree(IExpression expression){
+    private IExpression assembleLeftTree(IExpression expression){
         if(this.order < expression.order()){
             return null;
         }
         return this.left == null ? expression : this.left.assembleTree(expression);
     }
 
-    protected IExpression assembleRightTree(IExpression expression){
+    private IExpression assembleRightTree(IExpression expression){
         if(this.order > expression.order()){
             return null;
         }

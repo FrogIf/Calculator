@@ -1,6 +1,6 @@
 package frog.calculator.dimpl;
 
-import frog.calculator.express.endpoint.EndPointExpression;
+import frog.calculator.express.EndPointExpression;
 import frog.calculator.operator.IOperator;
 import frog.calculator.space.ISpace;
 

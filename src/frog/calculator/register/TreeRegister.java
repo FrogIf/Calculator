@@ -20,7 +20,9 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
 
     @Override
     public void insert(IExpression expression) {
-        insert(expression.symbol().toCharArray(), 0, expression, new TreeRegister(), false);
+        if(expression != null){
+            insert(expression.symbol().toCharArray(), 0, expression, new TreeRegister(), false);
+        }
     }
 
     @Override

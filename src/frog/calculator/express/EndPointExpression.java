@@ -1,4 +1,4 @@
-package frog.calculator.express.endpoint;
+package frog.calculator.express;
 
 import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;

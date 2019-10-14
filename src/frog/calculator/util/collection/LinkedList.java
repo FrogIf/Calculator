@@ -246,4 +246,20 @@ public class LinkedList<E> implements IList<E>{
         private T item;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        if(this.size() > 0){
+            Iterator<E> iterator = this.iterator();
+            E next = iterator.next();
+            sb.append(next);
+            while(iterator.hasNext()){
+                sb.append(',');
+                sb.append(iterator.next());
+            }
+        }
+        sb.append(']');
+        return sb.toString();
+    }
 }

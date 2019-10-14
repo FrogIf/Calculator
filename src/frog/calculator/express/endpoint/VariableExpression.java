@@ -1,5 +1,6 @@
 package frog.calculator.express.endpoint;
 
+import frog.calculator.express.EndPointExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.math.BaseNumber;

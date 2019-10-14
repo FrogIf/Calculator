@@ -1,8 +1,5 @@
-package frog.calculator.express.container;
+package frog.calculator.express;
 
-import frog.calculator.express.AbstractExpression;
-import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.space.Coordinate;
 import frog.calculator.space.FixedAlignSpaceBuilder;
@@ -11,7 +8,7 @@ import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
-public class TupleExpression extends AbstractExpression {
+public class SurroundExpression extends AbstractExpression {
 
     private String separatorSymbol;
 
@@ -25,7 +22,7 @@ public class TupleExpression extends AbstractExpression {
 
     private boolean isClose;
 
-    public TupleExpression(String openSymbol, String separatorSymbol, String closeSymbol) {
+    public SurroundExpression(String openSymbol, String separatorSymbol, String closeSymbol) {
         super(openSymbol, null);
         if(closeSymbol == null || separatorSymbol == null){
             throw new IllegalArgumentException("symbol is not enough.");
@@ -113,10 +110,10 @@ public class TupleExpression extends AbstractExpression {
     @Override
     public ISpace<BaseNumber> interpret() {
         Iterator<Element> iterator = this.elements.iterator();
-        FixedAlignSpaceBuilder builder = new FixedAlignSpaceBuilder();
+        FixedAlignSpaceBuilder<BaseNumber> builder = new FixedAlignSpaceBuilder<>();
         builder.setDimension(1);
         builder.setWidth(0, this.elements.size());
-        ISpace space = builder.build();
+        ISpace<BaseNumber> space = builder.build();
         int i = 0;
         while(iterator.hasNext()){
             Element next = iterator.next();
@@ -140,7 +137,7 @@ public class TupleExpression extends AbstractExpression {
 
     @Override
     public IExpression clone() {
-        TupleExpression clone = (TupleExpression) super.clone();
+        SurroundExpression clone = (SurroundExpression) super.clone();
         clone.init();
         return clone;
     }
@@ -169,5 +166,10 @@ public class TupleExpression extends AbstractExpression {
 
     private static class Element{
         private IExpression expression;
+
+        @Override
+        public String toString() {
+            return expression.symbol();
+        }
     }
 }

@@ -1,5 +1,6 @@
-package frog.calculator.express.endpoint;
+package frog.calculator.express;
 
+import frog.calculator.express.EndPointExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.space.ISpace;
 

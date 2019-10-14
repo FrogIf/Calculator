@@ -13,6 +13,8 @@ public final class BaseNumber {
 
     public final static BaseNumber ZERO = new BaseNumber(POLYNOMIAL_NUMBER_ZERO);
 
+    public final static BaseNumber ONE = new BaseNumber(POLYNOMIAL_NUMBER_ONE);
+
     private final PolynomialNumber polynomialNumber;
 
     public BaseNumber(PolynomialNumber polynomialNumber) {

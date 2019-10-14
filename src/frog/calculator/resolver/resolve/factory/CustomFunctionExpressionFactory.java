@@ -1,7 +1,6 @@
 package frog.calculator.resolver.resolve.factory;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.container.CustomFunctionExpression;
 
 public class CustomFunctionExpressionFactory implements ISymbolExpressionFactory {
 
@@ -21,7 +20,8 @@ public class CustomFunctionExpressionFactory implements ISymbolExpressionFactory
 
     @Override
     public IExpression createExpression(String symbol) {
-        return new CustomFunctionExpression(symbol, splitSymbol, closeSymbol);
+//        return new CustomFunctionExpression(symbol, splitSymbol, closeSymbol);
+        return null;
     }
 
 }
