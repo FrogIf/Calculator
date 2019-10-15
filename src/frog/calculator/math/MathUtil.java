@@ -1,5 +1,6 @@
 package frog.calculator.math;
 
+import frog.calculator.math.complex.ComplexNumber;
 import frog.calculator.math.rational.IntegerNumber;
 
 public class MathUtil {
@@ -30,6 +31,12 @@ public class MathUtil {
 
     public static BaseNumber sqrt(BaseNumber num){
         return num;
+    }
+
+    private static final BaseNumber IMAGINARY_MARK = new BaseNumber(ComplexNumber.I);
+
+    public static BaseNumber multiplyI(BaseNumber num){
+        return num.mult(IMAGINARY_MARK);
     }
 
 

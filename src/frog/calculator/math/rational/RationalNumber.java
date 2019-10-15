@@ -240,6 +240,8 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
     @Override
     public int compareTo(RationalNumber o) {
+        if(this == o) return 0;
+
         byte sign = this.numerator.getSign();
         if(sign != o.numerator.getSign()){
             if(sign == NumberConstant.POSITIVE){

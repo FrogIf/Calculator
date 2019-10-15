@@ -30,6 +30,7 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
                 new MiddleExpression("^", 2, new PowerOperator()),
                 new RightExpression("%", 4, new PercentOperator()),
                 new RightExpression("!", 4, new FactorialOperator()),
+                new RightExpression("i", 4, new ComplexMarkOperator()),
                 new LeftExpression("sqrt", 4, new SqrtOperator()),
                 new LeftExpression("avg", 4, new AverageOperator())
         };

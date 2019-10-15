@@ -9,7 +9,11 @@ import frog.calculator.util.collection.LinkedList;
 // 多项式
 public final class PolynomialNumber extends AbstractStructureNumber implements Comparable<PolynomialNumber>{
 
-    // 有理项
+    public static final PolynomialNumber ZERO = new PolynomialNumber(RationalNumber.ZERO);
+
+    public static final PolynomialNumber ONE = new PolynomialNumber(RationalNumber.ONE);
+
+    // 有理项, 可以为null
     private final RationalNumber rationalNomial;
 
     // 分式项
@@ -335,6 +339,26 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
     @Override
     public String toDecimal(int count) {
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o){ return true; }
+        if(o == null || o.getClass() != PolynomialNumber.class){
+            return false;
+        }
+        PolynomialNumber p = (PolynomialNumber) o;
+        if((this.rationalNomial == null) != (p.rationalNomial == null)){
+            return false;
+        }else if(this.rationalNomial != null && !this.rationalNomial.equals(p.rationalNomial)){
+            return false;
+        }else if((this.fractionNomial == null || this.fractionNomial.isEmpty()) != (p.fractionNomial == null || p.fractionNomial.isEmpty())){
+            return false;
+        }else if(this.fractionNomial != null && !this.fractionNomial.isEmpty()){
+            // TODO 存在无理项的时候如何判空
+
+        }
+        return true;
     }
 
     @Override

@@ -1,62 +1,49 @@
 package frog.calculator.math;
 
+import frog.calculator.math.complex.ComplexNumber;
 import frog.calculator.math.rational.IntegerNumber;
 import frog.calculator.math.rational.RationalNumber;
 import frog.calculator.math.real.PolynomialNumber;
 
 public final class BaseNumber {
 
-    private final static PolynomialNumber POLYNOMIAL_NUMBER_ZERO = new PolynomialNumber(RationalNumber.ZERO, null);
+    private final static ComplexNumber COMPLEX_ZERO = new ComplexNumber(new PolynomialNumber(RationalNumber.ZERO, null));
 
-    private final static PolynomialNumber POLYNOMIAL_NUMBER_ONE = new PolynomialNumber(RationalNumber.ONE, null);
+    private final static ComplexNumber COMPLEX_ONE = new ComplexNumber(new PolynomialNumber(RationalNumber.ONE, null));
 
-    private final static PolynomialNumber POLYNOMIAL_NUMBER_N_ONE = new PolynomialNumber(RationalNumber.N_ONE, null);
+    public final static BaseNumber ZERO = new BaseNumber(COMPLEX_ZERO);
 
-    public final static BaseNumber ZERO = new BaseNumber(POLYNOMIAL_NUMBER_ZERO);
+    public final static BaseNumber ONE = new BaseNumber(COMPLEX_ONE);
 
-    public final static BaseNumber ONE = new BaseNumber(POLYNOMIAL_NUMBER_ONE);
+    private final ComplexNumber complex;
 
-    private final PolynomialNumber polynomialNumber;
-
-    public BaseNumber(PolynomialNumber polynomialNumber) {
-        this.polynomialNumber = polynomialNumber;
-    }
-
-    public BaseNumber(int num){
-        this.polynomialNumber = new PolynomialNumber(new RationalNumber(String.valueOf(num)), null);
+    BaseNumber(ComplexNumber complex) {
+        this.complex = complex;
     }
 
     public BaseNumber add(BaseNumber num) {
-        return new BaseNumber(this.polynomialNumber.add(num.polynomialNumber));
+        return new BaseNumber(this.complex.add(num.complex));
     }
 
     public BaseNumber sub(BaseNumber num) {
-        return new BaseNumber(this.polynomialNumber.subtract(num.polynomialNumber));
+        return new BaseNumber(this.complex.sub(num.complex));
     }
 
     public BaseNumber mult(BaseNumber num) {
-        return new BaseNumber(this.polynomialNumber.multiply(num.polynomialNumber));
+        return new BaseNumber(this.complex.mult(num.complex));
     }
 
     public BaseNumber div(BaseNumber num) {
-        return new BaseNumber(this.polynomialNumber.divide(num.polynomialNumber));
+        return new BaseNumber(this.complex.div(num.complex));
     }
 
     @Override
     public String toString() {
-        return polynomialNumber.toString();
+        return complex.toString();
     }
 
     public String toDecimal(int precision){
-        return polynomialNumber.toDecimal(precision);
-    }
-
-    /**
-     * 该数减一
-     * @return 返回减一之后的数
-     */
-    public BaseNumber decrease() {
-        return null;
+        return this.toString();
     }
 
     /**
@@ -64,18 +51,18 @@ public final class BaseNumber {
      * @return 返回转换后的结果, 如果转换失败, 则返回null
      */
     public IntegerNumber convertToInteger() {
-        return polynomialNumber.convertToInteger();
+        return complex.convertToInteger();
     }
 
     public static BaseNumber valueOf(int num){
-        return new BaseNumber(new PolynomialNumber(new RationalNumber(IntegerNumber.valueOf(num), null), null));
+        return new BaseNumber(new ComplexNumber(new PolynomialNumber(new RationalNumber(IntegerNumber.valueOf(num), null), null)));
     }
 
     public static BaseNumber valueOf(String decimal){
-        return new BaseNumber(new PolynomialNumber(new RationalNumber(decimal), null));
+        return new BaseNumber(new ComplexNumber(new PolynomialNumber(new RationalNumber(decimal), null)));
     }
 
     public static BaseNumber valueOf(IntegerNumber num){
-        return new BaseNumber(new PolynomialNumber(new RationalNumber(num, null), null));
+        return new BaseNumber(new ComplexNumber(new PolynomialNumber(new RationalNumber(num, null), null)));
     }
 }
