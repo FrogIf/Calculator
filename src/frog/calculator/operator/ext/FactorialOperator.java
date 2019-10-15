@@ -29,6 +29,7 @@ public class FactorialOperator extends AbstractOperator {
             if(num != null){
                 // 暂时还算不了, 涉及到解析延拓, 积分, 超越函数
 //                while(BaseNumber.ONE)
+                return num;
             }
             return null;
         }

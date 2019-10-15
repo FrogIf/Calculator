@@ -20,7 +20,7 @@ public class IntegerTest {
 //            testHalfAssign(i * 2);
 //        }
 //        testGCD();
-//        assignGCDTest(0, 4);
+//        assignDivTest(2, 3);
 //        assignGCDTest(1009079744, 200842384);
 //        assignDivTest(1009079744, 2008);
 //        assignDivTest(100000, 5);
@@ -32,18 +32,20 @@ public class IntegerTest {
     private static void testDivRandom(){
         Random r = new Random();
         for(int i = 0; i < 1000000; i++){
-            int left = r.nextInt(Integer.MAX_VALUE >> 1);
-            int right = r.nextInt(200);
+            int right = r.nextInt(Integer.MAX_VALUE >> 1);
+            int left = r.nextInt(200);
             if(left == 0 || right == 0) continue;
-            int max, min;
-            if(left > right){
-                max = left;
-                min = right;
-            }else{
-                max = right;
-                min = left;
-            }
-            assignDivTest(max, min);
+
+//            int max, min;
+//            if(left > right){
+//                max = left;
+//                min = right;
+//            }else{
+//                max = right;
+//                min = left;
+//            }
+//            assignDivTest(max, min);
+            assignDivTest(left, right);
         }
     }
 

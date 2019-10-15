@@ -1,8 +1,9 @@
-package frog.calculator.operator.funs;
+package frog.calculator.operator.fun;
 
 import frog.calculator.exception.UnrightExpressionException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
+import frog.calculator.math.MathUtil;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.operator.util.IOneElementDealer;
 import frog.calculator.operator.util.OperateUtil;
@@ -27,10 +28,10 @@ public class SqrtOperator extends AbstractOperator {
         @Override
         public BaseNumber deal(BaseNumber num) {
             if(num != null){
-                // TODO 改成无理数
-                return num;
+                return MathUtil.sqrt(num);
             }
             return null;
         }
+
     }
 }

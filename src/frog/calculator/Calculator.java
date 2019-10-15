@@ -18,6 +18,7 @@ import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.resolver.resolve.factory.VariableExpressionFactory;
 import frog.calculator.resolver.util.CommonSymbolParse;
 import frog.calculator.space.Coordinate;
+import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.Stack;
 
@@ -234,9 +235,28 @@ public class Calculator {
 
         ISpace<BaseNumber> result = expTree.interpret(); // 执行计算
 
-        BaseNumber value = result.get(new Coordinate(0));
-
-        return value.toString();    // 计算结果
+        IRange range = result.getRange();
+        int[] widths = range.maxWidths();
+        if(widths.length == 1 && widths[0] == 1){
+            return result.get(new Coordinate(0)).toString();
+        }else{
+            StringBuilder sb = new StringBuilder("[");
+            int[] coordinateArr = new int[range.dimension()];
+            for(int i = coordinateArr.length - 1; i >= 0; i--){
+                int w = widths[i];
+                for(int j = 0; j < w; j++){
+                    coordinateArr[i] = j;
+                    BaseNumber number = result.get(new Coordinate(coordinateArr));
+                    if(j > 0){
+                        sb.append(',');
+                    }
+                    sb.append(number == null ? "null" : number.toString());
+                }
+                if(i > 0){ sb.append(';'); }
+            }
+            sb.append("]");
+            return sb.toString();
+        }
     }
 
     /**

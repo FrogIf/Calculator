@@ -109,11 +109,11 @@ public class SurroundExpression extends AbstractExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        Iterator<Element> iterator = this.elements.iterator();
         FixedAlignSpaceBuilder<BaseNumber> builder = new FixedAlignSpaceBuilder<>();
         builder.setDimension(1);
         builder.setWidth(0, this.elements.size());
         ISpace<BaseNumber> space = builder.build();
+        Iterator<Element> iterator = this.elements.iterator();
         int i = 0;
         while(iterator.hasNext()){
             Element next = iterator.next();

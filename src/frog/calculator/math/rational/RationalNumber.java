@@ -19,7 +19,10 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
     public static final RationalNumber N_ONE = new RationalNumber(IntegerNumber.ONE.not(), IntegerNumber.ONE);
 
-    private RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
+    public RationalNumber(IntegerNumber numerator, IntegerNumber denominator){
+        if(denominator == null){
+            denominator = IntegerNumber.ONE;
+        }
         this.denominator = denominator.abs();
         byte sign = (byte) (numerator.getSign() ^ denominator.getSign());
         this.numerator = sign == numerator.getSign() ? numerator : numerator.not();
@@ -258,4 +261,10 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
         }
     }
 
+    public IntegerNumber convertToInteger() {
+        if(this.denominator == null || this.denominator.equals(IntegerNumber.ONE)){
+            return this.numerator;
+        }
+        return null;
+    }
 }

@@ -20,7 +20,9 @@ public class MultOperator extends AbstractOperator {
             throw new UnrightExpressionException();
         }
 
-        return OperateUtil.transform(left.interpret(), right.interpret(), dealer);
+        ISpace<BaseNumber> leftInter = left.interpret();
+        ISpace<BaseNumber> rightInter = right.interpret();
+        return OperateUtil.transform(leftInter, rightInter, dealer);
     }
 
     public static class MapMultDealer implements ILeftRightMapDealer{

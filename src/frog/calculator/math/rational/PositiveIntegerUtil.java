@@ -190,6 +190,8 @@ class PositiveIntegerUtil {
         return result;
     }
 
+    private static final StringBuilder ZERO_BUILDER = new StringBuilder("0");
+
     /**
      * 除法
      * 向下取整
@@ -204,6 +206,8 @@ class PositiveIntegerUtil {
 
         // 补0
         int fl = dividend.length() - divisor.length();
+        if(fl < 0){ return ZERO_BUILDER; }
+
         StringBuilder fill = new StringBuilder(fl);
         for(int i = 0; i < fl; i++){
             fill.append('0');
@@ -241,7 +245,11 @@ class PositiveIntegerUtil {
             if(unZero) { quotient.append(q); }
         }
 
-        return quotient.reverse();
+        if(quotient.length() == 0){
+            return ZERO_BUILDER;
+        }else{
+            return quotient.reverse();
+        }
     }
 
     /**
@@ -271,7 +279,7 @@ class PositiveIntegerUtil {
     /**
      * 判断是偶数还是奇数
      */
-    private static boolean isOdd(StringBuilder num){
+    public static boolean isOdd(StringBuilder num){
         return (num.charAt(0) - '0') % 2 == 1;
     }
 

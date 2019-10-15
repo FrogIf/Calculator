@@ -1,5 +1,6 @@
 package frog.calculator.math.real;
 
+import frog.calculator.math.rational.IntegerNumber;
 import frog.calculator.math.rational.RationalNumber;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
@@ -339,5 +340,12 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
     @Override
     public int compareTo(PolynomialNumber o) {
         return 0;
+    }
+
+    public IntegerNumber convertToInteger() {
+        if(this.fractionNomial == null || this.fractionNomial.isEmpty()){
+            return this.rationalNomial.convertToInteger();
+        }
+        return null;
     }
 }

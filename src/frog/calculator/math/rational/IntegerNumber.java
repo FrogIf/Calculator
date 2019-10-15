@@ -14,7 +14,7 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
     private final byte sign;
 
-    private final StringBuilder number;   // 最低位在前
+    private final StringBuilder number;   // 最低位在前, 最高位在后
 
     private String literal;
 
@@ -35,6 +35,16 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
             return ONE;
         }else{
             return new IntegerNumber(number);
+        }
+    }
+
+    public static IntegerNumber valueOf(int num){
+        if(num == 0){
+            return ZERO;
+        }else if(num == 1){
+            return ONE;
+        }else{
+            return new IntegerNumber(String.valueOf(num));
         }
     }
 
@@ -153,6 +163,10 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         return new IntegerNumber(n, this.sign);
     }
 
+    public boolean isOdd(){
+        return PositiveIntegerUtil.isOdd(this.number);
+    }
+
     @Override
     public String toString() {
         if(this.literal == null){
@@ -193,4 +207,23 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IntegerNumber that = (IntegerNumber) o;
+
+        if(that.number.length() == this.number.length()){
+            for(int i = that.number.length() - 1; i >= 0; i--){
+                if(that.number.charAt(i) != this.number.charAt(i)){
+                    return false;
+                }
+            }
+        }else{
+            return false;
+        }
+
+        return true;
+    }
 }

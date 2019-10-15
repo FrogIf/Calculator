@@ -6,8 +6,10 @@ import frog.calculator.express.MiddleExpression;
 import frog.calculator.express.RightExpression;
 import frog.calculator.operator.IOperator;
 import frog.calculator.operator.base.*;
+import frog.calculator.operator.ext.FactorialOperator;
 import frog.calculator.operator.ext.PercentOperator;
-import frog.calculator.operator.funs.SqrtOperator;
+import frog.calculator.operator.fun.AverageOperator;
+import frog.calculator.operator.fun.SqrtOperator;
 
 public class OriginExpressionHolder extends AbstractExpressionHolder{
 
@@ -17,6 +19,7 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
     // 负
     private IExpression minus = new MiddleExpression("-", 1, new SubOperator());
 
+    // 数字表达式运算器
     private IOperator numberOperator = new NumberOperator();
 
     @Override
@@ -24,8 +27,11 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
         return new IExpression[]{
                 new MiddleExpression("*", 2, new MultOperator()),
                 new MiddleExpression("/", 2, new DivOperator()),
+                new MiddleExpression("^", 2, new PowerOperator()),
+                new RightExpression("%", 4, new PercentOperator()),
+                new RightExpression("!", 4, new FactorialOperator()),
                 new LeftExpression("sqrt", 4, new SqrtOperator()),
-                new RightExpression("%", 4, new PercentOperator())
+                new LeftExpression("avg", 4, new AverageOperator())
         };
     }
 
@@ -36,7 +42,7 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
 
     @Override
     public IExpression getMinus() {
-        return this.minus;
+        return minus;
     }
 
     @Override
