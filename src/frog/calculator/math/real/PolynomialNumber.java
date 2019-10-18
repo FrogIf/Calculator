@@ -1,6 +1,5 @@
 package frog.calculator.math.real;
 
-import frog.calculator.math.rational.IntegerNumber;
 import frog.calculator.math.rational.RationalNumber;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
@@ -200,11 +199,11 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
         return aggregate(resultRational, temp);
     }
 
-    public PolynomialNumber subtract(PolynomialNumber num){
+    public PolynomialNumber sub(PolynomialNumber num){
         return this.add(num.not());
     }
 
-    public PolynomialNumber multiply(PolynomialNumber num){
+    public PolynomialNumber mult(PolynomialNumber num){
         RationalNumber resultRational = this.rationalNomial;
         if(num.rationalNomial != null){
             if(resultRational != null){
@@ -257,7 +256,7 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
         return polynomial;
     }
 
-    public PolynomialNumber divide(PolynomialNumber num) {
+    public PolynomialNumber div(PolynomialNumber num) {
         RationalNumber resultRational = null;
         LinkedList<FractionNumber> resultFractionList = null;
 
@@ -290,7 +289,7 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
     }
 
     @Override
-    protected RationalNumber tryConvertToRational(){
+    public RationalNumber tryConvertToRational(){
         if (fractionNomial == null || fractionNomial.isEmpty()) {
             return this.rationalNomial;
         }
@@ -364,12 +363,5 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
     @Override
     public int compareTo(PolynomialNumber o) {
         return 0;
-    }
-
-    public IntegerNumber convertToInteger() {
-        if(this.fractionNomial == null || this.fractionNomial.isEmpty()){
-            return this.rationalNomial.convertToInteger();
-        }
-        return null;
     }
 }

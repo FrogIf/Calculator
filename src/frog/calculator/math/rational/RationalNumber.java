@@ -33,12 +33,12 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
         IntegerNumber bottom;
 
         if(StringUtils.isNotBlank(numerator)){
-            top = IntegerNumber.convertToInteger(numerator);
+            top = IntegerNumber.valueOf(numerator);
         }else{
             top = IntegerNumber.ZERO;
         }
         if(StringUtils.isNotBlank(denominator)){
-            bottom = IntegerNumber.convertToInteger(denominator);
+            bottom = IntegerNumber.valueOf(denominator);
         }else{
             bottom = IntegerNumber.ONE;
         }
@@ -62,9 +62,9 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
         IntegerNumber top;
         IntegerNumber bottom = IntegerNumber.ONE;
         if(pos < 0){
-            top = IntegerNumber.convertToInteger(decimal);
+            top = IntegerNumber.valueOf(decimal);
         }else{
-            top = IntegerNumber.convertToInteger(decimal.replace(".", ""));
+            top = IntegerNumber.valueOf(decimal.replace(".", ""));
 
             int len = decimal.length() - pos - 1;
             StringBuilder denominator = new StringBuilder(len + 1);
@@ -72,7 +72,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             for(int i = 0; i < len; i++){
                 denominator.append('0');
             }
-            bottom = IntegerNumber.convertToInteger(denominator.toString());
+            bottom = IntegerNumber.valueOf(denominator.toString());
 
             IntegerNumber gcd = bottom.greatestCommonDivisor(top);
             if(gcd != IntegerNumber.ONE){
@@ -98,7 +98,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
         int pos = decimal.indexOf(".");
         if(pos < 0){
-            this.numerator = IntegerNumber.convertToInteger(decimal);
+            this.numerator = IntegerNumber.valueOf(decimal);
             this.denominator = IntegerNumber.ONE;
         }else{
             int start = pos + repetend + 1;
@@ -121,8 +121,8 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
              */
             IntegerNumber top;
             IntegerNumber bottom;
-            IntegerNumber a = IntegerNumber.convertToInteger(decimal);
-            IntegerNumber b = IntegerNumber.convertToInteger(decimal.substring(0, start));
+            IntegerNumber a = IntegerNumber.valueOf(decimal);
+            IntegerNumber b = IntegerNumber.valueOf(decimal.substring(0, start));
 
             top = a.sub(b);
 
@@ -134,7 +134,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
                 nineSb.append('0');
             }
 
-            bottom = IntegerNumber.convertToInteger(nineSb.toString());
+            bottom = IntegerNumber.valueOf(nineSb.toString());
 
             IntegerNumber gcd = top.greatestCommonDivisor(bottom);
             if(gcd != IntegerNumber.ONE){
@@ -261,6 +261,25 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             }
             return mark;
         }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o){ return true; }
+
+        if(o == null || o.getClass() != RationalNumber.class){
+            return false;
+        }
+
+        RationalNumber that = (RationalNumber) o;
+        if(!that.numerator.equals(this.numerator)){
+            return false;
+        }else if((that.denominator == null) != (this.denominator == null)){
+            return false;
+        }else{
+            return this.denominator == null || this.denominator.equals(that.denominator);
+        }
+
     }
 
     public IntegerNumber convertToInteger() {

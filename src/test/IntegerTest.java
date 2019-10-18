@@ -51,8 +51,8 @@ public class IntegerTest {
 
     private static void assignDivTest(int division, int divisor){
         int r = division / divisor;
-        IntegerNumber a = IntegerNumber.convertToInteger(String.valueOf(division));
-        IntegerNumber b = IntegerNumber.convertToInteger(String.valueOf(divisor));
+        IntegerNumber a = IntegerNumber.valueOf(String.valueOf(division));
+        IntegerNumber b = IntegerNumber.valueOf(String.valueOf(divisor));
         IntegerNumber result = a.div(b);
         System.out.println(division + " / " + divisor + " = " + r);
         if(!result.toString().equals(String.valueOf(r))){
@@ -72,8 +72,8 @@ public class IntegerTest {
 
     private static void assignGCDTest(int left, int right){
         int gcd = gcd(left, right);
-        IntegerNumber a = IntegerNumber.convertToInteger(String.valueOf(left));
-        IntegerNumber b = IntegerNumber.convertToInteger(String.valueOf(right));
+        IntegerNumber a = IntegerNumber.valueOf(String.valueOf(left));
+        IntegerNumber b = IntegerNumber.valueOf(String.valueOf(right));
         System.out.println(left + ", " + right + " --> " + gcd);
         IntegerNumber res = a.greatestCommonDivisor(b);
         if(!res.toString().equals(String.valueOf(gcd))){
@@ -96,8 +96,8 @@ public class IntegerTest {
     }
 
     public static void assignBaseTest(long left, long right){
-        IntegerNumber a = IntegerNumber.convertToInteger(String.valueOf(left));
-        IntegerNumber b = IntegerNumber.convertToInteger(String.valueOf(right));
+        IntegerNumber a = IntegerNumber.valueOf(String.valueOf(left));
+        IntegerNumber b = IntegerNumber.valueOf(String.valueOf(right));
 
 //        System.out.println(left + " + " + right + " = ");
 //        IntegerNumber add = a.add(b);

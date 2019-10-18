@@ -2,13 +2,18 @@ package frog.calculator.math;
 
 import frog.calculator.math.complex.ComplexNumber;
 import frog.calculator.math.rational.IntegerNumber;
+import frog.calculator.math.rational.RationalNumber;
 
 public class MathUtil {
 
     private static final IntegerNumber TWO = IntegerNumber.valueOf(2);
 
     public static BaseNumber power(BaseNumber base, BaseNumber pow){
-        IntegerNumber intPow = pow.convertToInteger();
+        RationalNumber rational = pow.tryToConvertToRational();
+        IntegerNumber intPow = null;
+        if(rational != null){
+            intPow = rational.convertToInteger();
+        }
         BaseNumber result = BaseNumber.ONE;
         if(intPow != null){   // 说明是整数幂
             while(!intPow.equals(IntegerNumber.ZERO)){

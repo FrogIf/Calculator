@@ -1,7 +1,7 @@
 package frog.calculator.math.complex;
 
 import frog.calculator.math.INumber;
-import frog.calculator.math.rational.IntegerNumber;
+import frog.calculator.math.rational.RationalNumber;
 import frog.calculator.math.real.PolynomialNumber;
 
 /**
@@ -15,7 +15,7 @@ public class ComplexNumber implements INumber, Comparable<ComplexNumber> {
 
     private final PolynomialNumber imaginaryPart;
 
-    public ComplexNumber(PolynomialNumber realPart, PolynomialNumber imaginaryPart) {
+    ComplexNumber(PolynomialNumber realPart, PolynomialNumber imaginaryPart) {
         if(realPart == null && imaginaryPart == null){
             throw new IllegalArgumentException("can't init a empty object.");
         }
@@ -36,24 +36,24 @@ public class ComplexNumber implements INumber, Comparable<ComplexNumber> {
     }
 
     public ComplexNumber sub(ComplexNumber num){
-        return new ComplexNumber(this.realPart.subtract(num.realPart), this.imaginaryPart.subtract(num.imaginaryPart));
+        return new ComplexNumber(this.realPart.sub(num.realPart), this.imaginaryPart.sub(num.imaginaryPart));
     }
 
     public ComplexNumber mult(ComplexNumber num){
         /*
          * (a + bi) * (c + di) = ac + bd + (ad + bc)i
          */
-        return new ComplexNumber(this.realPart.multiply(num.realPart).subtract(this.imaginaryPart.multiply(num.imaginaryPart)),
-                this.realPart.multiply(num.imaginaryPart).add(this.imaginaryPart.multiply(num.realPart)));
+        return new ComplexNumber(this.realPart.mult(num.realPart).sub(this.imaginaryPart.mult(num.imaginaryPart)),
+                this.realPart.mult(num.imaginaryPart).add(this.imaginaryPart.mult(num.realPart)));
     }
 
     public ComplexNumber div(ComplexNumber num){
         /*
          * (a + bi)/(c + di) = (ac + bd)/(c*c + d*d) + ((bc - ad)/(c*c + d*d))i
          */
-        PolynomialNumber cd = num.realPart.multiply(num.realPart).add(num.imaginaryPart.multiply(num.imaginaryPart));
-        PolynomialNumber rp = this.realPart.multiply(num.realPart).add(this.imaginaryPart.multiply(num.imaginaryPart)).divide(cd);
-        PolynomialNumber ip = this.imaginaryPart.multiply(num.realPart).subtract(this.realPart.multiply(num.imaginaryPart)).divide(cd);
+        PolynomialNumber cd = num.realPart.mult(num.realPart).add(num.imaginaryPart.mult(num.imaginaryPart));
+        PolynomialNumber rp = this.realPart.mult(num.realPart).add(this.imaginaryPart.mult(num.imaginaryPart)).div(cd);
+        PolynomialNumber ip = this.imaginaryPart.mult(num.realPart).sub(this.realPart.mult(num.imaginaryPart)).div(cd);
         return new ComplexNumber(rp, ip);
     }
 
@@ -63,16 +63,16 @@ public class ComplexNumber implements INumber, Comparable<ComplexNumber> {
     }
 
     @Override
-    public String toDecimal(int count) {
+    public String toDecimal(int precision) {
         StringBuilder sb = new StringBuilder();
         if(!PolynomialNumber.ZERO.equals(this.realPart)){
-            sb.append(this.realPart.toDecimal(count));
+            sb.append(this.realPart.toDecimal(precision));
         }
         if(!PolynomialNumber.ZERO.equals(this.imaginaryPart)){
             if(sb.length() > 0){
                 sb.append('+');
             }
-            sb.append(this.imaginaryPart.toDecimal(count));
+            sb.append(this.imaginaryPart.toDecimal(precision));
             sb.append('i');
         }
         return sb.toString();
@@ -104,9 +104,9 @@ public class ComplexNumber implements INumber, Comparable<ComplexNumber> {
         return 0;
     }
 
-    public IntegerNumber convertToInteger() {
+    public RationalNumber tryConvertToRational(){
         if(PolynomialNumber.ZERO.equals(this.imaginaryPart)){
-            return this.realPart.convertToInteger();
+            return this.realPart.tryConvertToRational();
         }
         return null;
     }

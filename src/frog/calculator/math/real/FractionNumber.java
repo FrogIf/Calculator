@@ -107,20 +107,20 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
                     if(resultDenominatorPolynomial == null){
                         resultDenominatorPolynomial = num.denominatorPolynomial;
                     }else{
-                        resultDenominatorPolynomial = resultDenominatorPolynomial.multiply(num.denominatorPolynomial);
+                        resultDenominatorPolynomial = resultDenominatorPolynomial.mult(num.denominatorPolynomial);
                         if(rightResultNumeratorPolynomial == null){
                             rightResultNumeratorPolynomial = num.denominatorPolynomial;
                         }else{
-                            rightResultNumeratorPolynomial = rightResultNumeratorPolynomial.multiply(num.denominatorPolynomial);
+                            rightResultNumeratorPolynomial = rightResultNumeratorPolynomial.mult(num.denominatorPolynomial);
                         }
                     }
                     if(leftResultNumeratorPolynomial == null){
                         leftResultNumeratorPolynomial = num.denominatorPolynomial;
                     }else{
-                        leftResultNumeratorPolynomial = leftResultNumeratorPolynomial.multiply(num.denominatorPolynomial);
+                        leftResultNumeratorPolynomial = leftResultNumeratorPolynomial.mult(num.denominatorPolynomial);
                     }
                 }else{
-                    rightResultNumeratorPolynomial = rightResultNumeratorPolynomial.multiply(resultDenominatorPolynomial);
+                    rightResultNumeratorPolynomial = rightResultNumeratorPolynomial.mult(resultDenominatorPolynomial);
                 }
             }
 
@@ -153,7 +153,7 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
                     resultNumeratorPolynomial = left.numeratorPolynomial;
                 }else{
                     FractionNumber tempFraction = new FractionNumber(left.numerator, null, null, null);
-                    resultNumeratorPolynomial = left.numeratorPolynomial.multiply(new PolynomialNumber(tempFraction));
+                    resultNumeratorPolynomial = left.numeratorPolynomial.mult(new PolynomialNumber(tempFraction));
                 }
             }
             if(right.numeratorPolynomial != null){
@@ -162,7 +162,7 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
                     midResultPolynomial = right.numeratorPolynomial;
                 }else{
                     FractionNumber tempFraction = new FractionNumber(right.numerator, null, null, null);
-                    midResultPolynomial = right.numeratorPolynomial.multiply(new PolynomialNumber(tempFraction));
+                    midResultPolynomial = right.numeratorPolynomial.mult(new PolynomialNumber(tempFraction));
                 }
                 if(resultNumeratorPolynomial == null){
                     resultNumeratorPolynomial = midResultPolynomial;
@@ -184,7 +184,7 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
             if(resultNumeratorPolynomial == null){
                 resultNumeratorPolynomial = num.numeratorPolynomial;
             }else{
-                resultNumeratorPolynomial = num.numeratorPolynomial.multiply(resultNumeratorPolynomial);
+                resultNumeratorPolynomial = num.numeratorPolynomial.mult(resultNumeratorPolynomial);
             }
         }
 
@@ -202,7 +202,7 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
             if(resultDenominatorPolynomial == null){
                 resultDenominatorPolynomial = num.denominatorPolynomial;
             }else{
-                resultDenominatorPolynomial = resultNumeratorPolynomial.multiply(num.denominatorPolynomial);
+                resultDenominatorPolynomial = resultNumeratorPolynomial.mult(num.denominatorPolynomial);
             }
         }
 
@@ -222,7 +222,7 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
             if(resultNumeratorPolynomial == null){
                 resultNumeratorPolynomial = num.denominatorPolynomial;
             }else{
-                resultNumeratorPolynomial = resultNumeratorPolynomial.multiply(num.denominatorPolynomial);
+                resultNumeratorPolynomial = resultNumeratorPolynomial.mult(num.denominatorPolynomial);
             }
         }
 
@@ -238,7 +238,7 @@ final class FractionNumber extends AbstractStructureNumber implements Comparable
             if(resultDenominatorPolynomial == null){
                 resultDenominatorPolynomial = num.numeratorPolynomial;
             }else{
-                resultDenominatorPolynomial = resultDenominatorPolynomial.multiply(num.numeratorPolynomial);
+                resultDenominatorPolynomial = resultDenominatorPolynomial.mult(num.numeratorPolynomial);
             }
         }
 

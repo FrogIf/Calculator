@@ -27,27 +27,6 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
     public static final IntegerNumber ONE = new IntegerNumber(ONE_STR, NumberConstant.POSITIVE);
 
-    public static IntegerNumber convertToInteger(String number){
-        number = fixNumber(number);
-        if("0".equals(number) || "-0".equals(number)){
-            return ZERO;
-        }else if("1".equals(number)){
-            return ONE;
-        }else{
-            return new IntegerNumber(number);
-        }
-    }
-
-    public static IntegerNumber valueOf(int num){
-        if(num == 0){
-            return ZERO;
-        }else if(num == 1){
-            return ONE;
-        }else{
-            return new IntegerNumber(String.valueOf(num));
-        }
-    }
-
     private IntegerNumber(String number){
         this.sign = number.charAt(0) != '-' ? NumberConstant.POSITIVE : NumberConstant.NEGATIVE;
 
@@ -81,7 +60,7 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         return number;
     }
 
-    private IntegerNumber add(IntegerNumber left, IntegerNumber right, byte operator){
+    private static IntegerNumber add(IntegerNumber left, IntegerNumber right, byte operator){
         IntegerNumber result;
 
         if((left.sign ^ right.sign) == operator){
@@ -225,5 +204,26 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         }
 
         return true;
+    }
+
+    public static IntegerNumber valueOf(String number){
+        number = fixNumber(number);
+        if("0".equals(number) || "-0".equals(number)){
+            return ZERO;
+        }else if("1".equals(number)){
+            return ONE;
+        }else{
+            return new IntegerNumber(number);
+        }
+    }
+
+    public static IntegerNumber valueOf(int num){
+        if(num == 0){
+            return ZERO;
+        }else if(num == 1){
+            return ONE;
+        }else{
+            return new IntegerNumber(String.valueOf(num));
+        }
     }
 }

@@ -43,15 +43,11 @@ public final class BaseNumber {
     }
 
     public String toDecimal(int precision){
-        return this.toString();
+        return this.complex.toDecimal(precision);
     }
 
-    /**
-     * 尝试将base number转换为整数
-     * @return 返回转换后的结果, 如果转换失败, 则返回null
-     */
-    public IntegerNumber convertToInteger() {
-        return complex.convertToInteger();
+    public RationalNumber tryToConvertToRational(){
+        return complex.tryConvertToRational();
     }
 
     public static BaseNumber valueOf(int num){
