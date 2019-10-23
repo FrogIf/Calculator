@@ -43,7 +43,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             bottom = IntegerNumber.ONE;
         }
 
-        IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+        IntegerNumber gcd = bottom.gcd(top);
         if(gcd != IntegerNumber.ONE){
             top = top.div(gcd);
             bottom = bottom.div(gcd);
@@ -74,7 +74,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             }
             bottom = IntegerNumber.valueOf(denominator.toString());
 
-            IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+            IntegerNumber gcd = bottom.gcd(top);
             if(gcd != IntegerNumber.ONE){
                 top = top.div(gcd);
                 bottom = bottom.div(gcd);
@@ -136,7 +136,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
             bottom = IntegerNumber.valueOf(nineSb.toString());
 
-            IntegerNumber gcd = top.greatestCommonDivisor(bottom);
+            IntegerNumber gcd = top.gcd(bottom);
             if(gcd != IntegerNumber.ONE){
                 top = top.div(gcd);
                 bottom = bottom.div(gcd);
@@ -164,7 +164,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
                 bottom = this.denominator.mult(num.denominator);
                 top = this.denominator.mult(num.numerator).add(num.denominator.mult(this.numerator));
 
-                IntegerNumber gcd = bottom.greatestCommonDivisor(top);
+                IntegerNumber gcd = bottom.gcd(top);
                 if(gcd != IntegerNumber.ONE){
                     top = top.div(gcd);
                     bottom = bottom.div(gcd);
@@ -189,7 +189,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
         }else{
             IntegerNumber top = this.numerator.mult(num.numerator);
             IntegerNumber bottom = this.denominator.mult(num.denominator);
-            IntegerNumber gcd = top.greatestCommonDivisor(bottom);
+            IntegerNumber gcd = top.gcd(bottom);
             if(gcd != IntegerNumber.ONE){
                 top = top.div(gcd);
                 bottom = bottom.div(gcd);
