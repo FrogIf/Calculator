@@ -518,7 +518,7 @@ class PositiveIntegerUtil {
         int[] result = new int[values.length];
         int carry = 1;
         for(int i = 0; i < result.length; i++){
-            int s = result[i] + carry;
+            int s = values[i] + carry;
             if(s == SCALE){
                 carry = 1;
                 result[i] = 0;

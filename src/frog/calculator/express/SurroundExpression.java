@@ -5,6 +5,7 @@ import frog.calculator.space.Coordinate;
 import frog.calculator.space.FixedAlignSpaceBuilder;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
@@ -36,6 +37,8 @@ public class SurroundExpression extends AbstractExpression {
         currentElement = new Element();
         elements = new LinkedList<>();
         elements.add(currentElement);
+        traveller = null;
+        role = 1;
     }
 
     @Override
@@ -109,6 +112,9 @@ public class SurroundExpression extends AbstractExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
+        if(role == 0){
+            throw new IllegalStateException("the expression has output as argument list.");
+        }
         FixedAlignSpaceBuilder<BaseNumber> builder = new FixedAlignSpaceBuilder<>();
         builder.setDimension(1);
         builder.setWidth(0, this.elements.size());
@@ -154,14 +160,30 @@ public class SurroundExpression extends AbstractExpression {
         }
     }
 
+    private ITraveller<Element> traveller = null;
+
+    private int role = 1;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
+
     @Override
     public boolean hasNextChild() {
-        return false;
+        if(role == 2){
+            throw new IllegalStateException("this expression has output as a space.");
+        }
+        if(traveller == null){
+            traveller = elements.iterator();
+        }
+        return traveller.hasNext();
     }
 
     @Override
     public IExpression nextChild() {
-        return null;
+        if(role == 2){
+            throw new IllegalStateException("this expression has output as a space.");
+        }
+        if(traveller == null){
+            traveller = elements.iterator();
+        }
+        return traveller.next().expression;
     }
 
     private static class Element{

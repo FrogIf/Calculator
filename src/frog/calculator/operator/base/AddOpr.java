@@ -27,8 +27,12 @@ public class AddOpr extends AbstractOperator {
             ISpace<BaseNumber> ls = left.interpret();
             ISpace<BaseNumber> rs = right.interpret();
 
-            return OperateUtil.transform(ls, rs, addDealer);
+            return addSpace(ls, rs);
         }
+    }
+
+    public static ISpace<BaseNumber> addSpace(ISpace<BaseNumber> left, ISpace<BaseNumber> right){
+        return OperateUtil.transform(left, right, addDealer);
     }
 
     private static class AddDealer implements ILeftRightMapDealer {
