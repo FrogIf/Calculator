@@ -219,18 +219,8 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
     }
 
     @Override
-    public String toDecimal(int count) {
-        IntegerNumber leftMove = this.numerator.decLeftMove(count + 1);
-        IntegerNumber div = leftMove.div(this.denominator);
-        String s = div.toString();
-        int a = s.length() - count - 1;
-        int last = s.charAt(s.length() - 1) - '0';
-        if(last > 4){
-            div = div.add(IntegerNumber.ONE.decLeftMove(1));
-            s = div.toString();
-        }
-        s = s.substring(0, a) + '.' + s.substring(a, s.length() - 1);
-        return s;
+    public String toDecimal(int precision) {
+        return null;
     }
 
     @Override

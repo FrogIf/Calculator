@@ -128,19 +128,14 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
             return this;
         }
     }
-    /**
-     * 10进制左移
-     * @param b 左移的位数
-     * @return 左移后的结果
-     */
-    public IntegerNumber decLeftMove(int b){
-        StringBuilder n = new StringBuilder(this.number).reverse();
-        for(int i = 0; i < b; i++){
-            n.append('0');
-        }
-        n.reverse();
-        return new IntegerNumber(n, this.sign);
-    }
+//    public IntegerNumber decLeftMove(int b){
+//        StringBuilder n = new StringBuilder(this.number).reverse();
+//        for(int i = 0; i < b; i++){
+//            n.append('0');
+//        }
+//        n.reverse();
+//        return new IntegerNumber(n, this.sign);
+//    }
 
     public boolean isOdd(){
         return PositiveIntegerUtil.isOdd(this.number);

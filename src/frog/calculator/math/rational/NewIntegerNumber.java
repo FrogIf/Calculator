@@ -16,7 +16,7 @@ public class NewIntegerNumber implements INumber {
     private final byte sign;
 
     /*
-     * 用于存储number的真实值, 可读数字中每9个数作为一个元素存入该数组中, 低位存储于低索引处, 高位存储于高索引处
+     * 用于存储number的真实值, 可读数字中每9个数作为一个元素存入该数组中, 低位存储于低索引处, 高位存储于高索引处(little-endian)
      */
     private final int[] values;
 
@@ -25,7 +25,7 @@ public class NewIntegerNumber implements INumber {
         this.literal = new String[1];
         this.literal[0] = literal;
         int len = literal.length();
-        int vl = len / PositiveIntegerUtilArr.SINGLE_ELEMENT_LEN + (len % PositiveIntegerUtilArr.SINGLE_ELEMENT_LEN == 0 ? 0 : 1);
+        int vl = len / PositiveIntegerArrUtil.SINGLE_ELEMENT_LEN + (len % PositiveIntegerArrUtil.SINGLE_ELEMENT_LEN == 0 ? 0 : 1);
         this.values = new int[vl];
 
         int temp = 0;
@@ -36,7 +36,7 @@ public class NewIntegerNumber implements INumber {
             temp += (literal.charAt(i) - '0') * move;
             move *= 10;
             step++;
-            if(step % PositiveIntegerUtilArr.SINGLE_ELEMENT_LEN == 0){
+            if(step % PositiveIntegerArrUtil.SINGLE_ELEMENT_LEN == 0){
                 values[j++] = temp;
                 step = 0;
                 move = 1;
@@ -49,6 +49,24 @@ public class NewIntegerNumber implements INumber {
     }
 
     private NewIntegerNumber(byte sign, int[] values){
+        if(values == null || values.length == 0){
+            throw new IllegalArgumentException("empty number.");
+        }
+        // fix values
+        int i = values.length - 1;
+        for(; i > 0; i--){
+            if(values[i] > 0){
+                break;
+            }
+        }
+        if(i != values.length - 1){
+            int[] nv = new int[i + 1];
+            for(; i > -1; i--){
+                nv[i] = values[i];
+            }
+            values = nv;
+        }
+
         this.values = values;
         this.sign = sign;
     }
@@ -62,20 +80,20 @@ public class NewIntegerNumber implements INumber {
     private static NewIntegerNumber accumulation(NewIntegerNumber left, NewIntegerNumber right, byte operator){
         NewIntegerNumber result;
         if((left.sign ^ right.sign) == operator){
-            int[] values = PositiveIntegerUtilArr.add(left.values, right.values);
+            int[] values = PositiveIntegerArrUtil.add(left.values, right.values);
             result = new NewIntegerNumber(left.sign, values);
         }else{
-            int c = PositiveIntegerUtilArr.compare(left.values, right.values);
+            int c = PositiveIntegerArrUtil.compare(left.values, right.values);
             if(c == 0){
                 result = ZERO;
             }else{
                 int[] values;
                 byte sign = NumberConstant.POSITIVE;
                 if(c < 0){
-                    values = PositiveIntegerUtilArr.subtract(right.values, left.values);
+                    values = PositiveIntegerArrUtil.subtract(right.values, left.values);
                     sign = NumberConstant.NEGATIVE;
                 }else{
-                    values = PositiveIntegerUtilArr.subtract(left.values, right.values);
+                    values = PositiveIntegerArrUtil.subtract(left.values, right.values);
                 }
                 result = new NewIntegerNumber((byte)(left.sign ^ sign), values);
             }
@@ -92,16 +110,36 @@ public class NewIntegerNumber implements INumber {
     }
 
     public NewIntegerNumber mult(NewIntegerNumber num){
-        return new NewIntegerNumber((byte) (this.sign ^ num.sign), PositiveIntegerUtilArr.multiply(this.values, num.values));
+        return new NewIntegerNumber((byte) (this.sign ^ num.sign), PositiveIntegerArrUtil.multiply(this.values, num.values));
     }
 
-    public NewIntegerNumber div(NewIntegerNumber num){
-        return new NewIntegerNumber((byte) (this.sign ^ num.sign), PositiveIntegerUtilArr.division(this.values, num.values));
+    public NewIntegerNumber div(NewIntegerNumber num, Remainder remainder){
+        int[][] result = PositiveIntegerArrUtil.division(this.values, num.values);
+        if(remainder != null){
+            remainder.remainder = new NewIntegerNumber(NumberConstant.POSITIVE, result[1]);
+        }
+        return new NewIntegerNumber((byte) (this.sign ^ num.sign), result[0]);
     }
 
     @Override
     public NewIntegerNumber not() {
         return new NewIntegerNumber((byte) (1 ^ this.sign), this.values);
+    }
+
+    public NewIntegerNumber gcd(){
+        return null;
+    }
+
+    public boolean isOdd(){
+        return PositiveIntegerArrUtil.isOdd(this.values);
+    }
+
+    public NewIntegerNumber abs() {
+        if(this.sign == NumberConstant.NEGATIVE){
+            return new NewIntegerNumber(NumberConstant.POSITIVE, this.values);
+        }else{
+            return this;
+        }
     }
 
     private static String fixNumber(String number){
@@ -114,8 +152,8 @@ public class NewIntegerNumber implements INumber {
             }
         }
         if(number.startsWith("0")){
-            int pz = 1;
-            for(int i = 1, len = number.length(); i < len; i++){
+            int pz = 0;
+            for(int i = 0, len = number.length(); i < len - 1; i++){
                 if(number.charAt(i) == '0'){
                     pz++;
                 }else{
@@ -125,6 +163,16 @@ public class NewIntegerNumber implements INumber {
             number = number.substring(pz);
         }
         return number;
+    }
+
+    public static NewIntegerNumber valueOf(int number){
+        if(number == 0){
+            return ZERO;
+        }else if(number == 1){
+            return ONE;
+        }else{
+            return new NewIntegerNumber(NumberConstant.POSITIVE, new int[]{number});
+        }
     }
 
     public static NewIntegerNumber valueOf(String number){
@@ -150,14 +198,14 @@ public class NewIntegerNumber implements INumber {
      */
     private String[] literal;
 
-    private static final int SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH = PositiveIntegerUtilArr.SINGLE_ELEMENT_LEN * (Integer.MAX_VALUE >> 4);
+    private static final int SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH = PositiveIntegerArrUtil.SINGLE_ELEMENT_LEN * (Integer.MAX_VALUE >> 4);
 
     private static final String FILL_ELEMENT;
 
     static {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        while (i < PositiveIntegerUtilArr.SINGLE_ELEMENT_LEN){
+        while (i < PositiveIntegerArrUtil.SINGLE_ELEMENT_LEN){
             sb.append("0");
             i++;
         }
@@ -183,8 +231,8 @@ public class NewIntegerNumber implements INumber {
                 if(val == 0){
                     sb.append(FILL_ELEMENT);
                 }else {
-                    if(val < PositiveIntegerUtilArr.SCALE / 10){
-                        while(val < PositiveIntegerUtilArr.SCALE / 10){
+                    if(val < PositiveIntegerArrUtil.SCALE / 10){
+                        while(val < PositiveIntegerArrUtil.SCALE / 10){
                             sb.append(0);
                             val *= 10;
                         }
@@ -199,8 +247,31 @@ public class NewIntegerNumber implements INumber {
         return literal[0] + (literal.length > 1 ? "..." : "");
     }
 
+    public boolean equals(Object o){
+        if(o == this){ return true; }
+        if(o == null || o.getClass() != NewIntegerNumber.class){
+            return false;
+        }
+        NewIntegerNumber that = (NewIntegerNumber) o;
+        int mark = PositiveIntegerArrUtil.compare(this.values, that.values);
+        return mark == 0;
+    }
+
     @Override
     public String toDecimal(int precision) {
         return this.toString();
+    }
+
+    public static class Remainder{
+        private NewIntegerNumber remainder;
+
+        public Remainder(){ }
+
+        private Remainder(NewIntegerNumber remainder) {
+            this.remainder = remainder;
+        }
+        public NewIntegerNumber getRemainder() {
+            return remainder;
+        }
     }
 }
