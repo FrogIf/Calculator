@@ -9,7 +9,7 @@ import frog.calculator.operator.AbstractOperator;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.StringUtils;
 
-public class AssignOperator extends AbstractOperator {
+public class AssignOpr extends AbstractOperator {
 
     @Override
     public ISpace<BaseNumber> operate(IExpression exp) {

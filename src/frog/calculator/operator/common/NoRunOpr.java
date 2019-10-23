@@ -5,11 +5,15 @@ import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.space.ISpace;
 
-public class StructContainerOperator extends AbstractOperator {
-
+public class NoRunOpr extends AbstractOperator {
     @Override
     public ISpace<BaseNumber> operate(IExpression exp) {
-        return exp.nextChild().interpret();
+        return exp.hasNextChild() ? exp.nextChild().interpret(): null;
     }
 
+    private static NoRunOpr operator = new NoRunOpr();
+
+    public static NoRunOpr getInstance(){
+        return operator;
+    }
 }

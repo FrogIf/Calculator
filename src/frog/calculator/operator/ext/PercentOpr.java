@@ -7,7 +7,7 @@ import frog.calculator.operator.util.IOneElementDealer;
 import frog.calculator.operator.util.OperateUtil;
 import frog.calculator.space.ISpace;
 
-public class PercentOperator extends AbstractOperator {
+public class PercentOpr extends AbstractOperator {
 
     private static final BaseNumber ONE_HUNDRED = BaseNumber.valueOf(100);
 

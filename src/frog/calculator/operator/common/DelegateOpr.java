@@ -5,7 +5,7 @@ import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.space.ISpace;
 
-public class DelegateOperator extends AbstractOperator {
+public class DelegateOpr extends AbstractOperator {
     @Override
     public ISpace<BaseNumber> operate(IExpression expression) {
 //        IExpression func = expression.nextChild();

@@ -8,7 +8,7 @@ import frog.calculator.operator.util.ILeftRightMapDealer;
 import frog.calculator.operator.util.OperateUtil;
 import frog.calculator.space.ISpace;
 
-public class DivOperator extends AbstractOperator {
+public class DivOpr extends AbstractOperator {
 
     private static final DivMapDealer dealer = new DivMapDealer();
 

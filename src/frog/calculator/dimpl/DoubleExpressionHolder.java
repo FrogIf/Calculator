@@ -10,7 +10,7 @@ public class DoubleExpressionHolder extends AbstractExpressionHolder {
     protected IExpression[] getRunnableExpression() {
         return new IExpression[]{
 //                new SeparatorExpression("*", 2, new MultiOperator()),
-//                new SeparatorExpression("/", 2, new DivOperator()),
+//                new SeparatorExpression("/", 2, new DivOpr()),
 //                new RightSeparatorExpression("!", 3, new FactorialOperator()),
 //                new RightSeparatorExpression("%", 3, new PercentOperator()),
 //                new ContainerExpression("sqrt(", new SqrtOperator(), ")"),

@@ -8,7 +8,7 @@ import frog.calculator.operator.util.ILeftRightMapDealer;
 import frog.calculator.operator.util.OperateUtil;
 import frog.calculator.space.ISpace;
 
-public class AddOperator extends AbstractOperator {
+public class AddOpr extends AbstractOperator {
 
     private static final ILeftRightMapDealer addDealer = new AddDealer();
 

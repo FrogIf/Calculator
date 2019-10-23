@@ -7,7 +7,7 @@ import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.space.*;
 
-public class AverageOperator extends AbstractOperator {
+public class AverageOpr extends AbstractOperator {
     @Override
     public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression child = exp.nextChild();

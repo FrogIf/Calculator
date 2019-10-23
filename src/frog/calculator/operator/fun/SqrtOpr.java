@@ -1,40 +1,37 @@
-package frog.calculator.operator.base;
+package frog.calculator.operator.fun;
 
+import frog.calculator.exception.UnrightExpressionException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.math.MathUtil;
 import frog.calculator.operator.AbstractOperator;
 import frog.calculator.operator.util.IOneElementDealer;
 import frog.calculator.operator.util.OperateUtil;
-import frog.calculator.space.AtomSpace;
 import frog.calculator.space.ISpace;
 
-public class ComplexMarkOperator extends AbstractOperator {
+public class SqrtOpr extends AbstractOperator {
 
-    private static final ImaginaryDealer dealer = new ImaginaryDealer();
-
-    private static final ISpace<BaseNumber> DEFAULT_VALUE = new AtomSpace<>(MathUtil.multiplyI(BaseNumber.ONE));
+    private static final SqrtDealer dealer = new SqrtDealer();
 
     @Override
     public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression child = exp.nextChild();
         if(child == null){
-            return DEFAULT_VALUE;
+            throw new UnrightExpressionException();
         }else{
-            ISpace<BaseNumber> space = child.interpret();
-            return OperateUtil.transform(space, dealer);
+            return OperateUtil.transform(child.interpret(), dealer);
         }
     }
 
-    public static class ImaginaryDealer implements IOneElementDealer{
+    private static class SqrtDealer implements IOneElementDealer{
 
         @Override
         public BaseNumber deal(BaseNumber num) {
             if(num != null){
-                return MathUtil.multiplyI(num);
+                return MathUtil.sqrt(num);
             }
             return null;
         }
-    }
 
+    }
 }

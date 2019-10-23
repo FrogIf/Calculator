@@ -10,7 +10,7 @@ import frog.calculator.space.FixedAlignSpace;
 import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
 
-public class PowerOperator extends AbstractOperator {
+public class PowerOpr extends AbstractOperator {
     @Override
     public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression base = exp.nextChild();
