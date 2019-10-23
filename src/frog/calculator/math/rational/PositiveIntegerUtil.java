@@ -1,6 +1,6 @@
 package frog.calculator.math.rational;
 
-import frog.calculator.math.NumberConstant;
+import frog.calculator.util.Arrays;
 
 class PositiveIntegerUtil {
 
@@ -78,9 +78,7 @@ class PositiveIntegerUtil {
 
         if(carry > 0){
             int[] newResult = new int[m + 1];   // 显然, 数组长度最多只会增长1
-            for(int i = 0; i < m; i++){
-                newResult[i] = result[i];
-            }
+            Arrays.copy(result, newResult, 0, m);
             newResult[m] = (int) (carry % SCALE);
             result = newResult;
         }
@@ -163,9 +161,7 @@ class PositiveIntegerUtil {
                 result = ZERO;
             }else{
                 int[] newResult = new int[result.length - more];
-                for(int i = 0; i < newResult.length; i++){
-                    newResult[i] = result[i];
-                }
+                Arrays.copy(result, newResult, 0, newResult.length);
                 result = newResult;
             }
         }
@@ -220,9 +216,7 @@ class PositiveIntegerUtil {
         int[] result = tempResult;
         if(redundancy > 0){
             result = new int[tempResult.length - redundancy];
-            for(int i = 0; i < result.length; i++){
-                result[i] = tempResult[i];
-            }
+            Arrays.copy(tempResult, result, 0, result.length);
         }
 
         return result;
@@ -491,6 +485,56 @@ class PositiveIntegerUtil {
             rem = d & 1;
         }
 
+        return result;
+    }
+
+    static int[] decrease(int[] values) {
+        if(values.length == 1 && values[0] == 0){
+            throw new IllegalArgumentException("can't decrease.");
+        }
+
+        int[] result = new int[values.length];
+        int borrow = 1;
+        for(int i = 0; i < values.length; i++){
+            if(values[i] > borrow){
+                result[i] = values[i] - borrow;
+                borrow = 0;
+            }else{
+                result[i] = SCALE - borrow;
+                borrow = 1;
+            }
+        }
+
+        if(result[values.length - 1] < 1){
+            int[] newResult = new int[values.length - 1];
+            Arrays.copy(result, newResult, 0, newResult.length);
+            result = newResult;
+        }
+
+        return result;
+    }
+
+    static int[] increase(int[] values) {
+        int[] result = new int[values.length];
+        int carry = 1;
+        for(int i = 0; i < result.length; i++){
+            int s = result[i] + carry;
+            if(s == SCALE){
+                carry = 1;
+                result[i] = 0;
+            }else{
+                carry = 0;
+                result[i] = s;
+            }
+        }
+
+        if(carry == 1){
+            int len = result.length;
+            int[] newResult = new int[len + 1];
+            Arrays.copy(result, newResult, 0, len);
+            newResult[len] = 1;
+            result = newResult;
+        }
         return result;
     }
 }

@@ -4,19 +4,28 @@ import frog.calculator.util.collection.ITraveller;
 
 public class Arrays {
 
-    public static <T> T[] copy(T[] source, T[] desc, int start, int end){
-        if(start < 0 || (start > source.length - 1) || (end > source.length - 1) || start > end){
-            throw new IllegalArgumentException("start and end index is error. start : " + start + ", end : " + end);
-        }
-        if(end - start + 1 > desc.length){
-            throw new IllegalArgumentException("desc array is not enough. desc's length : " + desc.length + ", will put : " + (end - start + 1));
-        }
+    public static <T> void copy(T[] source, T[] dest, int start, int end){
+        checkCopy(source.length, dest.length, start, end);
 
         for(int i = 0, j = start; j <= end; j++, i++){
-            desc[i] = source[j];
+            dest[i] = source[j];
         }
+    }
 
-        return desc;
+    public static void copy(int[] source, int[] dest, int start, int end){
+        checkCopy(source.length, dest.length, start, end);
+        for(int i = 0, j = start; j < end; j++, i++){
+            dest[i] = source[j];
+        }
+    }
+
+    private static void checkCopy(int sourceLen, int destLen, int start, int end){
+        if(start < 0 || end > sourceLen || start > end){
+            throw new IllegalArgumentException("start and end index is error. start : " + start + ", end : " + end);
+        }
+        if(end - start > destLen){
+            throw new IllegalArgumentException("desc array is not enough. desc's length : " + destLen + ", will put : " + (end - start + 1));
+        }
     }
 
     public static ITraveller<Integer> traveller(int[] array){

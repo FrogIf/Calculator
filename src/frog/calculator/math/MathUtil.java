@@ -44,5 +44,24 @@ public class MathUtil {
         return num.mult(IMAGINARY_MARK);
     }
 
+    public static BaseNumber factorial(BaseNumber num){
+        RationalNumber rational = num.tryToConvertToRational();
+        if(rational == null){
+            throw new IllegalArgumentException(num.toString() + " is not a rational number.");
+        }
+        IntegerNumber integer = rational.convertToInteger();
+        if(integer == null){
+            throw new IllegalArgumentException("factorial can't support this number : " + num.toString());
+        }
+
+        IntegerNumber result = integer;
+
+        while(IntegerNumber.ONE.compareTo(integer) < 0){
+            integer = integer.decrease();
+            result = result.mult(integer);
+        }
+
+        return BaseNumber.valueOf(result);
+    }
 
 }

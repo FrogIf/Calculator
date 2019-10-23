@@ -2,6 +2,7 @@ package frog.calculator.math.rational;
 
 import frog.calculator.math.INumber;
 import frog.calculator.math.NumberConstant;
+import frog.calculator.math.exception.DivideByZeroException;
 
 public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
@@ -13,12 +14,14 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
     public static final IntegerNumber ONE = new IntegerNumber(NumberConstant.POSITIVE, ONE_VALUES);
 
+    public static final IntegerNumber N_ONE = new IntegerNumber(NumberConstant.NEGATIVE, ONE_VALUES);
+
     private final byte sign;
 
     /*
      * 用于存储number的真实值, 可读数字中每9个数作为一个元素存入该数组中, 低位存储于低索引处, 高位存储于高索引处(little-endian)
      */
-    final int[] values;
+    private final int[] values;
 
     public IntegerNumber(byte sign, String literal) {
         this.sign = sign;
@@ -48,7 +51,7 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         }
     }
 
-    IntegerNumber(byte sign, int[] values){
+    private IntegerNumber(byte sign, int[] values){
         if(values == null || values.length == 0){
             throw new IllegalArgumentException("empty number.");
         }
@@ -122,6 +125,9 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
     }
 
     public IntegerNumber div(IntegerNumber num){
+        if(num.values.length == 1 && num.values[0] == 0){
+            throw new DivideByZeroException();
+        }
         int[][] result = PositiveIntegerUtil.division(this.values, num.values);
         return new IntegerNumber((byte) (this.sign ^ num.sign), result[0]);
     }
@@ -144,6 +150,36 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
             return new IntegerNumber(NumberConstant.POSITIVE, this.values);
         }else{
             return this;
+        }
+    }
+
+    /**
+     * 自减1
+     * @return 返回自减结果
+     */
+    public IntegerNumber decrease(){
+        if(this.values.length == 1 && this.values[0] == 0){
+            return N_ONE;
+        }
+        if(this.sign == NumberConstant.POSITIVE){
+            int[] res = PositiveIntegerUtil.decrease(this.values);
+            return new IntegerNumber(this.sign, res);
+        }else{
+            int[] res = PositiveIntegerUtil.increase(this.values);;
+            return new IntegerNumber(this.sign, res);
+        }
+    }
+
+    public IntegerNumber increase(){
+        if(this.sign == NumberConstant.POSITIVE){
+            return new IntegerNumber(this.sign, PositiveIntegerUtil.increase(this.values));
+        }else{
+            int[] res = PositiveIntegerUtil.decrease(this.values);
+            if(this.values.length == 1 && values[0] == 0){
+                return ZERO;
+            }else{
+                return new IntegerNumber(this.sign, res);
+            }
         }
     }
 
