@@ -1,13 +1,13 @@
 package frog.calculator;
 
 import frog.calculator.express.IExpression;
-import frog.calculator.express.SurroundExpression;
 import frog.calculator.express.MarkExpression;
+import frog.calculator.express.SurroundExpression;
 
 public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
     // 声明符号
-//    private IExpression declareBegin = new LeftSeparatorExpression("@", 0, new DeclareOperator());
+//    private IExpression declareBegin = new LeftExpression("@", 0, new DeclareOperator());
 
     // 赋值符号
 //    private IExpression assign = new SeparatorExpression("=", 0, new AssignOperator(), true);

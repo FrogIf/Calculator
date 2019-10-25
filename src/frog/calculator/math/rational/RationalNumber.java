@@ -1,7 +1,6 @@
 package frog.calculator.math.rational;
 
 import frog.calculator.math.INumber;
-import frog.calculator.math.NumberConstant;
 import frog.calculator.util.StringUtils;
 
 /**
@@ -142,11 +141,68 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
                 bottom = bottom.div(gcd);
             }
 
-            byte sign = negative ? NumberConstant.NEGATIVE : NumberConstant.POSITIVE;
+            byte sign = negative ? IntegerNumber.NEGATIVE : IntegerNumber.POSITIVE;
             this.numerator = top.getSign() == sign ? top : top.abs();
             this.denominator = bottom.abs();
         }
     }
+
+//    public RationalNumber(String decimal, IntegerNumber repetend){
+//        if(StringUtils.isBlank(decimal)){
+//            throw new IllegalArgumentException("decimal is blank.");
+//        }
+//
+//        int pos = decimal.indexOf(".");
+//        if(pos < 0){
+//            this.numerator = IntegerNumber.valueOf(decimal);
+//            this.denominator = IntegerNumber.ONE;
+//        }else{
+//            int start = pos + repetend + 1;
+//            if(start >= decimal.length()){
+//                throw new IllegalArgumentException("decimal is not enough.");
+//            }
+//
+//            boolean negative = decimal.startsWith("-");
+//            decimal = decimal.replace(".", "");
+//            if(negative){
+//                decimal = decimal.substring(1);
+//            }
+//            start--;
+//            repetend--;
+//            /*
+//             * 循环小数转分数:
+//             * 123.456 (56循环)
+//             * --> 分子 = 123456 - 1234
+//             *     分母 = 990 (9的个数与循环节位数相同, 0的位数与不循环部分相同)
+//             */
+//            IntegerNumber top;
+//            IntegerNumber bottom;
+//            IntegerNumber a = IntegerNumber.valueOf(decimal);
+//            IntegerNumber b = IntegerNumber.valueOf(decimal.substring(0, start));
+//
+//            top = a.sub(b);
+//
+//            StringBuilder nineSb = new StringBuilder();
+//            for(int i = 0, len = decimal.length() - start; i < len; i++){
+//                nineSb.append('9');
+//            }
+//            for(int i = 0, len = repetend + 1; i < len; i++){
+//                nineSb.append('0');
+//            }
+//
+//            bottom = IntegerNumber.valueOf(nineSb.toString());
+//
+//            IntegerNumber gcd = top.gcd(bottom);
+//            if(gcd != IntegerNumber.ONE){
+//                top = top.div(gcd);
+//                bottom = bottom.div(gcd);
+//            }
+//
+//            byte sign = negative ? NumberConstant.NEGATIVE : NumberConstant.POSITIVE;
+//            this.numerator = top.getSign() == sign ? top : top.abs();
+//            this.denominator = bottom.abs();
+//        }
+//    }
 
     public RationalNumber add(RationalNumber num){
         if(this.equals(ZERO)){
@@ -234,7 +290,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
         byte sign = this.numerator.getSign();
         if(sign != o.numerator.getSign()){
-            if(sign == NumberConstant.POSITIVE){
+            if(sign == IntegerNumber.POSITIVE){
                 return 1;
             }else{
                 return -1;
@@ -246,7 +302,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             }else{
                 mark = this.numerator.mult(o.denominator).compareTo(o.numerator.mult(this.denominator));
             }
-            if(sign == NumberConstant.NEGATIVE){
+            if(sign == IntegerNumber.NEGATIVE){
                 mark = -mark;
             }
             return mark;

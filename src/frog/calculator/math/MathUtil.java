@@ -23,7 +23,7 @@ public class MathUtil {
                 base = base.mult(base);
                 intPow = intPow.div(TWO);
             }
-            if(intPow.getSign() == NumberConstant.NEGATIVE){  // 负指数
+            if(intPow.getSign() == IntegerNumber.NEGATIVE){  // 负指数
                 return BaseNumber.ONE.div(result);
             }else{  // 正指数
                 return result;

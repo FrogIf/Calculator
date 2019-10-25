@@ -1,7 +1,7 @@
 package test.model;
 
 import frog.calculator.math.INumber;
-import frog.calculator.math.NumberConstant;
+import frog.calculator.math.rational.IntegerNumber;
 
 /**
  * 整数
@@ -23,12 +23,12 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
         this.sign = sign;
     }
 
-    public static final OldIntegerNumber ZERO = new OldIntegerNumber(ZERO_STR, NumberConstant.POSITIVE);
+    public static final OldIntegerNumber ZERO = new OldIntegerNumber(ZERO_STR, IntegerNumber.POSITIVE);
 
-    public static final OldIntegerNumber ONE = new OldIntegerNumber(ONE_STR, NumberConstant.POSITIVE);
+    public static final OldIntegerNumber ONE = new OldIntegerNumber(ONE_STR, IntegerNumber.POSITIVE);
 
     private OldIntegerNumber(String number){
-        this.sign = number.charAt(0) != '-' ? NumberConstant.POSITIVE : NumberConstant.NEGATIVE;
+        this.sign = number.charAt(0) != '-' ? IntegerNumber.POSITIVE : IntegerNumber.NEGATIVE;
 
         int len = number.length();
         boolean pz = true;  // 是否存在前置0
@@ -76,10 +76,10 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
                 return ZERO;
             }else {
                 StringBuilder number;
-                byte sign = NumberConstant.POSITIVE;
+                byte sign = IntegerNumber.POSITIVE;
                 if(fa < 0){
                     number = OldPositiveIntegerUtil.subtract(right.number, left.number);
-                    sign = NumberConstant.NEGATIVE;
+                    sign = IntegerNumber.NEGATIVE;
                 }else{
                     number = OldPositiveIntegerUtil.subtract(left.number, right.number);
                 }
@@ -91,11 +91,11 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
     }
 
     public OldIntegerNumber add(OldIntegerNumber r){
-        return add(this, r, NumberConstant.POSITIVE);
+        return add(this, r, IntegerNumber.POSITIVE);
     }
 
     public OldIntegerNumber sub(OldIntegerNumber r){
-        return add(this, r, NumberConstant.NEGATIVE);
+        return add(this, r, IntegerNumber.NEGATIVE);
     }
 
     public OldIntegerNumber mult(OldIntegerNumber r){
@@ -113,7 +113,7 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
      * @return
      */
     public OldIntegerNumber greatestCommonDivisor(OldIntegerNumber num){
-        return new OldIntegerNumber(OldPositiveIntegerUtil.gcd(num.number, this.number), NumberConstant.POSITIVE);
+        return new OldIntegerNumber(OldPositiveIntegerUtil.gcd(num.number, this.number), IntegerNumber.POSITIVE);
     }
 
     public OldIntegerNumber not(){
@@ -126,8 +126,8 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
     }
 
     public OldIntegerNumber abs() {
-        if(this.sign == NumberConstant.NEGATIVE){
-            return new OldIntegerNumber(this.number, NumberConstant.POSITIVE);
+        if(this.sign == IntegerNumber.NEGATIVE){
+            return new OldIntegerNumber(this.number, IntegerNumber.POSITIVE);
         }else{
             return this;
         }
@@ -149,7 +149,7 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
     public String toString() {
         if(this.literal == null){
             StringBuilder temp = new StringBuilder(this.number);
-            if(this.sign == NumberConstant.NEGATIVE){
+            if(this.sign == IntegerNumber.NEGATIVE){
                 temp.append('-');
             }
             this.literal = temp.reverse().toString();
@@ -174,13 +174,13 @@ public final class OldIntegerNumber implements INumber, Comparable<OldIntegerNum
     @Override
     public int compareTo(OldIntegerNumber o) {
         if(this.sign == o.sign){
-            if(this.sign == NumberConstant.POSITIVE){
+            if(this.sign == IntegerNumber.POSITIVE){
                 return OldPositiveIntegerUtil.compare(this.number, o.number);
             }else {
                 return -OldPositiveIntegerUtil.compare(this.number, o.number);
             }
         }else{
-            if(this.sign == NumberConstant.POSITIVE){
+            if(this.sign == IntegerNumber.POSITIVE){
                 return 1;
             }else{
                 return -1;

@@ -8,12 +8,12 @@ public class MiddleExpression extends AbstractBlockExpression{
 
     private IExpression left;
 
-    public MiddleExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
-        super(symbol, buildFactor, operator, fifo);
-    }
+//    public MiddleExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
+//        super(symbol, buildFactor, operator, fifo);
+//    }
 
     public MiddleExpression(String symbol, int buildFactor, IOperator operator) {
-        super(symbol, buildFactor, operator, false);
+        super(symbol, buildFactor, operator);
     }
 
     @Override

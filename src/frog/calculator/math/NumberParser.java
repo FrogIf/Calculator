@@ -16,8 +16,7 @@ public class NumberParser {
         int dot1 = symbol.indexOf('.');
         int dot2 = symbol.lastIndexOf('.');
         if(dot1 == dot2 || dot2 == symbol.length() - 1){
-            RationalNumber rationalNumber = new RationalNumber(symbol);
-            return new BaseNumber(new ComplexNumber(new PolynomialNumber(rationalNumber, null)));
+            return BaseNumber.valueOf(symbol);
         }else{
             String num = symbol.substring(0, dot2);
             String repetend = symbol.substring(dot2 + 1);

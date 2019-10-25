@@ -1,8 +1,5 @@
 package frog.calculator.express;
 
-import frog.calculator.express.AbstractExpression;
-import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.IOperator;
 import frog.calculator.space.ISpace;

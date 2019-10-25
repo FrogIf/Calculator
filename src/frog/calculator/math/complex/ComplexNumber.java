@@ -7,7 +7,7 @@ import frog.calculator.math.real.PolynomialNumber;
 /**
  * 复数
  */
-public class ComplexNumber implements INumber, Comparable<ComplexNumber> {
+public final class ComplexNumber implements INumber, Comparable<ComplexNumber> {
 
     public static final ComplexNumber I = new ComplexNumber(null, PolynomialNumber.ONE);
 

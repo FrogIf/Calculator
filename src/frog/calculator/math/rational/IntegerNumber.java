@@ -1,34 +1,35 @@
 package frog.calculator.math.rational;
 
 import frog.calculator.math.INumber;
-import frog.calculator.math.NumberConstant;
 import frog.calculator.math.exception.DivideByZeroException;
 
-public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
+public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
-    private static final int[] ZERO_VALUES = new int[1];
+    public static final byte POSITIVE = 0;
 
-    private static final int[] ONE_VALUES = new int[]{1};
+    public static final byte NEGATIVE = 1;
 
-    public static final IntegerNumber ZERO = new IntegerNumber(NumberConstant.POSITIVE, ZERO_VALUES);
+    public static final IntegerNumber ZERO = new IntegerNumber(POSITIVE, PositiveInteger.ZERO);
 
-    public static final IntegerNumber ONE = new IntegerNumber(NumberConstant.POSITIVE, ONE_VALUES);
+    public static final IntegerNumber ONE = new IntegerNumber(POSITIVE, PositiveInteger.ONE);
 
-    public static final IntegerNumber N_ONE = new IntegerNumber(NumberConstant.NEGATIVE, ONE_VALUES);
+    public static final IntegerNumber N_ONE = new IntegerNumber(NEGATIVE, PositiveInteger.ONE);
 
     private final byte sign;
+
+    private final int highPos;  // 首位高度
 
     /*
      * 用于存储number的真实值, 可读数字中每9个数作为一个元素存入该数组中, 低位存储于低索引处, 高位存储于高索引处(little-endian)
      */
     private final int[] values;
 
-    public IntegerNumber(byte sign, String literal) {
+    private IntegerNumber(byte sign, String literal) {
         this.sign = sign;
         this.literal = new String[1];
         this.literal[0] = literal;
         int len = literal.length();
-        int vl = len / PositiveIntegerUtil.SINGLE_ELEMENT_LEN + (len % PositiveIntegerUtil.SINGLE_ELEMENT_LEN == 0 ? 0 : 1);
+        int vl = len / PositiveInteger.SINGLE_ELEMENT_LEN + (len % PositiveInteger.SINGLE_ELEMENT_LEN == 0 ? 0 : 1);
         this.values = new int[vl];
 
         int temp = 0;
@@ -39,7 +40,7 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
             temp += (literal.charAt(i) - '0') * move;
             move *= 10;
             step++;
-            if(step % PositiveIntegerUtil.SINGLE_ELEMENT_LEN == 0){
+            if(step % PositiveInteger.SINGLE_ELEMENT_LEN == 0){
                 values[j++] = temp;
                 step = 0;
                 move = 1;
@@ -49,27 +50,14 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         if(temp > 0){
             values[j] = temp;
         }
+        this.highPos = values.length - 1;
     }
 
     private IntegerNumber(byte sign, int[] values){
         if(values == null || values.length == 0){
             throw new IllegalArgumentException("empty number.");
         }
-        // fix values
-        int i = values.length - 1;
-        for(; i > 0; i--){
-            if(values[i] > 0){
-                break;
-            }
-        }
-        if(i != values.length - 1){
-            int[] nv = new int[i + 1];
-            for(; i > -1; i--){
-                nv[i] = values[i];
-            }
-            values = nv;
-        }
-
+        this.highPos = PositiveInteger.highPos(values);
         this.values = values;
         this.sign = sign;
     }
@@ -83,20 +71,20 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
     private static IntegerNumber accumulation(IntegerNumber left, IntegerNumber right, byte operator){
         IntegerNumber result;
         if((left.sign ^ right.sign) == operator){
-            int[] values = PositiveIntegerUtil.add(left.values, right.values);
+            int[] values = PositiveInteger.add(left.values, left.highPos, right.values, right.highPos);
             result = new IntegerNumber(left.sign, values);
         }else{
-            int c = PositiveIntegerUtil.compare(left.values, right.values);
+            int c = PositiveInteger.compare(left.values, left.highPos, right.values, right.highPos);
             if(c == 0){
                 result = ZERO;
             }else{
                 int[] values;
-                byte sign = NumberConstant.POSITIVE;
+                byte sign = POSITIVE;
                 if(c < 0){
-                    values = PositiveIntegerUtil.subtract(right.values, left.values);
-                    sign = NumberConstant.NEGATIVE;
+                    values = PositiveInteger.subtract(right.values, right.highPos, left.values, left.highPos);
+                    sign = NEGATIVE;
                 }else{
-                    values = PositiveIntegerUtil.subtract(left.values, right.values);
+                    values = PositiveInteger.subtract(left.values, left.highPos, right.values, right.highPos);
                 }
                 result = new IntegerNumber((byte)(left.sign ^ sign), values);
             }
@@ -104,22 +92,68 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         return result;
     }
 
+    private IntegerNumber accumulationOneWord(int num, byte operator){
+        if(num == 0){ return this; }
+
+        int absNum = num < 0 ? -num : num;
+        if(num < 0 == (this.sign == NEGATIVE) && operator == POSITIVE){  // 同号
+            if(absNum < PositiveInteger.SCALE){
+                return new IntegerNumber(this.sign, PositiveInteger.addOneWord(this.values, this.highPos, absNum));
+            }else{
+                int[] temp = new int[2];
+                temp[0] = absNum % PositiveInteger.SCALE;
+                temp[1] = absNum / PositiveInteger.SCALE;
+                return new IntegerNumber(this.sign, PositiveInteger.add(this.values, this.highPos, temp, 1));
+            }
+        }else{ // 异号
+            if(absNum < PositiveInteger.SCALE){
+                if(this.values.length > 1 || this.values[0] > absNum){
+                    return new IntegerNumber(this.sign, PositiveInteger.subtractOneWord(this.values, this.highPos, absNum));
+                }else{
+                    int res = absNum - this.values[0];
+                    if(res == 0){ return ZERO; }
+                    else{ return new IntegerNumber((byte) (1 ^ this.sign), new int[]{res}); }
+                }
+            }else{
+                int[] temp = new int[2];
+                temp[0] = absNum % PositiveInteger.SCALE;
+                temp[1] = absNum / PositiveInteger.SCALE;
+                int c = PositiveInteger.compare(this.values, this.highPos, temp, 1);
+                if(c == 0){
+                    return ZERO;
+                }else if(c > 0){
+                    return new IntegerNumber(this.sign, PositiveInteger.subtract(this.values, this.highPos, temp, 1));
+                }else{
+                    return new IntegerNumber((byte) (1 ^ this.sign), PositiveInteger.subtract(temp, 1,this.values, this.highPos));
+                }
+            }
+        }
+    }
+
     public IntegerNumber add(IntegerNumber num){
-        return accumulation(this, num, NumberConstant.POSITIVE);
+        return accumulation(this, num, POSITIVE);
+    }
+
+    public IntegerNumber add(int num){
+        return accumulationOneWord(num, POSITIVE);
     }
 
     public IntegerNumber sub(IntegerNumber num){
-        return accumulation(this, num, NumberConstant.NEGATIVE);
+        return accumulation(this, num, NEGATIVE);
+    }
+
+    public IntegerNumber sub(int num){
+        return accumulationOneWord(num, NEGATIVE);
     }
 
     public IntegerNumber mult(IntegerNumber num){
-        return new IntegerNumber((byte) (this.sign ^ num.sign), PositiveIntegerUtil.multiply(this.values, num.values));
+        return new IntegerNumber((byte) (this.sign ^ num.sign), PositiveInteger.multiply(this.values, this.highPos, num.values, num.highPos));
     }
 
     public IntegerNumber div(IntegerNumber num, Remainder remainder){
-        int[][] result = PositiveIntegerUtil.division(this.values, num.values);
+        int[][] result = PositiveInteger.divide(this.values, this.highPos, num.values, num.highPos);
         if(remainder != null){
-            remainder.remainder = new IntegerNumber(NumberConstant.POSITIVE, result[1]);
+            remainder.remainder = new IntegerNumber(POSITIVE, result[1]);
         }
         return new IntegerNumber((byte) (this.sign ^ num.sign), result[0]);
     }
@@ -128,7 +162,7 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         if(num.values.length == 1 && num.values[0] == 0){
             throw new DivideByZeroException();
         }
-        int[][] result = PositiveIntegerUtil.division(this.values, num.values);
+        int[][] result = PositiveInteger.divide(this.values, this.highPos, num.values, num.highPos);
         return new IntegerNumber((byte) (this.sign ^ num.sign), result[0]);
     }
 
@@ -138,16 +172,16 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
     }
 
     public IntegerNumber gcd(IntegerNumber num){
-        return new IntegerNumber(NumberConstant.POSITIVE, PositiveIntegerUtil.gcd(this.values, num.values));
+        return new IntegerNumber(POSITIVE, PositiveInteger.gcd(this.values, this.highPos, num.values, num.highPos));
     }
 
     public boolean isOdd(){
-        return PositiveIntegerUtil.isOdd(this.values);
+        return PositiveInteger.isOdd(this.values);
     }
 
     public IntegerNumber abs() {
-        if(this.sign == NumberConstant.NEGATIVE){
-            return new IntegerNumber(NumberConstant.POSITIVE, this.values);
+        if(this.sign == NEGATIVE){
+            return new IntegerNumber(POSITIVE, this.values);
         }else{
             return this;
         }
@@ -161,20 +195,20 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         if(this.values.length == 1 && this.values[0] == 0){
             return N_ONE;
         }
-        if(this.sign == NumberConstant.POSITIVE){
-            int[] res = PositiveIntegerUtil.decrease(this.values);
+        if(this.sign == POSITIVE){
+            int[] res = PositiveInteger.subtractOneWord(this.values, this.highPos, 1);
             return new IntegerNumber(this.sign, res);
         }else{
-            int[] res = PositiveIntegerUtil.increase(this.values);;
+            int[] res = PositiveInteger.addOneWord(this.values, this.highPos, 1);
             return new IntegerNumber(this.sign, res);
         }
     }
 
     public IntegerNumber increase(){
-        if(this.sign == NumberConstant.POSITIVE){
-            return new IntegerNumber(this.sign, PositiveIntegerUtil.increase(this.values));
+        if(this.sign == POSITIVE){
+            return new IntegerNumber(this.sign, PositiveInteger.addOneWord(this.values, this.highPos, 1));
         }else{
-            int[] res = PositiveIntegerUtil.decrease(this.values);
+            int[] res = PositiveInteger.subtractOneWord(this.values, this.highPos, 1);
             if(this.values.length == 1 && values[0] == 0){
                 return ZERO;
             }else{
@@ -212,7 +246,27 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         }else if(number == 1){
             return ONE;
         }else{
-            return new IntegerNumber(NumberConstant.POSITIVE, new int[]{number});
+            byte sign;
+            int absNum;
+            if(number < 0){
+                absNum = -number;
+                sign = NEGATIVE;
+            }else{
+                absNum = number;
+                sign = POSITIVE;
+            }
+
+            int[] result;
+            if(absNum < PositiveInteger.SCALE){
+                result = new int[1];
+                result[0] = absNum;
+            }else{
+                result = new int[2];
+                result[0] = absNum % PositiveInteger.SCALE;
+                result[1] = absNum / PositiveInteger.SCALE;
+            }
+
+            return new IntegerNumber(sign, result);
         }
     }
 
@@ -224,9 +278,9 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
             return ONE;
         }else{
             if(number.startsWith("-")){
-                return new IntegerNumber(NumberConstant.NEGATIVE, number.substring(1));
+                return new IntegerNumber(NEGATIVE, number.substring(1));
             }else{
-                return new IntegerNumber(NumberConstant.POSITIVE, number);
+                return new IntegerNumber(POSITIVE, number);
             }
         }
     }
@@ -239,14 +293,14 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
      */
     private String[] literal;
 
-    private static final int SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH = PositiveIntegerUtil.SINGLE_ELEMENT_LEN * (Integer.MAX_VALUE >> 4);
+    private static final int SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH = PositiveInteger.SINGLE_ELEMENT_LEN * (Integer.MAX_VALUE >> 4);
 
     private static final String FILL_ELEMENT;
 
     static {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        while (i < PositiveIntegerUtil.SINGLE_ELEMENT_LEN){
+        while (i < PositiveInteger.SINGLE_ELEMENT_LEN){
             sb.append("0");
             i++;
         }
@@ -256,14 +310,14 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
     @Override
     public String toString() {
         if(literal == null){
-            int len = values.length / SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH * 10 + (values.length % SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH == 0 ? 0 : 1);
+            int len = (this.highPos + 1) / SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH * 10 + (values.length % SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH == 0 ? 0 : 1);
             literal = new String[len];
             int j = 0;
             StringBuilder sb = new StringBuilder();
-            if(this.sign == NumberConstant.NEGATIVE){ sb.append('-'); }
+            if(this.sign == NEGATIVE){ sb.append('-'); }
 
-            sb.append(values[values.length - 1]);
-            for(int i = values.length - 2; i >= 0; i--){
+            sb.append(values[highPos]);
+            for(int i = highPos - 1; i >= 0; i--){
                 if(sb.length() == SINGLE_LITERAL_ARRAY_ELEMENT_LENGTH){
                     literal[j++] = sb.toString();
                     sb = new StringBuilder();
@@ -272,8 +326,8 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
                 if(val == 0){
                     sb.append(FILL_ELEMENT);
                 }else {
-                    if(val < PositiveIntegerUtil.SCALE / 10){
-                        while(val < PositiveIntegerUtil.SCALE / 10){
+                    if(val < PositiveInteger.SCALE / 10){
+                        while(val < PositiveInteger.SCALE / 10){
                             sb.append(0);
                             val *= 10;
                         }
@@ -294,7 +348,7 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
             return false;
         }
         IntegerNumber that = (IntegerNumber) o;
-        int mark = PositiveIntegerUtil.compare(this.values, that.values);
+        int mark = PositiveInteger.compare(this.values, this.highPos, that.values, that.highPos);
         return mark == 0;
     }
 
@@ -310,13 +364,13 @@ public class IntegerNumber implements INumber, Comparable<IntegerNumber> {
     @Override
     public int compareTo(IntegerNumber o) {
         if(this.sign == o.sign){
-            if(this.sign == NumberConstant.POSITIVE){
-                return PositiveIntegerUtil.compare(this.values, o.values);
+            if(this.sign == POSITIVE){
+                return PositiveInteger.compare(this.values, this.highPos, o.values, o.highPos);
             }else{
-                return -PositiveIntegerUtil.compare(this.values, o.values);
+                return -PositiveInteger.compare(this.values, this.highPos, o.values, o.highPos);
             }
         }else{
-            if(this.sign == NumberConstant.POSITIVE){
+            if(this.sign == POSITIVE){
                 return 1;
             }else{
                 return -1;
