@@ -490,7 +490,7 @@ class PositiveInteger {
      * @return true : 奇数; false : 偶数
      */
     static boolean isOdd(int[] values){
-        return values[0] % 2 == 1;
+        return (values[0] & 1) == 1;
     }
 
     /**
@@ -508,20 +508,22 @@ class PositiveInteger {
             boolean aIsOdd = isOdd(a);
             boolean bIsOdd = isOdd(b);
             if(aIsOdd && bIsOdd){
-                int mark = compare(a, highPos(a), b, highPos(b));
+                ah = highPos(a);
+                bh = highPos(b);
+                int mark = compare(a, ah, b, bh);
                 if(mark > 0){
-                    a = subtract(a, highPos(a), b, highPos(b));
+                    a = subtract(a, ah, b, bh);
                 }else{
-                    b = subtract(b, highPos(b), a, highPos(a));
+                    b = subtract(b, bh, a, ah);
                 }
             }else if(aIsOdd){
-                b = floorHalf(b, highPos(b));
+                b = half(b, highPos(b));
             }else if(bIsOdd){
-                a = floorHalf(a, highPos(a));
+                a = half(a, highPos(a));
             }else{
-                d = doubleNum(d, highPos(d));
-                a = floorHalf(a, highPos(a));
-                b = floorHalf(b, highPos(b));
+                d = twice(d, highPos(d));
+                a = half(a, highPos(a));
+                b = half(b, highPos(b));
             }
         }
 
@@ -535,7 +537,7 @@ class PositiveInteger {
      * @param h num非0高位位置
      * @return 乘以2之后的结果
      */
-    private static int[] doubleNum(int[] num, int h){
+    private static int[] twice(int[] num, int h){
         int[] result = new int[h + 2];
         int carry = 0;
         int i = 0;
@@ -556,7 +558,7 @@ class PositiveInteger {
      * @param h num非0高位位置
      * @return 除以2之后的结果
      */
-    private static int[] floorHalf(int[] num, int h){
+    private static int[] half(int[] num, int h){
         if(h == 0){
             return new int[]{ num[0] >> 1 };
         }
