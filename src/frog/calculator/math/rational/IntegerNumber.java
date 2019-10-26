@@ -361,6 +361,23 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         return this.toString();
     }
 
+    public int compareTo(int num){
+        if(num == 0){
+            return this.values[this.highPos] - this.sign << 30;
+        }else if(num < 0 == (this.sign == NEGATIVE) && this.highPos < 2){
+            long mark = ((long)this.values[this.highPos] * PositiveInteger.SCALE * this.highPos + this.values[0] - (num < 0 ? -num : num));
+            if(mark == 0){
+                return 0;
+            }else if(mark > 0){
+                return 1 - (this.sign << 1);
+            }else{
+                return (this.sign << 1) - 1;
+            }
+        }else{
+            return 1 - (this.sign << 1);
+        }
+    }
+
     @Override
     public int compareTo(IntegerNumber o) {
         if(this.sign == o.sign){

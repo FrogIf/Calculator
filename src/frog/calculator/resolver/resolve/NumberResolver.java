@@ -22,12 +22,16 @@ public class NumberResolver extends AbstractResolver {
     protected void resolve(char[] chars, int startIndex, IResolverResult resolveResult) {
         StringBuilder numberBuilder = new StringBuilder();
 
+        boolean hasDot = false;
         for(; startIndex < chars.length; startIndex++){
             char ch = chars[startIndex];
 
             if(CharDiscriminator.isNumber(ch)){
                 numberBuilder.append(ch);
-            }else if(isDot(ch)){
+            }else if(ch == '.' && !hasDot){
+                hasDot = true;
+                numberBuilder.append(ch);
+            }else if(ch == '_' && hasDot){
                 numberBuilder.append(ch);
             }else{
                 break;

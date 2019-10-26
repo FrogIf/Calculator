@@ -61,4 +61,8 @@ public final class BaseNumber {
     public static BaseNumber valueOf(IntegerNumber num){
         return new BaseNumber(new ComplexNumber(new PolynomialNumber(new RationalNumber(num, null), null)));
     }
+
+    public static BaseNumber valueOf(RationalNumber num){
+        return new BaseNumber(new ComplexNumber(new PolynomialNumber(num, null)));
+    }
 }
