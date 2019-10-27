@@ -75,7 +75,6 @@ public class AVLTreeSet<T> implements ISet<T> {
             } else {
                 p.right = nextNode;
             }
-            modCount++;
 
             // 修复树的平衡, 并重新计算高度
             AVLNode<T> c = nextNode;
@@ -104,6 +103,7 @@ public class AVLTreeSet<T> implements ISet<T> {
                 }
             }
 
+            modCount++;
             root = p;
         }
 
@@ -227,9 +227,11 @@ public class AVLTreeSet<T> implements ISet<T> {
         return true;
     }
 
+    /**
+     * 根据指定的节点, 将其从树中移除, 并调整树的平衡
+     * @param cursor 需要移除的节点
+     */
     private void remove(AVLNode<T> cursor){
-        this.modCount--;
-
         AVLNode<T> p = cursor.parent;
         AVLNode<T> nr;   // 替换被删除节点的节点
         AVLNode<T> b = p;   // 需要调整的最底层节点
@@ -302,6 +304,8 @@ public class AVLTreeSet<T> implements ISet<T> {
         }
 
         if(r != null){ this.root = r; }
+
+        this.modCount--;
     }
 
     /**
@@ -380,13 +384,13 @@ public class AVLTreeSet<T> implements ISet<T> {
      */
     @Override
     public Iterator<T> iterator() {
-        return new TreeIterator();
+        return new AVLIterator();
     }
 
     /**
      * avl tree 集合的迭代器
      */
-    private class TreeIterator implements Iterator<T> {
+    private class AVLIterator implements Iterator<T> {
 
         /**
          * 记录在创建该迭代器时, 集合中元素的个数<br/>
@@ -398,7 +402,7 @@ public class AVLTreeSet<T> implements ISet<T> {
 
         private AVLNode<T> viewNode;
 
-        private TreeIterator() {
+        private AVLIterator() {
             if(AVLTreeSet.this.root != null){
                 cursor = AVLTreeSet.this.root.minimum();
             }

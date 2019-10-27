@@ -1,13 +1,14 @@
 package test;
 
-import frog.calculator.util.collection.AVLTreeSet;
 import frog.calculator.util.collection.ISet;
 import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.RBTreeSet;
 
 public class AVLTreeTest {
 
     public static void main(String[] args){
-        AVLTreeSet<Integer> treeSet = new AVLTreeSet<>(Integer::compareTo);
+        RBTreeSet<Integer> treeSet = new RBTreeSet<>(Integer::compareTo);
+//        AVLTreeSet<Integer> treeSet = new AVLTreeSet<>(Integer::compareTo);
 //        Tree<Integer> treeSet = new Tree<>(12);
         treeSet.add(12);
         treeSet.add(14);
@@ -21,14 +22,15 @@ public class AVLTreeTest {
         treeSet.add(190);
         showTree(treeSet);
 
-        Iterator<Integer> iterator = treeSet.iterator();
-        while (iterator.hasNext()){
-            Integer next = iterator.next();
-            if((next & 1) == 0){
-                System.out.println("remove - " + next);
-                iterator.remove();
-            }
-        }
+        treeSet.add(12);
+//        Iterator<Integer> iterator = treeSet.iterator();
+//        while (iterator.hasNext()){
+//            Integer next = iterator.next();
+//            if((next & 1) == 0){
+//                System.out.println("remove - " + next);
+//                iterator.remove();
+//            }
+//        }
 //        treeSet.remove(12);
 //        treeSet.remove(14);
 //        treeSet.remove(16);
