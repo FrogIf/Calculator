@@ -8,10 +8,10 @@ public final class InterleavedSpace<T> extends MergeableSpace<T> {
 
     private static final PointComparator comparator = new PointComparator();
 
-    private ISet<XSpace<T>> subspaces = new TreeSet<>(ComparableComparator.<XSpace<T>>getInstance());
+    private ISet<XSpace<T>> subspaces = new AVLTreeSet<>(ComparableComparator.<XSpace<T>>getInstance());
 
     @SuppressWarnings("unchecked")
-    private ISet<XPoint<T>> points = new TreeSet<>(comparator);
+    private ISet<XPoint<T>> points = new AVLTreeSet<>(comparator);
 
     private int dimension;
 
