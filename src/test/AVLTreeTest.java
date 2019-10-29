@@ -21,16 +21,15 @@ public class AVLTreeTest {
         treeSet.add(13);
         treeSet.add(190);
         showTree(treeSet);
-
-        treeSet.add(12);
-//        Iterator<Integer> iterator = treeSet.iterator();
-//        while (iterator.hasNext()){
-//            Integer next = iterator.next();
-//            if((next & 1) == 0){
-//                System.out.println("remove - " + next);
-//                iterator.remove();
-//            }
-//        }
+//        treeSet.remove(190);
+        Iterator<Integer> iterator = treeSet.iterator();
+        while (iterator.hasNext()){
+            Integer next = iterator.next();
+            if((next & 1) == 1){
+                System.out.println("remove - " + next);
+                iterator.remove();
+            }
+        }
 //        treeSet.remove(12);
 //        treeSet.remove(14);
 //        treeSet.remove(16);

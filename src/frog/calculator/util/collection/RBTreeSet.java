@@ -2,8 +2,6 @@ package frog.calculator.util.collection;
 
 import frog.calculator.util.IComparator;
 
-import java.util.TreeSet;
-
 /**
  * 使用红黑树构造的集合<br/>
  * 特定 : 综合性能好, 增删速度比AVL树快, 查找速度比AVL稍慢
@@ -18,7 +16,7 @@ public class RBTreeSet<T> implements ISet<T>{
      *     2. 一个节点不是红节点就是黑节点
      *     3. 叶节点一定为黑节点(根据算法导论, 所有叶子结点都是null节点, 也就是说, 这里的末端节点并不是真实的叶节点)
      *     4. 红节点的子节点一定是黑节点
-     *     5. 从一节点(不包含该节点本身)到其后代所有叶节点, 所经过的路径包含相同数目的黑节点
+     *     5. 从一节点(不包含该节点本身)到其后代所有叶节点, 所经过的路径包含相同数目的黑节点(因此, 红黑树是黑平衡的!)
      */
 
     /**
@@ -188,10 +186,12 @@ public class RBTreeSet<T> implements ISet<T>{
 
             transplant(node, fill);
             fill.color = node.color;
-            if(node.left != null){
-                fill.left = node.left;
-                fill.left.parent = fill;
+            if(node.right != fill){
+                fill.right = node.right;
+                fill.right.parent = fill;
             }
+            fill.left = node.left;
+            fill.left.parent = fill;
         }
 
         if(color == RBNode.BLACK){  // 只有消失的节点颜色是黑色时, 才会破坏树的红黑性质
@@ -206,11 +206,69 @@ public class RBTreeSet<T> implements ISet<T>{
 
     private void deleteFixup(RBNode<T> fix) {
         while(fix != this.root && fix.color == RBNode.BLACK){
-            // TODO
+            if(fix == fix.parent.left){
+                RBNode<T> w = fix.parent.right; // fix的兄弟节点
+                // case1
+                if(w.color == RBNode.RED){
+                    w.color = RBNode.BLACK;
+                    fix.parent.color = RBNode.RED;
+                    leftRotate(fix.parent);
+                    w = fix.parent.right;
+                }
+                // case 2
+                if(w.left.color == RBNode.BLACK && w.right.color == RBNode.BLACK){  // 根据性质5, b的左右子一定不会是null
+                    w.color = RBNode.RED;
+                    fix = fix.parent;
+                }else{
+                    // case3
+                    if(w.right.color == RBNode.BLACK){  // 由于排除了w.left.color == w.right.color == BLACK, 所以如果这里w.left.color一定是red
+                        w.color = RBNode.RED;
+                        w.left.color = RBNode.BLACK;
+                        rightRotate(w);
+                        w = w.parent;
+                    }
+
+                    // case4
+                    w.color = fix.parent.color;
+                    w.right.color = fix.parent.color = RBNode.BLACK;
+                    leftRotate(fix.parent);
+                    fix = this.root;
+                }
+            }else{
+                RBNode<T> w = fix.parent.left;
+                if(w.color == RBNode.RED){
+                    fix.parent.color = RBNode.RED;
+                    w.color = RBNode.BLACK;
+                    rightRotate(fix.parent);
+                    w = fix.parent.left;
+                }
+                if(w.left.color == RBNode.BLACK && w.right.color == RBNode.BLACK){
+                    w.color = RBNode.RED;
+                    fix = fix.parent;
+                }else{
+                    if(w.left.color == RBNode.BLACK){
+                        w.color = RBNode.RED;
+                        w.right.color = RBNode.BLACK;
+                        leftRotate(w);
+                        w = w.parent;
+                    }
+
+                    w.color = fix.parent.color;
+                    w.left.color = fix.parent.color = RBNode.RED;
+                    rightRotate(fix.parent);
+                    fix = this.root;
+                }
+            }
         }
         fix.color = RBNode.BLACK;
     }
 
+    /**
+     * 节点的移植<br/>
+     * 不会连带移植传入两个节点的子节点
+     * @param o 原节点, 它的位置需要被新节点替换
+     * @param n 新节点
+     */
     private void transplant(RBNode<T> o, RBNode<T> n){
         if(o.parent == null){
             this.root = n;
@@ -224,6 +282,10 @@ public class RBTreeSet<T> implements ISet<T>{
         }
     }
 
+    /**
+     * 右旋
+     * @param node 需旋转的子树的根
+     */
     private void rightRotate(RBNode<T> node){
         RBNode<T> nr = node.left;
         node.left = nr.right;
@@ -244,6 +306,10 @@ public class RBTreeSet<T> implements ISet<T>{
         node.parent = nr;
     }
 
+    /**
+     * 左旋
+     * @param node 需旋转的子树的根
+     */
     private void leftRotate(RBNode<T> node){
         RBNode<T> nr = node.right;
         node.right = nr.left;
