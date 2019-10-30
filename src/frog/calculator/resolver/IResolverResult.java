@@ -28,9 +28,9 @@ public interface IResolverResult extends Cloneable {
 
     void setSymbol(String symbol);
 
-    void setType(ResolverResultType type);
-
-    ResolverResultType getType();
+//    void setType(ResolverResultType type);
+//
+//    ResolverResultType getType();
 
     IResolverResult clone();
 }

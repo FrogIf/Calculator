@@ -3,42 +3,43 @@ package frog.calculator.register;
 import frog.calculator.express.IExpression;
 import frog.calculator.util.ComparableComparator;
 import frog.calculator.util.collection.AVLTreeSet;
+import frog.calculator.util.collection.ISet;
 
-public class TreeRegister implements IRegister, Comparable<TreeRegister>{
+public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
 
     private char symbol = 0;
 
     private IExpression expression;
 
-    private AVLTreeSet<TreeRegister> nextLetter = new AVLTreeSet<>(ComparableComparator.<TreeRegister>getInstance());
+    private ISet<SymbolRegister> nextLetter = new AVLTreeSet<>(ComparableComparator.<SymbolRegister>getInstance());
 
-    public TreeRegister(){ }
+    public SymbolRegister(){ }
 
-    private TreeRegister(char symbol){
+    private SymbolRegister(char symbol){
         this.symbol = symbol;
     }
 
     @Override
     public void insert(IExpression expression) {
         if(expression != null){
-            insert(expression.symbol().toCharArray(), 0, expression, new TreeRegister(), false);
+            insert(expression.symbol().toCharArray(), 0, expression, new SymbolRegister(), false);
         }
     }
 
     @Override
     public void replace(String exp, IExpression expression) {
-        this.insert(exp.toCharArray(), 0, expression, new TreeRegister(), true);
+        this.insert(exp.toCharArray(), 0, expression, new SymbolRegister(), true);
     }
 
-    private void insert(char[] expChars, int startIndex, IExpression expression, TreeRegister finder, boolean replace){
+    private void insert(char[] expChars, int startIndex, IExpression expression, SymbolRegister finder, boolean replace){
         char ch = expChars[startIndex];
 
         finder.symbol = ch;
 
-        TreeRegister register = nextLetter.find(finder);
+        SymbolRegister register = nextLetter.find(finder);
 
         if(register == null){
-            register = new TreeRegister();
+            register = new SymbolRegister();
             register.symbol = ch;
         }
 
@@ -72,7 +73,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
             return this.expression;
         }
         char ch = chars[startIndex];
-        TreeRegister treeRegister = nextLetter.find(new TreeRegister(ch));
+        SymbolRegister treeRegister = nextLetter.find(new SymbolRegister(ch));
         if(treeRegister != null){
             return treeRegister.retrieve(chars, startIndex + 1);
         }else{
@@ -86,7 +87,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
         if(chars.length <= 0){
             return false;
         }else{
-            TreeRegister register = this.nextLetter.find(new TreeRegister(chars[0]));
+            SymbolRegister register = this.nextLetter.find(new SymbolRegister(chars[0]));
             if(register == null){
                 return false;
             }else{
@@ -103,7 +104,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
             this.expression = null;
             result = hasExists;
         }else if(chars.length > startIndex){
-            TreeRegister register = this.nextLetter.find(new TreeRegister(chars[startIndex + 1]));
+            SymbolRegister register = this.nextLetter.find(new SymbolRegister(chars[startIndex + 1]));
             if(register != null){
                 if(register.remove(chars, startIndex + 1)){
                     if(register.isEmpty()){
@@ -122,7 +123,7 @@ public class TreeRegister implements IRegister, Comparable<TreeRegister>{
     }
 
     @Override
-    public int compareTo(TreeRegister o) {
+    public int compareTo(SymbolRegister o) {
         return this.symbol - o.symbol;
     }
 

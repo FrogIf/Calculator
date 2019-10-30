@@ -6,15 +6,6 @@ import frog.calculator.express.SurroundExpression;
 
 public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
-    // 声明符号
-//    private IExpression declareBegin = new LeftExpression("@", 0, new DeclareOperator());
-
-    // 赋值符号
-//    private IExpression assign = new SeparatorExpression("=", 0, new AssignOperator(), true);
-
-    // 委托符号
-//    private IExpression delegate = new SeparatorExpression("->", 0, new DelegateOperator());
-
     // 右括号
     private IExpression bracketClose = new MarkExpression(")");
 
@@ -31,19 +22,6 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private IExpression listFun = new SurroundExpression("[", separator.symbol(), listEnd.symbol());
 
     @Override
-    public IExpression getAssign() {
-//        return assign;
-//        return null;
-        return new MarkExpression("=");
-    }
-
-    @Override
-    public IExpression getDeclareBegin() {
-//        return this.declareBegin;
-        return new MarkExpression("@");
-    }
-
-    @Override
     public IExpression[] getBuiltInExpression() {
         IExpression[] runnableExpression = this.getRunnableExpression();
         int total = runnableExpression.length + 7;
@@ -54,19 +32,16 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
             builtInExpression[i] = runnableExpression[i];
         }
 
-//        builtInExpression[i++] = this.assign;
         builtInExpression[i++] = this.separator;
         builtInExpression[i++] = this.bracketClose;
         builtInExpression[i++] = this.bracketOpen;
         builtInExpression[i++] = this.listEnd;
         builtInExpression[i++] = this.listFun;
-//        builtInExpression[i] = this.delegate;
 
         return builtInExpression;
     }
 
     protected abstract IExpression[] getRunnableExpression();
-
 
     @Override
     public IExpression getSeparator() {
@@ -85,8 +60,16 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
     @Override
     public IExpression getDelegate() {
-//        return delegate;
         return new MarkExpression("->");
     }
 
+    @Override
+    public IExpression getAssign() {
+        return new MarkExpression("=");
+    }
+
+    @Override
+    public IExpression getDeclareBegin() {
+        return new MarkExpression("@");
+    }
 }

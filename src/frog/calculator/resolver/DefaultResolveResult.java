@@ -10,7 +10,7 @@ public class DefaultResolveResult implements IResolverResult {
 
     private String symbol;
 
-    private ResolverResultType type = ResolverResultType.RUNNABLE;
+//    private ResolverResultType type = ResolverResultType.RUNNABLE;
 
     @Override
     public IExpression getExpression() {
@@ -49,16 +49,6 @@ public class DefaultResolveResult implements IResolverResult {
             throw new IllegalStateException("the symbol can't be modify.");
         }
         this.symbol = symbol;
-    }
-
-    @Override
-    public void setType(ResolverResultType type) {
-        this.type = type;
-    }
-
-    @Override
-    public ResolverResultType getType() {
-        return this.type;
     }
 
     @Override

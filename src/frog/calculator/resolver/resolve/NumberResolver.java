@@ -4,7 +4,6 @@ import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
-import frog.calculator.util.CharDiscriminator;
 
 /**
  * 数字表达式解析器
@@ -22,11 +21,11 @@ public class NumberResolver extends AbstractResolver {
     protected void resolve(char[] chars, int startIndex, IResolverResult resolveResult) {
         StringBuilder numberBuilder = new StringBuilder();
 
-        boolean hasDot = false;
+        boolean hasDot = false; // 记录是否已经找到小数点
         for(; startIndex < chars.length; startIndex++){
             char ch = chars[startIndex];
 
-            if(CharDiscriminator.isNumber(ch)){
+            if(ch >= '0' && ch <= '9'){
                 numberBuilder.append(ch);
             }else if(ch == '.' && !hasDot){
                 hasDot = true;
@@ -44,10 +43,6 @@ public class NumberResolver extends AbstractResolver {
             resolveResult.setExpression(numberExpression);
             resolveResult.setSymbol(numberExpression.symbol());
         }
-    }
-
-    private boolean isDot(char ch){
-        return ch == '.';
     }
 
 }

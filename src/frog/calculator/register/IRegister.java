@@ -15,8 +15,8 @@ public interface IRegister {
     void replace(String exp, IExpression expression);
 
     /**
-     * 判断当前表达式是否没有记录任何表达式
-     * @return
+     * 判断当前注册器是否没有记录任何表达式
+     * @return true 是; false 否
      */
     boolean isEmpty();
 }

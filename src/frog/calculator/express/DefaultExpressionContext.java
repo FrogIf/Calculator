@@ -1,11 +1,14 @@
 package frog.calculator.express;
 
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.register.TreeRegister;
+import frog.calculator.register.SymbolRegister;
 
 public class DefaultExpressionContext implements IExpressionContext {
 
-    private TreeRegister register = new TreeRegister();
+    /**
+     * 用户变量存储在这里
+     */
+    private SymbolRegister register = new SymbolRegister();
 
     private ICalculatorSession session;
 
