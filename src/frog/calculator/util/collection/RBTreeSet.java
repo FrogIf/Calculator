@@ -156,6 +156,12 @@ public class RBTreeSet<T> implements ISet<T>{
         return false;
     }
 
+    /**
+     * 用于作为红黑树的临时叶子节点, 红黑树调整结束后, 移除
+     */
+    private final RBNode<T> NIL = new RBNode<>();
+    { NIL.color = RBNode.BLACK; }
+
     private void remove(RBNode<T> node){
         /*
          * 记录被删除元素的颜色, 如果被删除节点有两个子节点, 则会使用该节点的后继节点补位
@@ -164,8 +170,11 @@ public class RBTreeSet<T> implements ISet<T>{
         int color = node.color;
         RBNode<T> fix;  // 需要修复节点起始位置, 从该节点开始向双亲的方向修复
         if(node.left == null){
+            if(node.right == null){ // 如果node的左右节点均为空, 则使用NIL临时替代, 使用之后归还NIL
+                node.right = NIL;
+                NIL.parent = node;
+            }
             fix = node.right;
-            if(fix == null){ fix = node.parent; }
             transplant(node, node.right);
         }else if(node.right == null){
             fix = node.left;
@@ -174,15 +183,15 @@ public class RBTreeSet<T> implements ISet<T>{
             RBNode<T> fill = node.right.minimum();    // 填充空缺的节点
             color = fill.color;
 
+            if(fill.right == null){
+                fill.right = NIL;
+                NIL.parent = fill;
+            }
+
             if(fill != node.right){
                 transplant(fill, fill.right);
             }
-
-            if(fill.right != null){
-                fix = fill.right;
-            }else{
-                fix = fill;
-            }
+            fix = fill.right;
 
             transplant(node, fill);
             fill.color = node.color;
@@ -201,6 +210,16 @@ public class RBTreeSet<T> implements ISet<T>{
              */
             deleteFixup(fix);
         }
+
+        if(NIL.parent != null){ // 断开NIL与树的连接, 恢复NIL的初始状态
+            if(NIL.parent.right == NIL){
+                NIL.parent.right = null;
+            }else{
+                NIL.parent.left = null;
+            }
+            NIL.parent = null;
+        }
+        if(this.root == NIL){ this.root = null; }
         this.modCount--;
     }
 
@@ -215,22 +234,25 @@ public class RBTreeSet<T> implements ISet<T>{
                     leftRotate(fix.parent);
                     w = fix.parent.right;
                 }
-                // case 2
-                if(w.left.color == RBNode.BLACK && w.right.color == RBNode.BLACK){  // 根据性质5, b的左右子一定不会是null
+                // case 2 w.left = w.right = black
+                if((w.left == null || w.left.color == RBNode.BLACK) && (w.right == null || w.right.color == RBNode.BLACK)){  // 根据性质5, b的左右子一定不会是null
                     w.color = RBNode.RED;
                     fix = fix.parent;
                 }else{
-                    // case3
-                    if(w.right.color == RBNode.BLACK){  // 由于排除了w.left.color == w.right.color == BLACK, 所以如果这里w.left.color一定是red
+                    // case3 w.right = black, w.right = red
+                    if(w.right == null || w.right.color == RBNode.BLACK){  // 由于排除了w.left.color == w.right.color == BLACK, 所以如果这里w.left.color一定是red
                         w.color = RBNode.RED;
                         w.left.color = RBNode.BLACK;
                         rightRotate(w);
-                        w = w.parent;
+                        w = w.parent;   // 这里执行完之后, w.right = red
                     }
 
-                    // case4
+                    // case4 w.right = red
                     w.color = fix.parent.color;
-                    w.right.color = fix.parent.color = RBNode.BLACK;
+                    fix.parent.color = RBNode.BLACK;
+                    if(w.right != null){
+                        w.right.color = RBNode.BLACK;
+                    }
                     leftRotate(fix.parent);
                     fix = this.root;
                 }
@@ -242,11 +264,11 @@ public class RBTreeSet<T> implements ISet<T>{
                     rightRotate(fix.parent);
                     w = fix.parent.left;
                 }
-                if(w.left.color == RBNode.BLACK && w.right.color == RBNode.BLACK){
+                if((w.left == null || w.left.color == RBNode.BLACK) && (w.right == null || w.right.color == RBNode.BLACK)){
                     w.color = RBNode.RED;
                     fix = fix.parent;
                 }else{
-                    if(w.left.color == RBNode.BLACK){
+                    if(w.left == null || w.left.color == RBNode.BLACK){
                         w.color = RBNode.RED;
                         w.right.color = RBNode.BLACK;
                         leftRotate(w);
@@ -254,7 +276,10 @@ public class RBTreeSet<T> implements ISet<T>{
                     }
 
                     w.color = fix.parent.color;
-                    w.left.color = fix.parent.color = RBNode.RED;
+                    fix.parent.color = RBNode.BLACK;
+                    if(w.left != null) {
+                        w.left.color = RBNode.BLACK;
+                    }
                     rightRotate(fix.parent);
                     fix = this.root;
                 }
@@ -523,7 +548,7 @@ public class RBTreeSet<T> implements ISet<T>{
 
         @Override
         public String toString() {
-            return data.toString();
+            return data.toString() + ":" + this.color;
         }
 
     }
