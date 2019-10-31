@@ -58,7 +58,7 @@ public class PMResolver extends AbstractResolver {
             }
 
             j++;
-            if(mark == 1 || mark == 2){
+            if(mark != 3){
                 if(j == lens[mark - 1]){
                     counts[mark - 1]++;
                     j = 0;

@@ -24,7 +24,8 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     @Override
     public IExpression[] getBuiltInExpression() {
         IExpression[] runnableExpression = this.getRunnableExpression();
-        int total = runnableExpression.length + 7;
+        IExpression[] structureExpression = this.getStructureExpression();
+        int total = runnableExpression.length + structureExpression.length;
 
         IExpression[] builtInExpression = new IExpression[total];
         int i = 0;
@@ -32,44 +33,24 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
             builtInExpression[i] = runnableExpression[i];
         }
 
-        builtInExpression[i++] = this.separator;
-        builtInExpression[i++] = this.bracketClose;
-        builtInExpression[i++] = this.bracketOpen;
-        builtInExpression[i++] = this.listEnd;
-        builtInExpression[i++] = this.listFun;
+        for(int j = 0; j < structureExpression.length; j++){
+            builtInExpression[i + j] = structureExpression[j];
+        }
 
         return builtInExpression;
     }
 
+    @Override
+    public IExpression[] getStructureExpression() {
+        return new IExpression[]{
+                bracketOpen,    // 左括号
+                bracketClose,   // 右括号
+                separator,      // 逗号
+                listFun,        // 集合左
+                listEnd         // 集合右
+        };
+    }
+
     protected abstract IExpression[] getRunnableExpression();
 
-    @Override
-    public IExpression getSeparator() {
-        return this.separator;
-    }
-
-    @Override
-    public IExpression getFunArgStart() {
-        return this.bracketOpen;
-    }
-
-    @Override
-    public IExpression getFunArgEnd() {
-        return this.bracketClose;
-    }
-
-    @Override
-    public IExpression getDelegate() {
-        return new MarkExpression("->");
-    }
-
-    @Override
-    public IExpression getAssign() {
-        return new MarkExpression("=");
-    }
-
-    @Override
-    public IExpression getDeclareBegin() {
-        return new MarkExpression("@");
-    }
 }

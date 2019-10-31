@@ -1,16 +1,13 @@
 package frog.calculator.resolver.resolve.factory;
 
-import frog.calculator.express.IExpression;
 import frog.calculator.express.EndPointExpression;
+import frog.calculator.express.IExpression;
 import frog.calculator.operator.IOperator;
+import frog.calculator.operator.base.NumberOpr;
 
 public class NumberExpressionFactory implements ISymbolExpressionFactory {
 
-    private final IOperator operator;
-
-    public NumberExpressionFactory(IOperator operator) {
-        this.operator = operator;
-    }
+    private final IOperator operator = new NumberOpr();
 
     @Override
     public IExpression createExpression(String symbol) {

@@ -18,7 +18,6 @@ import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.space.Coordinate;
 import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
-import frog.calculator.util.collection.Stack;
 
 public class Calculator {
 
@@ -28,8 +27,8 @@ public class Calculator {
     // resolve result factory, used to pack resolver's result
     private IResolverResultFactory resolverResultFactory;
 
-    // resolve the string which can't run directly.
-    private IResolver runnableResolver;
+    // resolve inner symbol
+    private IResolver innerResolver;
 
     public Calculator(ICalculatorConfigure calculatorConfigure) {
         if (calculatorConfigure == null) {
@@ -38,16 +37,16 @@ public class Calculator {
         this.calculatorConfigure = calculatorConfigure;
         this.resolverResultFactory = calculatorConfigure.getResolverResultFactory();
 
-        this.runnableResolver = createRunnableResolver();
+        this.innerResolver = createInnerResolver();
     }
 
     // =============================================== init start =============================================
 
     // create framework inner defined symbol resolver
-    private IResolver createRunnableResolver() {
+    private IResolver createInnerResolver() {
         IExpressionHolder holder = this.calculatorConfigure.getExpressionHolder();
         // value resolver
-        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(holder.getNumberOperator()), resolverResultFactory);
+        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), resolverResultFactory);
 
         // plus and minus resolver
         // plus and minus can represent (positive and negative) or (add and sub)
@@ -60,19 +59,11 @@ public class Calculator {
         IResolver symbolResolver = new SymbolResolver(resolverResultFactory,
                 createRegister(holder.getBuiltInExpression()));
 
-        // to check the next symbol is or not the declare symbol, if it is declare current resolver will switch to declare resolver.
-        SymbolRegister declareStart = new SymbolRegister();
-        IExpression declareBeginExpression = holder.getDeclareBegin();
-        declareStart.insert(declareBeginExpression);
-//        IResolver declareStartListenResolver = new SymbolResolver(resolverResultFactory, declareStart, ResolverResultType.DECLARE_BEGIN);
-
-        // parse execute order : value -> plus and minus -> symbol -> declare check.
+        // parse execute order : value -> plus and minus -> symbol
         ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
-
         chainResolver.addResolver(numberResolver);
         chainResolver.addResolver(addSubResolver);
         chainResolver.addResolver(symbolResolver);
-//        chainResolver.addResolver(declareStartListenResolver);
 
         return chainResolver;
     }
@@ -91,13 +82,10 @@ public class Calculator {
     // ===============================================解析执行start=========================================
 
     private IExpression build(String expression, ICalculatorSession session, IExpressionContext context) {
-        ResolverHolder resolverHolder = new ResolverHolder();
-        resolverHolder.resolver = this.runnableResolver;
-
         char[] chars = expression.toCharArray();
         int order = 0;
 
-        IResolverResult rootResult = this.resolve(chars, 0, resolverHolder, session);
+        IResolverResult rootResult = this.resolve(chars, 0, session);
 
         if (rootResult == null) {
             throw new IllegalArgumentException("undefined symbol at " + 0);
@@ -107,7 +95,7 @@ public class Calculator {
         root.setOrder(order++);
 
         for (int i = rootResult.getEndIndex() + 1; i < chars.length; i++) {
-            IResolverResult result = this.resolve(chars, i, resolverHolder, session);
+            IResolverResult result = this.resolve(chars, i, session);
 
             if (result == null) {
                 throw new IllegalArgumentException("undefined symbol at " + i);
@@ -130,12 +118,12 @@ public class Calculator {
         return root;
     }
 
-    private IResolverResult resolve(char[] chars, int startIndex, ResolverHolder resolverHolder, ICalculatorSession session) {
-        IResolver resolver = resolverHolder.resolver;
-        IResolverResult result = resolver.resolve(chars, startIndex);
+    private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) {
+        IResolverResult result = this.innerResolver.resolve(chars, startIndex);
 
-        if (result.getExpression() == null){    // 使用截断解析器进行声明式解析
-
+        if (result.getExpression() == null){    // 使用截断解析器进行声明式解析, '=', ',', '(', ')'
+            // 1. 从session获取
+            // 2. 使用截断解析器进行解析
         }
 
         return result.getExpression() == null ? null : result;
@@ -177,13 +165,6 @@ public class Calculator {
             sb.append("]");
             return sb.toString();
         }
-    }
-
-    /**
-     * 解析器持有者, 用来记录每一次构造过程中解析器的切换, 有点类似状态模式
-     */
-    private static class ResolverHolder {
-        private IResolver resolver;
     }
 
     // ===============================================解析执行end=========================================

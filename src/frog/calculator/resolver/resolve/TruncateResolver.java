@@ -62,28 +62,17 @@ public class TruncateResolver extends AbstractResolver {
                     sb.append(expStr[k]);
                 }
                 TruncateSymbol ts = this.borderSymbolArr[findCharIndex];
-                if(ts.contain){
-                    sb.append(ts.symbol);
-                }
-
                 IExpression variableExpression = ts.symbolExpressionFactory.createExpression(sb.toString());
                 resolveResult.setExpression(variableExpression);
-                resolveResult.setEndIndex(i - matchCharLen + (ts.contain ? ts.symbol.length : 0));
+                resolveResult.setEndIndex(i - matchCharLen);
             }
         }
     }
 
     public static class TruncateSymbol {
-        private boolean contain;
         private char[] symbol;
         private ISymbolExpressionFactory symbolExpressionFactory;
-
         public TruncateSymbol(String symbol, ISymbolExpressionFactory symbolExpressionFactory) {
-            this(symbol, symbolExpressionFactory, false);
-        }
-
-        public TruncateSymbol(String symbol, ISymbolExpressionFactory symbolExpressionFactory, boolean contain) {
-            this.contain = contain;
             this.symbol = symbol.toCharArray();
             this.symbolExpressionFactory = symbolExpressionFactory;
         }
