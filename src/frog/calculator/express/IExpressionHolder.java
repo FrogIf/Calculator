@@ -1,6 +1,4 @@
-package frog.calculator;
-
-import frog.calculator.express.IExpression;
+package frog.calculator.express;
 
 public interface IExpressionHolder {
 

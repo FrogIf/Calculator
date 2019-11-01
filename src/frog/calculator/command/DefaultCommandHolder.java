@@ -1,7 +1,9 @@
-package frog.calculator;
+package frog.calculator.command;
 
-import frog.calculator.command.DeclareCommand;
-import frog.calculator.command.ICommand;
+import frog.calculator.ICalculatorConfigure;
+import frog.calculator.ICalculatorManager;
+import frog.calculator.express.IExpression;
+import frog.calculator.express.IExpressionHolder;
 
 public class DefaultCommandHolder implements ICommandHolder {
 
@@ -16,8 +18,10 @@ public class DefaultCommandHolder implements ICommandHolder {
 
     @Override
     public ICommand[] getCommands() {
+        IExpressionHolder holder = calculatorConfigure.getComponentFactory().createExpressionHolder();
+        IExpression[] structureExpression = holder.getStructureExpression();
         return new ICommand[]{
-                new DeclareCommand("@", "=", calculatorManager, calculatorConfigure.getExpressionHolder().getStructureExpression())
+                new DeclareCommand("@", "=", calculatorManager, structureExpression)
         };
     }
 }

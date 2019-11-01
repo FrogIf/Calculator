@@ -1,25 +1,15 @@
 package test;
 
 import frog.calculator.Calculator;
-import frog.calculator.DefaultCalculatorConfigure;
-import frog.calculator.ICalculatorManager;
-import frog.calculator.OriginExpressionHolder;
+import frog.calculator.CalculatorStater;
 import frog.calculator.connect.ICalculatorSession;
 
 import java.util.Scanner;
 
 public class TestApp {
 
-    private static Calculator calculator;
-
-    private static void init(){
-        DefaultCalculatorConfigure configure = new DefaultCalculatorConfigure();
-        configure.setExpressionHolder(new OriginExpressionHolder());
-        calculator = new Calculator(configure);
-    }
-
     public static void main(String[] args){
-        init();
+        Calculator calculator = CalculatorStater.start();
         // +, avg, number
 
 
@@ -36,8 +26,7 @@ public class TestApp {
 
         Scanner sc = new Scanner(System.in);
 
-        ICalculatorManager manager = calculator.getCalculatorManager();
-        ICalculatorSession session = manager.createCalculatorSession();
+        ICalculatorSession session = calculator.getSession();
 
         while(sc.hasNext()){
             String expression = sc.nextLine();

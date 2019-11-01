@@ -1,9 +1,5 @@
-package frog.calculator;
+package frog.calculator.express;
 
-import frog.calculator.express.IExpression;
-import frog.calculator.express.LeftExpression;
-import frog.calculator.express.MiddleExpression;
-import frog.calculator.express.RightExpression;
 import frog.calculator.operator.base.*;
 import frog.calculator.operator.ext.FactorialOpr;
 import frog.calculator.operator.ext.PercentOpr;

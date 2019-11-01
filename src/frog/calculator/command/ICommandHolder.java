@@ -1,6 +1,4 @@
-package frog.calculator;
-
-import frog.calculator.command.ICommand;
+package frog.calculator.command;
 
 public interface ICommandHolder {
 

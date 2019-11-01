@@ -1,8 +1,4 @@
-package frog.calculator;
-
-import frog.calculator.express.IExpression;
-import frog.calculator.express.MarkExpression;
-import frog.calculator.express.SurroundExpression;
+package frog.calculator.express;
 
 public abstract class AbstractExpressionHolder implements IExpressionHolder {
 

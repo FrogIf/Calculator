@@ -1,21 +1,15 @@
 package frog.calculator;
 
-import frog.calculator.command.CommandDetector;
 import frog.calculator.command.ICommand;
+import frog.calculator.command.ICommandDetector;
+import frog.calculator.command.ICommandHolder;
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
+import frog.calculator.express.IExpressionHolder;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.register.IRegister;
-import frog.calculator.register.SymbolRegister;
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.resolve.ChainResolver;
-import frog.calculator.resolver.resolve.NumberResolver;
-import frog.calculator.resolver.resolve.PMResolver;
-import frog.calculator.resolver.resolve.SymbolResolver;
-import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.space.Coordinate;
 import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
@@ -23,75 +17,25 @@ import frog.calculator.util.collection.ITraveller;
 
 public class Calculator {
 
-    // configure
-    private final ICalculatorConfigure calculatorConfigure;
-
     // 计算管理器
-    private final ICalculatorManager calculatorManager;
+    private ICalculatorManager calculatorManager;
 
     // resolve inner symbol
     private IResolver innerResolver;
 
-    private CommandDetector detector;
+    private ICommandDetector detector;
 
     public Calculator(ICalculatorConfigure calculatorConfigure) {
         if (calculatorConfigure == null) {
             throw new IllegalArgumentException("configure is null.");
         }
-        this.calculatorConfigure = calculatorConfigure;
-        this.calculatorManager = new DefaultCalculatorManager(calculatorConfigure);
-        ICommandHolder commandHolder = new DefaultCommandHolder(this.calculatorManager, this.calculatorConfigure);  // TODO 需优化
-
-        this.innerResolver = initInnerResolver();
-        this.detector = new CommandDetector(this.createCommandRegister(commandHolder.getCommands()));
+        ICalculatorComponentFactory componentFactory = calculatorConfigure.getComponentFactory();
+        this.calculatorManager = calculatorConfigure.getComponentFactory().createCalculatorManager(calculatorConfigure);
+        IExpressionHolder expressionHolder = componentFactory.createExpressionHolder();
+        this.innerResolver = componentFactory.createResolver(expressionHolder, this.calculatorManager);
+        ICommandHolder commandHolder = componentFactory.createCommandHolder(this.calculatorManager, calculatorConfigure);
+        this.detector = componentFactory.createCommandDetector(commandHolder);
     }
-
-    // =============================================== init start =============================================
-
-    // create framework inner defined symbol resolver
-    private IResolver initInnerResolver() {
-        IExpressionHolder holder = this.calculatorConfigure.getExpressionHolder();
-        // value resolver
-        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), this.calculatorManager);
-
-        // plus and minus resolver
-        // plus and minus can represent (positive and negative) or (add and sub)
-        // this resolver can transform like python
-        IResolver addSubResolver = new PMResolver(calculatorManager,
-                this.calculatorConfigure.getExpressionHolder().getPlus(),
-                this.calculatorConfigure.getExpressionHolder().getMinus());
-
-        // symbol resolver, can parse symbol which was supported by framework.
-        IResolver symbolResolver = new SymbolResolver(calculatorManager,
-                createRegister(holder.getBuiltInExpression()));
-
-        // parse execute order : value -> plus and minus -> symbol
-        ChainResolver chainResolver = new ChainResolver();
-        chainResolver.addResolver(numberResolver);
-        chainResolver.addResolver(addSubResolver);
-        chainResolver.addResolver(symbolResolver);
-
-        return chainResolver;
-    }
-
-    private IRegister<IExpression> createRegister(IExpression[] expressions) {
-        SymbolRegister<IExpression> register = new SymbolRegister<>();
-        for (IExpression exp : expressions) {
-            register.insert(exp);
-        }
-        return register;
-    }
-
-    private IRegister<ICommand> createCommandRegister(ICommand[] commands){
-        SymbolRegister<ICommand> register = new SymbolRegister<>();
-        for (ICommand command : commands) {
-            register.insert(command);
-        }
-        return register;
-    }
-
-    // =============================================== init end =============================================
-
 
     // ===============================================解析执行start=========================================
 
@@ -186,7 +130,7 @@ public class Calculator {
      * @return 解析结果
      */
     public String calculate(String expression, ICalculatorSession session) {
-        IExpressionContext context = new DefaultExpressionContext(session);
+        IExpressionContext context = this.calculatorManager.createExpressionContext(session);
 
         IExpression expTree = build(expression, session, context); // 构造解析树
 
@@ -216,8 +160,8 @@ public class Calculator {
         }
     }
 
-    public ICalculatorManager getCalculatorManager(){
-        return this.calculatorManager;
+    public ICalculatorSession getSession(){
+        return this.calculatorManager.createCalculatorSession();
     }
 
     // ===============================================解析执行end=========================================

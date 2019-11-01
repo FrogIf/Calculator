@@ -2,11 +2,11 @@ package frog.calculator.command;
 
 import frog.calculator.register.IRegister;
 
-public class CommandDetector {
+public class DefaultCommandDetector implements ICommandDetector{
 
     private final IRegister<ICommand> commandRegister;
 
-    public CommandDetector(IRegister<ICommand> commandRegister) {
+    public DefaultCommandDetector(IRegister<ICommand> commandRegister) {
         this.commandRegister = commandRegister;
     }
 
