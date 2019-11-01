@@ -6,10 +6,8 @@ public interface ICalculatorConfigure {
 
     IResolverResultFactory getResolverResultFactory();
 
-    void setResolverResultFactory(IResolverResultFactory resolverResultFactory);
-
     IExpressionHolder getExpressionHolder();
 
-    void setExpressionHolder(IExpressionHolder expressionHolder);
+    ICommandHolder getCommandHolder();
 
 }

@@ -1,17 +1,17 @@
 package frog.calculator.register;
 
-import frog.calculator.express.IExpression;
+import frog.calculator.ISymbol;
 import frog.calculator.util.ComparableComparator;
 import frog.calculator.util.collection.AVLTreeSet;
 import frog.calculator.util.collection.ISet;
 
-public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
+public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparable<SymbolRegister<T>>{
 
     private char symbol = 0;
 
-    private IExpression expression;
+    private T expression;
 
-    private ISet<SymbolRegister> nextLetter = new AVLTreeSet<>(ComparableComparator.<SymbolRegister>getInstance());
+    private ISet<SymbolRegister<T>> nextLetter = new AVLTreeSet<>(ComparableComparator.<SymbolRegister<T>>getInstance());
 
     public SymbolRegister(){ }
 
@@ -20,26 +20,26 @@ public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
     }
 
     @Override
-    public void insert(IExpression expression) {
+    public void insert(T expression) {
         if(expression != null){
-            insert(expression.symbol().toCharArray(), 0, expression, new SymbolRegister(), false);
+            insert(expression.symbol().toCharArray(), 0, expression, new SymbolRegister<>(), false);
         }
     }
 
     @Override
-    public void replace(String exp, IExpression expression) {
-        this.insert(exp.toCharArray(), 0, expression, new SymbolRegister(), true);
+    public void replace(String exp, T expression) {
+        this.insert(exp.toCharArray(), 0, expression, new SymbolRegister<>(), true);
     }
 
-    private void insert(char[] expChars, int startIndex, IExpression expression, SymbolRegister finder, boolean replace){
+    private void insert(char[] expChars, int startIndex, T expression, SymbolRegister<T> finder, boolean replace){
         char ch = expChars[startIndex];
 
         finder.symbol = ch;
 
-        SymbolRegister register = nextLetter.find(finder);
+        SymbolRegister<T> register = nextLetter.find(finder);
 
         if(register == null){
-            register = new SymbolRegister();
+            register = new SymbolRegister<>();
             register.symbol = ch;
         }
 
@@ -59,8 +59,8 @@ public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
     }
 
     @Override
-    public IExpression find(String symbol) {
-        IExpression expression = this.retrieve(symbol.toCharArray(), 0);
+    public T find(String symbol) {
+        T expression = this.retrieve(symbol.toCharArray(), 0);
         if(expression != null && symbol.equals(expression.symbol())){
             return expression;
         }
@@ -68,12 +68,12 @@ public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
     }
 
     @Override
-    public IExpression retrieve(char[] chars, int startIndex) {
+    public T retrieve(char[] chars, int startIndex) {
         if(chars.length <= startIndex){
             return this.expression;
         }
         char ch = chars[startIndex];
-        SymbolRegister treeRegister = nextLetter.find(new SymbolRegister(ch));
+        SymbolRegister<T> treeRegister = nextLetter.find(new SymbolRegister<>(ch));
         if(treeRegister != null){
             return treeRegister.retrieve(chars, startIndex + 1);
         }else{
@@ -87,7 +87,7 @@ public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
         if(chars.length <= 0){
             return false;
         }else{
-            SymbolRegister register = this.nextLetter.find(new SymbolRegister(chars[0]));
+            SymbolRegister register = this.nextLetter.find(new SymbolRegister<>(chars[0]));
             if(register == null){
                 return false;
             }else{
@@ -104,7 +104,7 @@ public class SymbolRegister implements IRegister, Comparable<SymbolRegister>{
             this.expression = null;
             result = hasExists;
         }else if(chars.length > startIndex){
-            SymbolRegister register = this.nextLetter.find(new SymbolRegister(chars[startIndex + 1]));
+            SymbolRegister<T> register = this.nextLetter.find(new SymbolRegister<>(chars[startIndex + 1]));
             if(register != null){
                 if(register.remove(chars, startIndex + 1)){
                     if(register.isEmpty()){

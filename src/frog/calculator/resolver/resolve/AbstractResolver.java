@@ -1,31 +1,16 @@
 package frog.calculator.resolver.resolve;
 
+import frog.calculator.ICalculatorManager;
 import frog.calculator.resolver.IResolver;
-import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.IResolverResultFactory;
 
 public abstract class AbstractResolver implements IResolver {
 
-    private IResolverResultFactory resolverResultFactory;
+    protected ICalculatorManager manager;
 
-    public AbstractResolver(IResolverResultFactory resolverResultFactory) {
-        if(resolverResultFactory == null){
-            throw new IllegalArgumentException("resolverResultFactory is null : " + this.getClass().getName());
+    public AbstractResolver(ICalculatorManager manager) {
+        if(manager == null){
+            throw new IllegalArgumentException("calculator manager is null : " + this.getClass().getName());
         }
-        this.resolverResultFactory = resolverResultFactory;
+        this.manager = manager;
     }
-
-    @Override
-    public IResolverResult resolve(char[] chars, int startIndex){
-        IResolverResult resolveResult = this.resolverResultFactory.createResolverResultBean();
-
-        this.resolve(chars, startIndex, resolveResult);
-
-        return resolveResult;
-    }
-
-    protected abstract void resolve(char[] chars, int startIndex, IResolverResult resolveResult);
-
-
-
 }

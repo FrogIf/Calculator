@@ -2,9 +2,8 @@ package test;
 
 import frog.calculator.Calculator;
 import frog.calculator.DefaultCalculatorConfigure;
-import frog.calculator.ICalculatorConfigure;
+import frog.calculator.ICalculatorManager;
 import frog.calculator.OriginExpressionHolder;
-import frog.calculator.connect.DefaultCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
 
 import java.util.Scanner;
@@ -14,8 +13,9 @@ public class TestApp {
     private static Calculator calculator;
 
     private static void init(){
-        ICalculatorConfigure calculatorConfigure = new DefaultCalculatorConfigure(new OriginExpressionHolder());
-        calculator = new Calculator(calculatorConfigure);
+        DefaultCalculatorConfigure configure = new DefaultCalculatorConfigure();
+        configure.setExpressionHolder(new OriginExpressionHolder());
+        calculator = new Calculator(configure);
     }
 
     public static void main(String[] args){
@@ -36,7 +36,8 @@ public class TestApp {
 
         Scanner sc = new Scanner(System.in);
 
-        ICalculatorSession session = new DefaultCalculatorSession();
+        ICalculatorManager manager = calculator.getCalculatorManager();
+        ICalculatorSession session = manager.createCalculatorSession();
 
         while(sc.hasNext()){
             String expression = sc.nextLine();

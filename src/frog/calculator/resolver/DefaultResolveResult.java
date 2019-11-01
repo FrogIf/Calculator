@@ -6,50 +6,30 @@ public class DefaultResolveResult implements IResolverResult {
 
     private IExpression expression;
 
-    private int endIndex = -1;
-
-    private String symbol;
-
-//    private ResolverResultType type = ResolverResultType.RUNNABLE;
+    private int offset = -1;
 
     @Override
     public IExpression getExpression() {
         return this.expression;
     }
 
-    @Override
-    public int getEndIndex() {
-        return this.endIndex;
-    }
-
-    @Override
-    public String getSymbol() {
-        return this.symbol;
-    }
-
-    @Override
-    public void setEndIndex(int index) {
-        if(this.endIndex > 0){
-            throw new IllegalStateException("the endIndex can't be modify.");
-        }
-        this.endIndex = index;
-    }
-
-    @Override
-    public void setExpression(IExpression expression) {
-        if(this.expression != null){
-            throw new IllegalStateException("the expression can't be modify.");
-        }
+    void setExpression(IExpression expression){
         this.expression = expression;
     }
 
     @Override
-    public void setSymbol(String symbol) {
-        if(this.symbol != null){
-            throw new IllegalStateException("the symbol can't be modify.");
+    public int offset() {
+        if(offset == -1){
+            offset = this.expression.symbol().length();
         }
-        this.symbol = symbol;
+        return offset;
     }
+
+    @Override
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
 
     @Override
     public DefaultResolveResult clone(){

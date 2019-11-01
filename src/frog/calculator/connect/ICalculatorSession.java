@@ -1,8 +1,16 @@
 package frog.calculator.connect;
 
+import frog.calculator.command.ICommand;
 import frog.calculator.express.IExpression;
+import frog.calculator.resolver.IResolverResult;
+import frog.calculator.util.collection.ITraveller;
 
 public interface ICalculatorSession {
+
+    /**
+     * 创建局部变量域
+     */
+    void createLocalVariableRegion();
 
     /**
      * 添加会话变量
@@ -21,5 +29,11 @@ public interface ICalculatorSession {
      * 从会话变量中获取值
      * @return
      */
-    IExpression getVariable(char[] expChars, int startIndex);
+    IResolverResult resolveVariable(char[] expChars, int startIndex);
+
+    void pushCommand(ICommand command);
+
+    ICommand popCommand();
+
+    ITraveller<ICommand> commandTraveller();
 }

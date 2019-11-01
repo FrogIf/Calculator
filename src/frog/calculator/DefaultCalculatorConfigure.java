@@ -9,8 +9,14 @@ public class DefaultCalculatorConfigure implements ICalculatorConfigure {
 
     private IExpressionHolder expressionHolder;
 
-    public DefaultCalculatorConfigure(IExpressionHolder expressionHolder) {
+    private ICommandHolder commandHolder;
+
+    public void setExpressionHolder(IExpressionHolder expressionHolder){
         this.expressionHolder = expressionHolder;
+    }
+
+    public void setCommandHolder(ICommandHolder commandHolder){
+        this.commandHolder = commandHolder;
     }
 
     @Override
@@ -22,18 +28,13 @@ public class DefaultCalculatorConfigure implements ICalculatorConfigure {
     }
 
     @Override
-    public void setResolverResultFactory(IResolverResultFactory resolverResultFactory) {
-        this.resolverResultFactory = resolverResultFactory;
-    }
-
-    @Override
     public IExpressionHolder getExpressionHolder() {
         return this.expressionHolder;
     }
 
     @Override
-    public void setExpressionHolder(IExpressionHolder expressionHolder) {
-        // do nothing. 不提供修改expressionHolder的方法, 一经赋值不允许修改(因为修改了, 也不会去重新构建解析器, 所以没有意义)
+    public ICommandHolder getCommandHolder() {
+        return this.commandHolder;
     }
 
 }

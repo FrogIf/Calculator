@@ -1,5 +1,7 @@
 package frog.calculator;
 
+import frog.calculator.command.CommandDetector;
+import frog.calculator.command.ICommand;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
@@ -9,7 +11,6 @@ import frog.calculator.register.IRegister;
 import frog.calculator.register.SymbolRegister;
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.resolve.ChainResolver;
 import frog.calculator.resolver.resolve.NumberResolver;
 import frog.calculator.resolver.resolve.PMResolver;
@@ -18,49 +19,54 @@ import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
 import frog.calculator.space.Coordinate;
 import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
+import frog.calculator.util.collection.ITraveller;
 
 public class Calculator {
 
     // configure
-    private ICalculatorConfigure calculatorConfigure;
+    private final ICalculatorConfigure calculatorConfigure;
 
-    // resolve result factory, used to pack resolver's result
-    private IResolverResultFactory resolverResultFactory;
+    // 计算管理器
+    private final ICalculatorManager calculatorManager;
 
     // resolve inner symbol
     private IResolver innerResolver;
+
+    private CommandDetector detector;
 
     public Calculator(ICalculatorConfigure calculatorConfigure) {
         if (calculatorConfigure == null) {
             throw new IllegalArgumentException("configure is null.");
         }
         this.calculatorConfigure = calculatorConfigure;
-        this.resolverResultFactory = calculatorConfigure.getResolverResultFactory();
+        this.calculatorManager = new DefaultCalculatorManager(calculatorConfigure);
+        ICommandHolder commandHolder = new DefaultCommandHolder(this.calculatorManager, this.calculatorConfigure);  // TODO 需优化
 
-        this.innerResolver = createInnerResolver();
+        this.innerResolver = initInnerResolver();
+        this.detector = new CommandDetector(this.createCommandRegister(commandHolder.getCommands()));
     }
 
     // =============================================== init start =============================================
 
     // create framework inner defined symbol resolver
-    private IResolver createInnerResolver() {
+    private IResolver initInnerResolver() {
         IExpressionHolder holder = this.calculatorConfigure.getExpressionHolder();
         // value resolver
-        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), resolverResultFactory);
+        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), this.calculatorManager);
 
         // plus and minus resolver
         // plus and minus can represent (positive and negative) or (add and sub)
         // this resolver can transform like python
-        IResolver addSubResolver = new PMResolver(resolverResultFactory,
+        IResolver addSubResolver = new PMResolver(calculatorManager,
                 this.calculatorConfigure.getExpressionHolder().getPlus(),
                 this.calculatorConfigure.getExpressionHolder().getMinus());
 
         // symbol resolver, can parse symbol which was supported by framework.
-        IResolver symbolResolver = new SymbolResolver(resolverResultFactory,
+        IResolver symbolResolver = new SymbolResolver(calculatorManager,
                 createRegister(holder.getBuiltInExpression()));
 
         // parse execute order : value -> plus and minus -> symbol
-        ChainResolver chainResolver = new ChainResolver(resolverResultFactory);
+        ChainResolver chainResolver = new ChainResolver();
         chainResolver.addResolver(numberResolver);
         chainResolver.addResolver(addSubResolver);
         chainResolver.addResolver(symbolResolver);
@@ -68,10 +74,18 @@ public class Calculator {
         return chainResolver;
     }
 
-    private IRegister createRegister(IExpression[] expressions) {
-        SymbolRegister register = new SymbolRegister();
+    private IRegister<IExpression> createRegister(IExpression[] expressions) {
+        SymbolRegister<IExpression> register = new SymbolRegister<>();
         for (IExpression exp : expressions) {
             register.insert(exp);
+        }
+        return register;
+    }
+
+    private IRegister<ICommand> createCommandRegister(ICommand[] commands){
+        SymbolRegister<ICommand> register = new SymbolRegister<>();
+        for (ICommand command : commands) {
+            register.insert(command);
         }
         return register;
     }
@@ -88,17 +102,17 @@ public class Calculator {
         IResolverResult rootResult = this.resolve(chars, 0, session);
 
         if (rootResult == null) {
-            throw new IllegalArgumentException("undefined symbol at " + 0);
+            throw new IllegalArgumentException("undefined symbol : " + chars[0]);
         }
 
         IExpression root = rootResult.getExpression();
         root.setOrder(order++);
 
-        for (int i = rootResult.getEndIndex() + 1; i < chars.length; i++) {
+        for (int i = rootResult.offset(); i < chars.length; ) {
             IResolverResult result = this.resolve(chars, i, session);
 
             if (result == null) {
-                throw new IllegalArgumentException("undefined symbol at " + i);
+                throw new IllegalArgumentException("undefined symbol : " + chars[i]);
             }
 
             IExpression curExp = result.getExpression();
@@ -107,10 +121,14 @@ public class Calculator {
             root = root.assembleTree(curExp);
 
             if (root == null) {
-                throw new IllegalStateException("tree root lost.");
+                throw new IllegalStateException("expression format is not right at " + i);
             }
 
-            i = result.getEndIndex();
+            int offset = result.offset();
+            if(offset < 1){
+                throw new IllegalStateException("system error : " + result.getExpression().symbol());
+            }
+            i += offset;
         }
 
         root.setExpressionContext(context);
@@ -119,14 +137,45 @@ public class Calculator {
     }
 
     private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) {
-        IResolverResult result = this.innerResolver.resolve(chars, startIndex);
+        // 使用命令解析器进行解析
+        ICommand command;
+        int offset;
+        do{
+            command = detector.detect(chars, startIndex);
+            if(command == null){ break; }
+            offset = command.init(session);
+            session.pushCommand(command);
+            startIndex += offset;
+        }while (offset > 0);
 
-        if (result.getExpression() == null){    // 使用截断解析器进行声明式解析, '=', ',', '(', ')'
-            // 1. 从session获取
-            // 2. 使用截断解析器进行解析
+        // 解析前置命令
+        ITraveller<ICommand> commands = session.commandTraveller();
+        while(commands.hasNext()){
+            ICommand c = commands.next();
+            c.beforeResolve(chars, startIndex, session);
+            if(c.over(chars, startIndex)){
+                session.popCommand();
+            }
         }
 
-        return result.getExpression() == null ? null : result;
+        // 尝试使用session解析器
+        IResolverResult result = session.resolveVariable(chars, startIndex);
+        if(result == null){
+            // 使用可执行解析器进行解析
+            result = this.innerResolver.resolve(chars, startIndex);
+        }
+
+        // 解析后置命令
+        commands = session.commandTraveller();
+        while(commands.hasNext()){
+            ICommand c = commands.next();
+            result = c.afterResolve(result, session);
+            if(c.over(chars, startIndex)){
+                session.popCommand();
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -165,6 +214,10 @@ public class Calculator {
             sb.append("]");
             return sb.toString();
         }
+    }
+
+    public ICalculatorManager getCalculatorManager(){
+        return this.calculatorManager;
     }
 
     // ===============================================解析执行end=========================================

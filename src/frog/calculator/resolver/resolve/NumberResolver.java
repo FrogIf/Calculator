@@ -1,8 +1,8 @@
 package frog.calculator.resolver.resolve;
 
+import frog.calculator.ICalculatorManager;
 import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 
 /**
@@ -12,15 +12,16 @@ public class NumberResolver extends AbstractResolver {
 
     private ISymbolExpressionFactory numberExpressionFactory;
 
-    public NumberResolver(ISymbolExpressionFactory numberExpressionFactory, IResolverResultFactory resolverResultFactory) {
-        super(resolverResultFactory);
+    public NumberResolver(ISymbolExpressionFactory numberExpressionFactory, ICalculatorManager manager) {
+        super(manager);
         this.numberExpressionFactory = numberExpressionFactory;
     }
 
     @Override
-    protected void resolve(char[] chars, int startIndex, IResolverResult resolveResult) {
+    public IResolverResult resolve(char[] chars, int startIndex) {
         StringBuilder numberBuilder = new StringBuilder();
 
+        int oldStart = startIndex;
         boolean hasDot = false; // 记录是否已经找到小数点
         for(; startIndex < chars.length; startIndex++){
             char ch = chars[startIndex];
@@ -39,10 +40,11 @@ public class NumberResolver extends AbstractResolver {
 
         if(numberBuilder.length() != 0){
             IExpression numberExpression = numberExpressionFactory.createExpression(numberBuilder.toString());
-            resolveResult.setEndIndex(startIndex - 1);
-            resolveResult.setExpression(numberExpression);
-            resolveResult.setSymbol(numberExpression.symbol());
+            IResolverResult resolveResult = this.manager.createResolverResult(numberExpression);
+            resolveResult.setOffset(startIndex - oldStart);
+            return resolveResult;
         }
+        return null;
     }
 
 }

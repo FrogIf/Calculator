@@ -103,6 +103,10 @@ public class LinkedList<E> implements IList<E>{
         return new LinkedIterator();
     }
 
+    public Iterator<E> invertedIterator(){
+        return new LinkedInvertedIterator();
+    }
+
     @Override
     public void clear() {
         this.head.next = null;
@@ -173,9 +177,12 @@ public class LinkedList<E> implements IList<E>{
             return null;
         }else{
             Node<E> cursor = head.next;
+            Node<E> p = head;
             for(int i = 0; i < index; i++){
+                p = cursor;
                 cursor = cursor.next;
             }
+            p.next = cursor.next;
             return cursor.item;
         }
     }
@@ -202,6 +209,59 @@ public class LinkedList<E> implements IList<E>{
 
     public void join(LinkedList<E> list){
         this.tail.next = list.head.next;
+    }
+
+    private class LinkedInvertedIterator implements Iterator<E>{
+
+        private int expectedModCount = modCount;
+
+        private Node<Node<E>> pre;
+
+        private Node<Node<E>> view;
+
+        private LinkedInvertedIterator() {
+            LinkedList<Node<E>> invertedLinked = new LinkedList<>();
+            Node<E> cursor = LinkedList.this.head.next;
+            while(cursor != null){
+                invertedLinked.preInsert(cursor);
+                cursor = cursor.next;
+            }
+            view = invertedLinked.head;
+        }
+
+        @Override
+        public void remove() {
+            if(expectedModCount != modCount){
+                throw new IllegalStateException("concurrent modify exception.");
+            }
+
+            if(pre == null){
+                throw new IllegalStateException("no element can be remove.");
+            }
+
+            if(view.next != null){
+                view.next.item.next = view.item.next;
+            }else{
+                LinkedList.this.head.next = view.item.next;
+            }
+            pre.next = view.next;
+            view = pre;
+            pre = null;
+            expectedModCount--;
+            modCount--;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return view.next != null;
+        }
+
+        @Override
+        public E next() {
+            pre = view;
+            view = view.next;
+            return view.item.item;
+        }
     }
 
     private class LinkedIterator implements Iterator<E> {
@@ -234,8 +294,13 @@ public class LinkedList<E> implements IList<E>{
                 throw new IllegalStateException("concurrent modify exception.");
             }
 
+            if(pre == null){
+                throw new IllegalStateException("no element can be remove.");
+            }
+
             pre.next = view.next;
             view = pre;
+            pre = null;
             expectedModCount--;
             modCount--;
         }

@@ -1,5 +1,6 @@
 package frog.calculator.resolver.resolve;
 
+import frog.calculator.ICalculatorManager;
 import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
@@ -18,8 +19,8 @@ public class PMResolver extends AbstractResolver {
 
     private final IExpression minusExpression;
 
-    public PMResolver(IResolverResultFactory resolverResultFactory, IExpression plusExpression, IExpression minusExpression) {
-        super(resolverResultFactory);
+    public PMResolver(ICalculatorManager manager, IExpression plusExpression, IExpression minusExpression) {
+        super(manager);
         this.plusExpression = plusExpression;
         this.minusExpression = minusExpression;
         if(plusExpression.symbol() != null){
@@ -43,7 +44,7 @@ public class PMResolver extends AbstractResolver {
     }
 
     @Override
-    protected void resolve(char[] chars, int startIndex, IResolverResult resolveResult) {
+    public IResolverResult resolve(char[] chars, int startIndex) {
         int[] counts = new int[2];
         int[] lens = {plusSymbol.length, minusSymbol.length};
         int mark = 3;   // 00b(0)两者都不是, 01b(1)是加, 10b(2)是减, 11(3)即加又减
@@ -68,8 +69,11 @@ public class PMResolver extends AbstractResolver {
         }
 
         if(counts[0] > 0 || counts[1] > 0){
-            resolveResult.setExpression(counts[1] % 2 == 0 ? plusExpression.clone() : minusExpression.clone());
-            resolveResult.setEndIndex(startIndex + counts[1] * minusSymbol.length + counts[0] * plusSymbol.length - 1);
+            IResolverResult resolverResult = this.manager.createResolverResult(counts[1] % 2 == 0 ? plusExpression.clone() : minusExpression.clone());
+            resolverResult.setOffset(counts[1] * minusSymbol.length + counts[0] * plusSymbol.length);
+            return resolverResult;
         }
+
+        return null;
     }
 }

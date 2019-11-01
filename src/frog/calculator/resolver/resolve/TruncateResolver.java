@@ -1,8 +1,8 @@
 package frog.calculator.resolver.resolve;
 
+import frog.calculator.ICalculatorManager;
 import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.IResolverResultFactory;
 import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 
 /**
@@ -11,43 +11,49 @@ import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
  */
 public class TruncateResolver extends AbstractResolver {
 
-    private TruncateSymbol[] borderSymbolArr;   // 边缘符号数组
+    private char[][] borderSymbolArr;   // 边缘符号数组
 
     private int[] borderSymbolLens;
 
-    public TruncateResolver(IResolverResultFactory resolverResultFactory, TruncateSymbol[] border) {
-        super(resolverResultFactory);
+    private ISymbolExpressionFactory symbolExpressionFactory;
+
+    public TruncateResolver(ICalculatorManager manager, ISymbolExpressionFactory symbolExpressionFactory, IExpression[] border) {
+        super(manager);
 
         if(border == null || border.length == 0){
             throw new IllegalArgumentException("border is undefined.");
         }
 
-        this.borderSymbolArr = border;
+        if(symbolExpressionFactory == null){
+            throw new IllegalArgumentException("symbol expression factory is null.");
+        }
+        this.symbolExpressionFactory = symbolExpressionFactory;
+
+        this.borderSymbolArr = new char[border.length][];
         this.borderSymbolLens = new int[border.length];
 
         for(int i = 0; i < border.length; i++){
-            TruncateSymbol ts = border[i];
-            this.borderSymbolLens[i] = ts.symbol.length;
+            char[] charArr = border[i].symbol().toCharArray();
+            borderSymbolArr[i] = charArr;
+            this.borderSymbolLens[i] = charArr.length;
         }
     }
 
     @Override
-    protected void resolve(char[] expStr, int startIndex, IResolverResult resolveResult) {
+    public IResolverResult resolve(char[] expStr, int startIndex) {
         char ch = expStr[startIndex];
         if(ch < '0' || ch > '9'){
             int[] match = new int[borderSymbolArr.length];
             int start;
             int i = start = startIndex; // 遍历的指针位置
             int matchCharLen = 0;
-            int findCharIndex = -1;
             out : for(; i < expStr.length; i++){
                 for(int c = 0; c < borderSymbolArr.length; c++){
                     int mf = match[c];
-                    if(borderSymbolArr[c].symbol[mf] == expStr[i]){
+                    if(borderSymbolArr[c][mf] == expStr[i]){
                         match[c]++;
                         if(mf + 1 == borderSymbolLens[c]){
                             matchCharLen = mf + 1;
-                            findCharIndex = c;
                             break out;
                         }
                     }else{
@@ -61,20 +67,11 @@ public class TruncateResolver extends AbstractResolver {
                 for(int k = start; k <= i - matchCharLen; k++){
                     sb.append(expStr[k]);
                 }
-                TruncateSymbol ts = this.borderSymbolArr[findCharIndex];
-                IExpression variableExpression = ts.symbolExpressionFactory.createExpression(sb.toString());
-                resolveResult.setExpression(variableExpression);
-                resolveResult.setEndIndex(i - matchCharLen);
+                IExpression variableExpression = this.symbolExpressionFactory.createExpression(sb.toString());
+                return this.manager.createResolverResult(variableExpression);
             }
         }
-    }
 
-    public static class TruncateSymbol {
-        private char[] symbol;
-        private ISymbolExpressionFactory symbolExpressionFactory;
-        public TruncateSymbol(String symbol, ISymbolExpressionFactory symbolExpressionFactory) {
-            this.symbol = symbol.toCharArray();
-            this.symbolExpressionFactory = symbolExpressionFactory;
-        }
+        return null;
     }
 }

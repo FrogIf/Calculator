@@ -8,7 +8,7 @@ public class DefaultExpressionContext implements IExpressionContext {
     /**
      * 用户变量存储在这里
      */
-    private SymbolRegister register = new SymbolRegister();
+    private SymbolRegister<IExpression> register = new SymbolRegister<>();
 
     private ICalculatorSession session;
 
