@@ -25,7 +25,6 @@ public class DeclareCommand extends AbstractCommand {
         this.endPrefix = this.over.charAt(0);
 
         this.truncateResolver = new TruncateResolver(manager, expressionFactory, structExpressions);
-        this.truncateResolver = null;
     }
 
     @Override
@@ -47,6 +46,9 @@ public class DeclareCommand extends AbstractCommand {
 
     @Override
     public boolean over(char[] chars, int startIndex) {
+        if(startIndex >= chars.length){
+            return true;
+        }
         boolean isOver = false;
         if(endPrefix == chars[startIndex]){
             isOver = true;

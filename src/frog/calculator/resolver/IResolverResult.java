@@ -2,7 +2,7 @@ package frog.calculator.resolver;
 
 import frog.calculator.express.IExpression;
 
-public interface IResolverResult extends Cloneable {
+public interface IResolverResult {
     /**
      * 记录解析器解析结果表达式
      * @return 解析后的表达式
@@ -17,6 +17,4 @@ public interface IResolverResult extends Cloneable {
     int offset();
 
     void setOffset(int index);
-
-    IResolverResult clone();
 }

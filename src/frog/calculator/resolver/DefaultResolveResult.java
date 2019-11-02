@@ -30,14 +30,4 @@ public class DefaultResolveResult implements IResolverResult {
         this.offset = offset;
     }
 
-
-    @Override
-    public DefaultResolveResult clone(){
-        try {
-            return (DefaultResolveResult) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

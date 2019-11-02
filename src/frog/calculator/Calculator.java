@@ -43,7 +43,8 @@ public class Calculator {
         char[] chars = expression.toCharArray();
         int order = 0;
 
-        IResolverResult rootResult = this.resolve(chars, 0, session);
+        int i = commandDetect(chars, 0, session);
+        IResolverResult rootResult = this.resolve(chars, i, session);
 
         if (rootResult == null) {
             throw new IllegalArgumentException("undefined symbol : " + chars[0]);
@@ -52,7 +53,9 @@ public class Calculator {
         IExpression root = rootResult.getExpression();
         root.setOrder(order++);
 
-        for (int i = rootResult.offset(); i < chars.length; ) {
+        for (i = i + rootResult.offset(); i < chars.length; ) {
+            i += commandDetect(chars, i, session);
+            if(i >= chars.length){ break; }
             IResolverResult result = this.resolve(chars, i, session);
 
             if (result == null) {
@@ -69,7 +72,7 @@ public class Calculator {
             }
 
             int offset = result.offset();
-            if(offset < 1){
+            if (offset < 1) {
                 throw new IllegalStateException("system error : " + result.getExpression().symbol());
             }
             i += offset;
@@ -80,33 +83,41 @@ public class Calculator {
         return root;
     }
 
-    private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) {
-        // 使用命令解析器进行解析
+    private int commandDetect(char[] chars, int startIndex, ICalculatorSession session){
         ICommand command;
+        int commandOffset = 0;
         int offset;
         do{
             command = detector.detect(chars, startIndex);
             if(command == null){ break; }
             offset = command.init(session);
             session.pushCommand(command);
+            commandOffset += offset;
             startIndex += offset;
-        }while (offset > 0);
+        }while (offset > 0 && startIndex < chars.length);
 
+        return commandOffset;
+    }
+
+    private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) {
         // 解析前置命令
         ITraveller<ICommand> commands = session.commandTraveller();
         while(commands.hasNext()){
             ICommand c = commands.next();
             c.beforeResolve(chars, startIndex, session);
             if(c.over(chars, startIndex)){
-                session.popCommand();
+                session.popCommand(c);
             }
         }
 
         // 尝试使用session解析器
-        IResolverResult result = session.resolveVariable(chars, startIndex);
-        if(result == null){
-            // 使用可执行解析器进行解析
-            result = this.innerResolver.resolve(chars, startIndex);
+        IResolverResult result = null;
+        if(startIndex < chars.length){
+            result = session.resolveVariable(chars, startIndex);
+            if(result == null){
+                // 使用可执行解析器进行解析
+                result = this.innerResolver.resolve(chars, startIndex);
+            }
         }
 
         // 解析后置命令
@@ -115,7 +126,7 @@ public class Calculator {
             ICommand c = commands.next();
             result = c.afterResolve(result, session);
             if(c.over(chars, startIndex)){
-                session.popCommand();
+                session.popCommand(c);
             }
         }
 

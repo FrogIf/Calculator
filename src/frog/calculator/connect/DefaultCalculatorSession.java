@@ -72,8 +72,12 @@ public class DefaultCalculatorSession implements ICalculatorSession {
     }
 
     @Override
-    public ICommand popCommand() {
-        return this.commandStack.pop();
+    public void popCommand(ICommand command) {
+        ICommand pop = this.commandStack.pop();
+        if(pop != command){
+            this.commandStack.push(pop);
+            throw new IllegalStateException("assign command is not in stack top.");
+        }
     }
 
     @Override

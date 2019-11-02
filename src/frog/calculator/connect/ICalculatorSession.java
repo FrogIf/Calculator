@@ -33,7 +33,7 @@ public interface ICalculatorSession {
 
     void pushCommand(ICommand command);
 
-    ICommand popCommand();
+    void popCommand(ICommand command);
 
     ITraveller<ICommand> commandTraveller();
 }
