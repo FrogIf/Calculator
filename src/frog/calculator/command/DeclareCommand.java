@@ -3,9 +3,9 @@ package frog.calculator.command;
 import frog.calculator.ICalculatorManager;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
+import frog.calculator.express.VariableExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.resolve.TruncateResolver;
-import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 
 public class DeclareCommand extends AbstractCommand {
 
@@ -17,14 +17,31 @@ public class DeclareCommand extends AbstractCommand {
 
     private TruncateResolver truncateResolver;
 
-    private static final VariableExpressionFactory expressionFactory = new VariableExpressionFactory();
-
     public DeclareCommand(String command, String over, ICalculatorManager manager, IExpression[] structExpressions) {
         this.command = command;
         this.over = over;
         this.endPrefix = this.over.charAt(0);
 
-        this.truncateResolver = new TruncateResolver(manager, expressionFactory, structExpressions);
+        boolean haveOver = false;
+        for (IExpression structExpression : structExpressions) {
+            if(over.equals(structExpression.symbol())){
+                haveOver = true;
+                break;
+            }
+        }
+
+        String[] truncateSymbol;
+        if(!haveOver){
+            truncateSymbol = new String[structExpressions.length + 1];
+            truncateSymbol[structExpressions.length] = over;
+        }else{
+            truncateSymbol = new String[structExpressions.length];
+        }
+        for (int i = 0; i < structExpressions.length; i++) {
+            truncateSymbol[i] = structExpressions[i].symbol();
+        }
+
+        this.truncateResolver = new TruncateResolver(manager, (symbol) -> new VariableExpression(symbol, this.over), truncateSymbol);
     }
 
     @Override
@@ -36,7 +53,10 @@ public class DeclareCommand extends AbstractCommand {
     public void beforeResolve(char[] chars, int startIndex, ICalculatorSession session) {
         // 执行变量解析
         IResolverResult result = this.truncateResolver.resolve(chars, startIndex);
-        // 如果结果为空, 抛出异常
+        if(result == null){
+            throw new IllegalStateException("truncate resolve failed.");
+        }
+        session.addVariable(result.getExpression());
     }
 
     @Override
@@ -65,12 +85,5 @@ public class DeclareCommand extends AbstractCommand {
     @Override
     public String symbol() {
         return command;
-    }
-
-    public static class VariableExpressionFactory implements ISymbolExpressionFactory{
-        @Override
-        public IExpression createExpression(String symbol) {
-            return null;
-        }
     }
 }

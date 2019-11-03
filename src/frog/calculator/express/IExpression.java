@@ -9,8 +9,9 @@ public interface IExpression extends Cloneable, ISymbol {
 
     /**
      * 创建树的分支<br />
-     * 该方法会尝试以调用者本身作为根节点, 将传入节点作为子节点进行创建, 成功为true, 失败为false
-     * @param childExpression
+     * 该方法会尝试以调用者本身作为根节点, 将传入节点作为子节点进行创建, 成功为true, 失败为false<br/>
+     * 一般地, 只有当一个表达式是尝试进入一棵表达式树的节点时, 会被外部调用该方法, 否则, 均是类内部调用
+     * @param childExpression 子表达式
      * @return true : 创建成功, false : 创建失败
      */
     boolean createBranch(IExpression childExpression);

@@ -3,7 +3,6 @@ package frog.calculator.resolver.resolve;
 import frog.calculator.ICalculatorManager;
 import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 
 /**
  * 截断解析器<br/>
@@ -17,7 +16,7 @@ public class TruncateResolver extends AbstractResolver {
 
     private ISymbolExpressionFactory symbolExpressionFactory;
 
-    public TruncateResolver(ICalculatorManager manager, ISymbolExpressionFactory symbolExpressionFactory, IExpression[] border) {
+    public TruncateResolver(ICalculatorManager manager, ISymbolExpressionFactory symbolExpressionFactory, String[] border){
         super(manager);
 
         if(border == null || border.length == 0){
@@ -33,7 +32,7 @@ public class TruncateResolver extends AbstractResolver {
         this.borderSymbolLens = new int[border.length];
 
         for(int i = 0; i < border.length; i++){
-            char[] charArr = border[i].symbol().toCharArray();
+            char[] charArr = border[i].toCharArray();
             borderSymbolArr[i] = charArr;
             this.borderSymbolLens[i] = charArr.length;
         }

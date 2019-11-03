@@ -1,4 +1,4 @@
-package frog.calculator.resolver.resolve.factory;
+package frog.calculator.resolver.resolve;
 
 import frog.calculator.express.IExpression;
 

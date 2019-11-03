@@ -13,7 +13,7 @@ import frog.calculator.resolver.resolve.ChainResolver;
 import frog.calculator.resolver.resolve.NumberResolver;
 import frog.calculator.resolver.resolve.PMResolver;
 import frog.calculator.resolver.resolve.SymbolResolver;
-import frog.calculator.resolver.resolve.factory.NumberExpressionFactory;
+import frog.calculator.resolver.resolve.NumberExpressionFactory;
 
 public class DefaultCalculatorComponentFactory implements ICalculatorComponentFactory {
 

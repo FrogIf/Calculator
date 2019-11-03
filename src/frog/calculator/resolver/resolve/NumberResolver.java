@@ -3,7 +3,6 @@ package frog.calculator.resolver.resolve;
 import frog.calculator.ICalculatorManager;
 import frog.calculator.express.IExpression;
 import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.resolve.factory.ISymbolExpressionFactory;
 
 /**
  * 数字表达式解析器

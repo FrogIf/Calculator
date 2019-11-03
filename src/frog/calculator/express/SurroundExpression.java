@@ -138,7 +138,7 @@ public class SurroundExpression extends AbstractExpression {
 
     @Override
     public int buildFactor() {
-        return -1;
+        return ExpressionConstant.MIN_BUILD_FACTOR;
     }
 
     @Override
