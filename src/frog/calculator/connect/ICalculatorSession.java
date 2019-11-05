@@ -20,13 +20,6 @@ public interface ICalculatorSession {
 
     /**
      * 从会话变量中获取值
-     * @param varName
-     * @return
-     */
-    IExpression getVariable(String varName);
-
-    /**
-     * 从会话变量中获取值
      * @return
      */
     IResolverResult resolveVariable(char[] expChars, int startIndex);
@@ -34,6 +27,8 @@ public interface ICalculatorSession {
     void pushCommand(ICommand command);
 
     void popCommand(ICommand command);
+
+    void clearCommand();
 
     ITraveller<ICommand> commandTraveller();
 }

@@ -17,6 +17,10 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     // 转list函数
     private IExpression listFun = new SurroundExpression("[", separator.symbol(), listEnd.symbol());
 
+    private IExpression end = new MarkExpression(";");
+
+    private IExpression assign = new AssignExpression("=", end.symbol());
+
     @Override
     public IExpression[] getBuiltInExpression() {
         IExpression[] runnableExpression = this.getRunnableExpression();
@@ -43,10 +47,16 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
                 bracketClose,   // 右括号
                 separator,      // 逗号
                 listFun,        // 集合左
-                listEnd         // 集合右
+                listEnd,         // 集合右
+                end,    // 表达式结束符
+                assign  // 赋值表达式
         };
     }
 
     protected abstract IExpression[] getRunnableExpression();
+
+    public IExpression getEndExpression(){
+        return this.end;
+    }
 
 }

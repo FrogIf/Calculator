@@ -31,14 +31,6 @@ public class RightExpression extends AbstractBlockExpression {
     }
 
     @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
-        if(this.left != null){
-            this.left.setExpressionContext(context);
-        }
-    }
-
-    @Override
     public boolean hasNextChild() {
         return false;
     }

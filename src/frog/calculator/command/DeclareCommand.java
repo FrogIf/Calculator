@@ -41,7 +41,7 @@ public class DeclareCommand extends AbstractCommand {
             truncateSymbol[i] = structExpressions[i].symbol();
         }
 
-        this.truncateResolver = new TruncateResolver(manager, (symbol) -> new VariableExpression(symbol, this.over), truncateSymbol);
+        this.truncateResolver = new TruncateResolver(manager, (symbol) -> VariableExpression.createVariableExpression(symbol, this.over), truncateSymbol);
     }
 
     @Override
@@ -53,10 +53,9 @@ public class DeclareCommand extends AbstractCommand {
     public void beforeResolve(char[] chars, int startIndex, ICalculatorSession session) {
         // 执行变量解析
         IResolverResult result = this.truncateResolver.resolve(chars, startIndex);
-        if(result == null){
-            throw new IllegalStateException("truncate resolve failed.");
+        if(result != null){
+            session.addVariable(result.getExpression());
         }
-        session.addVariable(result.getExpression());
     }
 
     @Override

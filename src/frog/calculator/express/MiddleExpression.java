@@ -32,17 +32,6 @@ public class MiddleExpression extends AbstractBlockExpression{
     }
 
     @Override
-    public void setExpressionContext(IExpressionContext context) {
-        if(this.left != null){
-            this.left.setExpressionContext(context);
-        }
-        if(this.right != null){
-            this.right.setExpressionContext(context);
-        }
-        this.context = context;
-    }
-
-    @Override
     public boolean createBranch(IExpression childExpression) {
         boolean buildSuccess = false;
 

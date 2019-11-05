@@ -6,15 +6,13 @@ import frog.calculator.space.ISpace;
 
 public class EndPointExpression extends AbstractExpression {
 
-    protected IExpressionContext context;
-
     public EndPointExpression(String symbol, IOperator operator) {
         super(symbol, operator);
         this.operator = operator;
     }
 
     @Override
-    public final boolean createBranch(IExpression childExpression) {
+    public boolean createBranch(IExpression childExpression) {
         // endpoint can't create branch.
         return false;
     }
@@ -47,11 +45,6 @@ public class EndPointExpression extends AbstractExpression {
     @Override
     public IExpression clone() {
         return super.clone();
-    }
-
-    @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
     }
 
     @Override

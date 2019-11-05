@@ -39,20 +39,6 @@ public class DefaultCalculatorSession implements ICalculatorSession {
     }
 
     @Override
-    public IExpression getVariable(String varName) {
-        Iterator<IRegister<IExpression>> iterator = localRegisterStack.iterator();
-        IExpression expression;
-        while(iterator.hasNext()){
-            IRegister<IExpression> register = iterator.next();
-            expression = register.find(varName);
-            if(expression != null){
-                return expression.clone();
-            }
-        }
-        return null;
-    }
-
-    @Override
     public IResolverResult resolveVariable(char[] expChars, int startIndex) {
         Iterator<IRegister<IExpression>> iterator = localRegisterStack.iterator();
         IExpression expression;
@@ -60,7 +46,8 @@ public class DefaultCalculatorSession implements ICalculatorSession {
             IRegister<IExpression> register = iterator.next();
             expression = register.retrieve(expChars, startIndex);
             if(expression != null){
-                return manager.createResolverResult(expression);
+                IExpression clone = expression.clone();
+                return manager.createResolverResult(clone);
             }
         }
         return null;
@@ -78,6 +65,11 @@ public class DefaultCalculatorSession implements ICalculatorSession {
             this.commandStack.push(pop);
             throw new IllegalStateException("assign command is not in stack top.");
         }
+    }
+
+    @Override
+    public void clearCommand() {
+        this.commandStack.clear();
     }
 
     @Override

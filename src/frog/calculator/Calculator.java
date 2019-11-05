@@ -25,6 +25,11 @@ public class Calculator {
 
     private ICommandDetector detector;
 
+    /**
+     * 终结表达式
+     */
+    private IExpression endExp;
+
     public Calculator(ICalculatorConfigure calculatorConfigure) {
         if (calculatorConfigure == null) {
             throw new IllegalArgumentException("configure is null.");
@@ -32,6 +37,7 @@ public class Calculator {
         ICalculatorComponentFactory componentFactory = calculatorConfigure.getComponentFactory();
         this.calculatorManager = calculatorConfigure.getComponentFactory().createCalculatorManager(calculatorConfigure);
         IExpressionHolder expressionHolder = componentFactory.createExpressionHolder();
+        this.endExp = expressionHolder.getEndExpression();
         this.innerResolver = componentFactory.createResolver(expressionHolder, this.calculatorManager);
         ICommandHolder commandHolder = componentFactory.createCommandHolder(this.calculatorManager, calculatorConfigure);
         this.detector = componentFactory.createCommandDetector(commandHolder);
@@ -64,6 +70,7 @@ public class Calculator {
 
             IExpression curExp = result.getExpression();
             curExp.setOrder(order++);
+            curExp.setExpressionContext(context);
 
             root = root.assembleTree(curExp);
 
@@ -78,7 +85,12 @@ public class Calculator {
             i += offset;
         }
 
-        root.setExpressionContext(context);
+        IExpression cloneEnd = this.endExp.clone();
+        cloneEnd.setOrder(order);
+        IExpression tryEnd = root.assembleTree(cloneEnd);
+        if(tryEnd != null){
+            root = tryEnd;
+        }
 
         return root;
     }

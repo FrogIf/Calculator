@@ -62,7 +62,7 @@ public class TruncateResolver extends AbstractResolver {
             }
 
             StringBuilder sb = new StringBuilder();
-            if(matchCharLen != 0){
+            if(matchCharLen != 0 && i - matchCharLen >= start){
                 for(int k = start; k <= i - matchCharLen; k++){
                     sb.append(expStr[k]);
                 }

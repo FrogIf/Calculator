@@ -148,18 +148,6 @@ public class SurroundExpression extends AbstractExpression {
         return clone;
     }
 
-    @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
-        Iterator<Element> iterator = elements.iterator();
-        while(iterator.hasNext()){
-            Element next = iterator.next();
-            if(next.expression != null){
-                next.expression.setExpressionContext(context);
-            }
-        }
-    }
-
     private ITraveller<Element> traveller = null;
 
     private int role = 1;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
