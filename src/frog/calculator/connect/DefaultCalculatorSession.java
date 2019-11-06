@@ -34,6 +34,16 @@ public class DefaultCalculatorSession implements ICalculatorSession {
     }
 
     @Override
+    public IRegister<IExpression> popLocalVariableRegion() {
+        IRegister<IExpression> pop = localRegisterStack.pop();
+        if(pop == sessionRegister){
+            localRegisterStack.push(sessionRegister);
+            throw new IllegalStateException("no local variable region can be pop.");
+        }
+        return pop;
+    }
+
+    @Override
     public void addVariable(IExpression expression) {
         localRegisterStack.first().insert(expression);
     }

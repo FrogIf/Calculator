@@ -117,7 +117,7 @@ public class Calculator {
         while(commands.hasNext()){
             ICommand c = commands.next();
             c.beforeResolve(chars, startIndex, session);
-            if(c.over(chars, startIndex)){
+            if(c.over(chars, startIndex, session)){
                 session.popCommand(c);
             }
         }
@@ -137,7 +137,7 @@ public class Calculator {
         while(commands.hasNext()){
             ICommand c = commands.next();
             result = c.afterResolve(result, session);
-            if(c.over(chars, startIndex)){
+            if(c.over(chars, startIndex, session)){
                 session.popCommand(c);
             }
         }

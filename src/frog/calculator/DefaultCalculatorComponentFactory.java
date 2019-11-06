@@ -65,9 +65,11 @@ public class DefaultCalculatorComponentFactory implements ICalculatorComponentFa
         return new DefaultCommandDetector(register);
     }
 
+    private IExpressionHolder expressionHolder = new OriginExpressionHolder();
+
     @Override
     public IExpressionHolder createExpressionHolder() {
-        return new OriginExpressionHolder();
+        return expressionHolder;
     }
 
     private IRegister<IExpression> createRegister(IExpression[] expressions) {

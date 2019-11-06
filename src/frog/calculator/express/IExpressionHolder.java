@@ -36,4 +36,34 @@ public interface IExpressionHolder {
      */
     IExpression getEndExpression();
 
+    /**
+     * 括号开始表达式
+     * @return 左括号
+     */
+    IExpression getBracketOpen();
+
+    /**
+     * 括号结束表达式
+     * @return 右括号
+     */
+    IExpression getBracketClose();
+
+    /**
+     * 赋值表达式
+     * @return 赋值表达式
+     */
+    IExpression getAssign();
+
+    /**
+     * 代码块起始表达式
+     * @return 代码块起始
+     */
+    IExpression getBlockOpen();
+
+    /**
+     * 代码块终止表达式
+     * @return 代码块终止
+     */
+    IExpression getBlockClose();
+
 }

@@ -3,6 +3,9 @@ package frog.calculator.express;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.space.ISpace;
 
+/**
+ * 值变量表达式
+ */
 public class VariableExpression extends EndPointExpression {
 
     private PrototypeVariableExpression prototype;
@@ -22,25 +25,23 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public boolean createBranch(IExpression childExpression) {
-        if(this.assign.equals(childExpression.symbol()) && childExpression.isLeaf()){
+        if(this.value == null && this.assign.equals(childExpression.symbol()) && childExpression.isLeaf()){
             this.value = childExpression;
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
     @Override
     public IExpression assembleTree(IExpression expression) {
-        if(this.assign.equals(expression.symbol()) && expression.isLeaf()){
+        if(this.value == null && this.assign.equals(expression.symbol()) && expression.isLeaf()){
             this.value = expression;
             return this;
-        }else{
-            if(expression.createBranch(this)){
-                return expression;
-            }
-            return null;
         }
+        if(expression.createBranch(this)){
+            return expression;
+        }
+        return null;
     }
 
     @Override
@@ -55,16 +56,6 @@ public class VariableExpression extends EndPointExpression {
         }
         this.prototype.protoValue = result;
         return result;
-    }
-
-    @Override
-    public boolean hasNextChild() {
-        return false;
-    }
-
-    @Override
-    public IExpression nextChild() {
-        return null;
     }
 
     @Override

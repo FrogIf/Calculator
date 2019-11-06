@@ -33,6 +33,6 @@ public interface ICommand extends ISymbol {
      * 指示该命令是否已失效
      * @return true 已失效, false 依旧起作用
      */
-    boolean over(char[] chars, int startIndex);
+    boolean over(char[] chars, int startIndex, ICalculatorSession session);
 
 }

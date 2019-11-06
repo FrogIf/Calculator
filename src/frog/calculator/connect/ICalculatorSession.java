@@ -2,6 +2,7 @@ package frog.calculator.connect;
 
 import frog.calculator.command.ICommand;
 import frog.calculator.express.IExpression;
+import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.util.collection.ITraveller;
 
@@ -11,6 +12,8 @@ public interface ICalculatorSession {
      * 创建局部变量域
      */
     void createLocalVariableRegion();
+
+    IRegister<IExpression> popLocalVariableRegion();
 
     /**
      * 添加会话变量

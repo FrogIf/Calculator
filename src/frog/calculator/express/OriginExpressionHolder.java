@@ -15,6 +15,8 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
     // 负
     private IExpression minus = new MiddleExpression("-", 1, new SubOpr());
 
+    private static final int FUNCTION_BUILD_FACTOR = 5;
+
     @Override
     protected IExpression[] getRunnableExpression() {
         return new IExpression[]{
@@ -24,9 +26,9 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
                 new RightExpression("%", 4, new PercentOpr()),
                 new RightExpression("!", 4, new FactorialOpr()),
                 new RightExpression("i", 4, new ComplexMarkOpr()),
-                new LeftExpression("sqrt", 4, new SqrtOpr()),
-                new LeftExpression("avg", 4, new AverageOpr()),
-                new LeftExpression("sum", 4, new SumOpr())
+                new LeftExpression("sqrt", FUNCTION_BUILD_FACTOR, new SqrtOpr()),
+                new LeftExpression("avg", FUNCTION_BUILD_FACTOR, new AverageOpr()),
+                new LeftExpression("sum", FUNCTION_BUILD_FACTOR, new SumOpr())
         };
     }
 
