@@ -1,40 +1,37 @@
 package frog.calculator.express;
 
-import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.register.SymbolRegister;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.LinkedList;
 
 public class DefaultExpressionContext implements IExpressionContext {
 
-    /**
-     * 用户变量存储在这里
-     */
-    private SymbolRegister<IExpression> register = new SymbolRegister<>();
+    private IList<IBuildFinishListener> buildOverListeners = new LinkedList<>();
 
-    private ICalculatorSession session;
+    private IExpression root;
 
-    public DefaultExpressionContext(ICalculatorSession session) {
-        this.session = session;
+    @Override
+    public void setRoot(IExpression root) {
+        this.root = root;
     }
 
     @Override
-    public IExpression getLocalVariable(String varName) {
-        return register.find(varName);
+    public IExpression getRoot() {
+        return root;
     }
 
     @Override
-    public void addLocalVariable(IExpression expression) {
-        register.insert(expression);
+    public void finishBuild() {
+        if(!buildOverListeners.isEmpty()){
+            Iterator<IBuildFinishListener> iterator = buildOverListeners.iterator();
+            while(iterator.hasNext()){
+                iterator.next().buildFinishCallBack(this);
+            }
+        }
     }
 
     @Override
-    public ICalculatorSession getSession() {
-        return this.session;
-    }
-
-    @Override
-    public IExpressionContext newInstance() {
-        // TODO 未完成, 应该使用栈结构(Last in First out), 考虑多层嵌套变量表
-        DefaultExpressionContext context = new DefaultExpressionContext(this.session);
-        return context;
+    public void addBuildFinishListener(IBuildFinishListener listener) {
+        buildOverListeners.add(listener);
     }
 }

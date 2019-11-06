@@ -25,11 +25,6 @@ public class Calculator {
 
     private ICommandDetector detector;
 
-    /**
-     * 终结表达式
-     */
-    private IExpression endExp;
-
     public Calculator(ICalculatorConfigure calculatorConfigure) {
         if (calculatorConfigure == null) {
             throw new IllegalArgumentException("configure is null.");
@@ -37,7 +32,6 @@ public class Calculator {
         ICalculatorComponentFactory componentFactory = calculatorConfigure.getComponentFactory();
         this.calculatorManager = calculatorConfigure.getComponentFactory().createCalculatorManager(calculatorConfigure);
         IExpressionHolder expressionHolder = componentFactory.createExpressionHolder();
-        this.endExp = expressionHolder.getEndExpression();
         this.innerResolver = componentFactory.createResolver(expressionHolder, this.calculatorManager);
         ICommandHolder commandHolder = componentFactory.createCommandHolder(this.calculatorManager, calculatorConfigure);
         this.detector = componentFactory.createCommandDetector(commandHolder);
@@ -58,6 +52,7 @@ public class Calculator {
 
         IExpression root = rootResult.getExpression();
         root.setOrder(order++);
+        context.setRoot(root);
 
         for (i = i + rootResult.offset(); i < chars.length; ) {
             i += commandDetect(chars, i, session);
@@ -72,11 +67,13 @@ public class Calculator {
             curExp.setOrder(order++);
             curExp.setExpressionContext(context);
 
-            root = root.assembleTree(curExp);
+            root = context.getRoot().assembleTree(curExp);
 
             if (root == null) {
                 throw new IllegalStateException("expression format is not right at " + i);
             }
+
+            context.setRoot(root);
 
             int offset = result.offset();
             if (offset < 1) {
@@ -85,14 +82,9 @@ public class Calculator {
             i += offset;
         }
 
-        IExpression cloneEnd = this.endExp.clone();
-        cloneEnd.setOrder(order);
-        IExpression tryEnd = root.assembleTree(cloneEnd);
-        if(tryEnd != null){
-            root = tryEnd;
-        }
+        context.finishBuild();
 
-        return root;
+        return context.getRoot();
     }
 
     private int commandDetect(char[] chars, int startIndex, ICalculatorSession session){

@@ -38,7 +38,7 @@ public class SurroundExpression extends AbstractExpression {
         elements = new LinkedList<>();
         elements.add(currentElement);
         traveller = null;
-        role = 1;
+        role = ROLE_UNDEFINE;
     }
 
     @Override
@@ -112,7 +112,7 @@ public class SurroundExpression extends AbstractExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        if(role == 0){
+        if(role == ROLE_ARG_LIST){
             throw new IllegalStateException("the expression has output as argument list.");
         }
         FixedAlignSpaceBuilder<BaseNumber> builder = new FixedAlignSpaceBuilder<>();
@@ -150,11 +150,17 @@ public class SurroundExpression extends AbstractExpression {
 
     private ITraveller<Element> traveller = null;
 
-    private int role = 1;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
+    private static final int ROLE_SPACE = 2;
+
+    private static final int ROLE_ARG_LIST = 0;
+
+    private static final int ROLE_UNDEFINE = 1;
+
+    private int role = ROLE_UNDEFINE;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
 
     @Override
     public boolean hasNextChild() {
-        if(role == 2){
+        if(role == ROLE_SPACE){
             throw new IllegalStateException("this expression has output as a space.");
         }
         if(traveller == null){
@@ -165,7 +171,7 @@ public class SurroundExpression extends AbstractExpression {
 
     @Override
     public IExpression nextChild() {
-        if(role == 2){
+        if(role == ROLE_SPACE){
             throw new IllegalStateException("this expression has output as a space.");
         }
         if(traveller == null){

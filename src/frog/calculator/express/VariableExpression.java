@@ -52,7 +52,7 @@ public class VariableExpression extends EndPointExpression {
         }else if(prototype.protoValue != null){
             result = prototype.protoValue;
         }else {
-            throw new IllegalStateException("variable is not assign.");
+            throw new IllegalStateException("variable " + this.symbol + " is not assign.");
         }
         this.prototype.protoValue = result;
         return result;

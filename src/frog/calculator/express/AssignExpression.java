@@ -12,13 +12,10 @@ public class AssignExpression extends AbstractExpression{
 
     private IExpression valueExpression;
 
-    private String end;
-
     private boolean leaf = false;
 
-    public AssignExpression(String symbol, String end) {
+    public AssignExpression(String symbol) {
         super(symbol, null);
-        this.end = end;
     }
 
     @Override
@@ -70,9 +67,6 @@ public class AssignExpression extends AbstractExpression{
                 if(expression.createBranch(this)){
                     root = expression;
                 }
-            }else if(this.end.equals(expression.symbol())){
-                this.leaf = true;
-                root = this.reversal();
             }else{
                 if(this.createBranch(expression)){
                     root = this;
@@ -117,6 +111,30 @@ public class AssignExpression extends AbstractExpression{
 
     @Override
     public IExpression clone() {
-        return new AssignExpression(this.symbol, this.end);
+        return new AssignExpression(this.symbol);
+    }
+
+    @Override
+    public void setExpressionContext(IExpressionContext context) {
+        this.context = context;
+        context.addBuildFinishListener(new GoDownListener(this));
+    }
+
+    private static class GoDownListener implements IBuildFinishListener{
+
+        private AssignExpression expression;
+
+        private GoDownListener(AssignExpression expression) {
+            this.expression = expression;
+        }
+
+        @Override
+        public void buildFinishCallBack(IExpressionContext context) {
+            if(!expression.leaf){   // 如果赋值操作还没有执行, 则执行赋值
+                expression.leaf = true;
+                IExpression root = expression.reversal();
+                context.setRoot(root);
+            }
+        }
     }
 }

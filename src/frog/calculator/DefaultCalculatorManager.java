@@ -28,6 +28,6 @@ public class DefaultCalculatorManager implements ICalculatorManager {
 
     @Override
     public IExpressionContext createExpressionContext(ICalculatorSession session) {
-        return new DefaultExpressionContext(session);
+        return new DefaultExpressionContext();
     }
 }

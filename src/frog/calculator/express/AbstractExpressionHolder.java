@@ -21,7 +21,7 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private IExpression end = new MarkExpression(";");
 
     // 变量赋值符
-    private IExpression assign = new AssignExpression("=", end.symbol());
+    private IExpression assign = new AssignExpression("=");
 
     // 代码块起始表达式
     private IExpression blockClose = new MarkExpression("}");
