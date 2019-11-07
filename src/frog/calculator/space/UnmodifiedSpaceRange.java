@@ -1,10 +1,10 @@
 package frog.calculator.space;
 
-public class UnmodifySpaceRange implements IRange {
+public class UnmodifiedSpaceRange implements IRange {
 
     private IRange range;
 
-    public UnmodifySpaceRange(IRange range) {
+    public UnmodifiedSpaceRange(IRange range) {
         this.range = range;
     }
 
@@ -21,5 +21,10 @@ public class UnmodifySpaceRange implements IRange {
     @Override
     public boolean equals(Object obj) {
         return range.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return range.toString();
     }
 }

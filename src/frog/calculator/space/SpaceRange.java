@@ -1,5 +1,7 @@
 package frog.calculator.space;
 
+import frog.calculator.util.Arrays;
+
 public class SpaceRange implements IRange {
 
     private int[] maxWidths;
@@ -25,20 +27,26 @@ public class SpaceRange implements IRange {
 
     @Override
     public boolean equals(Object obj) {
+        if(obj == this){ return true; }
         if(!(obj instanceof IRange)){
             return false;
-        }else{
-            IRange range = (IRange) obj;
-            if(this.maxWidths.length != range.dimension()){
+        }
+
+        IRange range = (IRange) obj;
+        if(this.maxWidths.length != range.dimension()){
+            return false;
+        }
+        int[] aimWidths = range.maxWidths();
+        for(int i = 0; i < this.maxWidths.length; i++){
+            if(aimWidths[i] != this.maxWidths[i]){
                 return false;
             }
-            int[] aimWidths = range.maxWidths();
-            for(int i = 0; i < this.maxWidths.length; i++){
-                if(aimWidths[i] != this.maxWidths[i]){
-                    return false;
-                }
-            }
-            return true;
         }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "dimension : " + this.dimension() + ", widths : " + Arrays.toString(maxWidths);
     }
 }

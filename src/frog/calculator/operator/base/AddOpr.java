@@ -1,6 +1,6 @@
 package frog.calculator.operator.base;
 
-import frog.calculator.exception.UnrightExpressionException;
+import frog.calculator.exception.IncorrectStructureException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
@@ -18,7 +18,7 @@ public class AddOpr extends AbstractOperator {
         IExpression right = exp.nextChild();
 
         if(right == null){
-            throw new UnrightExpressionException();
+            throw new IncorrectStructureException("add", "right child is null.");
         }
 
         if(left == null){

@@ -1,6 +1,6 @@
 package frog.calculator.operator.fun;
 
-import frog.calculator.exception.UnrightExpressionException;
+import frog.calculator.exception.IncorrectStructureException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.math.MathUtil;
@@ -17,7 +17,7 @@ public class SqrtOpr extends AbstractOperator {
     public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression child = exp.nextChild();
         if(child == null){
-            throw new UnrightExpressionException();
+            throw new IncorrectStructureException("sqrt", "child is null.");
         }else{
             return OperateUtil.transform(child.interpret(), dealer);
         }

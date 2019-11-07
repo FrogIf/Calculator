@@ -31,12 +31,6 @@ public interface IExpressionHolder {
     IExpression[] getStructureExpression();
 
     /**
-     * 表达式终结符表达式
-     * @return 表达式终结符
-     */
-    IExpression getEndExpression();
-
-    /**
      * 括号开始表达式
      * @return 左括号
      */

@@ -4,6 +4,9 @@ import frog.calculator.command.ICommand;
 import frog.calculator.command.ICommandDetector;
 import frog.calculator.command.ICommandHolder;
 import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.exception.BuildException;
+import frog.calculator.exception.CalculatorError;
+import frog.calculator.exception.ExpressionFormatException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.IExpressionHolder;
@@ -23,6 +26,7 @@ public class Calculator {
     // resolve inner symbol
     private IResolver innerResolver;
 
+    // 命令探测器
     private ICommandDetector detector;
 
     public Calculator(ICalculatorConfigure calculatorConfigure) {
@@ -39,7 +43,7 @@ public class Calculator {
 
     // ===============================================解析执行start=========================================
 
-    private IExpression build(String expression, ICalculatorSession session, IExpressionContext context) {
+    private IExpression build(String expression, ICalculatorSession session, IExpressionContext context) throws BuildException {
         char[] chars = expression.toCharArray();
         int order = 0;
 
@@ -47,7 +51,8 @@ public class Calculator {
         IResolverResult rootResult = this.resolve(chars, i, session);
 
         if (rootResult == null) {
-            throw new IllegalArgumentException("undefined symbol : " + chars[0]);
+            this.failure(session);
+            throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i]);
         }
 
         IExpression root = rootResult.getExpression();
@@ -60,7 +65,8 @@ public class Calculator {
             IResolverResult result = this.resolve(chars, i, session);
 
             if (result == null) {
-                throw new IllegalArgumentException("undefined symbol : " + chars[i]);
+                this.failure(session);
+                throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i] + " at " + i);
             }
 
             IExpression curExp = result.getExpression();
@@ -70,14 +76,15 @@ public class Calculator {
             root = context.getRoot().assembleTree(curExp);
 
             if (root == null) {
-                throw new IllegalStateException("expression format is not right at " + i);
+                this.failure(session);
+                throw new ExpressionFormatException(expression, "expression format is not right at " + i);
             }
 
             context.setRoot(root);
 
             int offset = result.offset();
             if (offset < 1) {
-                throw new IllegalStateException("system error : " + result.getExpression().symbol());
+                throw new CalculatorError("system error : length of '" + result.getExpression().symbol() + "' is " + offset + ".");
             }
             i += offset;
         }
@@ -101,6 +108,14 @@ public class Calculator {
         }while (offset > 0 && startIndex < chars.length);
 
         return commandOffset;
+    }
+
+    private void failure(ICalculatorSession session){
+        ITraveller<ICommand> commands = session.commandTraveller();
+        while(commands.hasNext()){
+            ICommand c = commands.next();
+            c.buildFailedCallback(session);
+        }
     }
 
     private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) {
@@ -144,7 +159,7 @@ public class Calculator {
      * @param session    会话
      * @return 解析结果
      */
-    public String calculate(String expression, ICalculatorSession session) {
+    public String calculate(String expression, ICalculatorSession session) throws BuildException {
         IExpressionContext context = this.calculatorManager.createExpressionContext(session);
 
         IExpression expTree = build(expression, session, context); // 构造解析树

@@ -1,6 +1,6 @@
 package frog.calculator.operator.base;
 
-import frog.calculator.exception.UnrightExpressionException;
+import frog.calculator.exception.IncorrectStructureException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
@@ -17,7 +17,7 @@ public class MultOpr extends AbstractOperator {
         IExpression left = exp.nextChild();
         IExpression right = exp.nextChild();
         if(left == null || right == null){
-            throw new UnrightExpressionException();
+            throw new IncorrectStructureException("mult", "left : " + left + ", right : " + right);
         }
 
         ISpace<BaseNumber> leftInter = left.interpret();

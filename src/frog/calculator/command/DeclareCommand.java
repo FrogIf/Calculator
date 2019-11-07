@@ -104,6 +104,11 @@ public class DeclareCommand extends AbstractCommand {
     }
 
     @Override
+    public void buildFailedCallback(ICalculatorSession session) {
+        session.popCommand(this);
+    }
+
+    @Override
     public String symbol() {
         return command;
     }

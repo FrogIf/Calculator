@@ -37,6 +37,6 @@ public class AtomSpace<T> implements ISpace<T> {
     public IRange getRange() {
         SpaceRange range = new SpaceRange();
         range.setMaxWidths(new int[]{1});
-        return new UnmodifySpaceRange(range);
+        return new UnmodifiedSpaceRange(range);
     }
 }

@@ -1,6 +1,6 @@
 package frog.calculator.operator.fun;
 
-import frog.calculator.exception.UnrightExpressionException;
+import frog.calculator.exception.IncorrectStructureException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.math.rational.IntegerNumber;
@@ -16,10 +16,10 @@ public class AverageOpr extends AbstractOperator {
     public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression child = exp.nextChild();
         if(child == null){
-            throw new UnrightExpressionException();
+            throw new IncorrectStructureException("average", "no argument.");
         }else{
             if(!child.hasNextChild()){
-                throw new IllegalArgumentException("empty argument.");
+                throw new IncorrectStructureException("average", "argument list is empty.");
             }
             IntegerNumber count = IntegerNumber.ONE;
             ISpace<BaseNumber> sumSpace = child.nextChild().interpret();

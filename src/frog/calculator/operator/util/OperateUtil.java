@@ -1,6 +1,6 @@
 package frog.calculator.operator.util;
 
-import frog.calculator.exception.UnsupportDimensionException;
+import frog.calculator.exception.NonsupportRangeException;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.space.Coordinate;
 import frog.calculator.space.FixedAlignSpace;
@@ -14,7 +14,7 @@ public class OperateUtil {
         IRange rr = right.getRange();
 
         if(!lr.equals(rr)){
-            throw new UnsupportDimensionException(lr.toString(), 12);
+            throw new NonsupportRangeException(dealer.getClass().toString(), "left range not equals right range : left : " + lr.toString() + ", right : " + rr.toString());
         }
 
         FixedAlignSpace<BaseNumber> result = new FixedAlignSpace<>(lr);

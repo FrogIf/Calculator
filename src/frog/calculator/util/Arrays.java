@@ -4,6 +4,35 @@ import frog.calculator.util.collection.ITraveller;
 
 public class Arrays {
 
+    public static <T> String toString(T[] arr){
+        if(arr == null) return "null";
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        boolean start = true;
+        for (T t : arr) {
+            if(start){ start = false; }
+            else{ builder.append(','); }
+            builder.append(t);
+        }
+        builder.append(']');
+        return builder.toString();
+    }
+
+    public static String toString(int[] arr){
+        if(arr == null) return "null";
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        boolean start = true;
+        for (int i : arr) {
+            if(start){ start = false; }
+            else{ builder.append(','); }
+            builder.append(i);
+        }
+        builder.append(']');
+        return builder.toString();
+    }
+
+
     public static <T> void copy(T[] source, T[] dest, int start, int end){
         checkCopy(source.length, dest.length, start, end);
 

@@ -1,6 +1,6 @@
 package frog.calculator.operator.base;
 
-import frog.calculator.exception.UnsupportOperateException;
+import frog.calculator.exception.NonsupportOperateException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.math.MathUtil;
@@ -18,8 +18,10 @@ public class PowerOpr extends AbstractOperator {
         IExpression index = exp.nextChild();
         ISpace<BaseNumber> indexSpace = index.interpret();
         IRange indexRange = indexSpace.getRange();
-        if(indexRange.dimension() != 1 || indexRange.maxWidths()[0] != 1){
-            throw new UnsupportOperateException(exp.symbol());
+        if(indexRange.dimension() != 1){
+            throw new NonsupportOperateException("power", "the index require dimension 1 but " + indexRange.dimension());
+        }else if(indexRange.maxWidths()[0] != 1){
+            throw new NonsupportOperateException("power", "the index require number 1 but " + indexRange.maxWidths()[0]);
         }else{
             BaseNumber indexNum = indexSpace.get(Coordinate.ORIGIN);
 

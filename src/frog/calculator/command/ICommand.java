@@ -35,4 +35,6 @@ public interface ICommand extends ISymbol {
      */
     boolean over(char[] chars, int startIndex, ICalculatorSession session);
 
+    void buildFailedCallback(ICalculatorSession session);
+
 }

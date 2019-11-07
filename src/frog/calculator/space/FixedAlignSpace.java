@@ -165,7 +165,7 @@ public class FixedAlignSpace<T> implements ISpace<T> {
         if(this.range == null){
             SpaceRange range = new SpaceRange();
             range.setMaxWidths(widthInfo);
-            this.range = new UnmodifySpaceRange(range);
+            this.range = new UnmodifiedSpaceRange(range);
         }
         return this.range;
     }

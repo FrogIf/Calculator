@@ -43,6 +43,11 @@ public class BlockCommand extends AbstractCommand {
     }
 
     @Override
+    public void buildFailedCallback(ICalculatorSession session) {
+        // do nothing
+    }
+
+    @Override
     public String symbol() {
         return this.blockOpen;
     }

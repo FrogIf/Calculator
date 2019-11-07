@@ -1,6 +1,6 @@
 package frog.calculator.operator.fun;
 
-import frog.calculator.exception.UnrightExpressionException;
+import frog.calculator.exception.IncorrectStructureException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;
@@ -12,10 +12,10 @@ public class SumOpr extends AbstractOperator {
     public ISpace<BaseNumber> operate(IExpression exp) {
         IExpression child = exp.nextChild();
         if(child == null){
-            throw new UnrightExpressionException();
+            throw new IncorrectStructureException("sum", "child is null.");
         }else{
             if(!child.hasNextChild()){
-                throw new IllegalArgumentException("empty argument.");
+                throw new IncorrectStructureException("sum", "empty argument.");
             }
             ISpace<BaseNumber> sumSpace = child.nextChild().interpret();
             while(child.hasNextChild()){
