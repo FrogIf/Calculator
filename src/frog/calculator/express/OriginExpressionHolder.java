@@ -4,6 +4,7 @@ import frog.calculator.operator.base.*;
 import frog.calculator.operator.ext.FactorialOpr;
 import frog.calculator.operator.ext.PercentOpr;
 import frog.calculator.operator.fun.AverageOpr;
+import frog.calculator.operator.fun.BeginOpr;
 import frog.calculator.operator.fun.SqrtOpr;
 import frog.calculator.operator.fun.SumOpr;
 
@@ -28,7 +29,8 @@ public class OriginExpressionHolder extends AbstractExpressionHolder{
                 new RightExpression("i", 4, new ComplexMarkOpr()),
                 new LeftExpression("sqrt", FUNCTION_BUILD_FACTOR, new SqrtOpr()),
                 new LeftExpression("avg", FUNCTION_BUILD_FACTOR, new AverageOpr()),
-                new LeftExpression("sum", FUNCTION_BUILD_FACTOR, new SumOpr())
+                new LeftExpression("sum", FUNCTION_BUILD_FACTOR, new SumOpr()),
+                new LeftExpression("begin", FUNCTION_BUILD_FACTOR, new BeginOpr())
         };
     }
 

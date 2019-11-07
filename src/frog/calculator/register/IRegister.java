@@ -1,10 +1,11 @@
 package frog.calculator.register;
 
 import frog.calculator.ISymbol;
+import frog.calculator.exception.DuplicateSymbolException;
 
 public interface IRegister<T extends ISymbol> {
 
-    void insert(T expression);
+    void insert(T expression) throws DuplicateSymbolException;
 
     T find(String symbol);
 

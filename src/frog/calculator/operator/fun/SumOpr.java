@@ -1,6 +1,6 @@
 package frog.calculator.operator.fun;
 
-import frog.calculator.exception.IncorrectStructureException;
+import frog.calculator.operator.exception.IncorrectStructureException;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.operator.AbstractOperator;

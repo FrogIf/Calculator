@@ -1,6 +1,8 @@
 package frog.calculator;
 
 import frog.calculator.command.*;
+import frog.calculator.exception.CalculatorError;
+import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionHolder;
 import frog.calculator.express.OriginExpressionHolder;
@@ -9,11 +11,7 @@ import frog.calculator.register.SymbolRegister;
 import frog.calculator.resolver.DefaultResolverResultFactory;
 import frog.calculator.resolver.IResolver;
 import frog.calculator.resolver.IResolverResultFactory;
-import frog.calculator.resolver.resolve.ChainResolver;
-import frog.calculator.resolver.resolve.NumberResolver;
-import frog.calculator.resolver.resolve.PMResolver;
-import frog.calculator.resolver.resolve.SymbolResolver;
-import frog.calculator.resolver.resolve.NumberExpressionFactory;
+import frog.calculator.resolver.resolve.*;
 
 public class DefaultCalculatorComponentFactory implements ICalculatorComponentFactory {
 
@@ -60,7 +58,11 @@ public class DefaultCalculatorComponentFactory implements ICalculatorComponentFa
         SymbolRegister<ICommand> register = new SymbolRegister<>();
         ICommand[] commands = holder.getCommands();
         for (ICommand command : commands) {
-            register.insert(command);
+            try {
+                register.insert(command);
+            } catch (DuplicateSymbolException e) {
+                throw new CalculatorError("duplicate system command");
+            }
         }
         return new DefaultCommandDetector(register);
     }
@@ -75,7 +77,11 @@ public class DefaultCalculatorComponentFactory implements ICalculatorComponentFa
     private IRegister<IExpression> createRegister(IExpression[] expressions) {
         SymbolRegister<IExpression> register = new SymbolRegister<>();
         for (IExpression exp : expressions) {
-            register.insert(exp);
+            try {
+                register.insert(exp);
+            } catch (DuplicateSymbolException e) {
+                throw new CalculatorError("duplicate system expression");
+            }
         }
         return register;
     }

@@ -2,6 +2,7 @@ package frog.calculator.command;
 
 import frog.calculator.ISymbol;
 import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.exception.BuildException;
 import frog.calculator.resolver.IResolverResult;
 
 public interface ICommand extends ISymbol {
@@ -19,7 +20,7 @@ public interface ICommand extends ISymbol {
      * @param startIndex 解析开始位置
      * @param session 会话
      */
-    void beforeResolve(char[] chars, int startIndex, ICalculatorSession session);
+    void beforeResolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException;
 
     /**
      * 解析后执行
@@ -33,7 +34,7 @@ public interface ICommand extends ISymbol {
      * 指示该命令是否已失效
      * @return true 已失效, false 依旧起作用
      */
-    boolean over(char[] chars, int startIndex, ICalculatorSession session);
+    boolean over(char[] chars, int startIndex, ICalculatorSession session) throws BuildException;
 
     void buildFailedCallback(ICalculatorSession session);
 

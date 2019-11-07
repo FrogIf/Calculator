@@ -1,6 +1,7 @@
 package frog.calculator.connect;
 
 import frog.calculator.command.ICommand;
+import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 import frog.calculator.register.IRegister;
 import frog.calculator.resolver.IResolverResult;
@@ -19,7 +20,7 @@ public interface ICalculatorSession {
      * 添加会话变量
      * @param expression
      */
-    void addVariable(IExpression expression);
+    void addVariable(IExpression expression) throws DuplicateSymbolException;
 
     /**
      * 从会话变量中获取值

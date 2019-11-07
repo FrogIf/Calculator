@@ -1,11 +1,15 @@
 package frog.calculator.operator.util;
 
-import frog.calculator.exception.NonsupportRangeException;
+import frog.calculator.operator.exception.IncorrectStructureException;
+import frog.calculator.operator.exception.NonsupportRangeException;
+import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.space.Coordinate;
 import frog.calculator.space.FixedAlignSpace;
 import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.LinkedList;
 
 public class OperateUtil {
 
@@ -50,6 +54,19 @@ public class OperateUtil {
         }
 
         return result;
+    }
+
+    public static IList<IExpression> getFunctionArgumentList(IExpression fun){
+        IExpression surround = fun.nextChild();
+        if(surround == null){
+            throw new IncorrectStructureException("average", "no argument.");
+        }else{
+            IList<IExpression> argumentExpressions = new LinkedList<>();
+            while(surround.hasNextChild()){
+                argumentExpressions.add(surround.nextChild());
+            }
+            return argumentExpressions;
+        }
     }
 
 }

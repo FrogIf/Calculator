@@ -1,6 +1,7 @@
 package frog.calculator.register;
 
 import frog.calculator.ISymbol;
+import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.util.ComparableComparator;
 import frog.calculator.util.collection.AVLTreeSet;
 import frog.calculator.util.collection.ISet;
@@ -20,7 +21,7 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
     }
 
     @Override
-    public void insert(T expression) {
+    public void insert(T expression) throws DuplicateSymbolException {
         if(expression != null){
             insert(expression.symbol().toCharArray(), 0, expression, new SymbolRegister<>(), false);
         }
@@ -28,10 +29,14 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
 
     @Override
     public void replace(String exp, T expression) {
-        this.insert(exp.toCharArray(), 0, expression, new SymbolRegister<>(), true);
+        try {
+            this.insert(exp.toCharArray(), 0, expression, new SymbolRegister<>(), true);
+        } catch (DuplicateSymbolException e) {
+            // do nothing, the DuplicateSymbolException will not be trigger.
+        }
     }
 
-    private void insert(char[] expChars, int startIndex, T expression, SymbolRegister<T> finder, boolean replace){
+    private void insert(char[] expChars, int startIndex, T expression, SymbolRegister<T> finder, boolean replace) throws DuplicateSymbolException {
         char ch = expChars[startIndex];
 
         finder.symbol = ch;
@@ -46,7 +51,7 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
         if(startIndex == expChars.length - 1){
             if(!replace){
                 if(register.expression != null && expression != null){
-                    throw new IllegalArgumentException("duplicate define expression.");
+                    throw new DuplicateSymbolException("duplicate define expression : " + expression.symbol());
                 }
             }
 

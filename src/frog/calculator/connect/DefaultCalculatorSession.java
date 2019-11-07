@@ -2,6 +2,7 @@ package frog.calculator.connect;
 
 import frog.calculator.ICalculatorManager;
 import frog.calculator.command.ICommand;
+import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 import frog.calculator.register.IRegister;
 import frog.calculator.register.SymbolRegister;
@@ -44,7 +45,7 @@ public class DefaultCalculatorSession implements ICalculatorSession {
     }
 
     @Override
-    public void addVariable(IExpression expression) {
+    public void addVariable(IExpression expression) throws DuplicateSymbolException {
         localRegisterStack.first().insert(expression);
     }
 

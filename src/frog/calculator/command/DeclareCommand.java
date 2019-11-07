@@ -2,6 +2,7 @@ package frog.calculator.command;
 
 import frog.calculator.ICalculatorManager;
 import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.exception.BuildException;
 import frog.calculator.express.FunctionExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionHolder;
@@ -62,7 +63,7 @@ public class DeclareCommand extends AbstractCommand {
     }
 
     @Override
-    public void beforeResolve(char[] chars, int startIndex, ICalculatorSession session) {
+    public void beforeResolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException {
         // 执行变量解析
         IResolverResult result = this.variableResolver.resolve(chars, startIndex);
         if(result != null){

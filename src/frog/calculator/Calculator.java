@@ -41,7 +41,17 @@ public class Calculator {
         this.detector = componentFactory.createCommandDetector(commandHolder);
     }
 
-    // ===============================================解析执行start=========================================
+    private IExpression build(String expression, ICalculatorSession session) throws BuildException {
+        IExpressionContext context = this.calculatorManager.createExpressionContext(session);
+        try {
+            return this.build(expression, session, context);
+        } catch (BuildException e) {
+            this.failure(session);
+            throw e;
+        }finally {
+            session.clearCommand();
+        }
+    }
 
     private IExpression build(String expression, ICalculatorSession session, IExpressionContext context) throws BuildException {
         char[] chars = expression.toCharArray();
@@ -51,7 +61,6 @@ public class Calculator {
         IResolverResult rootResult = this.resolve(chars, i, session);
 
         if (rootResult == null) {
-            this.failure(session);
             throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i]);
         }
 
@@ -65,7 +74,6 @@ public class Calculator {
             IResolverResult result = this.resolve(chars, i, session);
 
             if (result == null) {
-                this.failure(session);
                 throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i] + " at " + i);
             }
 
@@ -76,7 +84,6 @@ public class Calculator {
             root = context.getRoot().assembleTree(curExp);
 
             if (root == null) {
-                this.failure(session);
                 throw new ExpressionFormatException(expression, "expression format is not right at " + i);
             }
 
@@ -94,6 +101,13 @@ public class Calculator {
         return context.getRoot();
     }
 
+    /**
+     * 命令探查
+     * @param chars 表达式串
+     * @param startIndex 探查起始位置
+     * @param session 计算器会话
+     * @return 解析偏移量
+     */
     private int commandDetect(char[] chars, int startIndex, ICalculatorSession session){
         ICommand command;
         int commandOffset = 0;
@@ -110,6 +124,10 @@ public class Calculator {
         return commandOffset;
     }
 
+    /**
+     * 构建失败时回调
+     * @param session 会话
+     */
     private void failure(ICalculatorSession session){
         ITraveller<ICommand> commands = session.commandTraveller();
         while(commands.hasNext()){
@@ -118,14 +136,14 @@ public class Calculator {
         }
     }
 
-    private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) {
+    private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException {
         // 解析前置命令
         ITraveller<ICommand> commands = session.commandTraveller();
         while(commands.hasNext()){
             ICommand c = commands.next();
             c.beforeResolve(chars, startIndex, session);
             if(c.over(chars, startIndex, session)){
-                session.popCommand(c);
+                session.popCommand(c);  // TODO 并发修改异常
             }
         }
 
@@ -136,6 +154,11 @@ public class Calculator {
             if(result == null){
                 // 使用可执行解析器进行解析
                 result = this.innerResolver.resolve(chars, startIndex);
+            }else{
+                IResolverResult tryResult = this.innerResolver.resolve(chars, startIndex);
+                if(tryResult != null && tryResult.offset() > result.offset()){
+                    result = tryResult;
+                }
             }
         }
 
@@ -154,15 +177,12 @@ public class Calculator {
 
     /**
      * 执行计算
-     *
      * @param expression 待计算的表达式
      * @param session    会话
      * @return 解析结果
      */
     public String calculate(String expression, ICalculatorSession session) throws BuildException {
-        IExpressionContext context = this.calculatorManager.createExpressionContext(session);
-
-        IExpression expTree = build(expression, session, context); // 构造解析树
+        IExpression expTree = build(expression, session); // 构造解析树
 
         ISpace<BaseNumber> result = expTree.interpret(); // 执行计算
 
@@ -193,7 +213,5 @@ public class Calculator {
     public ICalculatorSession getSession(){
         return this.calculatorManager.createCalculatorSession();
     }
-
-    // ===============================================解析执行end=========================================
 
 }

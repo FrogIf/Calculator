@@ -1,4 +1,4 @@
-package frog.calculator.exception;
+package frog.calculator.operator.exception;
 
 public class IncorrectStructureException extends NonsupportOperateException {
 

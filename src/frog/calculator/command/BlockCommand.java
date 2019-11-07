@@ -44,7 +44,8 @@ public class BlockCommand extends AbstractCommand {
 
     @Override
     public void buildFailedCallback(ICalculatorSession session) {
-        // do nothing
+        session.popLocalVariableRegion();
+        session.popCommand(this);
     }
 
     @Override
