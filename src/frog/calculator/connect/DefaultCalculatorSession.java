@@ -11,7 +11,7 @@ import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.Stack;
 
-public class DefaultCalculatorSession implements ICalculatorSession {
+public class DefaultCalculatorSession extends AbstractCalculatorSession {
 
     private ICalculatorManager manager;
 

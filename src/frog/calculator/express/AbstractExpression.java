@@ -45,11 +45,6 @@ public abstract class AbstractExpression implements IExpression{
     }
 
     @Override
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    @Override
     public int order() {
         return this.order;
     }
@@ -65,7 +60,8 @@ public abstract class AbstractExpression implements IExpression{
     }
 
     @Override
-    public void setExpressionContext(IExpressionContext context) {
+    public void buildInit(int order, IExpressionContext context) {
+        this.order = order;
         this.context = context;
     }
 }

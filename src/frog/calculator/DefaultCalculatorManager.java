@@ -5,6 +5,7 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
+import frog.calculator.express.StartExpression;
 import frog.calculator.resolver.IResolverResult;
 import frog.calculator.resolver.IResolverResultFactory;
 
@@ -28,6 +29,8 @@ public class DefaultCalculatorManager implements ICalculatorManager {
 
     @Override
     public IExpressionContext createExpressionContext(ICalculatorSession session) {
-        return new DefaultExpressionContext();
+        IExpressionContext context= new DefaultExpressionContext();
+        context.setRoot(StartExpression.getInstance());
+        return context;
     }
 }

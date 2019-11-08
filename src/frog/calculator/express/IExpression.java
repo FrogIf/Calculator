@@ -48,22 +48,10 @@ public interface IExpression extends Cloneable, ISymbol {
     IExpression clone();
 
     /**
-     * 标记符号在字符串表达式中的位置
-     * @return
-     */
-    void setOrder(int order);
-
-    /**
      * 获取表达式节点在整个表达式中的位置
      * @return
      */
     int order();
-
-    /**
-     * 设置表达式上下文, 表达式上下文中存有当前表达式树的全部变量值
-     * @param context
-     */
-    void setExpressionContext(IExpressionContext context);
 
     /**
      * 解释执行表达式
@@ -76,4 +64,6 @@ public interface IExpression extends Cloneable, ISymbol {
     IExpression nextChild();
 
     IExpressionContext getContext();
+
+    void buildInit(int order, IExpressionContext context);
 }

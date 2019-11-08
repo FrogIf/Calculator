@@ -114,9 +114,10 @@ public class AssignExpression extends AbstractExpression{
         return new AssignExpression(this.symbol);
     }
 
+
     @Override
-    public void setExpressionContext(IExpressionContext context) {
-        this.context = context;
+    public void buildInit(int order, IExpressionContext context) {
+        super.buildInit(order, context);
         context.addBuildFinishListener(new GoDownListener(this));
     }
 

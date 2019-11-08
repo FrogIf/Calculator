@@ -17,6 +17,7 @@ import frog.calculator.space.Coordinate;
 import frog.calculator.space.IRange;
 import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.ITraveller;
+import frog.calculator.util.collection.Queue;
 
 public class Calculator {
 
@@ -57,36 +58,22 @@ public class Calculator {
         char[] chars = expression.toCharArray();
         int order = 0;
 
-        int i = commandDetect(chars, 0, session);
-        IResolverResult rootResult = this.resolve(chars, i, session);
-
-        if (rootResult == null) {
-            throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i]);
-        }
-
-        IExpression root = rootResult.getExpression();
-        root.setOrder(order++);
-        context.setRoot(root);
-
-        for (i = i + rootResult.offset(); i < chars.length; ) {
+        for (int i = 0; i < chars.length; ) {
             i += commandDetect(chars, i, session);
             if(i >= chars.length){ break; }
-            IResolverResult result = this.resolve(chars, i, session);
 
+            IResolverResult result = this.resolve(chars, i, session);
             if (result == null) {
                 throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i] + " at " + i);
             }
 
-            IExpression curExp = result.getExpression();
-            curExp.setOrder(order++);
-            curExp.setExpressionContext(context);
+            IExpression exp = result.getExpression();
+            exp.buildInit(order++, context);
 
-            root = context.getRoot().assembleTree(curExp);
-
+            IExpression root = context.getRoot().assembleTree(exp);
             if (root == null) {
                 throw new ExpressionFormatException(expression, "expression format is not right at " + i);
             }
-
             context.setRoot(root);
 
             int offset = result.offset();
@@ -139,12 +126,19 @@ public class Calculator {
     private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException {
         // 解析前置命令
         ITraveller<ICommand> commands = session.commandTraveller();
+        boolean canOver = true; // 标记是否可以结束, 出栈顺序必须是从栈顶到栈底, 所以如果一个命令不能出栈, 那么它下面的也不能出栈
+        Queue<ICommand> queue = new Queue<>();
         while(commands.hasNext()){
             ICommand c = commands.next();
             c.beforeResolve(chars, startIndex, session);
-            if(c.over(chars, startIndex, session)){
-                session.popCommand(c);  // TODO 并发修改异常
+            if(canOver && c.over(chars, startIndex, session)){
+                queue.enqueue(c);
+            }else{
+                canOver = false;
             }
+        }
+        while(!queue.isEmpty()){
+            session.popCommand(queue.dequeue());
         }
 
         // 尝试使用session解析器
@@ -164,12 +158,19 @@ public class Calculator {
 
         // 解析后置命令
         commands = session.commandTraveller();
+        queue.clear();
+        canOver = true;
         while(commands.hasNext()){
             ICommand c = commands.next();
             result = c.afterResolve(result, session);
-            if(c.over(chars, startIndex, session)){
-                session.popCommand(c);
+            if(canOver && c.over(chars, startIndex, session)){
+                queue.enqueue(c);
+            }else{
+                canOver = false;
             }
+        }
+        while(!queue.isEmpty()){
+            session.popCommand(queue.dequeue());
         }
 
         return result;
