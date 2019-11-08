@@ -45,7 +45,9 @@ public class Calculator {
     private IExpression build(String expression, ICalculatorSession session) throws BuildException {
         IExpressionContext context = this.calculatorManager.createExpressionContext(session);
         try {
-            return this.build(expression, session, context);
+            this.build(expression, session, context);
+            context.finishBuild();
+            return context.getRoot();
         } catch (BuildException e) {
             this.failure(session);
             throw e;
@@ -54,7 +56,7 @@ public class Calculator {
         }
     }
 
-    private IExpression build(String expression, ICalculatorSession session, IExpressionContext context) throws BuildException {
+    private void build(String expression, ICalculatorSession session, IExpressionContext context) throws BuildException {
         char[] chars = expression.toCharArray();
         int order = 0;
 
@@ -82,10 +84,6 @@ public class Calculator {
             }
             i += offset;
         }
-
-        context.finishBuild();
-
-        return context.getRoot();
     }
 
     /**

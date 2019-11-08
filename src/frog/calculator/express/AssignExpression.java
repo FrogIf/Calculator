@@ -121,7 +121,7 @@ public class AssignExpression extends AbstractExpression{
         context.addBuildFinishListener(new GoDownListener(this));
     }
 
-    private static class GoDownListener implements IBuildFinishListener{
+    private static class GoDownListener implements IBuildFinishListener {
 
         private AssignExpression expression;
 
