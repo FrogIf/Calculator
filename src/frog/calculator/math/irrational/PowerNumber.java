@@ -6,8 +6,13 @@ import frog.calculator.math.real.FactorNumber;
 
 /**
  * 幂指数 z = x ^ y
+ * 指数是分数
  */
-public class PowerExponentNumber extends AbstractIrrationalNumber {
+public class PowerNumber extends AbstractIrrationalNumber {
+
+    private RationalNumber exponent;   // 指数
+
+    private RationalNumber base;    // 底数
 
     @Override
     public FactorNumber tryAdd(AbstractIrrationalNumber num) {
@@ -31,6 +36,11 @@ public class PowerExponentNumber extends AbstractIrrationalNumber {
 
     @Override
     public AbstractIrrationalNumber tryAbsorb(RationalNumber rational) {
+        return null;
+    }
+
+    @Override
+    public RationalNumber tryConvertToRational() {
         return null;
     }
 
