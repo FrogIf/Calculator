@@ -1,10 +1,10 @@
 package frog.calculator;
 
-import frog.calculator.command.ICommandDetector;
-import frog.calculator.command.ICommandHolder;
+import frog.calculator.build.command.ICommandDetector;
+import frog.calculator.build.command.ICommandHolder;
 import frog.calculator.express.IExpressionHolder;
-import frog.calculator.resolver.IResolver;
-import frog.calculator.resolver.IResolverResultFactory;
+import frog.calculator.build.resolve.IResolver;
+import frog.calculator.build.resolve.IResolverResultFactory;
 
 public interface ICalculatorComponentFactory {
 

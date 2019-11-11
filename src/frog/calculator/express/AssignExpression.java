@@ -1,7 +1,9 @@
 package frog.calculator.express;
 
+import frog.calculator.build.IBuildFinishListener;
+import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.exec.space.ISpace;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.space.ISpace;
 
 /**
  * 赋值表达式
@@ -116,9 +118,9 @@ public class AssignExpression extends AbstractExpression{
 
 
     @Override
-    public void buildInit(int order, IExpressionContext context) {
-        super.buildInit(order, context);
-        context.addBuildFinishListener(new GoDownListener(this));
+    public void buildInit(int order, IExpressionContext context, IExpressionBuilder builder) {
+        super.buildInit(order, context, builder);
+        builder.addBuildFinishListener(new GoDownListener(this));
     }
 
     private static class GoDownListener implements IBuildFinishListener {
@@ -130,12 +132,12 @@ public class AssignExpression extends AbstractExpression{
         }
 
         @Override
-        public void buildFinishCallBack(IExpressionContext context) {
+        public IExpression buildFinishCallBack(IExpressionBuilder builder) {
             if(!expression.leaf){   // 如果赋值操作还没有执行, 则执行赋值
                 expression.leaf = true;
-                IExpression root = expression.reversal();
-                context.setRoot(root);
+                return expression.reversal();
             }
+            return builder.getRoot();
         }
     }
 }

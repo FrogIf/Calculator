@@ -1,7 +1,7 @@
 package frog.calculator.express;
 
 import frog.calculator.math.BaseNumber;
-import frog.calculator.space.ISpace;
+import frog.calculator.exec.space.ISpace;
 
 /**
  * 值变量表达式

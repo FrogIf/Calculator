@@ -1,9 +1,9 @@
 package frog.calculator.express;
 
 import frog.calculator.math.BaseNumber;
-import frog.calculator.space.Coordinate;
-import frog.calculator.space.FixedAlignSpaceBuilder;
-import frog.calculator.space.ISpace;
+import frog.calculator.exec.space.Coordinate;
+import frog.calculator.exec.space.FixedAlignSpaceBuilder;
+import frog.calculator.exec.space.ISpace;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;

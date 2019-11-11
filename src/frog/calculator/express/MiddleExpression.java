@@ -1,6 +1,6 @@
 package frog.calculator.express;
 
-import frog.calculator.operator.IOperator;
+import frog.calculator.exec.IOperator;
 
 public class MiddleExpression extends AbstractBlockExpression{
 

@@ -1,17 +1,17 @@
 package frog.calculator;
 
-import frog.calculator.command.*;
+import frog.calculator.build.command.*;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionHolder;
 import frog.calculator.express.OriginExpressionHolder;
-import frog.calculator.register.IRegister;
-import frog.calculator.register.SymbolRegister;
-import frog.calculator.resolver.DefaultResolverResultFactory;
-import frog.calculator.resolver.IResolver;
-import frog.calculator.resolver.IResolverResultFactory;
-import frog.calculator.resolver.resolve.*;
+import frog.calculator.build.register.IRegister;
+import frog.calculator.build.register.SymbolRegister;
+import frog.calculator.build.resolve.DefaultResolverResultFactory;
+import frog.calculator.build.resolve.IResolver;
+import frog.calculator.build.resolve.IResolverResultFactory;
+import frog.calculator.build.resolve.*;
 
 public class DefaultCalculatorComponentFactory implements ICalculatorComponentFactory {
 

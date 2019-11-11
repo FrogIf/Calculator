@@ -1,12 +1,12 @@
 package frog.calculator.express;
 
-import frog.calculator.operator.base.*;
-import frog.calculator.operator.ext.FactorialOpr;
-import frog.calculator.operator.ext.PercentOpr;
-import frog.calculator.operator.fun.AverageOpr;
-import frog.calculator.operator.fun.BeginOpr;
-import frog.calculator.operator.fun.SqrtOpr;
-import frog.calculator.operator.fun.SumOpr;
+import frog.calculator.exec.base.*;
+import frog.calculator.exec.ext.FactorialOpr;
+import frog.calculator.exec.ext.PercentOpr;
+import frog.calculator.exec.fun.AverageOpr;
+import frog.calculator.exec.fun.BeginOpr;
+import frog.calculator.exec.fun.SqrtOpr;
+import frog.calculator.exec.fun.SumOpr;
 
 public class OriginExpressionHolder extends AbstractExpressionHolder{
 

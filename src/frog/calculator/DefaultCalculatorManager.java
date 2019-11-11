@@ -1,13 +1,12 @@
 package frog.calculator;
 
+import frog.calculator.build.DefaultExpressionBuilder;
+import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.build.resolve.IResolverResult;
+import frog.calculator.build.resolve.IResolverResultFactory;
 import frog.calculator.connect.DefaultCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.express.DefaultExpressionContext;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
-import frog.calculator.express.StartExpression;
-import frog.calculator.resolver.IResolverResult;
-import frog.calculator.resolver.IResolverResultFactory;
 
 public class DefaultCalculatorManager implements ICalculatorManager {
 
@@ -28,9 +27,7 @@ public class DefaultCalculatorManager implements ICalculatorManager {
     }
 
     @Override
-    public IExpressionContext createExpressionContext(ICalculatorSession session) {
-        IExpressionContext context= new DefaultExpressionContext();
-        context.setRoot(StartExpression.getInstance());
-        return context;
+    public IExpressionBuilder createExpressionBuilder(ICalculatorSession session) {
+        return new DefaultExpressionBuilder();
     }
 }

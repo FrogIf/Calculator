@@ -1,12 +1,12 @@
 package frog.calculator.connect;
 
 import frog.calculator.ICalculatorManager;
-import frog.calculator.command.ICommand;
+import frog.calculator.build.command.ICommand;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
-import frog.calculator.register.IRegister;
-import frog.calculator.register.SymbolRegister;
-import frog.calculator.resolver.IResolverResult;
+import frog.calculator.build.register.IRegister;
+import frog.calculator.build.register.SymbolRegister;
+import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.Stack;
@@ -30,12 +30,12 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
     }
 
     @Override
-    public void createLocalVariableRegion() {
+    public void createLocalVariableTable() {
         localRegisterStack.push(new SymbolRegister<>());
     }
 
     @Override
-    public IRegister<IExpression> popLocalVariableRegion() {
+    public IRegister<IExpression> popLocalVariableTable() {
         IRegister<IExpression> pop = localRegisterStack.pop();
         if(pop == sessionRegister){
             localRegisterStack.push(sessionRegister);

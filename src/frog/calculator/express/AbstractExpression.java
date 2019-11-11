@@ -1,8 +1,9 @@
 package frog.calculator.express;
 
+import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.operator.IOperator;
-import frog.calculator.space.ISpace;
+import frog.calculator.exec.IOperator;
+import frog.calculator.exec.space.ISpace;
 
 public abstract class AbstractExpression implements IExpression{
 
@@ -60,7 +61,7 @@ public abstract class AbstractExpression implements IExpression{
     }
 
     @Override
-    public void buildInit(int order, IExpressionContext context) {
+    public void buildInit(int order, IExpressionContext context, IExpressionBuilder builder) {
         this.order = order;
         this.context = context;
     }

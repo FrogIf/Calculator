@@ -5,12 +5,4 @@ package frog.calculator.express;
  */
 public interface IExpressionContext {
 
-    void setRoot(IExpression root);
-
-    IExpression getRoot();
-
-    void finishBuild();
-
-    void addBuildFinishListener(IBuildFinishListener listener);
-
 }

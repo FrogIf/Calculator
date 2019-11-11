@@ -1,21 +1,21 @@
 package frog.calculator;
 
-import frog.calculator.command.ICommand;
-import frog.calculator.command.ICommandDetector;
-import frog.calculator.command.ICommandHolder;
+import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.build.command.ICommand;
+import frog.calculator.build.command.ICommandDetector;
+import frog.calculator.build.command.ICommandHolder;
+import frog.calculator.build.resolve.IResolver;
+import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.exception.ExpressionFormatException;
+import frog.calculator.exec.space.Coordinate;
+import frog.calculator.exec.space.IRange;
+import frog.calculator.exec.space.ISpace;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
 import frog.calculator.express.IExpressionHolder;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.resolver.IResolver;
-import frog.calculator.resolver.IResolverResult;
-import frog.calculator.space.Coordinate;
-import frog.calculator.space.IRange;
-import frog.calculator.space.ISpace;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Queue;
 
@@ -43,11 +43,11 @@ public class Calculator {
     }
 
     private IExpression build(String expression, ICalculatorSession session) throws BuildException {
-        IExpressionContext context = this.calculatorManager.createExpressionContext(session);
+        IExpressionBuilder builder = this.calculatorManager.createExpressionBuilder(session);
         try {
-            this.build(expression, session, context);
-            context.finishBuild();
-            return context.getRoot();
+            this.build(expression, session, builder);
+            builder.finishBuild();
+            return builder.getRoot();
         } catch (BuildException e) {
             this.failure(session);
             throw e;
@@ -56,27 +56,24 @@ public class Calculator {
         }
     }
 
-    private void build(String expression, ICalculatorSession session, IExpressionContext context) throws BuildException {
+    private void build(String expression, ICalculatorSession session, IExpressionBuilder builder) throws BuildException {
         char[] chars = expression.toCharArray();
-        int order = 0;
 
         for (int i = 0; i < chars.length; ) {
-            i += commandDetect(chars, i, session);
+            // 命令解析
+            i += this.commandDetect(chars, i, session);
             if(i >= chars.length){ break; }
 
+            // 表达式解析
             IResolverResult result = this.resolve(chars, i, session);
             if (result == null) {
                 throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i] + " at " + i);
             }
 
-            IExpression exp = result.getExpression();
-            exp.buildInit(order++, context);
-
-            IExpression root = context.getRoot().assembleTree(exp);
-            if (root == null) {
+            // 构建
+            if (builder.append(result.getExpression()) == null) {
                 throw new ExpressionFormatException(expression, "expression format is not right at " + i);
             }
-            context.setRoot(root);
 
             int offset = result.offset();
             if (offset < 1) {
@@ -107,18 +104,6 @@ public class Calculator {
         }while (offset > 0 && startIndex < chars.length);
 
         return commandOffset;
-    }
-
-    /**
-     * 构建失败时回调
-     * @param session 会话
-     */
-    private void failure(ICalculatorSession session){
-        ITraveller<ICommand> commands = session.commandTraveller();
-        while(commands.hasNext()){
-            ICommand c = commands.next();
-            c.buildFailedCallback(session);
-        }
     }
 
     private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException {
@@ -172,6 +157,18 @@ public class Calculator {
         }
 
         return result;
+    }
+
+    /**
+     * 构建失败时回调
+     * @param session 会话
+     */
+    private void failure(ICalculatorSession session){
+        ITraveller<ICommand> commands = session.commandTraveller();
+        while(commands.hasNext()){
+            ICommand c = commands.next();
+            c.buildFailedCallback(session);
+        }
     }
 
     /**

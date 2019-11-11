@@ -1,9 +1,10 @@
 package frog.calculator.express;
 
 import frog.calculator.ISymbol;
+import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.operator.IOperator;
-import frog.calculator.space.ISpace;
+import frog.calculator.exec.IOperator;
+import frog.calculator.exec.space.ISpace;
 
 public interface IExpression extends Cloneable, ISymbol {
 
@@ -65,5 +66,5 @@ public interface IExpression extends Cloneable, ISymbol {
 
     IExpressionContext getContext();
 
-    void buildInit(int order, IExpressionContext context);
+    void buildInit(int order, IExpressionContext context, IExpressionBuilder builder);
 }

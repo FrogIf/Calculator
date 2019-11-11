@@ -1,7 +1,7 @@
 package frog.calculator.express;
 
 import frog.calculator.math.BaseNumber;
-import frog.calculator.space.ISpace;
+import frog.calculator.exec.space.ISpace;
 
 public class MarkExpression extends EndPointExpression {
 

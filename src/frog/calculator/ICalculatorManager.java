@@ -1,9 +1,9 @@
 package frog.calculator;
 
+import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionContext;
-import frog.calculator.resolver.IResolverResult;
 
 public interface ICalculatorManager {
 
@@ -11,6 +11,5 @@ public interface ICalculatorManager {
 
     ICalculatorSession createCalculatorSession();
 
-    IExpressionContext createExpressionContext(ICalculatorSession session);
-
+    IExpressionBuilder createExpressionBuilder(ICalculatorSession session);
 }
