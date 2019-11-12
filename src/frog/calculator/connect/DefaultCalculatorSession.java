@@ -1,13 +1,11 @@
 package frog.calculator.connect;
 
 import frog.calculator.ICalculatorManager;
-import frog.calculator.build.command.ICommand;
-import frog.calculator.exception.DuplicateSymbolException;
-import frog.calculator.express.IExpression;
 import frog.calculator.build.register.IRegister;
 import frog.calculator.build.register.SymbolRegister;
 import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.util.collection.ITraveller;
+import frog.calculator.exception.DuplicateSymbolException;
+import frog.calculator.express.IExpression;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.Stack;
 
@@ -16,8 +14,6 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
     private ICalculatorManager manager;
 
     private SymbolRegister<IExpression> sessionRegister = new SymbolRegister<>();
-
-    private Stack<ICommand> commandStack = new Stack<>();   // 会话命令栈
 
     private Stack<IRegister<IExpression>> localRegisterStack = new Stack<>(); // 变量栈, 栈底是session全局变量, 其余是局部变量
 
@@ -63,30 +59,5 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
         }
         return null;
     }
-
-    @Override
-    public void pushCommand(ICommand command) {
-        this.commandStack.push(command);
-    }
-
-    @Override
-    public void popCommand(ICommand command) {
-        ICommand pop = this.commandStack.pop();
-        if(pop != command){
-            this.commandStack.push(pop);
-            throw new IllegalStateException("assign command is not in stack top.");
-        }
-    }
-
-    @Override
-    public void clearCommand() {
-        this.commandStack.clear();
-    }
-
-    @Override
-    public ITraveller<ICommand> commandTraveller() {
-        return this.commandStack.iterator();
-    }
-
 
 }

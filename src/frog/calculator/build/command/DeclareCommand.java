@@ -1,14 +1,15 @@
 package frog.calculator.build.command;
 
 import frog.calculator.ICalculatorManager;
+import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.build.resolve.IResolverResult;
+import frog.calculator.build.resolve.TruncateResolver;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.express.FunctionExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionHolder;
 import frog.calculator.express.VariableExpression;
-import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.build.resolve.TruncateResolver;
 import frog.calculator.util.StringUtils;
 
 /**
@@ -58,12 +59,12 @@ public class DeclareCommand extends AbstractCommand {
     }
 
     @Override
-    public int init(ICalculatorSession session) {
+    public int init(IExpressionBuilder builder) {
         return command.length();
     }
 
     @Override
-    public void beforeResolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException {
+    public void beforeResolve(char[] chars, int startIndex, IExpressionBuilder builder) throws BuildException {
         // 执行变量解析
         IResolverResult result = this.variableResolver.resolve(chars, startIndex);
         if(result != null){
@@ -77,6 +78,7 @@ public class DeclareCommand extends AbstractCommand {
                     }
                 }
             }
+            ICalculatorSession session = builder.getSession();
             if(mayFun){ // 如果是函数
                 FunctionExpression functionExpression = new FunctionExpression(result.getExpression().symbol());
                 session.addVariable(functionExpression);
@@ -88,12 +90,12 @@ public class DeclareCommand extends AbstractCommand {
     }
 
     @Override
-    public IResolverResult afterResolve(IResolverResult result, ICalculatorSession session) {
+    public IResolverResult afterResolve(IResolverResult result, IExpressionBuilder builder) {
         return result;
     }
 
     @Override
-    public boolean over(char[] chars, int startIndex, ICalculatorSession session) {
+    public boolean over(char[] chars, int startIndex, IExpressionBuilder builder) {
         if(startIndex >= chars.length){
             return true;
         }
@@ -105,8 +107,8 @@ public class DeclareCommand extends AbstractCommand {
     }
 
     @Override
-    public void buildFailedCallback(ICalculatorSession session) {
-        session.popCommand(this);
+    public void buildFailedCallback(IExpressionBuilder builder) {
+        builder.popCommand(this);
     }
 
     @Override

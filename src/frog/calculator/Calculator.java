@@ -45,27 +45,25 @@ public class Calculator {
     private IExpression build(String expression, ICalculatorSession session) throws BuildException {
         IExpressionBuilder builder = this.calculatorManager.createExpressionBuilder(session);
         try {
-            this.build(expression, session, builder);
+            this.build(expression, builder);
             builder.finishBuild();
             return builder.getRoot();
         } catch (BuildException e) {
-            this.failure(session);
+            builder.buildFail();
             throw e;
-        }finally {
-            session.clearCommand();
         }
     }
 
-    private void build(String expression, ICalculatorSession session, IExpressionBuilder builder) throws BuildException {
+    private void build(String expression, IExpressionBuilder builder) throws BuildException {
         char[] chars = expression.toCharArray();
 
         for (int i = 0; i < chars.length; ) {
             // 命令解析
-            i += this.commandDetect(chars, i, session);
+            i += this.commandDetect(chars, i, builder);
             if(i >= chars.length){ break; }
 
             // 表达式解析
-            IResolverResult result = this.resolve(chars, i, session);
+            IResolverResult result = this.resolve(chars, i, builder);
             if (result == null) {
                 throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i] + " at " + i);
             }
@@ -87,18 +85,18 @@ public class Calculator {
      * 命令探查
      * @param chars 表达式串
      * @param startIndex 探查起始位置
-     * @param session 计算器会话
+     * @param builder 表达式构建器
      * @return 解析偏移量
      */
-    private int commandDetect(char[] chars, int startIndex, ICalculatorSession session){
+    private int commandDetect(char[] chars, int startIndex, IExpressionBuilder builder){
         ICommand command;
         int commandOffset = 0;
         int offset;
         do{
             command = detector.detect(chars, startIndex);
             if(command == null){ break; }
-            offset = command.init(session);
-            session.pushCommand(command);
+            offset = command.init(builder);
+            builder.pushCommand(command);
             commandOffset += offset;
             startIndex += offset;
         }while (offset > 0 && startIndex < chars.length);
@@ -106,28 +104,28 @@ public class Calculator {
         return commandOffset;
     }
 
-    private IResolverResult resolve(char[] chars, int startIndex, ICalculatorSession session) throws BuildException {
+    private IResolverResult resolve(char[] chars, int startIndex, IExpressionBuilder builder) throws BuildException {
         // 解析前置命令
-        ITraveller<ICommand> commands = session.commandTraveller();
+        ITraveller<ICommand> commands = builder.commandTraveller();
         boolean canOver = true; // 标记是否可以结束, 出栈顺序必须是从栈顶到栈底, 所以如果一个命令不能出栈, 那么它下面的也不能出栈
         Queue<ICommand> queue = new Queue<>();
         while(commands.hasNext()){
             ICommand c = commands.next();
-            c.beforeResolve(chars, startIndex, session);
-            if(canOver && c.over(chars, startIndex, session)){
+            c.beforeResolve(chars, startIndex, builder);
+            if(canOver && c.over(chars, startIndex, builder)){
                 queue.enqueue(c);
             }else{
                 canOver = false;
             }
         }
         while(!queue.isEmpty()){
-            session.popCommand(queue.dequeue());
+            builder.popCommand(queue.dequeue());
         }
 
         // 尝试使用session解析器
         IResolverResult result = null;
         if(startIndex < chars.length){
-            result = session.resolveVariable(chars, startIndex);
+            result = builder.getSession().resolveVariable(chars, startIndex);
             if(result == null){
                 // 使用可执行解析器进行解析
                 result = this.innerResolver.resolve(chars, startIndex);
@@ -140,35 +138,23 @@ public class Calculator {
         }
 
         // 解析后置命令
-        commands = session.commandTraveller();
+        commands = builder.commandTraveller();
         queue.clear();
         canOver = true;
         while(commands.hasNext()){
             ICommand c = commands.next();
-            result = c.afterResolve(result, session);
-            if(canOver && c.over(chars, startIndex, session)){
+            result = c.afterResolve(result, builder);
+            if(canOver && c.over(chars, startIndex, builder)){
                 queue.enqueue(c);
             }else{
                 canOver = false;
             }
         }
         while(!queue.isEmpty()){
-            session.popCommand(queue.dequeue());
+            builder.popCommand(queue.dequeue());
         }
 
         return result;
-    }
-
-    /**
-     * 构建失败时回调
-     * @param session 会话
-     */
-    private void failure(ICalculatorSession session){
-        ITraveller<ICommand> commands = session.commandTraveller();
-        while(commands.hasNext()){
-            ICommand c = commands.next();
-            c.buildFailedCallback(session);
-        }
     }
 
     /**

@@ -1,11 +1,9 @@
 package frog.calculator.connect;
 
-import frog.calculator.build.command.ICommand;
-import frog.calculator.exception.DuplicateSymbolException;
-import frog.calculator.express.IExpression;
 import frog.calculator.build.register.IRegister;
 import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.util.collection.ITraveller;
+import frog.calculator.exception.DuplicateSymbolException;
+import frog.calculator.express.IExpression;
 
 /**
  * 计算器会话<br/>
@@ -39,27 +37,4 @@ public interface ICalculatorSession {
      */
     IResolverResult resolveVariable(char[] expChars, int startIndex);
 
-    /**
-     * 向会话中添加command
-     * @param command 待添加的命令
-     */
-    void pushCommand(ICommand command);
-
-    /**
-     * 销毁会话顶部命令<br/>
-     * 为安全起见, 必须传入待销毁命令本身方可销毁该命令
-     * @param command 指定待销毁的命令
-     */
-    void popCommand(ICommand command);
-
-    /**
-     * 清除session会话中的所有命令
-     */
-    void clearCommand();
-
-    /**
-     * 获取session的命令traveller
-     * @return traveller
-     */
-    ITraveller<ICommand> commandTraveller();
 }
