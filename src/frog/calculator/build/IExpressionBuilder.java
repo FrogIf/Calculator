@@ -1,24 +1,21 @@
 package frog.calculator.build;
 
 import frog.calculator.build.command.ICommand;
-import frog.calculator.build.region.IBuildRegion;
+import frog.calculator.build.region.IBuildPipe;
+import frog.calculator.build.register.IRegister;
+import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.exception.BuildException;
+import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
-import frog.calculator.util.collection.ITraveller;
 
 public interface IExpressionBuilder {
 
     IExpression getRoot();
 
-    void finishBuild();
-
-    void buildFail();
-
     void addBuildFinishListener(IBuildFinishListener listener);
 
-    IExpression append(IExpression expression);
-
-    void setBuildRegion(IBuildRegion region);
+    void setBuildPipe(IBuildPipe pipe);
 
     ICalculatorSession getSession();
 
@@ -35,15 +32,26 @@ public interface IExpressionBuilder {
      */
     void popCommand(ICommand command);
 
-    /**
-     * 清除session会话中的所有命令
-     */
-    void clearCommand();
+    void addVariable(IExpression expression) throws DuplicateSymbolException;
 
     /**
-     * 获取session的命令traveller
-     * @return traveller
+     * 创建局部变量表
      */
-    ITraveller<ICommand> commandTraveller();
+    void createLocalVariableTable();
+
+    /**
+     * 销毁栈顶局部变量表
+     * @return 栈顶局部变量表
+     */
+    IRegister<IExpression> popLocalVariableTable();
+
+    /**
+     * 从会话变量中获取值<br />
+     * 遵循就近原则
+     * @return 返回检索到的最长匹配解析结果
+     */
+    IResolverResult resolveVariable(char[] expChars, int startIndex);
+
+    IExpression build(String expression) throws BuildException;
 
 }

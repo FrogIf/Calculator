@@ -18,7 +18,7 @@ public class BlockCommand extends AbstractCommand {
 
     @Override
     public int init(IExpressionBuilder builder) {
-        builder.getSession().createLocalVariableTable();    // 创建局部变量表
+        builder.createLocalVariableTable();    // 创建局部变量表
         return 0;
     }
 
@@ -37,14 +37,14 @@ public class BlockCommand extends AbstractCommand {
     public boolean over(char[] chars, int startIndex, IExpressionBuilder builder) {
         boolean isOver = StringUtils.startWith(startIndex, chars, this.blockClose);
         if(isOver){
-            builder.getSession().popLocalVariableTable();   // 销毁局部变量表
+            builder.popLocalVariableTable();   // 销毁局部变量表
         }
         return isOver;
     }
 
     @Override
     public void buildFailedCallback(IExpressionBuilder builder) {
-        builder.getSession().popLocalVariableTable();
+        builder.popLocalVariableTable();
         builder.popCommand(this);
     }
 

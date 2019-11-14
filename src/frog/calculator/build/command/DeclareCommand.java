@@ -2,9 +2,10 @@ package frog.calculator.build.command;
 
 import frog.calculator.ICalculatorManager;
 import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.build.region.FunctionBuildPipe;
+import frog.calculator.build.register.IRegister;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.build.resolve.TruncateResolver;
-import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.express.FunctionExpression;
 import frog.calculator.express.IExpression;
@@ -23,8 +24,6 @@ public class DeclareCommand extends AbstractCommand {
     private String over;
 
     private String funOpen;
-
-    private String funClose;
 
     private TruncateResolver variableResolver;
 
@@ -53,7 +52,6 @@ public class DeclareCommand extends AbstractCommand {
         }
 
         this.funOpen = holder.getBracketOpen().symbol();
-        this.funClose = holder.getBracketClose().symbol();
 
         this.variableResolver = new TruncateResolver(manager, (symbol) -> VariableExpression.createVariableExpression(symbol, this.over), truncateSymbol);
     }
@@ -68,23 +66,13 @@ public class DeclareCommand extends AbstractCommand {
         // 执行变量解析
         IResolverResult result = this.variableResolver.resolve(chars, startIndex);
         if(result != null){
-            int truncate = startIndex + result.offset();    // 开始区分是值, 还是函数
-            int len = this.funOpen.length();
-            boolean mayFun = truncate < chars.length && len + truncate < chars.length;
-            if(mayFun){
-                for(int i = 0; i < len; i++){
-                    if(!(mayFun = this.funOpen.charAt(i) == chars[truncate + i])){
-                        break;
-                    }
-                }
-            }
-            ICalculatorSession session = builder.getSession();
-            if(mayFun){ // 如果是函数
+            int truncate = startIndex + result.offset();
+            if(StringUtils.startWith(truncate, chars, this.funOpen)){ // 如果是函数
                 FunctionExpression functionExpression = new FunctionExpression(result.getExpression().symbol());
-                session.addVariable(functionExpression);
-                session.createLocalVariableTable();    // 遇到"="释放
+                builder.addVariable(functionExpression);
+                builder.createLocalVariableTable();    // 遇到"="释放
             }else{  // 如果是变量
-                session.addVariable(result.getExpression());
+                builder.addVariable(result.getExpression());
             }
         }
     }
@@ -102,6 +90,10 @@ public class DeclareCommand extends AbstractCommand {
         boolean isOver = StringUtils.startWith(startIndex, chars, this.over);
         if(isOver){
             // TODO 判断刚刚声明的是变量还是函数, 如果是函数, 销毁上层局部变量栈
+//            IRegister<IExpression> register = builder.popLocalVariableTable();
+//            FunctionBuildPipe pipe = new FunctionBuildPipe(new String[]{"{"});
+//            pipe.setRegister(register);
+//            builder.setBuildPipe(pipe);
         }
         return isOver;
     }

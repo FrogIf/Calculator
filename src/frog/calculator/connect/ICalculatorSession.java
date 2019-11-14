@@ -1,6 +1,5 @@
 package frog.calculator.connect;
 
-import frog.calculator.build.register.IRegister;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
@@ -11,17 +10,6 @@ import frog.calculator.express.IExpression;
  * 单一会话是线程不安全的, 会话之间是线程安全的
  */
 public interface ICalculatorSession {
-
-    /**
-     * 创建局部变量表
-     */
-    void createLocalVariableTable();
-
-    /**
-     * 销毁栈顶局部变量表
-     * @return 栈顶局部变量表
-     */
-    IRegister<IExpression> popLocalVariableTable();
 
     /**
      * 添加会话变量
