@@ -52,12 +52,12 @@ public interface IExpressionHolder {
      * 代码块起始表达式
      * @return 代码块起始
      */
-    IExpression getBlockOpen();
+    IExpression getBlockStart();
 
     /**
      * 代码块终止表达式
      * @return 代码块终止
      */
-    IExpression getBlockClose();
+    IExpression getBlockEnd();
 
 }

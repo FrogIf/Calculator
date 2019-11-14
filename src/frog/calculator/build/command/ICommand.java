@@ -36,6 +36,4 @@ public interface ICommand extends ISymbol {
      */
     boolean over(char[] chars, int startIndex, IExpressionBuilder builder) throws BuildException;
 
-    void buildFailedCallback(IExpressionBuilder builder);
-
 }

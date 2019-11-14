@@ -1,19 +1,26 @@
-package frog.calculator.exec.fun;
+package frog.calculator.express;
 
 import frog.calculator.exec.exception.IncorrectStructureException;
-import frog.calculator.express.IExpression;
-import frog.calculator.math.BaseNumber;
-import frog.calculator.exec.AbstractOperator;
-import frog.calculator.exec.util.OperateUtil;
 import frog.calculator.exec.space.ISpace;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.LinkedList;
 
-public class BeginOpr extends AbstractOperator {
+public class BlockExpression extends SurroundExpression {
+
+    public BlockExpression(String openSymbol, String separatorSymbol, String closeSymbol) {
+        super(openSymbol, separatorSymbol, closeSymbol);
+    }
+
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IList<IExpression> argumentList = OperateUtil.getFunctionArgumentList(exp);
+    public ISpace<BaseNumber> interpret() {
+        IList<IExpression> argumentList = new LinkedList<>();
+        while(this.hasNextChild()){
+            argumentList.add(this.nextChild());
+        }
+
         if(argumentList.isEmpty()){
             throw new IncorrectStructureException("average", "argument list is empty.");
         }
@@ -25,5 +32,4 @@ public class BeginOpr extends AbstractOperator {
         }
         return result;
     }
-
 }

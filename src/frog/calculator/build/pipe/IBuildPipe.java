@@ -1,4 +1,4 @@
-package frog.calculator.build.region;
+package frog.calculator.build.pipe;
 
 import frog.calculator.build.IExpressionBuilder;
 

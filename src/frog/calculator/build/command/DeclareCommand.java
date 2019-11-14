@@ -2,8 +2,6 @@ package frog.calculator.build.command;
 
 import frog.calculator.ICalculatorManager;
 import frog.calculator.build.IExpressionBuilder;
-import frog.calculator.build.region.FunctionBuildPipe;
-import frog.calculator.build.register.IRegister;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.build.resolve.TruncateResolver;
 import frog.calculator.exception.BuildException;
@@ -96,11 +94,6 @@ public class DeclareCommand extends AbstractCommand {
 //            builder.setBuildPipe(pipe);
         }
         return isOver;
-    }
-
-    @Override
-    public void buildFailedCallback(IExpressionBuilder builder) {
-        builder.popCommand(this);
     }
 
     @Override

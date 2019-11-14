@@ -1,6 +1,7 @@
 package frog.calculator.connect;
 
 import frog.calculator.ICalculatorManager;
+import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.build.register.SymbolRegister;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.exception.DuplicateSymbolException;
@@ -10,10 +11,13 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
 
     private ICalculatorManager manager;
 
+    private IExpressionBuilder builder;
+
     private SymbolRegister<IExpression> sessionRegister = new SymbolRegister<>();
 
     public DefaultCalculatorSession(ICalculatorManager manager) {
         this.manager = manager;
+        this.builder = this.manager.createExpressionBuilder(this);
     }
 
     @Override
@@ -28,6 +32,11 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
             return this.manager.createResolverResult(expression.clone());
         }
         return null;
+    }
+
+    @Override
+    public IExpressionBuilder getExpressionBuilder() {
+        return this.builder;
     }
 
 }

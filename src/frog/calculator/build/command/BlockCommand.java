@@ -7,13 +7,13 @@ import frog.calculator.util.StringUtils;
 
 public class BlockCommand extends AbstractCommand {
 
-    private String blockOpen;
+    private String blockStart;
 
-    private String blockClose;
+    private String blockEnd;
 
     public BlockCommand(IExpressionHolder holder) {
-        this.blockOpen = holder.getBlockOpen().symbol();
-        this.blockClose = holder.getBlockClose().symbol();
+        this.blockStart = holder.getBlockStart().symbol();
+        this.blockEnd = holder.getBlockEnd().symbol();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class BlockCommand extends AbstractCommand {
 
     @Override
     public boolean over(char[] chars, int startIndex, IExpressionBuilder builder) {
-        boolean isOver = StringUtils.startWith(startIndex, chars, this.blockClose);
+        boolean isOver = StringUtils.startWith(startIndex, chars, this.blockEnd);
         if(isOver){
             builder.popLocalVariableTable();   // 销毁局部变量表
         }
@@ -43,13 +43,7 @@ public class BlockCommand extends AbstractCommand {
     }
 
     @Override
-    public void buildFailedCallback(IExpressionBuilder builder) {
-        builder.popLocalVariableTable();
-        builder.popCommand(this);
-    }
-
-    @Override
     public String symbol() {
-        return this.blockOpen;
+        return this.blockStart;
     }
 }

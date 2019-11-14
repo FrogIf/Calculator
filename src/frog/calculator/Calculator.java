@@ -27,10 +27,11 @@ public class Calculator {
      * @return 解析结果
      */
     public String calculate(String expression, ICalculatorSession session) throws BuildException {
-        // 构造解析树
-        IExpression expTree = this.calculatorManager.createExpressionBuilder(session).build(expression);
+        // 解析
+        IExpression expTree = session.getExpressionBuilder().build(expression);
 
-        ISpace<BaseNumber> result = expTree.interpret(); // 执行计算
+        // 执行
+        ISpace<BaseNumber> result = expTree.interpret();
 
         IRange range = result.getRange();
         int[] widths = range.maxWidths();

@@ -1,23 +1,31 @@
 package frog.calculator.build;
 
 import frog.calculator.build.command.ICommand;
-import frog.calculator.build.region.IBuildPipe;
+import frog.calculator.build.pipe.IBuildPipe;
 import frog.calculator.build.register.IRegister;
-import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 
 public interface IExpressionBuilder {
 
+    /**
+     * 获取表达式的根节点
+     * @return 根节点
+     */
     IExpression getRoot();
 
+    /**
+     * 注册构建完成监听
+     * @param listener 构建完成监听
+     */
     void addBuildFinishListener(IBuildFinishListener listener);
 
+    /**
+     * 设置构建管道
+     * @param pipe
+     */
     void setBuildPipe(IBuildPipe pipe);
-
-    ICalculatorSession getSession();
 
     /**
      * 向会话中添加command
@@ -27,11 +35,16 @@ public interface IExpressionBuilder {
 
     /**
      * 销毁会话顶部命令<br/>
-     * 为安全起见, 必须传入待销毁命令本身方可销毁该命令
-     * @param command 指定待销毁的命令
+     * 为安全起见, 必须传入待销毁命令对象本身方可销毁该命令
+     * @param command 指定的待销毁的命令对象
      */
     void popCommand(ICommand command);
 
+    /**
+     * 通过构建器添加变量, 如果存在局部变量表, 会添加到顶层局部变量表中, 如果没有, 会添加到session变量表中
+     * @param expression 待添加的变量
+     * @throws DuplicateSymbolException 存在重复变量
+     */
     void addVariable(IExpression expression) throws DuplicateSymbolException;
 
     /**
@@ -45,13 +58,13 @@ public interface IExpressionBuilder {
      */
     IRegister<IExpression> popLocalVariableTable();
 
-    /**
-     * 从会话变量中获取值<br />
-     * 遵循就近原则
-     * @return 返回检索到的最长匹配解析结果
-     */
-    IResolverResult resolveVariable(char[] expChars, int startIndex);
 
+    /**
+     * 将指定的字符串解析为表达式树
+     * @param expression 待解析的字符串
+     * @return 解析结果
+     * @throws BuildException 构建失败
+     */
     IExpression build(String expression) throws BuildException;
 
 }

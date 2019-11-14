@@ -1,5 +1,6 @@
 package frog.calculator.connect;
 
+import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
@@ -24,5 +25,11 @@ public interface ICalculatorSession {
      * @return 返回检索到的最长匹配解析结果
      */
     IResolverResult resolveVariable(char[] expChars, int startIndex);
+
+    /**
+     * 获取当前会话的表达式构建器
+     * @return 构建器builder
+     */
+    IExpressionBuilder getExpressionBuilder();
 
 }

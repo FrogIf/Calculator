@@ -3,7 +3,7 @@ package frog.calculator.build;
 import frog.calculator.ICalculatorManager;
 import frog.calculator.build.command.ICommand;
 import frog.calculator.build.command.ICommandDetector;
-import frog.calculator.build.region.IBuildPipe;
+import frog.calculator.build.pipe.IBuildPipe;
 import frog.calculator.build.register.IRegister;
 import frog.calculator.build.register.SymbolRegister;
 import frog.calculator.build.resolve.IResolver;
@@ -19,39 +19,57 @@ import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.util.collection.*;
+import frog.calculator.util.collection.ITraveller;
+import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.Queue;
+import frog.calculator.util.collection.Stack;
 
 public class DefaultExpressionBuilder implements IExpressionBuilder {
 
-    private static final IExpression initRoot = new StartExpression();
+    // 表达式树初始节点, 当有其它表达式节点参与构建时, 会自动使用该节点替换初始节点
+    private static final IExpression INIT_ROOT = new StartExpression();
 
-    // resolve inner symbol
-    private IResolver innerResolver;
+    // 内置运算符解析器
+    private final IResolver innerResolver;
 
-    // 命令探测器
-    private ICommandDetector detector;
+    // 命令探查器
+    private final ICommandDetector detector;
 
-    private Stack<IRegister<IExpression>> localRegisterStack = new Stack<>(); // 变量栈, 栈底是session全局变量, 其余是局部变量
+    // 计算器管理器
+    private final ICalculatorManager manager;
 
-    private IList<IBuildFinishListener> buildOverListeners = new LinkedList<>();
+    // builder绑定的session会话
+    private final ICalculatorSession session;
 
-    private IExpression root = initRoot;
+    // 局部变量栈, 仅用于构建单个表达式, 一旦表达式构建完成, 该栈将无效
+    private Stack<IRegister<IExpression>> localRegisterStack;
+
+    // 构建命令栈, 同局部变量栈, 仅用于单个表达式的构建, 一旦构建完成, 该栈失效
+    private Stack<ICommand> commandStack;   // 会话命令栈
+
+    // 构建结束监听, 构建完成调用, 调用之后销毁
+    private Queue<IBuildFinishListener> buildOverListenerQueue;
+
+    private IExpression root;
 
     private IBuildPipe buildRegion;
 
     private int order = 0;
-
-    private Stack<ICommand> commandStack = new Stack<>();   // 会话命令栈
-
-    private ICalculatorSession session;
-
-    private ICalculatorManager manager;
 
     public DefaultExpressionBuilder(ICalculatorSession session, ICalculatorManager manager, IResolver innerResolver, ICommandDetector commandDetector) {
         this.session = session;
         this.manager = manager;
         this.innerResolver = innerResolver;
         this.detector = commandDetector;
+    }
+
+    private void init(){
+        this.buildRegion = null;
+        this.order = 0;
+        this.root = INIT_ROOT;
+        this.localRegisterStack = new Stack<>();
+        this.commandStack = new Stack<>();
+        this.buildOverListenerQueue = new Queue<>();
     }
 
     @Override
@@ -61,17 +79,12 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
 
     @Override
     public void addBuildFinishListener(IBuildFinishListener listener) {
-        buildOverListeners.add(listener);
+        buildOverListenerQueue.enqueue(listener);
     }
 
     @Override
     public void setBuildPipe(IBuildPipe region) {
         this.buildRegion = region;
-    }
-
-    @Override
-    public ICalculatorSession getSession() {
-        return this.session;
     }
 
     @Override
@@ -111,8 +124,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         }
     }
 
-    @Override
-    public IResolverResult resolveVariable(char[] expChars, int startIndex) {
+    private IResolverResult resolveVariable(char[] expChars, int startIndex) {
         Iterator<IRegister<IExpression>> iterator = localRegisterStack.iterator();
         IExpression expression = null;
         while(iterator.hasNext()){
@@ -123,7 +135,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
             }
         }
         IResolverResult result = this.session.resolveVariable(expChars, startIndex);
-        if((expression != null) && (result == null || result.offset() < expression.symbol().length())){
+        if((expression != null) && (result == null || result.offset() <= expression.symbol().length())){
             result = this.manager.createResolverResult(expression.clone());
         }
         return result;
@@ -131,6 +143,8 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
 
     @Override
     public IExpression build(String expression) throws BuildException {
+        this.init();    // 初始化builder
+
         char[] chars = expression.toCharArray();
 
         for (int i = 0; i < chars.length; ) {
@@ -162,11 +176,8 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     private void finishBuild() {
-        if(!buildOverListeners.isEmpty()){
-            Iterator<IBuildFinishListener> iterator = buildOverListeners.iterator();
-            while(iterator.hasNext()){
-                this.root = iterator.next().buildFinishCallBack(this);
-            }
+        while(!buildOverListenerQueue.isEmpty()){
+            this.root = this.buildOverListenerQueue.dequeue().buildFinishCallBack(this);
         }
     }
 
@@ -260,12 +271,12 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     /**
-     * 表达式起点</br>
+     * 表达式初始节点(头部哨兵)</br>
      * 多线程安全
      */
     private static class StartExpression extends AbstractExpression {
 
-        public StartExpression() {
+        private StartExpression() {
             super("", null);
         }
 

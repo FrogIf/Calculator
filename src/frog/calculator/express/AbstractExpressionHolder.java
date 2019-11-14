@@ -21,10 +21,10 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private IExpression assign = new AssignExpression("=");
 
     // 代码块起始表达式
-    private IExpression blockClose = new MarkExpression("}");
+    private IExpression blockEnd = new MarkExpression("}");
 
     // 代码块终止表达式
-    private IExpression blockOpen = new SurroundExpression("{", separator.symbol(), blockClose.symbol());
+    private IExpression blockStart = new BlockExpression("{", separator.symbol(), blockEnd.symbol());
 
     @Override
     public IExpression[] getBuiltInExpression() {
@@ -54,8 +54,8 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
                 listFun,        // 集合左
                 listEnd,         // 集合右
                 assign,  // 赋值表达式
-                blockOpen,  // 块起始
-                blockClose  // 块终止
+                blockEnd,  // 块起始
+                blockStart  // 块终止
         };
     }
 
@@ -77,12 +77,12 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     }
 
     @Override
-    public IExpression getBlockOpen() {
-        return this.blockOpen;
+    public IExpression getBlockStart() {
+        return this.blockStart;
     }
 
     @Override
-    public IExpression getBlockClose() {
-        return this.blockClose;
+    public IExpression getBlockEnd() {
+        return this.blockEnd;
     }
 }
