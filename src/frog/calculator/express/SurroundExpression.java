@@ -34,9 +34,17 @@ public class SurroundExpression extends AbstractExpression {
     }
 
     private void init(){
-        currentElement = new Element();
+        IList<Element> oldElements = this.elements;
         elements = new LinkedList<>();
-        elements.add(currentElement);
+        if(oldElements == null || oldElements.isEmpty()){
+            currentElement = new Element();
+            elements.add(currentElement);
+        }else{
+            Iterator<Element> iterator = oldElements.iterator();
+            while(iterator.hasNext()){
+                elements.add(iterator.next());
+            }
+        }
         traveller = null;
         role = ROLE_UNDEFINE;
     }

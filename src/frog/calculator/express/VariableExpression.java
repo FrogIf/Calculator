@@ -1,5 +1,6 @@
 package frog.calculator.express;
 
+import frog.calculator.exception.ArgumentUnmatchException;
 import frog.calculator.exec.space.ISpace;
 import frog.calculator.math.BaseNumber;
 
@@ -12,9 +13,11 @@ public class VariableExpression extends EndPointExpression {
 
     private IExpression value;
 
-    String assign;
+    private IExpression actualArg;
 
-//    private final String[] variablePipe = new String[];
+    private IExpression formatArg;
+
+    String assign;
 
     private VariableExpression(String symbol, String assign) {
         super(symbol, null);
@@ -33,6 +36,9 @@ public class VariableExpression extends EndPointExpression {
                 return true;
             }else if(this.prototype.protoValue == null && this.prototype.argumentList == null){ // 说明该变量未初始化
                 this.prototype.argumentList = childExpression;
+                return true;
+            }else if(this.prototype.argumentList != null && this.actualArg == null){
+                this.actualArg = childExpression;
                 return true;
             }
         }
@@ -53,16 +59,35 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        ISpace<BaseNumber> result;
-        if(this.value != null){
-            result = this.value.interpret();
-        }else if(prototype.protoValue != null){
-            result = prototype.protoValue;
-        }else {
-            throw new IllegalStateException("variable " + this.symbol + " is not assign.");
+        if(this.actualArg != null && this.formatArg != null){  // 函数
+            IExpression aArgList = this.actualArg.nextChild();
+            IExpression fArgList = this.formatArg.nextChild();
+            if(aArgList != null && fArgList != null){
+                while(aArgList.hasNextChild() && fArgList.hasNextChild()){
+                    VariableExpression fArg = (VariableExpression) fArgList.nextChild();  // 形参
+                    fArg.value = aArgList.nextChild();  // 实参
+                }
+                if(aArgList.hasNextChild() || fArgList.hasNextChild()){
+                    throw new ArgumentUnmatchException(this.symbol);
+                }
+            }else if(aArgList != null || fArgList != null){
+                throw new ArgumentUnmatchException(this.symbol);
+            }
+            return this.value.interpret();
+        }else if(this.actualArg == null && this.prototype.argumentList == null){
+            ISpace<BaseNumber> result;
+            if(this.value != null){
+                result = this.value.interpret();
+            }else if(prototype.protoValue != null){
+                result = prototype.protoValue;
+            }else {
+                throw new IllegalStateException("variable " + this.symbol + " is not assign.");
+            }
+            this.prototype.protoValue = result;
+            return result;
+        }else{
+            throw new ArgumentUnmatchException(this.symbol);
         }
-        this.prototype.protoValue = result;
-        return result;
     }
 
     @Override
@@ -86,6 +111,9 @@ public class VariableExpression extends EndPointExpression {
             VariableExpression variableExpression = new VariableExpression(this.symbol, this.assign);
             variableExpression.value = null;
             variableExpression.prototype = this;
+            if(this.argumentList != null) {
+                variableExpression.formatArg = this.argumentList.clone();
+            }
             return variableExpression;
         }
     }
