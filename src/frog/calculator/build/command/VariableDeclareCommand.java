@@ -94,8 +94,8 @@ public class VariableDeclareCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean over(char[] chars, int startIndex, IExpressionBuilder builder) {
-        return startIndex >= chars.length || StringUtils.startWith(startIndex, chars, this.over);
+    public boolean over(String symbol, IExpressionBuilder builder) {
+        return this.over.equals(symbol);
     }
 
     @Override

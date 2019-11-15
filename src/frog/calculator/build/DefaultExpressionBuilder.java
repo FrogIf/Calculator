@@ -154,10 +154,6 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
 
             // 表达式解析
             IResolverResult result = this.resolve(chars, i);
-            if (result == null) {
-                throw new ExpressionFormatException(expression, "undefined symbol : " + chars[i] + " at " + i);
-            }
-
             // 构建
             if (this.append(result.getExpression()) == null) {
                 throw new ExpressionFormatException(expression, "expression format is not right at " + i);
@@ -220,19 +216,9 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     private IResolverResult resolve(char[] chars, int startIndex) throws BuildException {
         // 解析前置命令
         ITraveller<ICommand> commands = this.commandStack.iterator();
-        boolean canOver = true; // 标记是否可以结束, 出栈顺序必须是从栈顶到栈底, 所以如果一个命令不能出栈, 那么它下面的也不能出栈
-        Queue<ICommand> queue = new Queue<>();
         while(commands.hasNext()){
             ICommand c = commands.next();
             c.beforeResolve(chars, startIndex, this);
-            if(canOver && c.over(chars, startIndex, this)){
-                queue.enqueue(c);
-            }else{
-                canOver = false;
-            }
-        }
-        while(!queue.isEmpty()){
-            this.popCommand(queue.dequeue());
         }
 
         // 尝试使用session解析器
@@ -252,19 +238,25 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
 
         // 解析后置命令
         commands = this.commandStack.iterator();
-        queue.clear();
-        canOver = true;
-        while(commands.hasNext()){
-            ICommand c = commands.next();
-            result = c.afterResolve(result, this);
-            if(canOver && c.over(chars, startIndex, this)){
-                queue.enqueue(c);
-            }else{
-                canOver = false;
+
+        if(result != null){
+            boolean canOver = true; // 标记是否可以结束, 出栈顺序必须是从栈顶到栈底, 所以如果一个命令不能出栈, 那么它下面的也不能出栈
+            Queue<ICommand> queue = new Queue<>();
+            String symbol = result.getExpression().symbol();
+            while(commands.hasNext()){
+                ICommand c = commands.next();
+                result = c.afterResolve(result, this);
+                if(canOver && c.over(symbol, this)){
+                    queue.enqueue(c);
+                }else{
+                    canOver = false;
+                }
             }
-        }
-        while(!queue.isEmpty()){
-            this.popCommand(queue.dequeue());
+            while(!queue.isEmpty()){
+                this.popCommand(queue.dequeue());
+            }
+        }else{
+            throw new ExpressionFormatException(String.valueOf(chars), "undefined symbol : " + chars[startIndex] + " at " + startIndex);
         }
 
         return result;

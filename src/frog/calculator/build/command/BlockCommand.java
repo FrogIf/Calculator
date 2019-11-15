@@ -34,8 +34,8 @@ public class BlockCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean over(char[] chars, int startIndex, IExpressionBuilder builder) {
-        boolean isOver = StringUtils.startWith(startIndex, chars, this.blockEnd);
+    public boolean over(String symbol, IExpressionBuilder builder) {
+        boolean isOver = this.blockEnd.endsWith(symbol);
         if(isOver){
             builder.popLocalVariableTable();   // 销毁局部变量表
         }

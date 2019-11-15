@@ -31,9 +31,14 @@ public class VariableExpression extends EndPointExpression {
     @Override
     public boolean createBranch(IExpression childExpression) {
         if(childExpression.isLeaf()){
-            if(this.value == null && this.assign.equals(childExpression.symbol())){
-                this.value = childExpression;
-                return true;
+            if(this.assign.equals(childExpression.symbol())){
+                if(this.value == null && this.prototype.argumentList == null){
+                    this.value = childExpression;
+                        this.prototype.funBody = childExpression;
+                    return true;
+                }else{
+                    return false;
+                }
             }else if(this.prototype.protoValue == null && this.prototype.argumentList == null){ // 说明该变量未初始化
                 this.prototype.argumentList = childExpression;
                 return true;
@@ -102,6 +107,8 @@ public class VariableExpression extends EndPointExpression {
         }
 
         private ISpace<BaseNumber> protoValue;
+
+        private IExpression funBody;
 
         // 参数列表
         private IExpression argumentList;
