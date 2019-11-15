@@ -3,8 +3,7 @@ package frog.calculator.build.register;
 import frog.calculator.ISymbol;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.util.ComparableComparator;
-import frog.calculator.util.collection.AVLTreeSet;
-import frog.calculator.util.collection.ISet;
+import frog.calculator.util.collection.*;
 
 public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparable<SymbolRegister<T>>{
 
@@ -125,6 +124,37 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
     @Override
     public boolean isEmpty() {
         return this.expression == null && this.nextLetter.isEmpty();
+    }
+
+    @Override
+    public IList<T> getElements() {
+        IList<T> result = new LinkedList<>();
+
+        IList<ISet<SymbolRegister<T>>> cursorBranches = new LinkedList<>();
+        IList<ISet<SymbolRegister<T>>> tempCursorBranches = new LinkedList<>();
+        if(!this.nextLetter.isEmpty()) { cursorBranches.add(this.nextLetter); }
+        while(!cursorBranches.isEmpty()){
+            tempCursorBranches.clear();
+            Iterator<ISet<SymbolRegister<T>>> iterator = cursorBranches.iterator();
+            while(iterator.hasNext()){
+                ISet<SymbolRegister<T>> nextSet = iterator.next();
+                Iterator<SymbolRegister<T>> symbolItr = nextSet.iterator();
+                while (symbolItr.hasNext()){
+                    SymbolRegister<T> next = symbolItr.next();
+                    if(next.expression != null){
+                        result.add(next.expression);
+                    }
+                    if(!next.nextLetter.isEmpty()){
+                        tempCursorBranches.add(next.nextLetter);
+                    }
+                }
+            }
+            IList<ISet<SymbolRegister<T>>> t = tempCursorBranches;
+            tempCursorBranches = cursorBranches;
+            cursorBranches = t;
+
+        }
+        return result;
     }
 
     @Override

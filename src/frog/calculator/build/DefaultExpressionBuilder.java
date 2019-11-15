@@ -181,7 +181,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         }
     }
 
-    private IExpression append(IExpression expression) {
+    private IExpression append(IExpression expression) throws DuplicateSymbolException {
         expression.buildInit(this.order++, null, this); // TODO Context
         if(buildRegion != null){
             if(expression.symbol().equals(buildRegion.symbol())){

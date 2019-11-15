@@ -56,6 +56,7 @@ public class AssignExpression extends AbstractExpression{
                 throw new IllegalStateException("the expression can't put into this tree.");
             }
         }
+
         return root;
     }
 

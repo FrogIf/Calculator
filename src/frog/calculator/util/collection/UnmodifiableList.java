@@ -14,6 +14,11 @@ public class UnmodifiableList<E> implements IList<E> {
     }
 
     @Override
+    public void addAll(ICollection<E> e) {
+        throw new UnsupportedOperationException("this list can't be modify.");
+    }
+
+    @Override
     public void add(int index, E element) {
         throw new UnsupportedOperationException("this list can't be modify.");
     }

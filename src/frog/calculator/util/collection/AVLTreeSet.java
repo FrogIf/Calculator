@@ -8,7 +8,7 @@ import frog.calculator.util.IComparator;
  *
  * @param <T> 实际存储的元素的类型
  */
-public class AVLTreeSet<T> implements ISet<T> {
+public class AVLTreeSet<T> extends AbstractCollection<T> implements ISet<T> {
 
     /**
      * 树的根节点

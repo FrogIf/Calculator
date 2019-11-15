@@ -19,7 +19,7 @@ public class DefaultCommandHolder implements ICommandHolder {
     public ICommand[] getCommands() {
         IExpressionHolder holder = calculatorConfigure.getComponentFactory().createExpressionHolder();
         return new ICommand[]{
-                new DeclareCommand("@", calculatorManager, holder),
+                new VariableDeclareCommand("@", calculatorManager, holder),
                 new BlockCommand(holder)
         };
     }

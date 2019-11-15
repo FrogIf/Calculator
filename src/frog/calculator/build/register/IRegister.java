@@ -2,6 +2,7 @@ package frog.calculator.build.register;
 
 import frog.calculator.ISymbol;
 import frog.calculator.exception.DuplicateSymbolException;
+import frog.calculator.util.collection.IList;
 
 public interface IRegister<T extends ISymbol> {
 
@@ -26,4 +27,6 @@ public interface IRegister<T extends ISymbol> {
      * @return true 是; false 否
      */
     boolean isEmpty();
+
+    IList<T> getElements();
 }

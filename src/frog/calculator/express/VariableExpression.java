@@ -1,7 +1,7 @@
 package frog.calculator.express;
 
-import frog.calculator.math.BaseNumber;
 import frog.calculator.exec.space.ISpace;
+import frog.calculator.math.BaseNumber;
 
 /**
  * 值变量表达式
@@ -14,6 +14,8 @@ public class VariableExpression extends EndPointExpression {
 
     String assign;
 
+//    private final String[] variablePipe = new String[];
+
     private VariableExpression(String symbol, String assign) {
         super(symbol, null);
         this.assign = assign;
@@ -25,23 +27,28 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public boolean createBranch(IExpression childExpression) {
-        if(this.value == null && this.assign.equals(childExpression.symbol()) && childExpression.isLeaf()){
-            this.value = childExpression;
-            return true;
+        if(childExpression.isLeaf()){
+            if(this.value == null && this.assign.equals(childExpression.symbol())){
+                this.value = childExpression;
+                return true;
+            }else if(this.prototype.protoValue == null && this.prototype.argumentList == null){ // 说明该变量未初始化
+                this.prototype.argumentList = childExpression;
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public IExpression assembleTree(IExpression expression) {
-        if(this.value == null && this.assign.equals(expression.symbol()) && expression.isLeaf()){
-            this.value = expression;
+        if(!this.createBranch(expression)){ // 当变量本身已经初始化完毕, 就变成一个数, 这时createBranch失败
+            if(expression.createBranch(this)){
+                return expression;
+            }
+            return null;
+        }else{
             return this;
         }
-        if(expression.createBranch(this)){
-            return expression;
-        }
-        return null;
     }
 
     @Override
@@ -70,6 +77,9 @@ public class VariableExpression extends EndPointExpression {
         }
 
         private ISpace<BaseNumber> protoValue;
+
+        // 参数列表
+        private IExpression argumentList;
 
         @Override
         public IExpression clone() {

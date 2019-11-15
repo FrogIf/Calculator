@@ -8,7 +8,7 @@ import frog.calculator.util.IComparator;
  *
  * @param <T> 实际存储的元素的类型
  */
-public class RBTreeSet<T> implements ISet<T>{
+public class RBTreeSet<T> extends AbstractCollection<T> implements ISet<T>{
 
     /*
      * 红黑树的性质:

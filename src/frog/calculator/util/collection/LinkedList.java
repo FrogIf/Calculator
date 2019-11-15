@@ -4,7 +4,7 @@ package frog.calculator.util.collection;
  * 链表<br/>
  * @param <E>
  */
-public class LinkedList<E> implements IList<E>{
+public class LinkedList<E> extends AbstractCollection<E> implements IList<E>{
 
     private Node<E> head = new Node<>();    // head is empty node. can't get.
 

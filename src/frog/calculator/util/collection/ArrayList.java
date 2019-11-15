@@ -2,7 +2,7 @@ package frog.calculator.util.collection;
 
 import java.util.ConcurrentModificationException;
 
-public class ArrayList<E> implements IList<E> {
+public class ArrayList<E> extends AbstractCollection<E> implements IList<E> {
 
     private static final int DEFAULT_CAPACITY = 10;
 

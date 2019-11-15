@@ -10,6 +10,12 @@ public interface ICollection<E> {
     boolean add(E e);
 
     /**
+     * 将一个集合中所有元素添加到另一个集合
+     * @param collection 待添加元素所在集合
+     */
+    void addAll(ICollection<E> collection);
+
+    /**
      * 从集合中移除指定的元素
      * @param e 需移除的元素
      * @return 返回是否成功移除
