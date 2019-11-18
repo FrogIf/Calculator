@@ -1,9 +1,9 @@
 package frog.calculator.express;
 
-import frog.calculator.math.BaseNumber;
 import frog.calculator.exec.space.Coordinate;
 import frog.calculator.exec.space.FixedAlignSpaceBuilder;
 import frog.calculator.exec.space.ISpace;
+import frog.calculator.math.BaseNumber;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
@@ -34,17 +34,9 @@ public class SurroundExpression extends AbstractExpression {
     }
 
     private void init(){
-        IList<Element> oldElements = this.elements;
         elements = new LinkedList<>();
-        if(oldElements == null || oldElements.isEmpty()){
-            currentElement = new Element();
-            elements.add(currentElement);
-        }else{
-            Iterator<Element> iterator = oldElements.iterator();
-            while(iterator.hasNext()){
-                elements.add(iterator.next());
-            }
-        }
+        currentElement = new Element();
+        elements.add(currentElement);
         traveller = null;
         role = ROLE_UNDEFINE;
     }

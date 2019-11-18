@@ -6,10 +6,6 @@ public class LeftExpression extends AbstractBlockExpression {
 
     private IExpression right;
 
-//    public LeftExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
-//        super(symbol, buildFactor, operator, fifo);
-//    }
-
     public LeftExpression(String symbol, int buildFactor, IOperator operator){
         super(symbol, buildFactor, operator);
     }

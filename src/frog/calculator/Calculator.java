@@ -7,6 +7,7 @@ import frog.calculator.exec.space.IRange;
 import frog.calculator.exec.space.ISpace;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
+import frog.calculator.util.Arrays;
 
 public class Calculator {
 
@@ -20,6 +21,27 @@ public class Calculator {
         this.calculatorManager = calculatorConfigure.getComponentFactory().createCalculatorManager(calculatorConfigure);
     }
 
+    // 字符ASCII码在IGNORE_CODE之前的均会被忽略(不包括IGNORE_CODE本身)
+    private static final int IGNORE_CODE = 33;
+
+    /**
+     * 表达式预处理, 清除无用的字符
+     */
+    private char[] preprocess(String expression){
+        char[] chars = expression.toCharArray();
+        char[] fix = new char[chars.length];
+        int i = 0;
+        for (char c : chars) {
+            if (c < IGNORE_CODE) {
+                continue;
+            }
+            fix[i++] = c;
+        }
+        chars = new char[i];
+        Arrays.copy(fix, chars, 0, i);
+        return chars;
+    }
+
     /**
      * 执行计算
      * @param expression 待计算的表达式
@@ -27,8 +49,9 @@ public class Calculator {
      * @return 解析结果
      */
     public String calculate(String expression, ICalculatorSession session) throws BuildException {
+        char[] expChars = preprocess(expression);
         // 解析
-        IExpression expTree = session.getExpressionBuilder().build(expression);
+        IExpression expTree = session.getExpressionBuilder().build(expChars);
 
         // 执行
         ISpace<BaseNumber> result = expTree.interpret();

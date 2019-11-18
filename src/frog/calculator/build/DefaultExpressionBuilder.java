@@ -19,6 +19,7 @@ import frog.calculator.express.AbstractExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionContext;
 import frog.calculator.math.BaseNumber;
+import frog.calculator.util.StringUtils;
 import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.Queue;
@@ -142,21 +143,19 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     @Override
-    public IExpression build(String expression) throws BuildException {
+    public IExpression build(char[] expression) throws BuildException {
         this.init();    // 初始化builder
 
-        char[] chars = expression.toCharArray();
-
-        for (int i = 0; i < chars.length; ) {
+        for (int i = 0; i < expression.length; ) {
             // 命令解析
-            i += this.commandDetect(chars, i);
-            if(i >= chars.length){ break; }
+            i += this.commandDetect(expression, i);
+            if(i >= expression.length){ break; }
 
             // 表达式解析
-            IResolverResult result = this.resolve(chars, i);
+            IResolverResult result = this.resolve(expression, i);
             // 构建
             if (this.append(result.getExpression()) == null) {
-                throw new ExpressionFormatException(expression, "expression format is not right at " + i);
+                throw new ExpressionFormatException(StringUtils.concat(expression), "expression format is not right at " + i);
             }
 
             int offset = result.offset();
@@ -263,7 +262,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     /**
-     * 表达式初始节点(头部哨兵)</br>
+     * 表达式初始节点(头部哨兵)<br/>
      * 多线程安全
      */
     private static class StartExpression extends AbstractExpression {

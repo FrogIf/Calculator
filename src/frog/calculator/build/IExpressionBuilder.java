@@ -65,6 +65,6 @@ public interface IExpressionBuilder {
      * @return 解析结果
      * @throws BuildException 构建失败
      */
-    IExpression build(String expression) throws BuildException;
+    IExpression build(char[] expression) throws BuildException;
 
 }

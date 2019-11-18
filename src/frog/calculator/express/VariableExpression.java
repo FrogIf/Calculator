@@ -3,6 +3,8 @@ package frog.calculator.express;
 import frog.calculator.exception.ArgumentUnmatchException;
 import frog.calculator.exec.space.ISpace;
 import frog.calculator.math.BaseNumber;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.LinkedList;
 
 /**
  * 值变量表达式
@@ -30,19 +32,30 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public boolean createBranch(IExpression childExpression) {
-        if(childExpression.isLeaf()){
-            if(this.assign.equals(childExpression.symbol())){
+        if(childExpression.isLeaf()){   // 只有叶子节点才可能作为变量表达式的子表达式
+            if(this.assign.equals(childExpression.symbol())){   // 如果是赋值操作符, 则是为变量赋值
                 if(this.value == null && this.prototype.argumentList == null){
                     this.value = childExpression;
-                        this.prototype.funBody = childExpression;
+                    return true;
+                }else if(this.value == null){   // 暗示argumentList不为null
+                    this.prototype.funBody = childExpression;
                     return true;
                 }else{
                     return false;
                 }
             }else if(this.prototype.protoValue == null && this.prototype.argumentList == null){ // 说明该变量未初始化
-                this.prototype.argumentList = childExpression;
+                this.prototype.argumentList = new LinkedList<>();
+                while(childExpression.hasNextChild()){
+                    IExpression expression = childExpression.nextChild();
+                    if(expression instanceof VariableExpression){
+                        this.prototype.argumentList.add((VariableExpression) expression);
+                    }else{
+                        this.prototype.argumentList = null;
+                        return false;
+                    }
+                }
                 return true;
-            }else if(this.prototype.argumentList != null && this.actualArg == null){
+            }else if(this.prototype.argumentList != null && this.actualArg == null){    // 说明这是一个函数变量, 并且还没指定实参
                 this.actualArg = childExpression;
                 return true;
             }
@@ -64,7 +77,7 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        if(this.actualArg != null && this.formatArg != null){  // 函数
+        if(this.prototype.funBody != null && this.formatArg != null){  // 函数变量
             IExpression aArgList = this.actualArg.nextChild();
             IExpression fArgList = this.formatArg.nextChild();
             if(aArgList != null && fArgList != null){
@@ -79,11 +92,11 @@ public class VariableExpression extends EndPointExpression {
                 throw new ArgumentUnmatchException(this.symbol);
             }
             return this.value.interpret();
-        }else if(this.actualArg == null && this.prototype.argumentList == null){
+        }else if(this.prototype.argumentList == null){    // 值变量
             ISpace<BaseNumber> result;
-            if(this.value != null){
+            if(this.value != null){ // 重新赋值
                 result = this.value.interpret();
-            }else if(prototype.protoValue != null){
+            }else if(prototype.protoValue != null){ // 没有重新赋值, 存在默认值
                 result = prototype.protoValue;
             }else {
                 throw new IllegalStateException("variable " + this.symbol + " is not assign.");
@@ -111,16 +124,13 @@ public class VariableExpression extends EndPointExpression {
         private IExpression funBody;
 
         // 参数列表
-        private IExpression argumentList;
+        private IList<VariableExpression> argumentList;
 
         @Override
         public IExpression clone() {
             VariableExpression variableExpression = new VariableExpression(this.symbol, this.assign);
             variableExpression.value = null;
             variableExpression.prototype = this;
-            if(this.argumentList != null) {
-                variableExpression.formatArg = this.argumentList.clone();
-            }
             return variableExpression;
         }
     }

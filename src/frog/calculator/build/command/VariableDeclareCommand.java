@@ -10,7 +10,6 @@ import frog.calculator.exception.BuildException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.IExpressionHolder;
 import frog.calculator.express.VariableExpression;
-import frog.calculator.util.StringUtils;
 
 /**
  * 声明命令<br/>

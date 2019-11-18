@@ -10,4 +10,12 @@ public class StringUtils {
         return str == null || "".equals(str.trim());
     }
 
+    public static String concat(char[] chars){
+        if(chars == null){ return null; }
+        StringBuilder builder = new StringBuilder();
+        for(char c : chars){
+            builder.append(c);
+        }
+        return builder.toString();
+    }
 }

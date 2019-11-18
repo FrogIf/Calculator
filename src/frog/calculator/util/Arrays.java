@@ -18,6 +18,20 @@ public class Arrays {
         return builder.toString();
     }
 
+    public static String toString(char[] chars){
+        if(chars == null){ return "null"; }
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        boolean start = true;
+        for(char c : chars){
+            if(start){ start = false; }
+            else{ builder.append(','); }
+            builder.append(c);
+        }
+        builder.append(']');
+        return builder.toString();
+    }
+
     public static String toString(int[] arr){
         if(arr == null) return "null";
         StringBuilder builder = new StringBuilder();
@@ -42,6 +56,13 @@ public class Arrays {
     }
 
     public static void copy(int[] source, int[] dest, int start, int end){
+        checkCopy(source.length, dest.length, start, end);
+        for(int i = 0, j = start; j < end; j++, i++){
+            dest[i] = source[j];
+        }
+    }
+
+    public static void copy(char[] source, char[] dest, int start, int end){
         checkCopy(source.length, dest.length, start, end);
         for(int i = 0, j = start; j < end; j++, i++){
             dest[i] = source[j];

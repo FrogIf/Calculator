@@ -53,7 +53,7 @@ public class AssignExpression extends AbstractExpression{
             root = this.suspendExpression;
             this.suspendExpression = null;
             if(!root.createBranch(this)){
-                throw new IllegalStateException("the expression can't put into this tree.");
+                throw new IllegalStateException("the expression can't put into this tree:" + root.symbol() + ", " + this.symbol);
             }
         }
 

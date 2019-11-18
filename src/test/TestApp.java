@@ -10,18 +10,12 @@ public class TestApp {
 
     public static void main(String[] args){
         Calculator calculator = CalculatorStater.start();
-        // 自定义函数, lambda表达式
-
-        // 输出计算过程
-        // 自定义异常
-
         Scanner sc = new Scanner(System.in);
 
         ICalculatorSession session = calculator.getSession();
 
         while(sc.hasNext()){
             String expression = sc.nextLine();
-            expression = expression.replaceAll(" " , "");
             if("exit".equals(expression)) {
                 System.out.println("bye !");
                 break;
