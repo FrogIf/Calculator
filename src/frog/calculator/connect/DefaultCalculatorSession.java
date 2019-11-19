@@ -39,4 +39,9 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
         return this.builder;
     }
 
+    @Override
+    public boolean removeVariable(String symbol) {
+        return this.sessionRegister.remove(symbol);
+    }
+
 }

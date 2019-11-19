@@ -67,4 +67,9 @@ public interface IExpressionBuilder {
      */
     IExpression build(char[] expression) throws BuildException;
 
+    /**
+     * 表达式执行失败回调
+     */
+    void executeFailedCallBack();
+
 }

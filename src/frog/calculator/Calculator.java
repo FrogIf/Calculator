@@ -1,5 +1,6 @@
 package frog.calculator;
 
+import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.exec.space.Coordinate;
@@ -50,11 +51,19 @@ public class Calculator {
      */
     public String calculate(String expression, ICalculatorSession session) throws BuildException {
         char[] expChars = preprocess(expression);
+
+        IExpressionBuilder builder = session.getExpressionBuilder();
         // 解析
-        IExpression expTree = session.getExpressionBuilder().build(expChars);
+        IExpression expTree = builder.build(expChars);
 
         // 执行
-        ISpace<BaseNumber> result = expTree.interpret();
+        ISpace<BaseNumber> result;
+        try{
+            result = expTree.interpret();
+        }catch (Exception e){
+//            builder.executeFailedCallBack();
+            throw e;
+        }
 
         IRange range = result.getRange();
         int[] widths = range.maxWidths();

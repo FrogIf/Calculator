@@ -17,8 +17,6 @@ public class VariableExpression extends EndPointExpression {
 
     private IExpression actualArg;
 
-    private IExpression formatArg;
-
     String assign;
 
     private VariableExpression(String symbol, String assign) {
@@ -48,7 +46,7 @@ public class VariableExpression extends EndPointExpression {
                 while(childExpression.hasNextChild()){
                     IExpression expression = childExpression.nextChild();
                     if(expression instanceof VariableExpression){
-                        this.prototype.argumentList.add((VariableExpression) expression);
+                        this.prototype.argumentList.add(((VariableExpression) expression).prototype);
                     }else{
                         this.prototype.argumentList = null;
                         return false;
@@ -77,20 +75,7 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        if(this.prototype.funBody != null && this.formatArg != null){  // 函数变量
-            IExpression aArgList = this.actualArg.nextChild();
-            IExpression fArgList = this.formatArg.nextChild();
-            if(aArgList != null && fArgList != null){
-                while(aArgList.hasNextChild() && fArgList.hasNextChild()){
-                    VariableExpression fArg = (VariableExpression) fArgList.nextChild();  // 形参
-                    fArg.value = aArgList.nextChild();  // 实参
-                }
-                if(aArgList.hasNextChild() || fArgList.hasNextChild()){
-                    throw new ArgumentUnmatchException(this.symbol);
-                }
-            }else if(aArgList != null || fArgList != null){
-                throw new ArgumentUnmatchException(this.symbol);
-            }
+        if(this.prototype.funBody != null && this.prototype.argumentList != null){  // 函数变量
             return this.value.interpret();
         }else if(this.prototype.argumentList == null){    // 值变量
             ISpace<BaseNumber> result;
