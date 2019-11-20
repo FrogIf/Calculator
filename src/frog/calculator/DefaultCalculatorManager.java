@@ -47,4 +47,9 @@ public class DefaultCalculatorManager implements ICalculatorManager {
     public IExpressionBuilder createExpressionBuilder(ICalculatorSession session) {
         return new DefaultExpressionBuilder(session, this, this.innerResolver, this.detector);
     }
+
+    @Override
+    public ICalculatorContext createCalculatorContext() {
+        return new CommonCalculatorContext();
+    }
 }

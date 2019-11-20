@@ -12,4 +12,6 @@ public interface ICalculatorManager {
     ICalculatorSession createCalculatorSession();
 
     IExpressionBuilder createExpressionBuilder(ICalculatorSession session);
+
+    ICalculatorContext createCalculatorContext();
 }

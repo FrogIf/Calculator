@@ -1,5 +1,6 @@
 package frog.calculator.build;
 
+import frog.calculator.ICalculatorContext;
 import frog.calculator.build.command.ICommand;
 import frog.calculator.build.pipe.IBuildPipe;
 import frog.calculator.build.register.IRegister;
@@ -22,8 +23,9 @@ public interface IExpressionBuilder {
     void addBuildFinishListener(IBuildFinishListener listener);
 
     /**
-     * 设置构建管道
-     * @param pipe
+     * 设置构建管道<br/>
+     * 一个builder中, 同时存在的管道数量只有一个, 新入一个管道会重置掉原来的管道
+     * @param pipe 管道对象
      */
     void setBuildPipe(IBuildPipe pipe);
 
@@ -58,7 +60,6 @@ public interface IExpressionBuilder {
      */
     IRegister<IExpression> popLocalVariableTable();
 
-
     /**
      * 将指定的字符串解析为表达式树
      * @param expression 待解析的字符串
@@ -67,9 +68,5 @@ public interface IExpressionBuilder {
      */
     IExpression build(char[] expression) throws BuildException;
 
-    /**
-     * 表达式执行失败回调
-     */
-    void executeFailedCallBack();
-
+    void viewCalculatorContext(ICalculatorContext context);
 }

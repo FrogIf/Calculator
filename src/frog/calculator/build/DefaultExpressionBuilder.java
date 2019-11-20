@@ -1,5 +1,7 @@
 package frog.calculator.build;
 
+import frog.calculator.ICalculateListener;
+import frog.calculator.ICalculatorContext;
 import frog.calculator.ICalculatorManager;
 import frog.calculator.build.command.ICommand;
 import frog.calculator.build.command.ICommandDetector;
@@ -51,6 +53,9 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     // 构建结束监听, 构建完成调用, 调用之后销毁
     private Queue<IBuildFinishListener> buildOverListenerQueue;
 
+    // 计算监听器, 覆盖整个计算周期的监听器
+    private ICalculateListener calculateListener = new CalculateListener();
+
     private IExpression root;
 
     private IBuildPipe buildRegion;
@@ -71,6 +76,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         this.localRegisterStack = new Stack<>();
         this.commandStack = new Stack<>();
         this.buildOverListenerQueue = new Queue<>();
+        this.tempSessionVariableRecord.clear();
     }
 
     @Override
@@ -177,8 +183,8 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     @Override
-    public void executeFailedCallBack() {
-        this.failed();
+    public void viewCalculatorContext(ICalculatorContext context) {
+        context.addCalculateListener(this.calculateListener);
     }
 
     private void failed(){
@@ -280,6 +286,19 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         }
 
         return result;
+    }
+
+    private class CalculateListener implements ICalculateListener {
+
+        @Override
+        public void failed() {
+            DefaultExpressionBuilder.this.failed();
+        }
+
+        @Override
+        public void success() {
+            // do nothing
+        }
     }
 
     /**

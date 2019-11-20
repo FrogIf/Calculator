@@ -9,6 +9,8 @@ import frog.calculator.exec.space.ISpace;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.util.Arrays;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.Iterator;
 
 public class Calculator {
 
@@ -52,16 +54,36 @@ public class Calculator {
     public String calculate(String expression, ICalculatorSession session) throws BuildException {
         char[] expChars = preprocess(expression);
 
+        // 创建计算器监听器
+        ICalculatorContext context = this.calculatorManager.createCalculatorContext();
+
         IExpressionBuilder builder = session.getExpressionBuilder();
         // 解析
         IExpression expTree = builder.build(expChars);
 
         // 执行
         ISpace<BaseNumber> result;
+        boolean success = false;
         try{
             result = expTree.interpret();
+            success = true;
+            IList<ICalculateListener> listener = context.getCalculateListeners();
+            // 触发执行成功监听
+            if(!listener.isEmpty()){
+                Iterator<ICalculateListener> iterator = listener.iterator();
+                while (iterator.hasNext()){
+                    iterator.next().success();
+                }
+            }
         }catch (Exception e){
-//            builder.executeFailedCallBack();
+            // 触发执行失败监听
+            IList<ICalculateListener> listener = context.getCalculateListeners();
+            if(!success && !listener.isEmpty()){
+                Iterator<ICalculateListener> iterator = listener.iterator();
+                while (iterator.hasNext()){
+                    iterator.next().failed();
+                }
+            }
             throw e;
         }
 

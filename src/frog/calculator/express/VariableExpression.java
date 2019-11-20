@@ -31,7 +31,7 @@ public class VariableExpression extends EndPointExpression {
     @Override
     public boolean createBranch(IExpression childExpression) {
         if(childExpression.isLeaf()){   // 只有叶子节点才可能作为变量表达式的子表达式
-            if(this.assign.equals(childExpression.symbol())){   // 如果是赋值操作符, 则是为变量赋值
+            if(this.assign.equals(childExpression.symbol())){   // 如果是赋值操作符
                 if(this.value == null && this.prototype.argumentList == null){
                     this.value = childExpression;
                     return true;
@@ -41,7 +41,7 @@ public class VariableExpression extends EndPointExpression {
                 }else{
                     return false;
                 }
-            }else if(this.prototype.protoValue == null && this.prototype.argumentList == null){ // 说明该变量未初始化
+            }else if(this.prototype.argumentList == null){ // 说明该变量未初始化
                 this.prototype.argumentList = new LinkedList<>();
                 while(childExpression.hasNextChild()){
                     IExpression expression = childExpression.nextChild();
@@ -53,7 +53,7 @@ public class VariableExpression extends EndPointExpression {
                     }
                 }
                 return true;
-            }else if(this.prototype.argumentList != null && this.actualArg == null){    // 说明这是一个函数变量, 并且还没指定实参
+            }else if(this.actualArg == null){    // 说明这是一个函数变量, 并且还没指定实参
                 this.actualArg = childExpression;
                 return true;
             }
@@ -76,6 +76,7 @@ public class VariableExpression extends EndPointExpression {
     @Override
     public ISpace<BaseNumber> interpret() {
         if(this.prototype.funBody != null && this.prototype.argumentList != null){  // 函数变量
+            // TODO 函数运算
             return this.value.interpret();
         }else if(this.prototype.argumentList == null){    // 值变量
             ISpace<BaseNumber> result;
@@ -113,10 +114,12 @@ public class VariableExpression extends EndPointExpression {
 
         @Override
         public IExpression clone() {
+            // TODO copy改造
             VariableExpression variableExpression = new VariableExpression(this.symbol, this.assign);
             variableExpression.value = null;
             variableExpression.prototype = this;
             return variableExpression;
         }
     }
+
 }
