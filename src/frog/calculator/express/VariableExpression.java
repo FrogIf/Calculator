@@ -4,6 +4,7 @@ import frog.calculator.exception.ArgumentUnmatchException;
 import frog.calculator.exec.space.ISpace;
 import frog.calculator.math.BaseNumber;
 import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
 /**
@@ -35,8 +36,12 @@ public class VariableExpression extends EndPointExpression {
                 if(this.value == null && this.prototype.argumentList == null){
                     this.value = childExpression;
                     return true;
-                }else if(this.value == null){   // 暗示argumentList不为null
-                    this.prototype.funBody = childExpression;
+                }else if(this.value == null){   // 暗示argumentList不为null, 构造funBody
+                    Iterator<PrototypeVariableExpression> iterator = this.prototype.argumentList.iterator();
+                    while (iterator.hasNext()){
+                        iterator.next().funRef = this.prototype;
+                    }
+                    this.prototype.funBody = childExpression.clone();   // 这里触发clone, 与signRef配合(参见clone方法), 将内部变量全部替换为变量原型
                     return true;
                 }else{
                     return false;
@@ -96,7 +101,7 @@ public class VariableExpression extends EndPointExpression {
 
     @Override
     public IExpression clone() {
-        return this;
+        return this.prototype.funRef == null ? this : this.prototype;
     }
 
     private static class PrototypeVariableExpression extends VariableExpression {
@@ -110,7 +115,10 @@ public class VariableExpression extends EndPointExpression {
         private IExpression funBody;
 
         // 参数列表
-        private IList<VariableExpression> argumentList;
+        private IList<PrototypeVariableExpression> argumentList;
+
+        // 这个参数是为函数形参提供的, 每一个形参都关联与其对应的函数变量
+        private PrototypeVariableExpression funRef;
 
         @Override
         public IExpression clone() {
