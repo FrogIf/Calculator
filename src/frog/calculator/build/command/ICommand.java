@@ -5,7 +5,12 @@ import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.exception.BuildException;
 
-public interface ICommand extends ISymbol {
+/**
+ * 方法调用顺序:
+ * 一个新的命令出现时 -- init    <br/>
+ * 每一次解析 -- beforeResolve -> afterResolve -> over <br/>
+ */
+public interface ICommand extends ISymbol { //TODO 通过代码约束调用顺序
 
     /**
      * 一个新的命令初始化时执行
