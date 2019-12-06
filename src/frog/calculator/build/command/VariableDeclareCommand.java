@@ -2,8 +2,6 @@ package frog.calculator.build.command;
 
 import frog.calculator.ICalculatorManager;
 import frog.calculator.build.IExpressionBuilder;
-import frog.calculator.build.pipe.VariableDeliveryPipe;
-import frog.calculator.build.register.IRegister;
 import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.build.resolve.TruncateResolver;
 import frog.calculator.exception.BuildException;
@@ -16,8 +14,6 @@ import frog.calculator.express.VariableExpression;
  * 用于定义变量以及函数
  */
 public class VariableDeclareCommand extends AbstractCommand {
-
-    private final String[] variablePipe;
 
     private String command;
 
@@ -56,7 +52,7 @@ public class VariableDeclareCommand extends AbstractCommand {
         this.funOpen = holder.getBracketOpen().symbol();
         this.funClose = holder.getBracketClose().symbol();
 
-        this.variablePipe = new String[]{this.funClose, this.over, holder.getBlockStart().symbol() };
+//        this.variablePipe = new String[]{this.funClose, this.over, holder.getBlockStart().symbol() };
 
         this.variableResolver = new TruncateResolver(manager, (symbol) -> VariableExpression.createVariableExpression(symbol, this.over), truncateSymbol);
     }
@@ -81,13 +77,14 @@ public class VariableDeclareCommand extends AbstractCommand {
             String symbol = result.getExpression().symbol();
             if(this.funOpen.equals(symbol)){
                 builder.createLocalVariableTable();
-            }else if(this.funClose.equals(symbol)){
-                // 将形参变量通过管道传递
-                IRegister<IExpression> register = builder.popLocalVariableTable();
-                VariableDeliveryPipe pipe = new VariableDeliveryPipe(this.variablePipe);
-                pipe.setRegister(register);
-                builder.setBuildPipe(pipe);
             }
+//            else if(this.funClose.equals(symbol)){
+//                // 将形参变量通过管道传递
+//                IRegister<IExpression> register = builder.popLocalVariableTable();
+//                VariableDeliveryPipe pipe = new VariableDeliveryPipe(this.variablePipe);
+//                pipe.setRegister(register);
+//                builder.setBuildPipe(pipe);
+//            }
         }
         return result;
     }

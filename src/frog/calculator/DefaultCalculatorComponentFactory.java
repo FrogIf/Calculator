@@ -55,14 +55,14 @@ public class DefaultCalculatorComponentFactory implements ICalculatorComponentFa
 
     @Override
     public ICommandDetector createCommandDetector(ICommandHolder holder) {
-        SymbolRegister<ICommand> register = new SymbolRegister<>();
-        ICommand[] commands = holder.getCommands();
-        for (ICommand command : commands) {
-            try {
-                register.insert(command);
-            } catch (DuplicateSymbolException e) {
-                throw new CalculatorError("duplicate system command");
+        SymbolRegister<ICommandFactory> register = new SymbolRegister<>();
+        ICommandFactory[] commandFactoryList = holder.getCommandFactoryList();
+        try {
+            for (ICommandFactory commandFactory : commandFactoryList) {
+                register.insert(commandFactory);
             }
+        } catch (DuplicateSymbolException e) {
+            throw new CalculatorError("duplicate system command");
         }
         return new DefaultCommandDetector(register);
     }

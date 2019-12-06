@@ -4,14 +4,19 @@ import frog.calculator.build.register.IRegister;
 
 public class DefaultCommandDetector implements ICommandDetector{
 
-    private final IRegister<ICommand> commandRegister;
+    private final IRegister<ICommandFactory> commandRegister;
 
-    public DefaultCommandDetector(IRegister<ICommand> commandRegister) {
+    public DefaultCommandDetector(IRegister<ICommandFactory> commandRegister) {
         this.commandRegister = commandRegister;
     }
 
     public ICommand detect(char[] exps, int startIndex){
-        return commandRegister.retrieve(exps, startIndex);
+        ICommandFactory factory = commandRegister.retrieve(exps, startIndex);
+        if(factory == null){
+            return null;
+        }else{
+            return factory.instance();
+        }
     }
 
 }

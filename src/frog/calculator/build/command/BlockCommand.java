@@ -2,8 +2,6 @@ package frog.calculator.build.command;
 
 import frog.calculator.build.IExpressionBuilder;
 import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.express.IExpressionHolder;
-import frog.calculator.util.StringUtils;
 
 public class BlockCommand extends AbstractCommand {
 
@@ -11,9 +9,9 @@ public class BlockCommand extends AbstractCommand {
 
     private String blockEnd;
 
-    public BlockCommand(IExpressionHolder holder) {
-        this.blockStart = holder.getBlockStart().symbol();
-        this.blockEnd = holder.getBlockEnd().symbol();
+    public BlockCommand(String blockStart, String blockEnd) {
+        this.blockStart = blockStart;
+        this.blockEnd = blockEnd;
     }
 
     @Override

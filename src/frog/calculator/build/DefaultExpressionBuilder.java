@@ -5,7 +5,6 @@ import frog.calculator.ICalculatorContext;
 import frog.calculator.ICalculatorManager;
 import frog.calculator.build.command.ICommand;
 import frog.calculator.build.command.ICommandDetector;
-import frog.calculator.build.pipe.IBuildPipe;
 import frog.calculator.build.register.IRegister;
 import frog.calculator.build.register.SymbolRegister;
 import frog.calculator.build.resolve.IResolver;
@@ -58,8 +57,6 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
 
     private IExpression root;
 
-    private IBuildPipe buildRegion;
-
     private int order = 0;
 
     public DefaultExpressionBuilder(ICalculatorSession session, ICalculatorManager manager, IResolver innerResolver, ICommandDetector commandDetector) {
@@ -70,7 +67,6 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     private void init(){
-        this.buildRegion = null;
         this.order = 0;
         this.root = INIT_ROOT;
         this.localRegisterStack = new Stack<>();
@@ -87,11 +83,6 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     @Override
     public void addBuildFinishListener(IBuildFinishListener listener) {
         buildOverListenerQueue.enqueue(listener);
-    }
-
-    @Override
-    public void setBuildPipe(IBuildPipe region) {
-        this.buildRegion = region;
     }
 
     @Override
@@ -203,15 +194,8 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         }
     }
 
-    private IExpression append(IExpression expression) throws DuplicateSymbolException {
+    private IExpression append(IExpression expression) {
         expression.buildInit(this.order++, null, this); // TODO Context
-        if(buildRegion != null){
-            if(expression.symbol().equals(buildRegion.symbol())){
-                this.buildRegion.matchCallBack(this);
-            }else{
-                this.buildRegion = null;
-            }
-        }
         this.root = this.root.assembleTree(expression);
         return this.root;
     }

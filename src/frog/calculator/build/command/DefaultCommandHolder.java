@@ -16,11 +16,11 @@ public class DefaultCommandHolder implements ICommandHolder {
     }
 
     @Override
-    public ICommand[] getCommands() {
+    public ICommandFactory[] getCommandFactoryList() {
         IExpressionHolder holder = calculatorConfigure.getComponentFactory().createExpressionHolder();
-        return new ICommand[]{
-                new VariableDeclareCommand("@", calculatorManager, holder),
-                new BlockCommand(holder)
+        return new ICommandFactory[]{
+                new VariableCommandFactory("@", calculatorManager, holder),
+                new BlockCommandFactory(holder.getBlockStart().symbol(), holder.getBlockEnd().symbol())
         };
     }
 }

@@ -2,7 +2,6 @@ package frog.calculator.build;
 
 import frog.calculator.ICalculatorContext;
 import frog.calculator.build.command.ICommand;
-import frog.calculator.build.pipe.IBuildPipe;
 import frog.calculator.build.register.IRegister;
 import frog.calculator.exception.BuildException;
 import frog.calculator.exception.DuplicateSymbolException;
@@ -21,13 +20,6 @@ public interface IExpressionBuilder {
      * @param listener 构建完成监听
      */
     void addBuildFinishListener(IBuildFinishListener listener);
-
-    /**
-     * 设置构建管道<br/>
-     * 一个builder中, 同时存在的管道数量只有一个, 新入一个管道会重置掉原来的管道
-     * @param pipe 管道对象
-     */
-    void setBuildPipe(IBuildPipe pipe);
 
     /**
      * 向会话中添加command
