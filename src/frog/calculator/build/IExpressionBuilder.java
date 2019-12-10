@@ -25,14 +25,14 @@ public interface IExpressionBuilder {
      * 向会话中添加command
      * @param command 待添加的命令
      */
-    void pushCommand(ICommand command);
+//    void pushCommand(ICommand command);
 
     /**
      * 销毁会话顶部命令<br/>
      * 为安全起见, 必须传入待销毁命令对象本身方可销毁该命令
      * @param command 指定的待销毁的命令对象
      */
-    void popCommand(ICommand command);
+//    void popCommand(ICommand command);
 
     /**
      * 通过构建器添加变量, 如果存在局部变量表, 会添加到顶层局部变量表中, 如果没有, 会添加到session变量表中
@@ -61,4 +61,5 @@ public interface IExpressionBuilder {
     IExpression build(char[] expression) throws BuildException;
 
     void viewCalculatorContext(ICalculatorContext context);
+
 }

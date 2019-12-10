@@ -86,20 +86,6 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
     }
 
     @Override
-    public void pushCommand(ICommand command) {
-        this.commandStack.push(command);
-    }
-
-    @Override
-    public void popCommand(ICommand command) {
-        ICommand pop = this.commandStack.pop();
-        if(pop != command){
-            this.commandStack.push(pop);
-            throw new IllegalStateException("assign command is not in stack top.");
-        }
-    }
-
-    @Override
     public void addVariable(IExpression expression) throws DuplicateSymbolException {
         if(this.localRegisterStack.isEmpty()){
             this.tempSessionVariableRecord.add(expression);
@@ -215,7 +201,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
             command = detector.detect(chars, startIndex);
             if(command == null){ break; }
             offset = command.init(this);
-            this.pushCommand(command);
+            this.commandStack.push(command);
             commandOffset += offset;
             startIndex += offset;
         }while (offset > 0 && startIndex < chars.length);
@@ -231,22 +217,22 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
             c.beforeResolve(chars, startIndex, this);
         }
 
-        // 尝试使用session解析器
+        // 解析
         IResolverResult result = null;
         if(startIndex < chars.length){
-            result = resolveVariable(chars, startIndex);
+            result = resolveVariable(chars, startIndex);    // 使用内部解析器进行解析
             if(result == null){
                 // 使用可执行解析器进行解析
-                result = this.innerResolver.resolve(chars, startIndex);
+                result = this.innerResolver.resolve(chars, startIndex); // 使用全局解析器
             }else{
-                IResolverResult tryResult = this.innerResolver.resolve(chars, startIndex);
+                IResolverResult tryResult = this.innerResolver.resolve(chars, startIndex);  // 使用全局解析器
                 if(tryResult != null && tryResult.offset() > result.offset()){
                     result = tryResult;
                 }
             }
         }
 
-        // 解析后置命令
+        // 解析后命令处理
         commands = this.commandStack.iterator();
 
         if(result != null){
@@ -257,13 +243,18 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
                 ICommand c = commands.next();
                 result = c.afterResolve(result, this);
                 if(canOver && c.over(symbol, this)){
-                    queue.enqueue(c);
+                    queue.enqueue(c);   // 压入待pop栈
                 }else{
                     canOver = false;
                 }
             }
             while(!queue.isEmpty()){
-                this.popCommand(queue.dequeue());
+                // 栈中已结束的命令出栈
+                ICommand pop = this.commandStack.pop();
+                if(pop != queue.dequeue()){
+                    this.commandStack.push(pop);
+                    throw new IllegalStateException("assign command is not in stack top.");
+                }
             }
         }else{
             throw new ExpressionFormatException(String.valueOf(chars), "undefined symbol : " + chars[startIndex] + " at " + startIndex);

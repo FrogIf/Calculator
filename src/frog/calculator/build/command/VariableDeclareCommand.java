@@ -31,6 +31,10 @@ public class VariableDeclareCommand extends AbstractCommand {
 
     private String blockOpen;
 
+    private String assign;
+
+    private String blockClose;
+
     private boolean declareFunction;    // 指示是否是函数声明
 
     private String over;
@@ -41,7 +45,7 @@ public class VariableDeclareCommand extends AbstractCommand {
 
     public VariableDeclareCommand(String command, ICalculatorManager manager, IExpressionHolder holder) {
         this.command = command;
-        this.over = holder.getAssign().symbol();
+        this.assign = this.over = holder.getAssign().symbol();
 
         IExpression[] structExpressions = holder.getStructureExpression();
         boolean haveOver = false;
@@ -66,6 +70,7 @@ public class VariableDeclareCommand extends AbstractCommand {
         this.funOpen = holder.getBracketOpen().symbol();
         this.funClose = holder.getBracketClose().symbol();
         this.blockOpen = holder.getBlockStart().symbol();
+        this.blockClose = holder.getBlockEnd().symbol();
 
         this.variableResolver = new TruncateResolver(manager, (symbol) -> VariableExpression.createVariableExpression(symbol, this.over), truncateSymbol);
     }
@@ -77,10 +82,12 @@ public class VariableDeclareCommand extends AbstractCommand {
 
     @Override
     public void beforeResolve(char[] chars, int startIndex, IExpressionBuilder builder) throws BuildException {
-        // 执行变量解析
-        IResolverResult result = this.variableResolver.resolve(chars, startIndex);
-        if(result != null){
-            builder.addVariable(result.getExpression());
+        if(this.variableResolver != null){
+            // 执行变量解析
+            IResolverResult result = this.variableResolver.resolve(chars, startIndex);
+            if(result != null){
+                builder.addVariable(result.getExpression());
+            }
         }
     }
 
@@ -91,9 +98,9 @@ public class VariableDeclareCommand extends AbstractCommand {
             if(this.funOpen.equals(symbol)){
                 this.declareFunction = true;
                 builder.createLocalVariableTable();
-            }else if(this.declareFunction && this.funClose.equals(symbol)){
+            }else if(this.declareFunction && this.funClose.equals(symbol)){ // 说明是函数声明
                 this.localRegister = builder.popLocalVariableTable();
-                this.over = this.blockOpen;
+                this.over = this.blockClose;
             }else if(this.blockOpen.equals(symbol)){
                 IList<IExpression> elements = this.localRegister.getElements();
                 Iterator<IExpression> itr = elements.iterator();
@@ -111,7 +118,12 @@ public class VariableDeclareCommand extends AbstractCommand {
 
     @Override
     public boolean over(String symbol, IExpressionBuilder builder) {
-        return this.over.equals(symbol);
+        if(this.over.equals(symbol)){
+            return true;
+        }else if(this.assign.equals(symbol)){// TODO 需要注意下声明的嵌套时会不会有什么影响
+            this.variableResolver = null;
+        }
+        return false;
     }
 
     @Override
