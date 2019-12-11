@@ -1,69 +1,34 @@
 package frog.calculator.express;
 
-import frog.calculator.exception.ArgumentUnmatchException;
 import frog.calculator.exec.space.ISpace;
 import frog.calculator.math.BaseNumber;
-import frog.calculator.util.collection.IList;
-import frog.calculator.util.collection.Iterator;
-import frog.calculator.util.collection.LinkedList;
 
-/**
- * 值变量表达式
- */
 public class VariableExpression extends EndPointExpression {
 
-    private PrototypeVariableExpression prototype;
+    private String assign;
 
-    private IExpression value;
+    private ISpace<BaseNumber> value;
 
-    private IExpression actualArg;
+    VariableExpression prototype;
 
-    String assign;
+    private VariableExpression realVariable;
 
-    private VariableExpression(String symbol, String assign) {
+    private final static short TYPE_VOID_VAR = 0;
+
+    private final static short TYPE_VALUE_VAR = 1;
+
+    private final static short TYPE_FUN_VAR = 2;
+
+    private short type; // 变量类型: 0 - void变量, 1 - 值变量, 2 - 函数变量
+
+    private VariableExpression(String symbol, VariableExpression prototype){
+        super(symbol, null);
+        this.prototype = prototype;
+    }
+
+    public VariableExpression(String symbol, String assign) {
         super(symbol, null);
         this.assign = assign;
-    }
-
-    public static VariableExpression createVariableExpression(String symbol, String assign){
-        return new PrototypeVariableExpression(symbol, assign);
-    }
-
-    @Override
-    public boolean createBranch(IExpression childExpression) {
-        if(childExpression.isLeaf()){   // 只有叶子节点才可能作为变量表达式的子表达式
-            if(this.assign.equals(childExpression.symbol())){   // 如果是赋值操作符
-                if(this.value == null && this.prototype.argumentList == null){
-                    this.value = childExpression;
-                    return true;
-                }else if(this.value == null){   // 暗示argumentList不为null, 构造funBody
-                    Iterator<PrototypeVariableExpression> iterator = this.prototype.argumentList.iterator();
-                    while (iterator.hasNext()){
-                        iterator.next().funRef = this.prototype;
-                    }
-                    this.prototype.funBody = childExpression.clone();   // 这里触发clone, 与signRef配合(参见clone方法), 将内部变量全部替换为变量原型
-                    return true;
-                }else{
-                    return false;
-                }
-            }else if(this.prototype.argumentList == null){ // 说明该变量未初始化
-                this.prototype.argumentList = new LinkedList<>();
-                while(childExpression.hasNextChild()){
-                    IExpression expression = childExpression.nextChild();
-                    if(expression instanceof VariableExpression){
-                        this.prototype.argumentList.add(((VariableExpression) expression).prototype);
-                    }else{
-                        this.prototype.argumentList = null;
-                        return false;
-                    }
-                }
-                return true;
-            }else if(this.actualArg == null){    // 说明这是一个函数变量, 并且还没指定实参
-                this.actualArg = childExpression;
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -79,55 +44,129 @@ public class VariableExpression extends EndPointExpression {
     }
 
     @Override
-    public ISpace<BaseNumber> interpret() {
-        if(this.prototype.funBody != null && this.prototype.argumentList != null){  // 函数变量
-            // TODO 函数运算
-            return this.value.interpret();
-        }else if(this.prototype.argumentList == null){    // 值变量
-            ISpace<BaseNumber> result;
-            if(this.value != null){ // 重新赋值
-                result = this.value.interpret();
-            }else if(prototype.protoValue != null){ // 没有重新赋值, 存在默认值
-                result = prototype.protoValue;
-            }else {
-                throw new IllegalStateException("variable " + this.symbol + " is not assign.");
-            }
-            this.prototype.protoValue = result;
-            return result;
-        }else{
-            throw new ArgumentUnmatchException(this.symbol);
+    public VariableExpression clone() {
+        VariableExpression variableExpression = null;
+        if(this.type == TYPE_VOID_VAR){
+            variableExpression = new VoidVariableExpression(this.symbol, this);
+        }else if(this.type == TYPE_VALUE_VAR){
+            variableExpression = new ValueVariableExpression(this.symbol, this);
+        }else if(this.type == TYPE_FUN_VAR){
+            variableExpression = new FunctionVariableExpression(this.symbol, this);
         }
+        if(variableExpression != null) {
+            variableExpression.value = null;
+        }
+
+        return variableExpression;
     }
 
     @Override
-    public IExpression clone() {
-        return this.prototype.funRef == null ? this : this.prototype;
+    public ISpace<BaseNumber> interpret() {
+        return this.prototype.realVariable.interpret();
     }
 
-    private static class PrototypeVariableExpression extends VariableExpression {
-
-        private PrototypeVariableExpression(String symbol, String assign) {
-            super(symbol, assign);
+    /**
+     * 函数变量表达式
+     */
+    private static class FunctionVariableExpression extends VariableExpression{
+        public FunctionVariableExpression(String symbol, VariableExpression prototype) {
+            super(symbol, prototype);
         }
 
-        private ISpace<BaseNumber> protoValue;
+        private IExpression body;
 
-        private IExpression funBody;
-
-        // 参数列表
-        private IList<PrototypeVariableExpression> argumentList;
-
-        // 这个参数是为函数形参提供的, 每一个形参都关联与其对应的函数变量
-        private PrototypeVariableExpression funRef;
+        private IExpression args;
 
         @Override
-        public IExpression clone() {
-            // TODO copy改造
-            VariableExpression variableExpression = new VariableExpression(this.symbol, this.assign);
-            variableExpression.value = null;
-            variableExpression.prototype = this;
-            return variableExpression;
+        public boolean createBranch(IExpression childExpression) {  // TODO 函数表达式
+            if(!childExpression.isLeaf()){
+                return false;
+            }
+            if(this.args == null){
+                this.args = childExpression;
+            }else if(this.body == null && this.prototype.assign.equals(childExpression.symbol())){
+                this.body = childExpression;
+            }else{
+                return false;
+            }
+            return true;
         }
     }
 
+    /**
+     * 值变量表达式
+     */
+    private static class ValueVariableExpression extends VariableExpression{
+
+        public ValueVariableExpression(String symbol, VariableExpression prototype) {
+            super(symbol, prototype);
+        }
+
+        private IExpression value;
+
+        @Override
+        public boolean createBranch(IExpression childExpression) {
+            if(childExpression.isLeaf() && this.prototype.assign.equals(childExpression.symbol()) && this.value == null){   // 只有叶子节点才可能作为变量表达式的子表达式
+                this.value = childExpression;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public  ISpace<BaseNumber> interpret() {
+            ISpace<BaseNumber> result;
+            if(this.value != null){ // 重新赋值
+                result = this.value.interpret();
+            }else if(this.prototype.value != null){ // 没有重新赋值, 存在默认值
+                result = this.prototype.value;
+            }else {
+                throw new IllegalStateException("variable " + this.symbol + " is not assign.");
+            }
+            this.prototype.value = result;
+            return result;
+        }
+
+        @Override
+        public VariableExpression clone() {
+            return this;
+        }
+    }
+
+    /**
+     * 泛型变量, 类型还未确定的变量
+     */
+    private static class VoidVariableExpression extends VariableExpression{
+        public VoidVariableExpression(String symbol, VariableExpression prototype) {
+            super(symbol, prototype);
+        }
+
+        @Override
+        public boolean createBranch(IExpression childExpression) {
+            if(childExpression.isLeaf()){   // 只有叶子节点才可能作为变量表达式的子表达式
+                if(this.prototype.realVariable == null){
+                    if(this.prototype.assign.equals(childExpression.symbol())){
+                        this.prototype.type = VariableExpression.TYPE_VALUE_VAR;
+                    }else{
+                        this.prototype.type = VariableExpression.TYPE_FUN_VAR;
+                    }
+                    VariableExpression varExp = this.prototype.clone();
+                    if(varExp.createBranch(childExpression)){
+                        this.prototype.realVariable = varExp;
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    return this.prototype.realVariable.createBranch(childExpression);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public VariableExpression clone() {
+            return this;
+        }
+    }
 }

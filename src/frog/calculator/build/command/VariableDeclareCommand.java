@@ -72,7 +72,7 @@ public class VariableDeclareCommand extends AbstractCommand {
         this.blockOpen = holder.getBlockStart().symbol();
         this.blockClose = holder.getBlockEnd().symbol();
 
-        this.variableResolver = new TruncateResolver(manager, (symbol) -> VariableExpression.createVariableExpression(symbol, this.over), truncateSymbol);
+        this.variableResolver = new TruncateResolver(manager, (symbol) -> new VariableExpression(symbol, this.over), truncateSymbol);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class VariableDeclareCommand extends AbstractCommand {
     public boolean over(String symbol, IExpressionBuilder builder) {
         if(this.over.equals(symbol)){
             return true;
-        }else if(this.assign.equals(symbol)){// TODO 需要注意下声明的嵌套时会不会有什么影响
+        }else if(this.assign.equals(symbol)){   // TODO 需要注意下声明的嵌套时会不会有什么影响
             this.variableResolver = null;
         }
         return false;
