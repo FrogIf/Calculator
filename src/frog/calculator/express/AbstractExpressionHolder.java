@@ -24,7 +24,7 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private IExpression blockEnd = new MarkExpression("}");
 
     // 代码块终止表达式
-    private IExpression blockStart = new BlockExpression("{", separator.symbol(), blockEnd.symbol());
+    private IExpression blockStart = new RegionExpression("{", separator.symbol(), blockEnd.symbol());
 
     @Override
     public IExpression[] getBuiltInExpression() {

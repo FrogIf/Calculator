@@ -8,7 +8,7 @@ import frog.calculator.math.BaseNumber;
 /**
  * 赋值表达式
  */
-public class AssignExpression extends AbstractExpression{
+public class AssignExpression extends AbstractExpression {
 
     private IExpression suspendExpression;
 
@@ -114,9 +114,15 @@ public class AssignExpression extends AbstractExpression{
 
     @Override
     public IExpression clone() {
-        return new AssignExpression(this.symbol);
+        AssignExpression expression = (AssignExpression) super.clone();
+        if(this.valueExpression != null){
+            expression.valueExpression = this.valueExpression.clone();
+        }
+        if(this.suspendExpression != null){
+            expression.suspendExpression = this.suspendExpression.clone();
+        }
+        return expression;
     }
-
 
     @Override
     public void buildInit(int order, IExpressionContext context, IExpressionBuilder builder) {

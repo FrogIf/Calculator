@@ -11,9 +11,9 @@ import frog.calculator.util.collection.LinkedList;
 
 public class SurroundExpression extends AbstractExpression {
 
-    private String separatorSymbol;
+    private final String separatorSymbol;
 
-    private String closeSymbol;
+    private final String closeSymbol;
 
     private IExpression suspendExpression;
 
@@ -144,7 +144,29 @@ public class SurroundExpression extends AbstractExpression {
     @Override
     public IExpression clone() {
         SurroundExpression clone = (SurroundExpression) super.clone();
-        clone.init();
+
+        clone.currentElement = null;
+
+        Iterator<Element> itr = this.elements.iterator();
+        clone.elements = new LinkedList<>();
+        while(itr.hasNext()){
+            Element next = itr.next();
+            Element ele = new Element();
+            if(this.currentElement == next){
+                clone.currentElement = ele;
+            }
+            if(next.expression != null){
+                ele.expression = next.expression.clone();
+            }
+            clone.elements.add(ele);
+        }
+
+        if(clone.currentElement == null){
+            clone.currentElement = new Element();
+            clone.elements.add(currentElement);
+        }
+
+        clone.traveller = null; // traveller置为null, 使该表达式可以遍历, 否则该表达式没有任何使用意义
         return clone;
     }
 

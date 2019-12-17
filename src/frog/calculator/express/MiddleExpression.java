@@ -8,10 +8,6 @@ public class MiddleExpression extends AbstractBlockExpression{
 
     private IExpression left;
 
-//    public MiddleExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
-//        super(symbol, buildFactor, operator, fifo);
-//    }
-
     public MiddleExpression(String symbol, int buildFactor, IOperator operator) {
         super(symbol, buildFactor, operator);
     }
@@ -24,10 +20,8 @@ public class MiddleExpression extends AbstractBlockExpression{
     @Override
     public IExpression clone() {
         MiddleExpression clone = (MiddleExpression) super.clone();
-
         clone.left = this.left == null ? null : this.left.clone();
         clone.right = this.right == null ? null : this.right.clone();
-
         return clone;
     }
 

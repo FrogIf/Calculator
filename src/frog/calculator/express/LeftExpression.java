@@ -33,4 +33,13 @@ public class LeftExpression extends AbstractBlockExpression {
     public IExpression nextChild() {
         return this.right;
     }
+
+    @Override
+    public IExpression clone() {
+        LeftExpression exp = (LeftExpression) super.clone();
+        if(this.right != null){
+            exp.right = this.right.clone();
+        }
+        return exp;
+    }
 }

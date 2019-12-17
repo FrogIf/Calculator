@@ -41,4 +41,8 @@ public abstract class AbstractBlockExpression extends AbstractExpression {
         return this.buildFactor;
     }
 
+    @Override
+    public IExpression clone() {
+        return super.clone();
+    }
 }

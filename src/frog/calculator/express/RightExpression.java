@@ -6,13 +6,8 @@ public class RightExpression extends AbstractBlockExpression {
 
     private IExpression left;
 
-//    public RightExpression(String symbol, int buildFactor, IOperator operator, boolean fifo) {
-//        super(symbol, buildFactor, operator, fifo);
-//    }
-
     public RightExpression(String symbol, int buildFactor, IOperator operator){
         super(symbol, buildFactor, operator);
-//        super(symbol, buildFactor, operator, false);
     }
 
     @Override
@@ -38,5 +33,14 @@ public class RightExpression extends AbstractBlockExpression {
     @Override
     public IExpression nextChild() {
         return this.left;
+    }
+
+    @Override
+    public IExpression clone() {
+        RightExpression expression = (RightExpression) super.clone();
+        if(this.left != null){
+            expression.left = this.left.clone();
+        }
+        return expression;
     }
 }

@@ -2,9 +2,9 @@ package frog.calculator.express;
 
 import frog.calculator.ISymbol;
 import frog.calculator.build.IExpressionBuilder;
-import frog.calculator.math.BaseNumber;
 import frog.calculator.exec.IOperator;
 import frog.calculator.exec.space.ISpace;
+import frog.calculator.math.BaseNumber;
 
 public interface IExpression extends Cloneable, ISymbol {
 

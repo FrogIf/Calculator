@@ -7,12 +7,14 @@ import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
-public class BlockExpression extends SurroundExpression {
+/**
+ * 域表达式, 即代码块
+ */
+public class RegionExpression extends SurroundExpression {
 
-    public BlockExpression(String openSymbol, String separatorSymbol, String closeSymbol) {
+    public RegionExpression(String openSymbol, String separatorSymbol, String closeSymbol) {
         super(openSymbol, separatorSymbol, closeSymbol);
     }
-
 
     @Override
     public ISpace<BaseNumber> interpret() {
@@ -31,5 +33,10 @@ public class BlockExpression extends SurroundExpression {
             result = iterator.next().interpret();
         }
         return result;
+    }
+
+    @Override
+    public IExpression clone() {
+        return super.clone();
     }
 }

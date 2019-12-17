@@ -1,11 +1,12 @@
 package frog.calculator.express;
 
 import frog.calculator.build.IExpressionBuilder;
-import frog.calculator.math.BaseNumber;
+import frog.calculator.exception.CalculatorError;
 import frog.calculator.exec.IOperator;
 import frog.calculator.exec.space.ISpace;
+import frog.calculator.math.BaseNumber;
 
-public abstract class AbstractExpression implements IExpression{
+public abstract class AbstractExpression implements IExpression {
 
     protected String symbol;
 
@@ -28,11 +29,12 @@ public abstract class AbstractExpression implements IExpression{
     @Override
     public IExpression clone() {
         try {
-            return (IExpression) super.clone();
+            AbstractExpression expression = (AbstractExpression) super.clone();
+            expression.context = null;
+            return expression;
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            throw new CalculatorError("clone is failed.");
         }
-        return null;
     }
 
     @Override
@@ -65,4 +67,6 @@ public abstract class AbstractExpression implements IExpression{
         this.order = order;
         this.context = context;
     }
+
+
 }

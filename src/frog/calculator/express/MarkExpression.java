@@ -14,4 +14,8 @@ public class MarkExpression extends EndPointExpression {
         throw new IllegalStateException("access illegal.");
     }
 
+    @Override
+    public IExpression clone() {
+        return super.clone();
+    }
 }
