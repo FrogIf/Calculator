@@ -219,7 +219,28 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
     @Override
     public String toDecimal(int precision) {
-        return null;
+        if(IntegerNumber.ONE.equals(this.denominator)){
+            return this.numerator.toString();
+        }else{
+            IntegerNumber.Remainder remainder = new IntegerNumber.Remainder();
+            IntegerNumber quotient = this.numerator.div(this.denominator, remainder);
+            IntegerNumber rem = remainder.getRemainder();
+//            long bcount = (long) precision;
+//            if(bcount > Integer.MAX_VALUE){
+//                throw new IllegalArgumentException("precision is too large.");
+//            }
+            IntegerNumber remEx = rem.decLeftShift(precision);
+
+            IntegerNumber decimal = remEx.div(this.denominator, remainder);
+            String decimalStr = decimal.toString();
+            if(decimalStr.length() < precision){
+                decimalStr = StringUtils.leftFill(decimalStr, '0', precision - decimalStr.length());
+            }
+            if(IntegerNumber.ZERO.equals(remainder.getRemainder()) && decimalStr.endsWith("0")){
+                decimalStr = StringUtils.rightTrim(decimalStr, '0');
+            }
+            return quotient.toString() + "." + decimalStr;
+        }
     }
 
     @Override

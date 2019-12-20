@@ -3,6 +3,9 @@ package frog.calculator.math.rational;
 import frog.calculator.math.INumber;
 import frog.calculator.math.exception.DivideByZeroException;
 
+/**
+ * 整数
+ */
 public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
 
     public static final byte POSITIVE = 0;
@@ -204,6 +207,10 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         }
     }
 
+    /**
+     * 自加1
+     * @return 自加结果
+     */
     public IntegerNumber increase(){
         if(this.sign == POSITIVE){
             return new IntegerNumber(this.sign, PositiveInteger.addOneWord(this.values, this.highPos, 1));
@@ -342,6 +349,32 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         return literal[0] + (literal.length > 1 ? "..." : "");
     }
 
+    /**
+     * 十进制左移
+     * @param bcount 左移位数
+     * @return 左移后的结果
+     */
+    public IntegerNumber decLeftShift(int bcount){
+        return new IntegerNumber(this.sign, PositiveInteger.decLeftShift(this.values, this.highPos, bcount));
+    }
+
+    /**
+     * 获取该数含有多少个十进制位
+     * @return 十进制位个数
+     */
+    public int decBits(){
+        int b = highPos * PositiveInteger.SINGLE_ELEMENT_LEN;
+        int v = this.values[highPos];
+        while(v > 0){
+            v /= 10;
+            b++;
+        }
+        if(b == 0){
+            b = 1;
+        }
+        return b;
+    }
+
     public boolean equals(Object o){
         if(o == this){ return true; }
         if(o == null || o.getClass() != IntegerNumber.class){
@@ -403,6 +436,7 @@ public final class IntegerNumber implements INumber, Comparable<IntegerNumber> {
         private Remainder(IntegerNumber remainder) {
             this.remainder = remainder;
         }
+
         public IntegerNumber getRemainder() {
             return remainder;
         }

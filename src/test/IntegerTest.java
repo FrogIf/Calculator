@@ -9,8 +9,13 @@ import java.util.Random;
 public class IntegerTest {
 
     public static void main(String[] args){
-        randomTest();
+//        IntegerNumber num = IntegerNumber.valueOf("123456789");
+//        for(int i = 0; i < 20; i++){
+//            System.out.println(i + "\t" + num.decLeftShift(i));
+//        }
+//        randomTest();
 //        assignTest("8", "18327732431324085593954544");
+        divTest("100000000000", "2");
     }
 
     public static void randomTest(){

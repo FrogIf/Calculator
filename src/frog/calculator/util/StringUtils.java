@@ -18,4 +18,21 @@ public class StringUtils {
         }
         return builder.toString();
     }
+
+    public static String leftFill(String str, char ch, int count){
+        StringBuilder sb = new StringBuilder(count);
+        for(int i = 0; i < count; i++){
+            sb.append(ch);
+        }
+        return sb.toString() + str;
+    }
+
+    public static String rightTrim(String str, char ch){
+        int i = str.length() - 1;
+        while(i > 0 && str.charAt(i) == ch){
+            i--;
+        }
+        str = str.substring(0, i + 1);
+        return str;
+    }
 }

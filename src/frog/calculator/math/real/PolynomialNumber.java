@@ -336,8 +336,15 @@ public final class PolynomialNumber extends AbstractStructureNumber implements C
     }
 
     @Override
-    public String toDecimal(int count) {
-        return null;
+    public String toDecimal(int precision) {
+        StringBuilder sb = new StringBuilder();
+        if(rationalNomial != null){
+            sb.append(rationalNomial.toDecimal(precision));
+        }
+
+        // TODO 无理数部分的头decimal
+
+        return sb.toString();
     }
 
     @Override

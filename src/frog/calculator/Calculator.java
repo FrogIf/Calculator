@@ -17,10 +17,13 @@ public class Calculator {
     // 计算管理器
     private ICalculatorManager calculatorManager;
 
+    private int precision = 10;
+
     public Calculator(ICalculatorConfigure calculatorConfigure) {
         if (calculatorConfigure == null) {
             throw new IllegalArgumentException("configure is null.");
         }
+        this.precision = calculatorConfigure.precision();
         this.calculatorManager = calculatorConfigure.getComponentFactory().createCalculatorManager(calculatorConfigure);
     }
 
@@ -91,6 +94,7 @@ public class Calculator {
         int[] widths = range.maxWidths();
         if(widths.length == 1 && widths[0] == 1){
             return result.get(new Coordinate(0)).toString();
+//            return result.get(new Coordinate(0)).toDecimal(this.precision);
         }else{
             StringBuilder sb = new StringBuilder("[");
             int[] coordinateArr = new int[range.dimension()];
@@ -103,6 +107,7 @@ public class Calculator {
                         sb.append(',');
                     }
                     sb.append(number == null ? "null" : number.toString());
+//                    sb.append(number == null ? "null" : number.toDecimal(this.precision));
                 }
                 if(i > 0){ sb.append(';'); }
             }

@@ -2,6 +2,9 @@ package frog.calculator.math.rational;
 
 import frog.calculator.math.exception.DivideByZeroException;
 
+/**
+ * 正整数操作类
+ */
 class PositiveInteger {
 
     static final int[] ZERO = new int[1];
@@ -375,11 +378,10 @@ class PositiveInteger {
                         a += SCALE;
                         borrow++;
                     }
-                    u[j + i] = (int) (a - b);
                 }else{
                     borrow = 0;
-                    u[j + i] = (int) (a - b);
                 }
+                u[j + i] = (int) (a - b);
             }
 
             // D6 往回加
@@ -469,7 +471,7 @@ class PositiveInteger {
 
         for(int i = result.length - 2; i > -1; i--){
             long d = dividend[i] + rem * SCALE;
-            if(d < divisor){
+            if(d < divisor && d != 0){
                 d = SCALE + d;
                 q = d / divisor;
                 rem = d % divisor;
@@ -581,6 +583,48 @@ class PositiveInteger {
         }
 
         return result;
+    }
+
+    /**
+     * 十进制左移
+     * @param num 待左移的数
+     * @param highPos num非0高位位置
+     * @param bcount 左移位数
+     * @return 左移的结果
+     */
+    public static int[] decLeftShift(int[] num, int highPos, int bcount){
+        int len = highPos + 1 + bcount / SINGLE_ELEMENT_LEN;
+        int r = bcount % SINGLE_ELEMENT_LEN;
+        int[] res;
+        if(r > 0){
+            len += 1;
+            res = new int[len];
+
+            int f = 1;
+            while(r > 0){
+                f *= 10;
+                r--;
+            }
+            int e = SCALE / f;
+
+            int up = 0;
+            int j = len - 1;
+            for(int i = highPos; i >= 0; i--, j--){
+                res[j] = num[i] / e + up * f;
+                up = num[i] % e;
+            }
+            if(up > 0){
+                res[j] = up * f;
+            }
+        }else{
+            res = new int[len];
+            int j = len - 1;
+            for(int i = highPos; i >= 0; i--, j--){
+                res[j] = num[i];
+            }
+        }
+
+        return res;
     }
 
 }
