@@ -16,7 +16,7 @@ public abstract class AbstractBlockExpression extends AbstractExpression {
         IExpression root;
         boolean inputLeaf = expression.isLeaf();
         if(!inputLeaf && this.buildFactor() == expression.buildFactor()){   // 如果两个表达式的优先级相等
-            root = this.createBranch(expression) ? this : null;
+            root = expression.createBranch(this) ? expression : null;
         }else{
             IExpression low;
             IExpression high;
