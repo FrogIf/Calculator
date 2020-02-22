@@ -1,6 +1,4 @@
-package test.model;
-
-import frog.calculator.math.rational.IntegerNumber;
+package frog.test.model;
 
 /**
  * 正整数基本运算

@@ -1,8 +1,8 @@
-package test;
+package frog.test;
 
 import frog.calculator.math.exception.DivideByZeroException;
 import frog.calculator.math.rational.IntegerNumber;
-import test.model.OldIntegerNumber;
+import frog.test.model.OldIntegerNumber;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package test.model;
+package frog.test.model;
 
 import frog.calculator.math.INumber;
 import frog.calculator.math.rational.IntegerNumber;

@@ -1,4 +1,4 @@
-package test;
+package frog.test;
 
 import frog.calculator.math.rational.RationalNumber;
 

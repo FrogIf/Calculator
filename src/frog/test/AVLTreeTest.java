@@ -1,4 +1,4 @@
-package test;
+package frog.test;
 
 import frog.calculator.util.collection.ISet;
 import frog.calculator.util.collection.Iterator;

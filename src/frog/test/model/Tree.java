@@ -1,4 +1,4 @@
-package test.model;
+package frog.test.model;
 
 /**
  * AVL-Tree
