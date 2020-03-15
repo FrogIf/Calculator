@@ -186,3 +186,45 @@ $$
 如果v_{n - 1} \geq \lfloor b / 2 \rfloor, 则\hat{q} - 2 \leq q \leq \hat{q}
 $$
 
+## Knuth D算法
+
+给定非负整数$u = u_{m + n - 1} \cdot b ^ {m + n - 1} + \dots + u_1 \cdot b + u_0$和$v = v_{n - 1} \cdot b ^ {n - 1} + \dots + v_1 \cdot b + v_0$, 其中$v_{n - 1} \neq 0$且n > 1, 可得商$\lfloor u / v \rfloor = q_m$
+
+
+## 附录
+
+证明不等式:
+
+$$
+\lfloor \frac{a}{b} \rfloor \geq \frac{a - (b - 1)}{b}, a, b \in N^+
+$$
+
+证明:
+
+不妨设$a = kb + c$, 其中, $k, c \in N^+$且$0 \leq c < b$
+
+所以:
+
+$$
+\lfloor \frac{a}{b} \rfloor = \lfloor \frac{kb + c}{b} \rfloor = k
+$$
+
+又有:
+
+$$
+\frac{a}{b} = \frac{kb + c}{b} = k + \frac{c}{b}
+$$
+
+所以:
+
+$$
+\lfloor \frac{a}{b} \rfloor = \frac{a}{b} - \frac{c}{b} = \frac{a - c}{b}
+$$
+
+由于, $c < b$, 且$c \in N^+$, 所以$c \leq b - 1$, 所以:
+
+$$
+\lfloor \frac{a}{b} \rfloor = \frac{a - c}{b} \geq \frac{a - (b - 1)}{b}
+$$
+
+证毕.
