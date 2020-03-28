@@ -20,9 +20,11 @@ $$
 
 其中, $u_i < b, v_i < b, u_n > 0, v_{n - 1} > 0$
 
-令$q = \lfloor u / v \rfloor$, 显然$1 < q \leq b$, 并且这里排除$q = b$的情况, 即$1 < q < b$
+令$q = \lfloor u / v \rfloor$, 显然$1 < q \leq b$, 并且这里排除$q = b$的情况, 即$1 < q < b$, 在后面算法实现中, 我们会看到如何消除$q=b$的情况
 
 现在, 寻找一种算法, 来求解$q$
+
+> 需要强调一下, 下面除算法实现小结以外, 都是在探讨仅差一位的两个数的相除
 
 **引理1**
 
@@ -188,10 +190,93 @@ $$
 
 ## Knuth D算法
 
-给定非负整数$u = u_{m + n - 1} \cdot b ^ {m + n - 1} + \dots + u_1 \cdot b + u_0$和$v = v_{n - 1} \cdot b ^ {n - 1} + \dots + v_1 \cdot b + v_0$, 其中$v_{n - 1} \neq 0$且n > 1, 可得商$\lfloor u / v \rfloor = q_m$
+给定非负整数
 
+$$u = u_{m + n - 1} \cdot b ^ {m + n - 1} + \dots + u_1 \cdot b + u_0$$
+
+和
+
+$$v = v_{n - 1} \cdot b ^ {n - 1} + \dots + v_1 \cdot b + v_0$$
+
+其中$v_{n - 1} \neq 0$且n > 1.
+
+可得商:
+
+$$\lfloor u / v \rfloor = q_m \cdot b ^ m + q_{m-1} \cdot q ^ {m - 1} + \dots + q_0$$
+
+和余数:
+
+$$u\, mod\, v = r_{n - 1} \cdot b ^ {n-1} + \dots + r_0$$
+
+具体算法步骤如下:
+
+**1. 规格化**
+
+我们不直接求解$u/v$, 而是通过规格化, 将u和v同时适当扩大, 使得$v_{n-1}$满足定理B, 而商又保持不变, 从而, 可以保证在至多3次估商就能得到正确的结果
+
+置$d = \lfloor b / (v_{n-1} + 1)\rfloor$, 然后置$u' = u \cdot d$, 置$v' = v \cdot d$
+
+显然, $v'$与$v$具有相同的位数, $u'$有可能需要进1位, 所以$u'$和$v'$可以表示为:
+
+$$
+u' = u'_{m + n} \cdot b^{m + n} + u'_{m + n - 1} \cdot b^{m + n - 1} + \dots + u'_0
+$$
+
+> 需要注意的是$u'_{m+n}$可能是0
+
+和
+
+$$
+v' = v'_{n - 1} \cdot b ^ {n - 1} + v'_{n - 2} \cdot b ^ {n - 2} + \dots + v'_0
+$$
+
+此时, 有:
+
+$$
+\frac{u}{v} = \frac{u'}{v'}
+$$
+
+且:
+
+$$
+v'_{n - 1} \geq \lfloor \frac{b}{2} \rfloor
+$$
+
+实际上, 这里还隐含一个很有用的结论, 即:
+
+$$
+\frac{u'}{b^m \cdot v'} < b
+$$
+
+这个条件使得上面的讨论的结论可以方便的应用, 因为上面的讨论一直是在$0 < q < b$下进行的. 附录中证明了这个结论.
+
+**2. 初始化**
+
+定义变量$i = m$, 第2 - 7步是一个循环, 实际上是将$u'_{j + n} \cdot b ^ {j + n} + \dots + u'_0$除以$v'$的除法, 得到的商只有一位, 即$q_j$
+
+**3. 计算$\hat{q_j}$**
+
+根据前面$\hat{q}$的定义, 有:
+
+$$
+\hat{q_j} = \lfloor \frac{u'_{j + n} \cdot b + u'_{j + n - 1}}{v'_{n - 1}}\rfloor
+$$
+
+同时, 余数为:
+
+$$
+\hat{r} = u'_{j + n} \cdot b + u'_{j + n - 1} \, mod\, v_{n - 1}
+$$
+
+检查估商的正确性, 测试是否$\hat{q_j} = b$或$\hat{q_j} \cdot v'_{n-2} > b\hat{r} + u'_{j+n-2}$
+
+如果是, 则使得$\hat{q_j} = \hat{q_j} - 1$, $\hat{r} = \hat{r} + v_{n - 1}$, 此时, 如果$\hat{r} < b$, 重复此测试.
+
+> 上面的论证中可知, $\hat{q_j} = b$时, $\hat{q_j} > q$值. 对于$\hat{q_j} \cdot v'_{n-2} > b\hat{r} + u'_{j+n-2}$时, $\hat{q_j} > q$的证明见附录.
 
 ## 附录
+
+**证明一**
 
 证明不等式:
 
@@ -226,5 +311,57 @@ $$
 $$
 \lfloor \frac{a}{b} \rfloor = \frac{a - c}{b} \geq \frac{a - (b - 1)}{b}
 $$
+
+证毕.
+
+----
+
+**证明二**
+
+求证:
+
+$$
+\frac{u'}{b^m \cdot v'} < b
+$$
+
+证明:
+
+1. 当$u'_{m+n} = 0$时, 显然该结论成立.
+
+2. 当$u'_{m+n} > 0$时:
+
+$$
+\frac{u'}{b^m \cdot v'} 
+= \frac{u'_{m + n} \cdot b^{m + n} + u'_{m + n - 1} \cdot b^{m + n - 1} + \dots + u'_0}{b^m(v'_{n - 1} \cdot b ^ {n - 1} + v'_{n - 2} \cdot b ^ {n - 2} + \dots + v'_0)} 
+< \frac{u'_{m+n} \cdot b^n+u'_{m+n-1} \cdot b^{n - 1} + \dots + u'_{m} + 1}{v'_{n - 1} \cdot b ^ {n - 1} + v'_{n - 2} \cdot b ^ {n - 2} + \dots + v'_0} \\
+< \frac{u'_{m + n}\cdot b ^ n + (u'_{m + n - 1} + 1)b^{n-1}}{(v'_{n-1} - 1)b^{n-1}} = \frac{u'_{m+n}b + u'_{m+n-1} + 1}{v'_{n-1} - 1}
+$$
+
+所以, 需要证明:
+
+$$
+\frac{u'_{m+n}b + u'_{m+n-1} + 1}{v'_{n-1} - 1} \leq b
+$$
+
+即, 需要证明:
+
+$$
+u'_{m+n} - v'_{n - 1} < \frac{u'_{m+n-1} + 1}{b} - 1
+$$
+
+显然$(u'_{m+n-1} + 1)/b \leq 1$, 所以, 即证:
+
+$$
+u'_{m+n} - v'_{n - 1} < 0或u'_{m+n} < v'_{n - 1}
+$$
+
+又根据$u'_{m+n} = (u_{m+n-1}d) / b$以及$v'_{n-1} \geq v_{n-1}d$, 所以即证:
+
+$$
+\frac{u_{m+n-1}d}{b} < v_{n-1}d\\
+\frac{u_{m+n-1}}{b} < v_{n-1}
+$$
+
+显然, $u_{m+n-1}<v_{n-1}$成立, $\frac{u'}{b^m \cdot v'} < b$成立. 
 
 证毕.
