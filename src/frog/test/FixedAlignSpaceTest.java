@@ -1,6 +1,6 @@
 package frog.test;
 
-import frog.calculator.exec.space.*;
+import frog.calculator.execute.space.*;
 
 public class FixedAlignSpaceTest {
 

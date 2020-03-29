@@ -1,7 +1,7 @@
 package frog.test.model;
 
-import frog.calculator.math.INumber;
-import frog.calculator.math.rational.IntegerNumber;
+import frog.calculator.math.number.INumber;
+import frog.calculator.math.number.IntegerNumber;
 
 /**
  * 整数

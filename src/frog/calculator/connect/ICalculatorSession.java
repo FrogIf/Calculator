@@ -1,8 +1,7 @@
 package frog.calculator.connect;
 
-import frog.calculator.build.IExpressionBuilder;
-import frog.calculator.build.resolve.IResolverResult;
 import frog.calculator.exception.DuplicateSymbolException;
+import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.IExpression;
 
 /**
@@ -24,13 +23,7 @@ public interface ICalculatorSession {
      * 遵循就近原则
      * @return 返回检索到的最长匹配解析结果
      */
-    IResolverResult resolveVariable(char[] expChars, int startIndex);
-
-    /**
-     * 获取当前会话的表达式构建器
-     * @return 构建器builder
-     */
-    IExpressionBuilder getExpressionBuilder();
+    IExpression resolveVariable(char[] expChars, int startIndex);
 
     /**
      * 删除指定的变量
@@ -38,5 +31,11 @@ public interface ICalculatorSession {
      * @return 已删除的变量表达式对象
      */
     boolean removeVariable(String symbol);
+
+    /**
+     * 获取当前session的构建器
+     * @return 构建器
+     */
+    IExpressionBuilder getBuilder();
 
 }

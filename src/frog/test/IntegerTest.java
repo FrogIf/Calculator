@@ -1,7 +1,7 @@
 package frog.test;
 
 import frog.calculator.math.exception.DivideByZeroException;
-import frog.calculator.math.rational.IntegerNumber;
+import frog.calculator.math.number.IntegerNumber;
 import frog.test.model.OldIntegerNumber;
 
 import java.util.Random;

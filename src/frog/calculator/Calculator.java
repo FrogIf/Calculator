@@ -1,13 +1,13 @@
 package frog.calculator;
 
-import frog.calculator.build.IExpressionBuilder;
+import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
-import frog.calculator.exec.space.Coordinate;
-import frog.calculator.exec.space.IRange;
-import frog.calculator.exec.space.ISpace;
+import frog.calculator.execute.space.Coordinate;
+import frog.calculator.execute.space.IRange;
+import frog.calculator.execute.space.ISpace;
 import frog.calculator.express.IExpression;
-import frog.calculator.math.BaseNumber;
+import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.Arrays;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
@@ -60,7 +60,8 @@ public class Calculator {
         // 创建计算器监听器
         ICalculatorContext context = this.calculatorManager.createCalculatorContext();
 
-        IExpressionBuilder builder = session.getExpressionBuilder();
+        IExpressionBuilder builder = session.getBuilder();
+
         // 解析
         IExpression expTree = builder.build(expChars);
 
@@ -93,8 +94,8 @@ public class Calculator {
         IRange range = result.getRange();
         int[] widths = range.maxWidths();
         if(widths.length == 1 && widths[0] == 1){
-            return result.get(new Coordinate(0)).toString();
-//            return result.get(new Coordinate(0)).toDecimal(this.precision);
+//            return result.get(new Coordinate(0)).toString();
+            return result.get(new Coordinate(0)).toDecimal(this.precision);
         }else{
             StringBuilder sb = new StringBuilder("[");
             int[] coordinateArr = new int[range.dimension()];
@@ -116,7 +117,7 @@ public class Calculator {
     }
 
     public ICalculatorSession getSession(){
-        return this.calculatorManager.createCalculatorSession();
+        return this.calculatorManager.getSession();
     }
 
 }
