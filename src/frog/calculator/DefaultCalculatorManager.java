@@ -12,7 +12,10 @@ public class DefaultCalculatorManager implements ICalculatorManager {
 
     private ISessionFactory sessionFactory = new DefaultSessionFactory();
 
+    private ICalculatorConfigure calculatorConfigure;
+
     public DefaultCalculatorManager(ICalculatorConfigure configure) {
+        this.calculatorConfigure = configure;
     }
 
     @Override
@@ -28,5 +31,10 @@ public class DefaultCalculatorManager implements ICalculatorManager {
     @Override
     public ICalculatorContext createCalculatorContext() {
         return new CommonCalculatorContext();
+    }
+
+    @Override
+    public ICalculatorConfigure getConfigure() {
+        return this.calculatorConfigure;
     }
 }

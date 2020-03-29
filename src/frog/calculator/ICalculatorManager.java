@@ -13,4 +13,6 @@ public interface ICalculatorManager {
     IExplainManager getExplainManager();
 
     ICalculatorContext createCalculatorContext();
+
+    ICalculatorConfigure getConfigure();
 }

@@ -19,12 +19,12 @@ public class Calculator {
 
     private int precision = 10;
 
-    public Calculator(ICalculatorConfigure calculatorConfigure) {
-        if (calculatorConfigure == null) {
-            throw new IllegalArgumentException("configure is null.");
+    public Calculator(ICalculatorManager calculatorManager) {
+        if (calculatorManager == null) {
+            throw new IllegalArgumentException("calculator manager is null.");
         }
-        this.precision = calculatorConfigure.precision();
-        this.calculatorManager = calculatorConfigure.getComponentFactory().createCalculatorManager(calculatorConfigure);
+        this.precision = calculatorManager.getConfigure().precision();
+        this.calculatorManager = calculatorManager;
     }
 
     // 字符ASCII码在IGNORE_CODE之前的均会被忽略(不包括IGNORE_CODE本身)
