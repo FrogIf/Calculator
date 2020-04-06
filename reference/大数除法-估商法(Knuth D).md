@@ -265,14 +265,139 @@ $$
 同时, 余数为:
 
 $$
-\hat{r} = u'_{j + n} \cdot b + u'_{j + n - 1} \, mod\, v_{n - 1}
+\hat{r} = (u'_{j + n} \cdot b + u'_{j + n - 1}) \, mod\, v_{n - 1}
 $$
 
 检查估商的正确性, 测试是否$\hat{q_j} = b$或$\hat{q_j} \cdot v'_{n-2} > b\hat{r} + u'_{j+n-2}$
 
 如果是, 则使得$\hat{q_j} = \hat{q_j} - 1$, $\hat{r} = \hat{r} + v_{n - 1}$, 此时, 如果$\hat{r} < b$, 重复此测试.
 
-> 上面的论证中可知, $\hat{q_j} = b$时, $\hat{q_j} > q$值. 对于$\hat{q_j} \cdot v'_{n-2} > b\hat{r} + u'_{j+n-2}$时, $\hat{q_j} > q$的证明见附录.
+> 对于上面估商正确性判定的解释: 首先, 由前面可知$\hat{q_j}<b$, 所以$\hat{q_j} = b$表明估商结果是不正确的; 其次, 对于$\hat{q_j} \cdot v'_{n-2} > b\hat{r} + u'_{j+n-2}$时, $\hat{q_j} > q$的证明见附录.
+
+**4. 乘和减**
+
+以$(u'_{j+n} \cdot b^{n} + u'_{j+n-1} \cdot b^{n - 1} + \dots + u'_j) - \hat{q_j} (v'_{n-1} \cdot b^{n-1} + v'_{n-2} \cdot b^{n-2} + \cdots + v'_0)$代替原来的$u'_{j+n} \cdot b^{n} + u'_{j+n-1} \cdot b^{n - 1} + \dots + u'_j$
+
+**5. 测试余数**
+
+如果$u'_{j+n} \cdot b^{n} + u'_{j+n-1} \cdot b^{n - 1} + \dots + u'_j$的值为负数, 则执行步骤6, 否则执行步骤7
+
+**6. 往回加**
+
+将$\hat{q_j}$减1, 并把$v'_{n-1} \cdot b^{n-1} + v'_{n-2} \cdot b^{n-2} + \cdots + v'_0$加到$u'_{j+n} \cdot b^{n} + u'_{j+n-1} \cdot b^{n - 1} + \dots + u'_j$上
+
+**7. 对j进行循环**
+
+j减1. 之后如果$j \geq 0$返回跳转至第3步.
+
+**8. 不规格化**
+
+现在$q_m \cdot b^{m} + q_{m-1} \cdot b^{m-1} + \dots + q_0$, 而所求余数通过$(u'_{n-1} \cdot b ^ {n-1} + \dots + u_1 \cdot b^1 + u_0)/d$获得
+
+## 代码实现
+
+如下, 需要解释一下的是, 代码中采用的进制b = 1000000000.
+
+```java
+    /**
+     * 该对象表示的数的实际进制为SCALE
+     * 这里选择每9个十进制位作为一个进制位
+     */
+    static final int SCALE = 1000000000;
+    
+    /**
+     * Knuth D正整数除法(估商法)
+     * @param dividend  被除数
+     * @param deh dividend非0高位位置
+     * @param divisor 除数
+     * @param drh divisor非0高位位置
+     * @return 商和余数, 数组的第一个元素是商, 第二个元素是余数
+     */
+    private static int[][] divideKnuth(int[] dividend, int deh, int[] divisor, int drh){
+        int m = deh - drh;
+        int n = drh + 1;
+        int[] quotient = new int[m + 1];
+
+        /*
+         * 估商法理论基础:
+         * 若令 qhat = min(ceil((u0*b-u1)/v1), b - 1), 当 v1 >= ceil(b / 2)时, qhat - 2 <= q <= qhat
+         * 因此可以在小于等于2次迭代的情况下, 求出真正的商值
+         */
+
+        // D1 规范化
+        int d = SCALE / (divisor[drh] + 1);
+        int[] u = new int[deh + 2];
+        copyAndShift(dividend, deh, d, u);
+
+        int[] v = new int[drh + 2];
+        copyAndShift(divisor, drh, d, v);
+
+        for(int j = m; j > -1; j--){ // D2 初始化j
+            // D3 计算qhat
+            long uH = u[j + n] * (long)SCALE + u[j + n - 1];
+            int vH = v[n - 1];
+            long qhat = uH / vH;
+            long rhat = uH % vH;
+
+            int v2 = v[n - 2];
+            int u2 = u[j + n - 2];
+            while((qhat == SCALE || qhat * v2 > (SCALE * rhat + u2)) && (rhat < SCALE)){    // assert 这个循环最多执行2次
+                qhat--;
+                rhat += vH;
+            }
+
+            // D4 乘和减
+            long borrow = 0;
+            for(int i = 0; i < n + 1; i++){
+                long a = u[j + i];
+                long b = qhat * v[i] + borrow;
+                if(a < b){
+                    borrow = b / SCALE;
+                    a = SCALE * borrow + a;
+                    if(a < b){
+                        a += SCALE;
+                        borrow++;
+                    }
+                }else{
+                    borrow = 0;
+                }
+                u[j + i] = (int) (a - b);
+            }
+
+            // D6 往回加
+            if(borrow > 0){
+                qhat--;
+                long carry = 0;
+                for(int i = 0; i < n + 1; i++){
+                    int a = u[j + i];
+                    int b = v[i];
+                    long sum = carry + a + b;
+                    carry = sum / SCALE;
+                    u[j + i] = (int) (sum % SCALE);
+                }
+            }
+
+            quotient[j] = (int) qhat;
+        }
+
+        // fix
+        int i = quotient.length - 1;
+        for(; i > 0; i--){
+            if(quotient[i] != 0){
+                break;
+            }
+        }
+        if(i < quotient.length - 1){
+            int[] nq = new int[i + 1];
+            for(; i > -1; i--){
+                nq[i] = quotient[i];
+            }
+            quotient = nq;
+        }
+
+        return new int[][]{quotient, divideOneWord(u, u.length - 1, d)[0]};
+    }
+```
 
 ## 附录
 
@@ -365,3 +490,29 @@ $$
 显然, $u_{m+n-1}<v_{n-1}$成立, $\frac{u'}{b^m \cdot v'} < b$成立. 
 
 证毕.
+
+**证明三**
+
+求证:
+
+$\hat{q}$是q的一个近似值, $\hat{r} = u_n \cdot b + u_{n-1} - \hat{q} \cdot v_{n-1}$, 假设$v_{n-1} > 0$, 证明$\hat{q} \cdot v_{n-2} > b \cdot \hat{r} + u_{n-2}$, 则$\hat{q} > q$
+
+证明:
+
+$$
+u - \hat{q}v \leq u - \hat{q}v_{n-1}b^{n-1}-\hat{q}v_{n-2}b^{n-2}\\
+= u_{n-2}b^{n-2} + \dots + u_0 + rb^{n-1} - \hat{q}v_{n-2}b^{n-2}\\
+< b ^{n-2}(u_{n-2} + 1 + \hat{r}b - \hat{q}v_{n-2}) \leq 0
+$$
+
+即:
+
+$$
+u - \hat{q}v < 0
+$$
+
+所以:
+
+$$
+\hat{q} > q
+$$
