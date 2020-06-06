@@ -1,6 +1,6 @@
 package frog.calculator.explain.resolve;
 
-import frog.calculator.express.template.EndPointExpression;
+import frog.calculator.express.EndPointExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.execute.IOperator;
 import frog.calculator.execute.base.NumberOpr;

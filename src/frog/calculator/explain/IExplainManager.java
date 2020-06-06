@@ -6,7 +6,7 @@ import frog.calculator.explain.resolve.IResolver;
 import frog.calculator.explain.resolve.IResolverResult;
 import frog.calculator.explain.resolve.IResolverResultFactory;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionHolder;
+import frog.calculator.execute.holder.IExpressionHolder;
 
 /**
  * 解释器管理器

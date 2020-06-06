@@ -8,8 +8,8 @@ import frog.calculator.explain.resolve.IResolverResult;
 import frog.calculator.explain.resolve.IResolverResultFactory;
 import frog.calculator.explain.resolve.TruncateResolver;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.IExpressionHolder;
-import frog.calculator.express.template.VariableExpression;
+import frog.calculator.execute.holder.IExpressionHolder;
+import frog.calculator.express.VariableExpression;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 

@@ -1,7 +1,6 @@
-package frog.calculator.express.template;
+package frog.calculator.express;
 
 import frog.calculator.execute.IOperator;
-import frog.calculator.express.IExpression;
 
 public class RightExpression extends AbstractBlockExpression {
 

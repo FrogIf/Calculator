@@ -4,6 +4,7 @@ import frog.calculator.ISymbol;
 import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 
 public interface IExpression extends Cloneable, ISymbol {

@@ -1,7 +1,7 @@
 package frog.calculator.explain.command;
 
 import frog.calculator.explain.resolve.IResolverResultFactory;
-import frog.calculator.express.IExpressionHolder;
+import frog.calculator.execute.holder.IExpressionHolder;
 
 public class VariableCommandFactory extends AbstractCommandFactory {
 

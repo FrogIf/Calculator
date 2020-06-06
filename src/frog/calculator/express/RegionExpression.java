@@ -1,8 +1,7 @@
-package frog.calculator.express.template;
+package frog.calculator.express;
 
 import frog.calculator.execute.exception.IncorrectStructureException;
 import frog.calculator.execute.space.ISpace;
-import frog.calculator.express.IExpression;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
