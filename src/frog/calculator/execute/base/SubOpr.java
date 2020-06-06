@@ -1,24 +1,21 @@
 package frog.calculator.execute.base;
 
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
-import frog.calculator.execute.AbstractOperator;
+import frog.calculator.execute.AbstractMiddleOpr;
+import frog.calculator.execute.space.ISpace;
 import frog.calculator.execute.util.ILeftRightMapDealer;
 import frog.calculator.execute.util.IOneElementDealer;
 import frog.calculator.execute.util.OperateUtil;
-import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
+import frog.calculator.math.number.BaseNumber;
 
-public class SubOpr extends AbstractOperator {
+public class SubOpr extends AbstractMiddleOpr {
 
     private static final ILeftRightMapDealer subDealer = new SubDealer();
 
     private static final IOneElementDealer notDealer = new NotDealer();
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IExpression left = exp.nextChild();
-        IExpression right = exp.nextChild();
-
+    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
         if(left == null){
             ISpace<BaseNumber> rightSpace = right.interpret();
             return OperateUtil.transform(rightSpace, notDealer);

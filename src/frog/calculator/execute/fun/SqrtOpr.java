@@ -1,21 +1,20 @@
 package frog.calculator.execute.fun;
 
+import frog.calculator.execute.AbstractSingleArgOpr;
 import frog.calculator.execute.exception.IncorrectStructureException;
+import frog.calculator.execute.space.ISpace;
+import frog.calculator.execute.util.IOneElementDealer;
+import frog.calculator.execute.util.OperateUtil;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.math.tool.MathUtil;
-import frog.calculator.execute.AbstractOperator;
-import frog.calculator.execute.util.IOneElementDealer;
-import frog.calculator.execute.util.OperateUtil;
-import frog.calculator.execute.space.ISpace;
 
-public class SqrtOpr extends AbstractOperator {
+public class SqrtOpr extends AbstractSingleArgOpr {
 
     private static final SqrtDealer dealer = new SqrtDealer();
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IExpression child = exp.nextChild();
+    protected ISpace<BaseNumber> exec(IExpression child) {
         if(child == null){
             throw new IncorrectStructureException("sqrt", "child is null.");
         }else{

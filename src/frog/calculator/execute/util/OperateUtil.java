@@ -56,17 +56,4 @@ public class OperateUtil {
         return result;
     }
 
-    public static IList<IExpression> getFunctionArgumentList(IExpression fun){
-        IExpression surround = fun.nextChild();
-        if(surround == null){
-            throw new IncorrectStructureException("average", "no argument.");
-        }else{
-            IList<IExpression> argumentExpressions = new LinkedList<>();
-            while(surround.hasNextChild()){
-                argumentExpressions.add(surround.nextChild());
-            }
-            return argumentExpressions;
-        }
-    }
-
 }

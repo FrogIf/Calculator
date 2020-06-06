@@ -3,6 +3,7 @@ package frog.calculator.express;
 import frog.calculator.execute.space.ISpace;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.ITraveller;
 import frog.calculator.util.collection.LinkedList;
 
 public class VariableExpression extends EndPointExpression {
@@ -129,8 +130,10 @@ public class VariableExpression extends EndPointExpression {
                 boolean isAssign = this.prototype.assign.equals(childExpression.symbol());
                 if(this.args == null && !isAssign){ // 函数形参
                     this.args = new LinkedList<>();
-                    while(childExpression.hasNextChild()){
-                        IExpression exp = childExpression.nextChild();
+                    IList<IExpression> children = childExpression.children();
+                    ITraveller<? extends IExpression> traveler = children.iterator();
+                    while(traveler.hasNext()){
+                        IExpression exp = traveler.next();
                         if(exp instanceof VariableExpression){
                             VariableExpression arg = ((VariableExpression) exp);
                             arg.prototype.type = VariableExpression.TYPE_FORMAT_ARG;

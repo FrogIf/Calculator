@@ -1,11 +1,12 @@
 package frog.calculator.express;
 
+import frog.calculator.execute.space.ISpace;
 import frog.calculator.explain.IBuildFinishListener;
 import frog.calculator.explain.IExpressionBuilder;
-import frog.calculator.execute.space.ISpace;
 import frog.calculator.express.support.ExpressionConstant;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
+import frog.calculator.util.collection.IList;
 
 /**
  * 赋值表达式
@@ -96,22 +97,16 @@ public class AssignExpression extends AbstractExpression {
     }
 
     @Override
-    public boolean hasNextChild() {
-        return false;
-    }
-
-    @Override
-    public IExpression nextChild() {
-        return null;
-    }
-
-
-    @Override
     public ISpace<BaseNumber> interpret() {
         if(this.valueExpression == null){
             throw new IllegalStateException("assign is empty.");
         }
         return this.valueExpression.interpret();
+    }
+
+    @Override
+    public IList<IExpression> children() {
+        return null;
     }
 
     @Override

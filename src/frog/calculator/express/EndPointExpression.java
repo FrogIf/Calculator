@@ -1,8 +1,10 @@
 package frog.calculator.express;
 
-import frog.calculator.math.number.BaseNumber;
 import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
+import frog.calculator.math.number.BaseNumber;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.ITraveller;
 
 public class EndPointExpression extends AbstractExpression {
 
@@ -32,6 +34,11 @@ public class EndPointExpression extends AbstractExpression {
     }
 
     @Override
+    public IList<IExpression> children() {
+        return null;
+    }
+
+    @Override
     public final boolean isLeaf() {
         return true;
     }
@@ -47,13 +54,4 @@ public class EndPointExpression extends AbstractExpression {
         return super.clone();
     }
 
-    @Override
-    public boolean hasNextChild() {
-        return false;
-    }
-
-    @Override
-    public IExpression nextChild() {
-        return null;
-    }
 }

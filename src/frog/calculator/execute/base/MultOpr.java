@@ -1,25 +1,22 @@
 package frog.calculator.execute.base;
 
+import frog.calculator.execute.AbstractMiddleOpr;
 import frog.calculator.execute.exception.IncorrectStructureException;
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
-import frog.calculator.execute.AbstractOperator;
+import frog.calculator.execute.space.ISpace;
 import frog.calculator.execute.util.ILeftRightMapDealer;
 import frog.calculator.execute.util.OperateUtil;
-import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
+import frog.calculator.math.number.BaseNumber;
 
-public class MultOpr extends AbstractOperator {
+public class MultOpr extends AbstractMiddleOpr {
 
     private static final MapMultDealer dealer = new MapMultDealer();
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IExpression left = exp.nextChild();
-        IExpression right = exp.nextChild();
+    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
         if(left == null || right == null){
             throw new IncorrectStructureException("mult", "left : " + left + ", right : " + right);
         }
-
         ISpace<BaseNumber> leftInter = left.interpret();
         ISpace<BaseNumber> rightInter = right.interpret();
         return OperateUtil.transform(leftInter, rightInter, dealer);

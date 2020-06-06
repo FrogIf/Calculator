@@ -1,6 +1,10 @@
 package frog.calculator.express;
 
 import frog.calculator.execute.IOperator;
+import frog.calculator.util.collection.ArrayList;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.ITraveller;
+import frog.calculator.util.collection.SingleElementTraveller;
 
 public class LeftExpression extends AbstractBlockExpression {
 
@@ -25,16 +29,6 @@ public class LeftExpression extends AbstractBlockExpression {
     }
 
     @Override
-    public boolean hasNextChild() {
-        return false;
-    }
-
-    @Override
-    public IExpression nextChild() {
-        return this.right;
-    }
-
-    @Override
     public IExpression clone() {
         LeftExpression exp = (LeftExpression) super.clone();
         if(this.right != null){
@@ -42,4 +36,10 @@ public class LeftExpression extends AbstractBlockExpression {
         }
         return exp;
     }
+
+    @Override
+    public IList<IExpression> children() {
+        return new ArrayList<>(new IExpression[]{this.right});
+    }
+
 }

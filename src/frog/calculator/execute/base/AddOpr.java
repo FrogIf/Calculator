@@ -1,22 +1,19 @@
 package frog.calculator.execute.base;
 
+import frog.calculator.execute.AbstractMiddleOpr;
 import frog.calculator.execute.exception.IncorrectStructureException;
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
-import frog.calculator.execute.AbstractOperator;
+import frog.calculator.execute.space.ISpace;
 import frog.calculator.execute.util.ILeftRightMapDealer;
 import frog.calculator.execute.util.OperateUtil;
-import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
+import frog.calculator.math.number.BaseNumber;
 
-public class AddOpr extends AbstractOperator {
+public class AddOpr extends AbstractMiddleOpr {
 
     private static final ILeftRightMapDealer addDealer = new AddDealer();
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IExpression left = exp.nextChild();
-        IExpression right = exp.nextChild();
-
+    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
         if(right == null){
             throw new IncorrectStructureException("add", "right child is null.");
         }

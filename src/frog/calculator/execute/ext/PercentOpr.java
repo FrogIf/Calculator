@@ -1,21 +1,20 @@
 package frog.calculator.execute.ext;
 
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
-import frog.calculator.execute.AbstractOperator;
+import frog.calculator.execute.AbstractSingleArgOpr;
+import frog.calculator.execute.space.ISpace;
 import frog.calculator.execute.util.IOneElementDealer;
 import frog.calculator.execute.util.OperateUtil;
-import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
+import frog.calculator.math.number.BaseNumber;
 
-public class PercentOpr extends AbstractOperator {
+public class PercentOpr extends AbstractSingleArgOpr {
 
     private static final BaseNumber ONE_HUNDRED = BaseNumber.valueOf(100);
 
     private static final PercentDealer dealer = new PercentDealer();
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IExpression child = exp.nextChild();
+    protected ISpace<BaseNumber> exec(IExpression child) {
         return OperateUtil.transform(child.interpret(), dealer);
     }
 

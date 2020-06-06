@@ -1,6 +1,8 @@
 package frog.calculator.express;
 
 import frog.calculator.execute.IOperator;
+import frog.calculator.util.collection.ArrayList;
+import frog.calculator.util.collection.IList;
 
 public class MiddleExpression extends AbstractBlockExpression{
 
@@ -23,6 +25,11 @@ public class MiddleExpression extends AbstractBlockExpression{
         clone.left = this.left == null ? null : this.left.clone();
         clone.right = this.right == null ? null : this.right.clone();
         return clone;
+    }
+
+    @Override
+    public IList<IExpression> children() {
+        return new ArrayList<>(new IExpression[]{this.left, this.right});
     }
 
     @Override
@@ -60,31 +67,4 @@ public class MiddleExpression extends AbstractBlockExpression{
         return this.right == null ? expression : this.right.assembleTree(expression);
     }
 
-    public IExpression getRight() {
-        return right;
-    }
-
-    public IExpression getLeft() {
-        return left;
-    }
-
-    private int mi = 0;
-
-    @Override
-    public boolean hasNextChild() {
-        return mi < 2;
-    }
-
-    @Override
-    public IExpression nextChild() {
-        if(mi == 0){
-            mi++;
-            return this.left;
-        }else if(mi == 1){
-            mi++;
-            return this.right;
-        }else{
-            return null;
-        }
-    }
 }

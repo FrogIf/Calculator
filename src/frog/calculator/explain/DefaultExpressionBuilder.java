@@ -13,6 +13,7 @@ import frog.calculator.explain.command.ICommand;
 import frog.calculator.explain.register.IRegister;
 import frog.calculator.explain.register.SymbolRegister;
 import frog.calculator.explain.resolve.IResolverResult;
+import frog.calculator.express.GhostExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.express.AbstractExpression;
@@ -270,11 +271,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
      * 表达式初始节点(头部哨兵)<br/>
      * 多线程安全
      */
-    private static class StartExpression extends AbstractExpression {
-
-        private StartExpression() {
-            super("", null);
-        }
+    private static class StartExpression extends GhostExpression {
 
         @Override
         public boolean createBranch(IExpression childExpression) {
@@ -287,33 +284,8 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         }
 
         @Override
-        public boolean isLeaf() {
-            return false;
-        }
-
-        @Override
-        public int buildFactor() {
-            return 0;
-        }
-
-        @Override
-        public boolean hasNextChild() {
-            return false;
-        }
-
-        @Override
-        public IExpression nextChild() {
-            return null;
-        }
-
-        @Override
         public int order() {
             return -1;
-        }
-
-        @Override
-        public void buildInit(int order, IExpressionContext context, IExpressionBuilder builder) {
-            // do nothing
         }
 
         private ISpace<BaseNumber> value = new AtomSpace<>(BaseNumber.ZERO);

@@ -1,11 +1,11 @@
 package frog.calculator.execute.base;
 
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
-import frog.calculator.math.number.RationalNumber;
 import frog.calculator.execute.AbstractOperator;
 import frog.calculator.execute.space.AtomSpace;
 import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
+import frog.calculator.math.number.BaseNumber;
+import frog.calculator.math.number.RationalNumber;
 import frog.calculator.util.StringUtils;
 
 public class NumberOpr extends AbstractOperator {

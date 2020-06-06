@@ -1,22 +1,22 @@
 package frog.calculator.execute.fun;
 
+import frog.calculator.execute.AbstractSingleArgOpr;
+import frog.calculator.execute.base.AddOpr;
 import frog.calculator.execute.exception.IncorrectStructureException;
+import frog.calculator.execute.space.ISpace;
+import frog.calculator.execute.util.IOneElementDealer;
+import frog.calculator.execute.util.OperateUtil;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.math.number.IntegerNumber;
-import frog.calculator.execute.AbstractOperator;
-import frog.calculator.execute.base.AddOpr;
-import frog.calculator.execute.util.IOneElementDealer;
-import frog.calculator.execute.util.OperateUtil;
-import frog.calculator.execute.space.ISpace;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 
-public class AverageOpr extends AbstractOperator {
+public class AverageOpr extends AbstractSingleArgOpr {
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IList<IExpression> argumentList = OperateUtil.getFunctionArgumentList(exp);
+    protected ISpace<BaseNumber> exec(IExpression child) {
+        IList<IExpression> argumentList = child.children();
         if(argumentList.isEmpty()){
             throw new IncorrectStructureException("average", "argument list is empty.");
         }

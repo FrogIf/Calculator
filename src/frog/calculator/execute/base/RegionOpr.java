@@ -1,27 +1,17 @@
-package frog.calculator.express;
+package frog.calculator.execute.base;
 
+import frog.calculator.execute.AbstractOperator;
 import frog.calculator.execute.exception.IncorrectStructureException;
 import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
-import frog.calculator.util.collection.LinkedList;
 
-/**
- * 域表达式, 即代码块
- */
-public class RegionExpression extends SurroundExpression {
-
-    public RegionExpression(String openSymbol, String separatorSymbol, String closeSymbol) {
-        super(openSymbol, separatorSymbol, closeSymbol);
-    }
-
+public class RegionOpr extends AbstractOperator {
     @Override
-    public ISpace<BaseNumber> interpret() {
-        IList<IExpression> argumentList = new LinkedList<>();
-        while(this.hasNextChild()){
-            argumentList.add(this.nextChild());
-        }
+    public ISpace<BaseNumber> operate(IExpression exp) {
+        IList<IExpression> argumentList = exp.children();
 
         if(argumentList.isEmpty()){
             throw new IncorrectStructureException("average", "argument list is empty.");
@@ -33,10 +23,5 @@ public class RegionExpression extends SurroundExpression {
             result = iterator.next().interpret();
         }
         return result;
-    }
-
-    @Override
-    public IExpression clone() {
-        return super.clone();
     }
 }

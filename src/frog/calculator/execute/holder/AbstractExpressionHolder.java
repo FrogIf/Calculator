@@ -1,10 +1,8 @@
 package frog.calculator.execute.holder;
 
-import frog.calculator.express.IExpression;
-import frog.calculator.express.AssignExpression;
-import frog.calculator.express.MarkExpression;
-import frog.calculator.express.RegionExpression;
-import frog.calculator.express.SurroundExpression;
+import frog.calculator.execute.base.BracketOpr;
+import frog.calculator.execute.base.RegionOpr;
+import frog.calculator.express.*;
 
 public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
@@ -15,13 +13,13 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private IExpression separator = new MarkExpression(",");
 
     // 左括号
-    private IExpression bracketOpen = new SurroundExpression("(", separator.symbol(), bracketClose.symbol());
+    private IExpression bracketOpen = new ContainerExpression("(", separator.symbol(), bracketClose.symbol(), new BracketOpr());
 
     // list 结束
     private IExpression listEnd = new MarkExpression("]");
 
     // 转list函数
-    private IExpression listFun = new SurroundExpression("[", separator.symbol(), listEnd.symbol());
+    private IExpression listFun = new ContainerExpression("[", separator.symbol(), listEnd.symbol(), new BracketOpr());
 
     // 变量赋值符
     private IExpression assign = new AssignExpression("=");
@@ -30,7 +28,7 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private IExpression blockEnd = new MarkExpression("}");
 
     // 代码块终止表达式
-    private IExpression blockStart = new RegionExpression("{", separator.symbol(), blockEnd.symbol());
+    private IExpression blockStart = new ContainerExpression("{", separator.symbol(), blockEnd.symbol(), new RegionOpr());
 
     @Override
     public IExpression[] getBuiltInExpression() {

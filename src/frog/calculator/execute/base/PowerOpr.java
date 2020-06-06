@@ -1,21 +1,20 @@
 package frog.calculator.execute.base;
 
+import frog.calculator.execute.AbstractMiddleOpr;
 import frog.calculator.execute.exception.NonsupportOperateException;
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
-import frog.calculator.math.tool.MathUtil;
-import frog.calculator.execute.AbstractOperator;
 import frog.calculator.execute.space.Coordinate;
 import frog.calculator.execute.space.FixedAlignSpace;
 import frog.calculator.execute.space.IRange;
 import frog.calculator.execute.space.ISpace;
+import frog.calculator.express.IExpression;
+import frog.calculator.math.number.BaseNumber;
+import frog.calculator.math.tool.MathUtil;
 
-public class PowerOpr extends AbstractOperator {
+public class PowerOpr extends AbstractMiddleOpr {
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
-        IExpression base = exp.nextChild();
-
-        IExpression index = exp.nextChild();
+    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
+        IExpression base = left;
+        IExpression index = right;
         ISpace<BaseNumber> indexSpace = index.interpret();
         IRange indexRange = indexSpace.getRange();
         if(indexRange.dimension() != 1){
