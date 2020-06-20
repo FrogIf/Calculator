@@ -3,7 +3,6 @@ package frog.calculator.express;
 import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
 import frog.calculator.explain.IExpressionBuilder;
-import frog.calculator.express.support.ExpressionConstant;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
@@ -47,7 +46,7 @@ public class GhostExpression implements IExpression {
 
     @Override
     public int buildFactor() {
-        return root == null ? ExpressionConstant.MIN_BUILD_FACTOR : root.buildFactor();
+        return root == null ? MIN_BUILD_FACTOR : root.buildFactor();
     }
 
     @Override

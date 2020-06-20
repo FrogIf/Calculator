@@ -1,12 +1,12 @@
 package frog.calculator.express;
 
 import frog.calculator.execute.IOperator;
-import frog.calculator.execute.space.Coordinate;
-import frog.calculator.execute.space.FixedAlignSpaceBuilder;
 import frog.calculator.execute.space.ISpace;
-import frog.calculator.express.support.ExpressionConstant;
 import frog.calculator.math.number.BaseNumber;
-import frog.calculator.util.collection.*;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.LinkedList;
+import frog.calculator.util.collection.UnmodifiableList;
 
 public class ContainerExpression extends AbstractExpression {
 
@@ -118,7 +118,7 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public int buildFactor() {
-        return ExpressionConstant.MIN_BUILD_FACTOR;
+        return MIN_BUILD_FACTOR;
     }
 
     @Override

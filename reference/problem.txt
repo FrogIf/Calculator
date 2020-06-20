@@ -8,3 +8,6 @@ tan(arcsin(sqrt(2.0)/2.0))-1.0 = 1
 3. 导包
 
 @f(a,b) = { (@c=a+b)+(c=c+1)+c }
+
+
+优化代码, 使得expression children不可编辑

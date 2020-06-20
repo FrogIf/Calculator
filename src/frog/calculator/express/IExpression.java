@@ -7,9 +7,13 @@ import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
-import frog.calculator.util.collection.ITraveller;
 
 public interface IExpression extends Cloneable, ISymbol {
+
+    /**
+     * 最小构建因子
+     */
+    int MIN_BUILD_FACTOR = -1;
 
     /**
      * 创建树的分支<br />

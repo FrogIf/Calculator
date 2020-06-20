@@ -3,8 +3,6 @@ package frog.calculator.express;
 import frog.calculator.execute.IOperator;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
-import frog.calculator.util.collection.ITraveller;
-import frog.calculator.util.collection.SingleElementTraveller;
 
 public class RightExpression extends AbstractBlockExpression {
 

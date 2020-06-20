@@ -3,7 +3,6 @@ package frog.calculator.express;
 import frog.calculator.execute.space.ISpace;
 import frog.calculator.explain.IBuildFinishListener;
 import frog.calculator.explain.IExpressionBuilder;
-import frog.calculator.express.support.ExpressionConstant;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
@@ -93,7 +92,7 @@ public class AssignExpression extends AbstractExpression {
 
     @Override
     public int buildFactor() {
-        return ExpressionConstant.MIN_BUILD_FACTOR;
+        return MIN_BUILD_FACTOR;
     }
 
     @Override

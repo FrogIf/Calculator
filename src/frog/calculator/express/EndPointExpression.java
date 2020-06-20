@@ -4,7 +4,6 @@ import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
-import frog.calculator.util.collection.ITraveller;
 
 public class EndPointExpression extends AbstractExpression {
 
