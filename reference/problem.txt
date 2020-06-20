@@ -9,5 +9,5 @@ tan(arcsin(sqrt(2.0)/2.0))-1.0 = 1
 
 @f(a,b) = { (@c=a+b)+(c=c+1)+c }
 
-
-优化代码, 使得expression children不可编辑
+异常处理
+优化结构及设计, 进行分层处理
