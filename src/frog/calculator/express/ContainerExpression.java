@@ -122,16 +122,15 @@ public class ContainerExpression extends AbstractExpression {
     }
 
     @Override
-    public IExpression clone() {
-        ContainerExpression clone = (ContainerExpression) super.clone();
-
+    public IExpression newInstance() {
+        ContainerExpression containerExpression = new ContainerExpression(this.symbol, this.separatorSymbol, this.closeSymbol, this.operator);
+        this.copyProperty(containerExpression);
         Iterator<IExpression> itr = this.elements.iterator();
-        clone.elements = new LinkedList<>();
+        containerExpression.elements = new LinkedList<>();
         while(itr.hasNext()){
-            clone.elements.add(itr.next().clone());
+            containerExpression.elements.add(itr.next().newInstance());
         }
-
-        return clone;
+        return containerExpression;
     }
 
     private static final int ROLE_SPACE = 2;

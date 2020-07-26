@@ -67,7 +67,7 @@ public class PMResolver extends AbstractResolver {
         }
 
         if(counts[0] > 0 || counts[1] > 0){
-            IResolverResult resolverResult = this.resolverResultFactory.createResolverResultBean(counts[1] % 2 == 0 ? plusExpression.clone() : minusExpression.clone());
+            IResolverResult resolverResult = this.resolverResultFactory.createResolverResultBean(counts[1] % 2 == 0 ? plusExpression.newInstance() : minusExpression.newInstance());
             resolverResult.setOffset(counts[1] * minusSymbol.length + counts[0] * plusSymbol.length);
             return resolverResult;
         }

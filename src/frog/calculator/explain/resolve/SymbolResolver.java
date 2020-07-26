@@ -1,8 +1,7 @@
 package frog.calculator.explain.resolve;
 
-import frog.calculator.ICalculatorManager;
-import frog.calculator.express.IExpression;
 import frog.calculator.explain.register.IRegister;
+import frog.calculator.express.IExpression;
 
 public class SymbolResolver extends AbstractResolver {
 
@@ -22,7 +21,7 @@ public class SymbolResolver extends AbstractResolver {
         if(expression == null){
             return null;
         }
-        IExpression exp = expression.clone();
+        IExpression exp = expression.newInstance();
         return this.resolverResultFactory.createResolverResultBean(exp);
     }
 

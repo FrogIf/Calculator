@@ -64,5 +64,16 @@ public abstract class AbstractExpression implements IExpression {
         this.context = context;
     }
 
+    /**
+     * 将与具体表达式无关的属性赋值给新的对象
+     * @param target 待赋值的对象
+     */
+    protected void copyProperty(AbstractExpression target){
+        /*
+         * symbol, operator是构建时必须的参数, 所以这里不需要重新赋值
+         */
+        target.context = this.context;
+    }
+
 
 }

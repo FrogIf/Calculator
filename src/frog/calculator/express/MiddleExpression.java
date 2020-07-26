@@ -20,11 +20,12 @@ public class MiddleExpression extends AbstractBlockExpression{
     }
 
     @Override
-    public IExpression clone() {
-        MiddleExpression clone = (MiddleExpression) super.clone();
-        clone.left = this.left == null ? null : this.left.clone();
-        clone.right = this.right == null ? null : this.right.clone();
-        return clone;
+    public IExpression newInstance() {
+        MiddleExpression middleExpression = new MiddleExpression(this.symbol, this.buildFactor(), this.operator);
+        this.copyProperty(middleExpression);
+        middleExpression.left = this.left == null ? null : this.left.newInstance();
+        middleExpression.right = this.right == null ? null : this.right.newInstance();
+        return middleExpression;
     }
 
     @Override

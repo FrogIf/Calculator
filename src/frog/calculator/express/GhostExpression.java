@@ -1,6 +1,5 @@
 package frog.calculator.express;
 
-import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
 import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.support.IExpressionContext;
@@ -50,14 +49,10 @@ public class GhostExpression implements IExpression {
     }
 
     @Override
-    public IExpression clone() {
-        try {
-            GhostExpression ghost = (GhostExpression) super.clone();
-            ghost.root = this.root == null ? null : this.root.clone();
-            return ghost;
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
+    public IExpression newInstance() {
+        GhostExpression ghost = new GhostExpression();
+        ghost.root = this.root == null ? null : this.root.newInstance();
+        return ghost;
     }
 
     @Override

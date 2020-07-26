@@ -40,9 +40,4 @@ public abstract class AbstractBlockExpression extends AbstractExpression {
     public int buildFactor() {
         return this.buildFactor;
     }
-
-    @Override
-    public IExpression clone() {
-        return super.clone();
-    }
 }

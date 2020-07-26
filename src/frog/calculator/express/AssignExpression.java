@@ -109,15 +109,16 @@ public class AssignExpression extends AbstractExpression {
     }
 
     @Override
-    public IExpression clone() {
-        AssignExpression expression = (AssignExpression) super.clone();
+    public IExpression newInstance() {
+        AssignExpression assignExpression = new AssignExpression(this.symbol);
+        this.copyProperty(assignExpression);
         if(this.valueExpression != null){
-            expression.valueExpression = this.valueExpression.clone();
+            assignExpression.valueExpression = this.valueExpression.newInstance();
         }
         if(this.suspendExpression != null){
-            expression.suspendExpression = this.suspendExpression.clone();
+            assignExpression.suspendExpression = this.suspendExpression.newInstance();
         }
-        return expression;
+        return assignExpression;
     }
 
     @Override

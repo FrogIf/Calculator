@@ -114,7 +114,7 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         if((expression == null) || (sessionExp != null && sessionExp.symbol().length() > expression.symbol().length())){
             expression = sessionExp;
         }
-        return expression == null ? null : this.manager.assembleResolveResult(expression.clone());
+        return expression == null ? null : this.manager.assembleResolveResult(expression.newInstance());
     }
 
     @Override

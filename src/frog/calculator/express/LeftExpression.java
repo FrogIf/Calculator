@@ -27,12 +27,13 @@ public class LeftExpression extends AbstractBlockExpression {
     }
 
     @Override
-    public IExpression clone() {
-        LeftExpression exp = (LeftExpression) super.clone();
+    public IExpression newInstance() {
+        LeftExpression leftExpression = new LeftExpression(this.symbol, this.buildFactor(), this.operator);
+        this.copyProperty(leftExpression);
         if(this.right != null){
-            exp.right = this.right.clone();
+            leftExpression.right = this.right.newInstance();
         }
-        return exp;
+        return leftExpression;
     }
 
     @Override

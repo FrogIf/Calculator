@@ -13,9 +13,4 @@ public class MarkExpression extends EndPointExpression {
     public ISpace<BaseNumber> interpret() {
         throw new IllegalStateException("access illegal.");
     }
-
-    @Override
-    public IExpression clone() {
-        return super.clone();
-    }
 }

@@ -7,7 +7,7 @@ import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
 
-public interface IExpression extends Cloneable, ISymbol {
+public interface IExpression extends ISymbol {
 
     /**
      * 最小构建因子
@@ -46,7 +46,7 @@ public interface IExpression extends Cloneable, ISymbol {
      * 复制表达式及其子表达式
      * @return
      */
-    IExpression clone();
+    IExpression newInstance();
 
     /**
      * 获取表达式节点在整个表达式中的位置

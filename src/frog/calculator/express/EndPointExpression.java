@@ -49,8 +49,10 @@ public class EndPointExpression extends AbstractExpression {
     }
 
     @Override
-    public IExpression clone() {
-        return super.clone();
+    public IExpression newInstance() {
+        EndPointExpression endPointExpression = new EndPointExpression(this.symbol, this.operator);
+        this.copyProperty(endPointExpression);
+        return endPointExpression;
     }
 
 }
