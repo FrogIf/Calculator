@@ -1,9 +1,9 @@
 package frog.calculator.express;
 
-import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
+import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 
@@ -36,11 +36,6 @@ public abstract class AbstractExpression implements IExpression {
         } catch (CloneNotSupportedException e) {
             throw new CalculatorError("clone is failed.");
         }
-    }
-
-    @Override
-    public IOperator getOperator() {
-        return operator;
     }
 
     @Override

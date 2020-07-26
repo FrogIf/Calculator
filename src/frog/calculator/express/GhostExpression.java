@@ -50,11 +50,6 @@ public class GhostExpression implements IExpression {
     }
 
     @Override
-    public IOperator getOperator() {
-        return root == null ? null : root.getOperator();
-    }
-
-    @Override
     public IExpression clone() {
         try {
             GhostExpression ghost = (GhostExpression) super.clone();

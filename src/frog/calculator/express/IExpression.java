@@ -1,7 +1,6 @@
 package frog.calculator.express;
 
 import frog.calculator.ISymbol;
-import frog.calculator.execute.IOperator;
 import frog.calculator.execute.space.ISpace;
 import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.support.IExpressionContext;
@@ -42,12 +41,6 @@ public interface IExpression extends Cloneable, ISymbol {
      * @return
      */
     int buildFactor();
-
-    /**
-     * 获取运算器
-     * @return
-     */
-    IOperator getOperator();
 
     /**
      * 复制表达式及其子表达式
