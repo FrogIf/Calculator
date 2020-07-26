@@ -1,7 +1,7 @@
 package frog.calculator.explain;
 
-import frog.calculator.ICalculatorContext;
 import frog.calculator.ICalculateListener;
+import frog.calculator.ICalculatorContext;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.exception.CalculatorError;
@@ -15,8 +15,6 @@ import frog.calculator.explain.register.SymbolRegister;
 import frog.calculator.explain.resolve.IResolverResult;
 import frog.calculator.express.GhostExpression;
 import frog.calculator.express.IExpression;
-import frog.calculator.express.support.IExpressionContext;
-import frog.calculator.express.AbstractExpression;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.StringUtils;
 import frog.calculator.util.collection.*;
@@ -288,18 +286,17 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
             return -1;
         }
 
-        private ISpace<BaseNumber> value = new AtomSpace<>(BaseNumber.ZERO);
+        private final ISpace<BaseNumber> VAL = new AtomSpace<>(BaseNumber.ZERO);
 
         @Override
         public ISpace<BaseNumber> interpret() {
-            return this.value;
+            return this.VAL;
         }
 
         @Override
-        public IExpression clone() {
+        public IExpression newInstance() {
             return this;
         }
-
     }
 
 }
