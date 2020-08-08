@@ -74,7 +74,7 @@ public class VariableExpression extends EndPointExpression {
     }
 
     @Override
-    public VariableExpression clone() {
+    public VariableExpression newInstance() {
         VariableExpression variableExpression = null;
         switch (this.type){
             case TYPE_VOID_VAR:
@@ -176,7 +176,7 @@ public class VariableExpression extends EndPointExpression {
             }
         }
 
-//        @Override
+        //        @Override
 //        public VariableExpression clone() {
 //            FunctionVariableExpression functionVariableExpression = new FunctionVariableExpression(this.symbol, this.prototype);
 //
@@ -235,7 +235,7 @@ public class VariableExpression extends EndPointExpression {
                     }else{
                         this.prototype.type = VariableExpression.TYPE_FUN_VAR;
                     }
-                    this.prototype.realVariable = this.prototype.clone();
+                    this.prototype.realVariable = this.prototype.newInstance();
                     if(this.prototype.realVariable.createBranch(childExpression)){
                         return true;
                     }else{
