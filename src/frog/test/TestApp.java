@@ -12,6 +12,8 @@ public class TestApp {
         Calculator calculator = CalculatorStater.start();
         Scanner sc = new Scanner(System.in);
 
+        System.out.println("**********Calculator************");
+
         ICalculatorSession session = calculator.getSession();
 
         while(sc.hasNext()){
