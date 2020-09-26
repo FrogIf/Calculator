@@ -27,7 +27,6 @@ public class ContainerExpression extends AbstractExpression {
         }
         this.separatorSymbol = separatorSymbol;
         this.closeSymbol = closeSymbol;
-        role = ROLE_UNDEFINE;
         elements.add(new GhostExpression());
     }
 

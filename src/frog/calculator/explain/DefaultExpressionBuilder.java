@@ -103,7 +103,8 @@ public class DefaultExpressionBuilder implements IExpressionBuilder {
         while(iterator.hasNext()){
             IRegister<IExpression> reg = iterator.next();
             IExpression tExp = reg.retrieve(expChars, startIndex);
-            if(tExp != null && (expression == null || tExp.symbol().length() > expression.symbol().length())){  // 贪心策略, 最长匹配原则
+            if(tExp != null && (expression == null || tExp.symbol().length() > expression.symbol().length())){
+                // 贪心策略, 最长匹配原则
                 expression = tExp;
             }
         }

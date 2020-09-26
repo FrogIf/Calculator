@@ -17,11 +17,14 @@ import frog.calculator.express.RightExpression;
 public class OriginExpressionHolder extends AbstractExpressionHolder {
 
     // 正
-    private IExpression plus = new MiddleExpression("+", 1, new AddOpr());
+    private final IExpression plus = new MiddleExpression("+", 1, new AddOpr());
 
     // 负
-    private IExpression minus = new MiddleExpression("-", 1, new SubOpr());
+    private final IExpression minus = new MiddleExpression("-", 1, new SubOpr());
 
+    /**
+     * 函数的构建因子, 也就是函数的优先级
+     */
     private static final int FUNCTION_BUILD_FACTOR = 5;
 
     @Override

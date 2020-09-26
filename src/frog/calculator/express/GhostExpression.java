@@ -8,6 +8,7 @@ import frog.calculator.util.collection.IList;
 
 /**
  * 幽灵表达式
+ * 不参与运算, 类似于哨兵或者占位
  */
 public class GhostExpression implements IExpression {
 

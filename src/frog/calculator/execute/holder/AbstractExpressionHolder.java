@@ -7,28 +7,28 @@ import frog.calculator.express.*;
 public abstract class AbstractExpressionHolder implements IExpressionHolder {
 
     // 右括号
-    private IExpression bracketClose = new MarkExpression(")");
+    private final IExpression bracketClose = new SignalExpression(")");
 
     // 分割符
-    private IExpression separator = new MarkExpression(",");
+    private final IExpression separator = new SignalExpression(",");
 
     // 左括号
-    private IExpression bracketOpen = new ContainerExpression("(", separator.symbol(), bracketClose.symbol(), new BracketOpr());
+    private final IExpression bracketOpen = new ContainerExpression("(", separator.symbol(), bracketClose.symbol(), new BracketOpr());
 
     // list 结束
-    private IExpression listEnd = new MarkExpression("]");
+    private final IExpression listEnd = new SignalExpression("]");
 
     // 转list函数
-    private IExpression listFun = new ContainerExpression("[", separator.symbol(), listEnd.symbol(), new BracketOpr());
+    private final IExpression listFun = new ContainerExpression("[", separator.symbol(), listEnd.symbol(), new BracketOpr());
 
     // 变量赋值符
-    private IExpression assign = new AssignExpression("=");
+    private final IExpression assign = new AssignExpression("=");
 
     // 代码块起始表达式
-    private IExpression blockEnd = new MarkExpression("}");
+    private final IExpression blockEnd = new SignalExpression("}");
 
     // 代码块终止表达式
-    private IExpression blockStart = new ContainerExpression("{", separator.symbol(), blockEnd.symbol(), new RegionOpr());
+    private final IExpression blockStart = new ContainerExpression("{", separator.symbol(), blockEnd.symbol(), new RegionOpr());
 
     @Override
     public IExpression[] getBuiltInExpression() {

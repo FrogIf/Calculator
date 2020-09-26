@@ -94,8 +94,8 @@ public class Calculator {
         IRange range = result.getRange();
         int[] widths = range.maxWidths();
         if(widths.length == 1 && widths[0] == 1){
-//            return result.get(new Coordinate(0)).toString();
-            return result.get(new Coordinate(0)).toDecimal(this.precision);
+            return result.get(new Coordinate(0)).toString();
+//            return result.get(new Coordinate(0)).toDecimal(this.precision);
         }else{
             StringBuilder sb = new StringBuilder("[");
             int[] coordinateArr = new int[range.dimension()];

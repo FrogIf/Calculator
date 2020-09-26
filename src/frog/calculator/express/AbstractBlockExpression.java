@@ -4,6 +4,9 @@ import frog.calculator.execute.IOperator;
 
 public abstract class AbstractBlockExpression extends AbstractExpression {
 
+    /**
+     * 构建因子, 可以理解为运算优先级
+     */
     private final int buildFactor;
 
     public AbstractBlockExpression(String symbol, int buildFactor, IOperator operator){
