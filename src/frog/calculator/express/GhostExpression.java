@@ -1,7 +1,7 @@
 package frog.calculator.express;
 
+import frog.calculator.build.IBuildContext;
 import frog.calculator.execute.space.ISpace;
-import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
@@ -77,7 +77,7 @@ public class GhostExpression implements IExpression {
     }
 
     @Override
-    public void buildInit(int order, IExpressionContext context, IExpressionBuilder builder) {
+    public void buildInit(int order, IExpressionContext context, IBuildContext buildContext) {
         // do nothing
     }
 
@@ -85,4 +85,5 @@ public class GhostExpression implements IExpression {
     public String symbol() {
         return this.root == null ? null : this.root.symbol();
     }
+
 }

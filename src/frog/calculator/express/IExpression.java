@@ -1,8 +1,9 @@
 package frog.calculator.express;
 
 import frog.calculator.ISymbol;
+import frog.calculator.build.IBuildContext;
 import frog.calculator.execute.space.ISpace;
-import frog.calculator.explain.IExpressionBuilder;
+import frog.calculator.build.IExpressionTreeBuilder;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
@@ -64,5 +65,5 @@ public interface IExpression extends ISymbol {
 
     IExpressionContext getContext();
 
-    void buildInit(int order, IExpressionContext context, IExpressionBuilder builder);
+    void buildInit(int order, IExpressionContext context, IBuildContext buildContext);
 }

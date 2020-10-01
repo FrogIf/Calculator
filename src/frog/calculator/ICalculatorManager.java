@@ -1,7 +1,7 @@
 package frog.calculator;
 
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.explain.IExplainManager;
+import frog.calculator.build.IExplainManager;
 
 /**
  * 计算器管理器

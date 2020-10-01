@@ -8,4 +8,5 @@ public interface ISymbol {
      * @return 符号字面量
      */
     String symbol();
+
 }

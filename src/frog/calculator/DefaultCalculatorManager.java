@@ -3,8 +3,8 @@ package frog.calculator;
 import frog.calculator.connect.DefaultSessionFactory;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.connect.ISessionFactory;
-import frog.calculator.explain.DefaultExplainManager;
-import frog.calculator.explain.IExplainManager;
+import frog.calculator.build.DefaultExplainManager;
+import frog.calculator.build.IExplainManager;
 
 public class DefaultCalculatorManager implements ICalculatorManager {
 

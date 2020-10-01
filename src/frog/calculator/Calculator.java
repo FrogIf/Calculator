@@ -1,6 +1,7 @@
 package frog.calculator;
 
-import frog.calculator.explain.IExpressionBuilder;
+import frog.calculator.build.DefaultExpressionTreeBuilder;
+import frog.calculator.build.IExpressionTreeBuilder;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.execute.space.Coordinate;
@@ -15,7 +16,9 @@ import frog.calculator.util.collection.Iterator;
 public class Calculator {
 
     // 计算管理器
-    private ICalculatorManager calculatorManager;
+    private final ICalculatorManager calculatorManager;
+
+    private final IExpressionTreeBuilder builder;
 
     private int precision = 10;
 
@@ -25,6 +28,8 @@ public class Calculator {
         }
         this.precision = calculatorManager.getConfigure().precision();
         this.calculatorManager = calculatorManager;
+
+        builder = new DefaultExpressionTreeBuilder(calculatorManager.getExplainManager());
     }
 
     // 字符ASCII码在IGNORE_CODE之前的均会被忽略(不包括IGNORE_CODE本身)
@@ -60,10 +65,8 @@ public class Calculator {
         // 创建计算器监听器
         ICalculatorContext context = this.calculatorManager.createCalculatorContext();
 
-        IExpressionBuilder builder = session.getBuilder();
-
         // 解析
-        IExpression expTree = builder.build(expChars);
+        IExpression expTree = builder.build(expChars, session);
 
         // 执行
         ISpace<BaseNumber> result;

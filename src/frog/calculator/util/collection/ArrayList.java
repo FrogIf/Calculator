@@ -1,7 +1,5 @@
 package frog.calculator.util.collection;
 
-import java.util.ConcurrentModificationException;
-
 public class ArrayList<E> extends AbstractCollection<E> implements IList<E> {
 
     private static final int DEFAULT_CAPACITY = 10;
@@ -167,7 +165,7 @@ public class ArrayList<E> extends AbstractCollection<E> implements IList<E> {
         @SuppressWarnings("unchecked")
         public E next() {
             if(size != expectedSize){
-                throw new ConcurrentModificationException();
+                throw new IllegalStateException("ConcurrentModificationException");
             }
             if(cursor >= size){
                 throw new IndexOutOfBoundsException();
@@ -183,7 +181,7 @@ public class ArrayList<E> extends AbstractCollection<E> implements IList<E> {
             }
 
             if(size != expectedSize){
-                throw new ConcurrentModificationException();
+                throw new IllegalStateException("ConcurrentModificationException");
             }
 
             ArrayList.this.remove(lastRet);

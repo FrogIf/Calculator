@@ -1,20 +1,20 @@
 package frog.calculator.connect;
 
 import frog.calculator.ICalculatorManager;
+import frog.calculator.build.register.SymbolRegister;
+import frog.calculator.build.resolve.IResolverResult;
+import frog.calculator.build.resolve.IResolverResultFactory;
 import frog.calculator.exception.DuplicateSymbolException;
-import frog.calculator.explain.DefaultExpressionBuilder;
-import frog.calculator.explain.IExpressionBuilder;
-import frog.calculator.explain.register.SymbolRegister;
 import frog.calculator.express.IExpression;
 
 public class DefaultCalculatorSession extends AbstractCalculatorSession {
 
-    private SymbolRegister<IExpression> sessionRegister = new SymbolRegister<>();
+    private final SymbolRegister<IExpression> sessionRegister = new SymbolRegister<>();
 
-    private IExpressionBuilder builder;
+    private final IResolverResultFactory resolverResultFactory;
 
     public DefaultCalculatorSession(ICalculatorManager calculatorManager) {
-        this.builder = new DefaultExpressionBuilder(this, calculatorManager.getExplainManager());
+        this.resolverResultFactory = calculatorManager.getExplainManager().getResolverFactory();
     }
 
     @Override
@@ -23,18 +23,14 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
     }
 
     @Override
-    public IExpression resolveVariable(char[] expChars, int startIndex) {
-        return sessionRegister.retrieve(expChars, startIndex);
+    public IResolverResult resolve(char[] expChars, int startIndex) {
+        IExpression expression = sessionRegister.retrieve(expChars, startIndex);
+        return this.resolverResultFactory.createResolverResultBean(expression);
     }
 
     @Override
     public boolean removeVariable(String symbol) {
         return this.sessionRegister.remove(symbol);
-    }
-
-    @Override
-    public IExpressionBuilder getBuilder() {
-        return this.builder;
     }
 
 }

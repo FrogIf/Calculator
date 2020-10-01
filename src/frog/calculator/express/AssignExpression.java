@@ -1,8 +1,8 @@
 package frog.calculator.express;
 
+import frog.calculator.build.IBuildContext;
+import frog.calculator.build.IBuildFinishListener;
 import frog.calculator.execute.space.ISpace;
-import frog.calculator.explain.IBuildFinishListener;
-import frog.calculator.explain.IExpressionBuilder;
 import frog.calculator.express.support.IExpressionContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.collection.IList;
@@ -122,26 +122,19 @@ public class AssignExpression extends AbstractExpression {
     }
 
     @Override
-    public void buildInit(int order, IExpressionContext context, IExpressionBuilder builder) {
-        super.buildInit(order, context, builder);
-        builder.addBuildFinishListener(new GoDownListener(this));
+    public void buildInit(int order, IExpressionContext context, IBuildContext buildContext) {
+        super.buildInit(order, context, buildContext);
+        buildContext.addListener(new GoDownListener());
     }
 
-    private static class GoDownListener implements IBuildFinishListener {
-
-        private AssignExpression expression;
-
-        private GoDownListener(AssignExpression expression) {
-            this.expression = expression;
-        }
-
+    private class GoDownListener implements IBuildFinishListener {
         @Override
-        public IExpression buildFinishCallBack(IExpressionBuilder builder) {
-            if(!expression.leaf){   // 如果赋值操作还没有执行, 则执行赋值
-                expression.leaf = true;
-                return expression.reversal();
+        public IExpression onFinish(IBuildContext context) {
+            if(!AssignExpression.this.leaf){   // 如果赋值操作还没有执行, 则执行赋值
+                AssignExpression.this.leaf = true;
+                return AssignExpression.this.reversal();
             }
-            return builder.getRoot();
+            return context.getRoot();
         }
     }
 }
