@@ -13,7 +13,7 @@ public class FactorialOpr extends AbstractSingleArgOpr {
     private static final FactorialDealer dealer = new FactorialDealer();
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression child) {
+    protected ISpace<BaseNumber> eval(IExpression child) {
         return OperateUtil.transform(child.interpret(), dealer);
     }
 

@@ -55,7 +55,7 @@ public abstract class AbstractExpression implements IExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        return this.operator.operate(this);
+        return this.operator.evaluate(this);
     }
 
     @Override

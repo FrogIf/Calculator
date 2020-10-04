@@ -11,7 +11,7 @@ import frog.calculator.util.collection.Iterator;
 
 public class BracketOpr extends AbstractOperator {
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> evaluate(IExpression exp) {
         IList<IExpression> elements = exp.children();
         FixedAlignSpaceBuilder<BaseNumber> builder = new FixedAlignSpaceBuilder<>();
         builder.setDimension(1);

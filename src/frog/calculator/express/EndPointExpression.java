@@ -29,7 +29,7 @@ public class EndPointExpression extends AbstractExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        return operator.operate(this);
+        return operator.evaluate(this);
     }
 
     @Override

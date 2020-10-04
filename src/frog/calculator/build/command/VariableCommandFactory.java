@@ -1,22 +1,22 @@
 package frog.calculator.build.command;
 
-import frog.calculator.build.resolve.IResolverResultFactory;
+import frog.calculator.build.resolve.CommonResolveResultFactory;
+import frog.calculator.build.resolve.IResolveResultFactory;
 import frog.calculator.execute.holder.IExpressionHolder;
 
 public class VariableCommandFactory extends AbstractCommandFactory {
 
     private IExpressionHolder holder;
 
-    private IResolverResultFactory resolverResultFactory;
+    private static final IResolveResultFactory resolverResultFactory = new CommonResolveResultFactory();
 
-    public VariableCommandFactory(String symbol, IExpressionHolder holder, IResolverResultFactory resolverResultFactory) {
+    public VariableCommandFactory(String symbol, IExpressionHolder holder) {
         super(symbol);
         this.holder = holder;
-        this.resolverResultFactory = resolverResultFactory;
     }
 
     @Override
     public ICommand instance() {
-        return new ValueVariableDeclareCommand(this.symbol, null, null);
+        return new ValueVariableDeclareCommand(this.symbol, new String[]{holder.getAssign().symbol()}, resolverResultFactory);
     }
 }

@@ -10,7 +10,7 @@ import frog.calculator.util.collection.Iterator;
 
 public class RegionOpr extends AbstractOperator {
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> evaluate(IExpression exp) {
         IList<IExpression> argumentList = exp.children();
 
         if(argumentList.isEmpty()){

@@ -8,14 +8,15 @@ import frog.calculator.express.IExpression;
  */
 public class TruncateResolver extends AbstractResolver {
 
-    private char[][] borderSymbolArr;   // 边缘符号数组
+    private final char[][] borderSymbolArr;   // 边缘符号数组
 
-    private int[] borderSymbolLens;
+    private final int[] borderSymbolLens;
 
-    private ISymbolExpressionFactory symbolExpressionFactory;
+    private final ISymbolExpressionFactory symbolExpressionFactory;
 
-    public TruncateResolver(ISymbolExpressionFactory symbolExpressionFactory, String[] border, IResolverResultFactory resolverResultFactory){
-        super(resolverResultFactory);
+    private static final IResolveResultFactory resolveResultFactory = new CommonResolveResultFactory();
+
+    public TruncateResolver(ISymbolExpressionFactory symbolExpressionFactory, String[] border){
         if(border == null || border.length == 0){
             throw new IllegalArgumentException("border is undefined.");
         }
@@ -36,7 +37,7 @@ public class TruncateResolver extends AbstractResolver {
     }
 
     @Override
-    public IResolverResult resolve(char[] expStr, int startIndex) {
+    public IResolveResult resolve(char[] expStr, int startIndex) {
         char ch = expStr[startIndex];
         if(ch < '0' || ch > '9'){
             int[] match = new int[borderSymbolArr.length];
@@ -64,10 +65,11 @@ public class TruncateResolver extends AbstractResolver {
                     sb.append(expStr[k]);
                 }
                 IExpression variableExpression = this.symbolExpressionFactory.createExpression(sb.toString());
-                return this.resolverResultFactory.createResolverResultBean(variableExpression);
+                return resolveResultFactory.createResolverResultBean(variableExpression);
             }
         }
 
-        return null;
+        return EMPTY_RESULT;
     }
+
 }

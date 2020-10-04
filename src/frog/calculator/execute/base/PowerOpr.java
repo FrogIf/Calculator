@@ -12,7 +12,7 @@ import frog.calculator.math.tool.MathUtil;
 
 public class PowerOpr extends AbstractMiddleOpr {
     @Override
-    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
+    protected ISpace<BaseNumber> eval(IExpression left, IExpression right) {
         IExpression base = left;
         IExpression index = right;
         ISpace<BaseNumber> indexSpace = index.interpret();

@@ -14,7 +14,7 @@ public class PercentOpr extends AbstractSingleArgOpr {
     private static final PercentDealer dealer = new PercentDealer();
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression child) {
+    protected ISpace<BaseNumber> eval(IExpression child) {
         return OperateUtil.transform(child.interpret(), dealer);
     }
 

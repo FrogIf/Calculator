@@ -1,6 +1,6 @@
 package frog.calculator.build;
 
-import frog.calculator.build.resolve.IResolverResult;
+import frog.calculator.build.resolve.IResolveResult;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.exception.CalculatorError;
@@ -10,6 +10,7 @@ import frog.calculator.execute.space.ISpace;
 import frog.calculator.express.GhostExpression;
 import frog.calculator.express.IExpression;
 import frog.calculator.math.number.BaseNumber;
+import frog.calculator.util.Reference;
 import frog.calculator.util.StringUtils;
 
 public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
@@ -26,8 +27,8 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
 
     @Override
     public IExpression build(char[] exp, ICalculatorSession session) throws BuildException {
-        BuildContext context = new BuildContext(session, new CommandChain(manager.getCommandDetector()),
-                this.manager.getResolverFactory());
+        BuildContext context = new BuildContext(session, new CommandChain(manager.getCommandDetector()));
+        Reference<IExpression> expRef = new Reference<>();
         try{
             IExpression root = INIT_ROOT;
             int order = 0;  // record symbol index
@@ -35,10 +36,10 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
 
             for (int i = 0; i < exp.length; ) {
                 // resolve
-                IResolverResult result = this.resolve(exp, i, context);
+                int pos = this.resolve(exp, i, context, expRef);
 
                 // build
-                IExpression expression = result.getExpression();
+                IExpression expression = expRef.getObj();
                 expression.buildInit(order++, null, context); // TODO Context
                 root = root.assembleTree(expression);
                 if (root == null) {
@@ -47,11 +48,7 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
 
                 context.setRoot(root);
 
-                int offset = result.offset();
-                if (offset < 1) {
-                    throw new CalculatorError("system error : length of '" + result.getExpression().symbol() + "' is " + offset + ".");
-                }
-                i += offset;
+                i = pos;
             }
 
             finish(context);
@@ -63,7 +60,7 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
         }
     }
 
-    private IResolverResult resolve(char[] chars, int startIndex, IBuildContext context) throws BuildException {
+    private int resolve(char[] chars, int startIndex, IBuildContext context, Reference<IExpression> ref) throws BuildException {
         // execute command before resolve
         CommandChain commandChain = context.commandChain();
         startIndex += commandChain.preBuild(chars, startIndex, context);
@@ -74,17 +71,17 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
 
         // 1. resolve from local register stack
         IVariableTableManager localVariableTableManager = context.getLocalVariableTableManager();
-        IResolverResult result = localVariableTableManager.resolve(chars, startIndex);
+        IResolveResult result = localVariableTableManager.resolve(chars, startIndex);
 
         // 2. resolve from session, maybe there much better match
         ICalculatorSession session = context.getSession();
-        IResolverResult sessionResult = session.resolve(chars, startIndex);
+        IResolveResult sessionResult = session.resolve(chars, startIndex);
         if(!result.success() || (result.offset() < sessionResult.offset())){
             result = sessionResult;
         }
 
         // 3. resolve from system, maybe this is the best
-        IResolverResult systemResult = this.manager.getResolver().resolve(chars, startIndex);
+        IResolveResult systemResult = this.manager.getResolver().resolve(chars, startIndex);
         if(!result.success() || result.offset() < systemResult.offset()){
             result = systemResult;
         }
@@ -96,7 +93,15 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
         // execute command after resolve
         commandChain.postBuild(context);
 
-        return result;
+        // set result
+        ref.setObj(result.getExpression());
+
+        int offset = result.offset();
+        if (offset < 1) {
+            throw new CalculatorError("system error : length of '" + result.getExpression().symbol() + "' is " + offset + ".");
+        }
+
+        return startIndex + offset;
     }
 
     private void failed(IBuildContext context){

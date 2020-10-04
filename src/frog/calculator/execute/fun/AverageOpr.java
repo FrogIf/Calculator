@@ -15,7 +15,7 @@ import frog.calculator.util.collection.Iterator;
 public class AverageOpr extends AbstractSingleArgOpr {
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression child) {
+    protected ISpace<BaseNumber> eval(IExpression child) {
         IList<IExpression> argumentList = child.children();
         if(argumentList.isEmpty()){
             throw new IncorrectStructureException("average", "argument list is empty.");

@@ -15,25 +15,25 @@ import frog.calculator.express.IExpression;
  */
 public class DefaultExplainManager implements IExplainManager {
 
-    private ICommandHolder commandHolder = new DefaultCommandHolder(this);
+    private final ICommandHolder commandHolder = new DefaultCommandHolder(this);
 
-    private IExpressionHolder expressionHolder = new OriginExpressionHolder();
+    private final IExpressionHolder expressionHolder = new OriginExpressionHolder();
 
-    private IResolverResultFactory resolverResultFactory = new DefaultResolverResultFactory();
+//    private final IResolveResultFactory resolverResultFactory = new CommonResolveResultFactory();
 
-    private IResolver resolver;
+    private final IResolver resolver;
 
-    private ICommandDetector detector;
+    private final ICommandDetector detector;
 
     public DefaultExplainManager() {
         this.resolver = this.initResolver();
         this.detector = this.initCommandDetector();
     }
 
-    @Override
-    public IResolverResult assembleResolveResult(IExpression expression) {
-        return resolverResultFactory.createResolverResultBean(expression);
-    }
+//    @Override
+//    public IResolveResult assembleResolveResult(IExpression expression) {
+//        return resolverResultFactory.createResolverResultBean(expression);
+//    }
 
     @Override
     public ICommandHolder getCommandHolder() {
@@ -68,23 +68,23 @@ public class DefaultExplainManager implements IExplainManager {
         return this.expressionHolder;
     }
 
-    @Override
-    public IResolverResultFactory getResolverFactory() {
-        return this.resolverResultFactory;
-    }
+//    @Override
+//    public IResolveResultFactory getResolverFactory() {
+//        return this.resolverResultFactory;
+//    }
 
 
     private IResolver initResolver() {
         // value resolver
-        IResolver numberResolver = new NumberResolver(new NumberExpressionFactory(), resolverResultFactory);
+        IResolver numberResolver = new NumberResolver();
 
         // plus and minus resolver
         // plus and minus can represent (positive and negative) or (add and sub)
         // this resolver can transform like python
-        IResolver addSubResolver = new PMResolver(this.expressionHolder.getPlus(), this.expressionHolder.getMinus(), resolverResultFactory);
+        IResolver addSubResolver = new PMResolver(this.expressionHolder.getPlus(), this.expressionHolder.getMinus());
 
         // symbol resolver, can parse symbol which was supported by framework.
-        IResolver symbolResolver = new SymbolResolver(createRegister(this.expressionHolder.getBuiltInExpression()), resolverResultFactory);
+        IResolver symbolResolver = new SymbolResolver(createRegister(this.expressionHolder.getBuiltInExpression()));
 
         // parse execute order : value -> plus and minus -> symbol
         ChainResolver chainResolver = new ChainResolver();

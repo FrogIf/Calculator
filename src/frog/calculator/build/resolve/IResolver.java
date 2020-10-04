@@ -11,5 +11,5 @@ public interface IResolver {
      * @return 返回解析结果, 永远不会返回null, 如果解析失败, 返回空结果
      * FIXME 解析失败之后, 仍返回对象, 只不过其中的expression为null
      */
-    IResolverResult resolve(char[] chars, int startIndex);
+    IResolveResult resolve(char[] chars, int startIndex);
 }

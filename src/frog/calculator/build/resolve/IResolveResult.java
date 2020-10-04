@@ -2,7 +2,7 @@ package frog.calculator.build.resolve;
 
 import frog.calculator.express.IExpression;
 
-public interface IResolverResult {
+public interface IResolveResult {
     /**
      * 记录解析器解析结果表达式
      * @return 解析后的表达式
@@ -15,8 +15,6 @@ public interface IResolverResult {
      * @return 解析终止位置
      */
     int offset();
-
-    void setOffset(int index);
 
     /**
      * 指示是否解析成功

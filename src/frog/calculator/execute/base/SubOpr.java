@@ -15,7 +15,7 @@ public class SubOpr extends AbstractMiddleOpr {
     private static final IOneElementDealer notDealer = new NotDealer();
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
+    protected ISpace<BaseNumber> eval(IExpression left, IExpression right) {
         if(left == null){
             ISpace<BaseNumber> rightSpace = right.interpret();
             return OperateUtil.transform(rightSpace, notDealer);

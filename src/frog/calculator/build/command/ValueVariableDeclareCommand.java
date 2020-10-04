@@ -2,8 +2,8 @@ package frog.calculator.build.command;
 
 import frog.calculator.build.IBuildContext;
 import frog.calculator.build.IVariableTableManager;
-import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.build.resolve.IResolverResultFactory;
+import frog.calculator.build.resolve.IResolveResult;
+import frog.calculator.build.resolve.IResolveResultFactory;
 import frog.calculator.build.resolve.TruncateResolver;
 import frog.calculator.exception.BuildException;
 import frog.calculator.express.ValueVariableExpression;
@@ -22,10 +22,10 @@ public class ValueVariableDeclareCommand extends AbstractCommand {
 
     private final TruncateResolver variableResolver;
 
-    public ValueVariableDeclareCommand(String command, String[] overExps, IResolverResultFactory resolveResultFactory) {
+    public ValueVariableDeclareCommand(String command, String[] overExps, IResolveResultFactory resolveResultFactory) {
         this.command = command;
         this.offset = command.length();
-        this.variableResolver = new TruncateResolver(ValueVariableExpression::new, overExps, resolveResultFactory);
+        this.variableResolver = new TruncateResolver(ValueVariableExpression::new, overExps);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ValueVariableDeclareCommand extends AbstractCommand {
 
     @Override
     public void preBuild(char[] chars, int startIndex, IBuildContext buildContext) throws BuildException {
-        IResolverResult result = this.variableResolver.resolve(chars, startIndex);
+        IResolveResult result = this.variableResolver.resolve(chars, startIndex);
         if(result.success()){
             /*
              * if the local variable table is empty, add the variable to session.

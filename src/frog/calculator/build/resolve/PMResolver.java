@@ -16,8 +16,7 @@ public class PMResolver extends AbstractResolver {
 
     private final IExpression minusExpression;
 
-    public PMResolver(IExpression plusExpression, IExpression minusExpression, IResolverResultFactory resolverResultFactory) {
-        super(resolverResultFactory);
+    public PMResolver(IExpression plusExpression, IExpression minusExpression) {
         this.plusExpression = plusExpression;
         this.minusExpression = minusExpression;
         if(plusExpression.symbol() != null){
@@ -41,7 +40,7 @@ public class PMResolver extends AbstractResolver {
     }
 
     @Override
-    public IResolverResult resolve(char[] chars, int startIndex) {
+    public IResolveResult resolve(char[] chars, int startIndex) {
         int[] counts = new int[2];
         int[] lens = {plusSymbol.length, minusSymbol.length};
         int mark = 3;   // 00b(0)两者都不是, 01b(1)是加, 10b(2)是减, 11(3)即加又减
@@ -66,11 +65,35 @@ public class PMResolver extends AbstractResolver {
         }
 
         if(counts[0] > 0 || counts[1] > 0){
-            IResolverResult resolverResult = this.resolverResultFactory.createResolverResultBean(counts[1] % 2 == 0 ? plusExpression.newInstance() : minusExpression.newInstance());
-            resolverResult.setOffset(counts[1] * minusSymbol.length + counts[0] * plusSymbol.length);
-            return resolverResult;
+            IExpression expression = counts[1] % 2 == 0 ? plusExpression.newInstance() : minusExpression.newInstance();
+            ResolveResult resolveResult = new ResolveResult();
+            resolveResult.expression = expression;
+            resolveResult.offset = counts[1] * minusSymbol.length + counts[0] * plusSymbol.length;
+            return resolveResult;
         }
 
-        return null;
+        return EMPTY_RESULT;
+    }
+
+    private static class ResolveResult implements IResolveResult{
+
+        private IExpression expression;
+
+        private int offset;
+
+        @Override
+        public IExpression getExpression() {
+            return this.expression;
+        }
+
+        @Override
+        public int offset() {
+            return this.offset;
+        }
+
+        @Override
+        public boolean success() {
+            return true;
+        }
     }
 }

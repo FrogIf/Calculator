@@ -6,6 +6,6 @@ import frog.calculator.math.number.BaseNumber;
 
 public interface IOperator {
 
-    ISpace<BaseNumber> operate(IExpression exp);
+    ISpace<BaseNumber> evaluate(IExpression exp);
 
 }

@@ -15,8 +15,6 @@ import frog.calculator.util.collection.Iterator;
 
 public class Calculator {
 
-    // evaluate
-
     // 计算管理器
     private final ICalculatorManager calculatorManager;
 

@@ -2,8 +2,9 @@ package frog.calculator.build;
 
 import frog.calculator.build.register.IRegister;
 import frog.calculator.build.register.SymbolRegister;
-import frog.calculator.build.resolve.IResolverResult;
-import frog.calculator.build.resolve.IResolverResultFactory;
+import frog.calculator.build.resolve.CommonResolveResultFactory;
+import frog.calculator.build.resolve.IResolveResult;
+import frog.calculator.build.resolve.IResolveResultFactory;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 import frog.calculator.util.collection.Iterator;
@@ -13,14 +14,7 @@ public class VariableTableManager implements IVariableTableManager {
 
     private final Stack<IRegister<IExpression>> localRegisterStack = new Stack<>();
 
-    private final IResolverResultFactory resolveResultFactory;
-
-    public VariableTableManager(IResolverResultFactory resolveResultFactory) {
-        if(resolveResultFactory == null){
-            throw new IllegalArgumentException("resolve result factory is null.");
-        }
-        this.resolveResultFactory = resolveResultFactory;
-    }
+    private final static IResolveResultFactory resolveResultFactory = new CommonResolveResultFactory();
 
     @Override
     public void createLocalVariableTable() {
@@ -52,7 +46,7 @@ public class VariableTableManager implements IVariableTableManager {
     }
 
     @Override
-    public IResolverResult resolve(char[] chars, int startIndex) {
+    public IResolveResult resolve(char[] chars, int startIndex) {
         IExpression expression = null;
 
         Iterator<IRegister<IExpression>> iterator = localRegisterStack.iterator();

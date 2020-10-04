@@ -1,6 +1,5 @@
 package frog.calculator.build;
 
-import frog.calculator.build.resolve.IResolverResultFactory;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
 
@@ -12,12 +11,11 @@ public class BuildContext implements IBuildContext {
 
     private final CommandChain commandChain;
 
-    private final VariableTableManager variableTableManager;
+    private final VariableTableManager variableTableManager = new VariableTableManager();
 
-    BuildContext(ICalculatorSession session, CommandChain commandChain, IResolverResultFactory resolveResultFactory) {
+    BuildContext(ICalculatorSession session, CommandChain commandChain) {
         this.session = session;
         this.commandChain = commandChain;
-        this.variableTableManager = new VariableTableManager(resolveResultFactory);
     }
 
     void setRoot(IExpression root){

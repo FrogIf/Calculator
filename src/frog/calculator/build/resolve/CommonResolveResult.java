@@ -2,7 +2,7 @@ package frog.calculator.build.resolve;
 
 import frog.calculator.express.IExpression;
 
-public class DefaultResolveResult implements IResolverResult {
+public class CommonResolveResult implements IResolveResult {
 
     private IExpression expression;
 
@@ -26,11 +26,6 @@ public class DefaultResolveResult implements IResolverResult {
             offset = this.expression == null ? 0 : this.expression.symbol().length();
         }
         return offset;
-    }
-
-    @Override
-    public void setOffset(int offset) {
-        this.offset = offset;
     }
 
     @Override

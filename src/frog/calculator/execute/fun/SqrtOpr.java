@@ -14,7 +14,7 @@ public class SqrtOpr extends AbstractSingleArgOpr {
     private static final SqrtDealer dealer = new SqrtDealer();
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression child) {
+    protected ISpace<BaseNumber> eval(IExpression child) {
         if(child == null){
             throw new IncorrectStructureException("sqrt", "child is null.");
         }else{

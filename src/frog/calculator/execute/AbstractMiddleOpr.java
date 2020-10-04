@@ -8,14 +8,14 @@ import frog.calculator.util.collection.ITraveller;
 
 public abstract class AbstractMiddleOpr extends AbstractOperator {
 
-    protected abstract ISpace<BaseNumber> exec(IExpression left, IExpression right);
+    protected abstract ISpace<BaseNumber> eval(IExpression left, IExpression right);
 
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> evaluate(IExpression exp) {
         IList<IExpression> children = exp.children();
         ITraveller<? extends IExpression> traveler = children.iterator();
         IExpression left = traveler.next();
         IExpression right = traveler.next();
-        return this.exec(left, right);
+        return this.eval(left, right);
     }
 }

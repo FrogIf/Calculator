@@ -5,7 +5,7 @@ import frog.calculator.execute.holder.IExpressionHolder;
 
 public class DefaultCommandHolder implements ICommandHolder {
 
-    private IExplainManager explainManager;
+    private final IExplainManager explainManager;
 
     public DefaultCommandHolder(IExplainManager manager) {
         this.explainManager = manager;
@@ -15,7 +15,7 @@ public class DefaultCommandHolder implements ICommandHolder {
     public ICommandFactory[] getCommandFactoryList() {
         IExpressionHolder holder = this.explainManager.getExpressionHolder();
         return new ICommandFactory[]{
-                new VariableCommandFactory("@", holder, this.explainManager.getResolverFactory()),
+                new VariableCommandFactory("@", holder),
                 new BlockCommandFactory(holder.getBlockStart().symbol(), holder.getBlockEnd().symbol())
         };
     }

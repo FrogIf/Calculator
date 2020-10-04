@@ -1,21 +1,19 @@
 package frog.calculator.build.resolve;
 
+import frog.calculator.execute.IOperator;
+import frog.calculator.execute.base.NumberOpr;
+import frog.calculator.express.EndPointExpression;
 import frog.calculator.express.IExpression;
 
 /**
  * 数字表达式解析器
  */
-public class NumberResolver extends AbstractResolver {
+public final class NumberResolver extends AbstractResolver {
 
-    private ISymbolExpressionFactory numberExpressionFactory;
-
-    public NumberResolver(ISymbolExpressionFactory numberExpressionFactory, IResolverResultFactory resolverResultFactory) {
-        super(resolverResultFactory);
-        this.numberExpressionFactory = numberExpressionFactory;
-    }
+    private final IOperator operator = new NumberOpr();
 
     @Override
-    public IResolverResult resolve(char[] chars, int startIndex) {
+    public IResolveResult resolve(char[] chars, int startIndex) {
         StringBuilder numberBuilder = new StringBuilder();
 
         int oldStart = startIndex;
@@ -36,12 +34,35 @@ public class NumberResolver extends AbstractResolver {
         }
 
         if(numberBuilder.length() != 0){
-            IExpression numberExpression = numberExpressionFactory.createExpression(numberBuilder.toString());
-            IResolverResult resolveResult = this.resolverResultFactory.createResolverResultBean(numberExpression);
-            resolveResult.setOffset(startIndex - oldStart);
+            IExpression numberExpression = new EndPointExpression(numberBuilder.toString(), operator);
+            NumberResolveResult resolveResult = new NumberResolveResult();
+            resolveResult.expression = numberExpression;
+            resolveResult.offset = startIndex - oldStart;
             return resolveResult;
         }
-        return null;
+        return EMPTY_RESULT;
+    }
+
+    private static class NumberResolveResult implements IResolveResult {
+
+        private IExpression expression;
+
+        private int offset;
+
+        @Override
+        public IExpression getExpression() {
+            return this.expression;
+        }
+
+        @Override
+        public int offset() {
+            return this.offset;
+        }
+
+        @Override
+        public boolean success() {
+            return true;
+        }
     }
 
 }

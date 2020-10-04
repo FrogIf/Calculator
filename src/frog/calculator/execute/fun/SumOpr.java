@@ -12,7 +12,7 @@ import frog.calculator.util.collection.Iterator;
 public class SumOpr extends AbstractSingleArgOpr {
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression child) {
+    protected ISpace<BaseNumber> eval(IExpression child) {
         if(child == null){
             throw new IncorrectStructureException("sum", "child is null.");
         }else{

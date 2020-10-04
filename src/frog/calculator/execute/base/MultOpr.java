@@ -13,7 +13,7 @@ public class MultOpr extends AbstractMiddleOpr {
     private static final MapMultDealer dealer = new MapMultDealer();
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
+    protected ISpace<BaseNumber> eval(IExpression left, IExpression right) {
         if(left == null || right == null){
             throw new IncorrectStructureException("mult", "left : " + left + ", right : " + right);
         }

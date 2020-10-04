@@ -16,7 +16,7 @@ public class ComplexMarkOpr extends AbstractSingleArgOpr {
     private static final ISpace<BaseNumber> DEFAULT_VALUE = new AtomSpace<>(MathUtil.multiplyI(BaseNumber.ONE));
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression child) {
+    protected ISpace<BaseNumber> eval(IExpression child) {
         if(child == null){
             return DEFAULT_VALUE;
         }else{

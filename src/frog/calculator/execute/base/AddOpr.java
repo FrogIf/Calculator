@@ -13,7 +13,7 @@ public class AddOpr extends AbstractMiddleOpr {
     private static final ILeftRightMapDealer addDealer = new AddDealer();
 
     @Override
-    protected ISpace<BaseNumber> exec(IExpression left, IExpression right) {
+    protected ISpace<BaseNumber> eval(IExpression left, IExpression right) {
         if(right == null){
             throw new IncorrectStructureException("add", "right child is null.");
         }

@@ -10,7 +10,7 @@ import frog.calculator.util.StringUtils;
 
 public class NumberOpr extends AbstractOperator {
     @Override
-    public ISpace<BaseNumber> operate(IExpression exp) {
+    public ISpace<BaseNumber> evaluate(IExpression exp) {
         BaseNumber number = parse(exp.symbol());
         return new AtomSpace<>(number);
     }
