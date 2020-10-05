@@ -13,7 +13,7 @@ import frog.calculator.express.IExpression;
 /**
  * 默认使用的解释管理器
  */
-public class DefaultExplainManager implements IExplainManager {
+public class CommonBuildManager implements IBuildManager {
 
     private final ICommandHolder commandHolder = new DefaultCommandHolder(this);
 
@@ -25,7 +25,7 @@ public class DefaultExplainManager implements IExplainManager {
 
     private final ICommandDetector detector;
 
-    public DefaultExplainManager() {
+    public CommonBuildManager() {
         this.resolver = this.initResolver();
         this.detector = this.initCommandDetector();
     }

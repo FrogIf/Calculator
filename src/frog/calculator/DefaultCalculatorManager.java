@@ -1,40 +1,47 @@
 package frog.calculator;
 
+import frog.calculator.build.CommonBuildManager;
+import frog.calculator.build.IBuildManager;
 import frog.calculator.connect.DefaultSessionFactory;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.connect.ISessionFactory;
-import frog.calculator.build.DefaultExplainManager;
-import frog.calculator.build.IExplainManager;
+import frog.calculator.util.collection.ArrayList;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.UnmodifiableList;
 
 public class DefaultCalculatorManager implements ICalculatorManager {
 
-    private IExplainManager manager = new DefaultExplainManager();
+    private IBuildManager manager = new CommonBuildManager();
 
     private ISessionFactory sessionFactory = new DefaultSessionFactory();
 
-    private ICalculatorConfigure calculatorConfigure;
+    private IList<ICalculateListener> listeners = new ArrayList<>();
 
-    public DefaultCalculatorManager(ICalculatorConfigure configure) {
-        this.calculatorConfigure = configure;
+    public void setManager(IBuildManager manager) {
+        this.manager = manager;
+    }
+
+    public void setSessionFactory(ISessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public ICalculatorSession getSession() {
+    public ICalculatorSession createSession() {
         return sessionFactory.createSession(this);
     }
 
     @Override
-    public IExplainManager getExplainManager() {
+    public IBuildManager getBuildManager() {
         return this.manager;
     }
 
     @Override
-    public ICalculatorContext createCalculatorContext() {
-        return new CommonCalculatorContext();
+    public IList<ICalculateListener> getCalculatorListeners() {
+        return new UnmodifiableList(listeners);
     }
 
-    @Override
-    public ICalculatorConfigure getConfigure() {
-        return this.calculatorConfigure;
+    public void addCalculateListener(ICalculateListener listener){
+        listeners.add(listener);
     }
+
 }

@@ -1,18 +1,18 @@
 package frog.calculator;
 
+import frog.calculator.build.IBuildManager;
 import frog.calculator.connect.ICalculatorSession;
-import frog.calculator.build.IExplainManager;
+import frog.calculator.util.collection.IList;
 
 /**
  * 计算器管理器
  */
 public interface ICalculatorManager {
 
-    ICalculatorSession getSession();
+    ICalculatorSession createSession();
 
-    IExplainManager getExplainManager();
+    IBuildManager getBuildManager();
 
-    ICalculatorContext createCalculatorContext();
+    IList<ICalculateListener> getCalculatorListeners();
 
-    ICalculatorConfigure getConfigure();
 }

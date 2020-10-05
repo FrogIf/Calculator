@@ -1,13 +1,13 @@
 package frog.calculator.build.command;
 
-import frog.calculator.build.IExplainManager;
+import frog.calculator.build.IBuildManager;
 import frog.calculator.execute.holder.IExpressionHolder;
 
 public class DefaultCommandHolder implements ICommandHolder {
 
-    private final IExplainManager explainManager;
+    private final IBuildManager explainManager;
 
-    public DefaultCommandHolder(IExplainManager manager) {
+    public DefaultCommandHolder(IBuildManager manager) {
         this.explainManager = manager;
     }
 

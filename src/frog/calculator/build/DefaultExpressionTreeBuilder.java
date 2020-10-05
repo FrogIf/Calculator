@@ -19,15 +19,16 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
     private static final IExpression INIT_ROOT = new StartExpression();
 
     // 计算器管理器
-    private final IExplainManager manager;
+    private final IBuildManager manager;
 
-    public DefaultExpressionTreeBuilder(IExplainManager manager) {
+    public DefaultExpressionTreeBuilder(IBuildManager manager) {
         this.manager = manager;
     }
 
     @Override
     public IExpression build(char[] exp, ICalculatorSession session) throws BuildException {
-        BuildContext context = new BuildContext(session, new CommandChain(manager.getCommandDetector()));
+        CommandChain commandChain = new CommandChain(manager.getCommandDetector());
+        BuildContext context = new BuildContext(session, commandChain);
         Reference<IExpression> expRef = new Reference<>();
         try{
             IExpression root = INIT_ROOT;
@@ -57,6 +58,8 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
         }catch (Exception e){
             this.failed(context);
             throw e;
+        }finally {
+            commandChain.clear();
         }
     }
 

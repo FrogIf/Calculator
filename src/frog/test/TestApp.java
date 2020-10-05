@@ -1,7 +1,7 @@
 package frog.test;
 
 import frog.calculator.Calculator;
-import frog.calculator.CalculatorStater;
+import frog.calculator.CommonCalculatorConfigure;
 import frog.calculator.connect.ICalculatorSession;
 
 import java.util.Scanner;
@@ -9,7 +9,11 @@ import java.util.Scanner;
 public class TestApp {
 
     public static void main(String[] args){
-        Calculator calculator = CalculatorStater.start();
+        CommonCalculatorConfigure configure = new CommonCalculatorConfigure();
+        configure.setPrecision(20);
+        configure.setOutputDecimal(false);
+        Calculator calculator = new Calculator(configure);
+
         Scanner sc = new Scanner(System.in);
 
         System.out.println("**********Calculator************");

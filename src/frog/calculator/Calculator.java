@@ -13,23 +13,26 @@ import frog.calculator.util.Arrays;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 
-public class Calculator {
+public final class Calculator {
 
     // 计算管理器
     private final ICalculatorManager calculatorManager;
 
     private final IExpressionTreeBuilder builder;
 
-    private int precision = 10;
+    private final ICalculatorConfigure configure;
 
-    public Calculator(ICalculatorManager calculatorManager) {
-        if (calculatorManager == null) {
+    private final IList<ICalculateListener> listeners;
+
+    public Calculator(ICalculatorConfigure configure) {
+        if (configure == null) {
             throw new IllegalArgumentException("calculator manager is null.");
         }
-        this.precision = calculatorManager.getConfigure().precision();
-        this.calculatorManager = calculatorManager;
+        this.configure = configure;
+        this.calculatorManager = configure.getCalculatorManager();
+        this.listeners = this.calculatorManager.getCalculatorListeners();
 
-        builder = new DefaultExpressionTreeBuilder(calculatorManager.getExplainManager());
+        builder = new DefaultExpressionTreeBuilder(calculatorManager.getBuildManager());
     }
 
     // 字符ASCII码在IGNORE_CODE之前的均会被忽略(不包括IGNORE_CODE本身)
@@ -62,9 +65,6 @@ public class Calculator {
     public String calculate(String expression, ICalculatorSession session) throws BuildException {
         char[] expChars = preprocess(expression);
 
-        // 创建计算器监听器
-        ICalculatorContext context = this.calculatorManager.createCalculatorContext();
-
         // 解析
         IExpression expTree = builder.build(expChars, session);
 
@@ -74,19 +74,17 @@ public class Calculator {
         try{
             result = expTree.interpret();
             success = true;
-            IList<ICalculateListener> listener = context.getCalculateListeners();
             // 触发执行成功监听
-            if(!listener.isEmpty()){
-                Iterator<ICalculateListener> iterator = listener.iterator();
+            if(!listeners.isEmpty()){
+                Iterator<ICalculateListener> iterator = listeners.iterator();
                 while (iterator.hasNext()){
                     iterator.next().success();
                 }
             }
         }catch (Exception e){
             // 触发执行失败监听
-            IList<ICalculateListener> listener = context.getCalculateListeners();
-            if(!success && !listener.isEmpty()){
-                Iterator<ICalculateListener> iterator = listener.iterator();
+            if(!success && !listeners.isEmpty()){
+                Iterator<ICalculateListener> iterator = listeners.iterator();
                 while (iterator.hasNext()){
                     iterator.next().failed();
                 }
@@ -97,8 +95,12 @@ public class Calculator {
         IRange range = result.getRange();
         int[] widths = range.maxWidths();
         if(widths.length == 1 && widths[0] == 1){
-            return result.get(new Coordinate(0)).toString();
-//            return result.get(new Coordinate(0)).toDecimal(this.precision);
+
+            if(configure.outputDecimal()){
+                return result.get(new Coordinate(0)).toDecimal(this.configure.getPrecision());
+            }else{
+                return result.get(new Coordinate(0)).toString();
+            }
         }else{
             StringBuilder sb = new StringBuilder("[");
             int[] coordinateArr = new int[range.dimension()];
@@ -110,7 +112,7 @@ public class Calculator {
                     if(j > 0){
                         sb.append(',');
                     }
-                    sb.append(number == null ? "null" : number.toDecimal(this.precision));
+                    sb.append(number == null ? "null" : number.toDecimal(this.configure.getPrecision()));
                 }
                 if(i > 0){ sb.append(';'); }
             }
@@ -120,7 +122,7 @@ public class Calculator {
     }
 
     public ICalculatorSession getSession(){
-        return this.calculatorManager.getSession();
+        return this.calculatorManager.createSession();
     }
 
 }

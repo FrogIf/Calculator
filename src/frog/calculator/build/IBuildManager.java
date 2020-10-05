@@ -8,7 +8,7 @@ import frog.calculator.execute.holder.IExpressionHolder;
 /**
  * 解释器管理器
  */
-public interface IExplainManager {
+public interface IBuildManager {
 
     ICommandHolder getCommandHolder();
 

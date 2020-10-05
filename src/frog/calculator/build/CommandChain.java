@@ -4,7 +4,7 @@ import frog.calculator.build.command.ICommand;
 import frog.calculator.build.command.ICommandDetector;
 import frog.calculator.exception.BuildException;
 
-public class CommandChain {
+class CommandChain {
 
     private final ICommandDetector commandDetector;
 
@@ -17,7 +17,6 @@ public class CommandChain {
             throw new IllegalArgumentException("command detector is null");
         }
         this.commandDetector = commandDetector;
-        // TODO 添加至buildFinish监听器, finish时调用clear
     }
 
     public int preBuild(char[] chars, int startIndex, IBuildContext buildContext) throws BuildException {
@@ -92,7 +91,7 @@ public class CommandChain {
     /**
      * 清理, 重回初始状态
      */
-    private void clear(){
+    public void clear(){
         this.head = this.tail = null;
     }
 
