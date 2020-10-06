@@ -35,4 +35,15 @@ public class StringUtils {
         str = str.substring(0, i + 1);
         return str;
     }
+
+    public static boolean startWith(char[] chars, int startIndex, String prefix){
+        int i = startIndex, j = 0;
+        char[] preChars = prefix.toCharArray();
+        for(int lenA = chars.length, lenB = preChars.length; i < lenA && j < lenB; i++, j++){
+            if(chars[i] != preChars[j]){
+                return false;
+            }
+        }
+        return true;
+    }
 }

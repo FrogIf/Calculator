@@ -37,12 +37,7 @@ public class VariableTableManager implements IVariableTableManager {
 
     @Override
     public void addVariable(IExpression expression) throws DuplicateSymbolException {
-
-    }
-
-    @Override
-    public boolean removeVariable(String symbol) {
-        return false;
+        this.localRegisterStack.top().insert(expression);
     }
 
     @Override

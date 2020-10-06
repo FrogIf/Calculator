@@ -59,14 +59,13 @@ class CommandChain {
      * 探查之后, 返回偏移量
      * @param chars 探查字符数组
      * @param startIndex 探查起始位置
-     * @param builder builder
+     * @param buildContext 构建上下文
      * @return 偏移量
      */
     private int commandDetect(char[] chars, int startIndex, IBuildContext buildContext) throws BuildException {
-        ICommand newCmd;
         int commandOffset = 0;
         do{
-            newCmd = commandDetector.detect(chars, startIndex);
+            ICommand newCmd = commandDetector.detect(chars, startIndex);
             if(newCmd == null){ break; }
 
             CommandNode node = new CommandNode(newCmd);
@@ -79,10 +78,17 @@ class CommandChain {
                 head = tail;
             }
 
-            commandOffset += newCmd.offset();
-            startIndex += newCmd.symbol().length();
+            int offset = newCmd.offset();
+            int symbolLen = newCmd.symbol().length();
+            commandOffset += offset;
+            startIndex += symbolLen;
 
             newCmd.preBuild(chars, startIndex, buildContext);
+
+            if(offset != symbolLen){
+                // 如果命令偏移量与命令符号长度不相等, 说明, 该命令中隐含expression, 跳出循环, 解析expression
+                break;
+            }
         }while (startIndex < chars.length);
 
         return commandOffset;

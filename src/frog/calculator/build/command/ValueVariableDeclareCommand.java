@@ -52,7 +52,7 @@ public class ValueVariableDeclareCommand extends AbstractCommand {
     @Override
     public boolean postBuild(IBuildContext buildContext) {
         // do nothing
-        return true;
+        return false;
     }
 
     @Override

@@ -20,13 +20,13 @@ public interface ICommand extends ISymbol {
      * 解析之前执行
      * @param chars 待解析的表达式
      * @param startIndex 解析开始位置
-     * @param builder 表达式构建器
+     * @param buildContext 构建上下文
      */
     void preBuild(char[] chars, int startIndex, IBuildContext buildContext) throws BuildException;
 
     /**
      * 解析后执行
-     * @param builder 表达式构建器
+     * @param buildContext 构建上下文
      * @return 返回值指示该命令是否仍有效, true: 有效, false: 无效
      */
      boolean postBuild(IBuildContext buildContext);

@@ -13,11 +13,4 @@ public interface IVariableManager extends IResolver {
      */
     void addVariable(IExpression expression) throws DuplicateSymbolException;
 
-    /**
-     * 删除指定的变量
-     * @param symbol 待删除的变量的符号
-     * @return 已删除的变量表达式对象
-     */
-    boolean removeVariable(String symbol);
-
 }

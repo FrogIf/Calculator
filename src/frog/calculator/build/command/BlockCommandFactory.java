@@ -2,9 +2,9 @@ package frog.calculator.build.command;
 
 public class BlockCommandFactory extends AbstractCommandFactory{
 
-    private String blockStart;
+    private final String blockStart;
 
-    private String blockEnd;
+    private final String blockEnd;
 
     public BlockCommandFactory(String blockStart, String blockEnd) {
         super(blockStart);
@@ -14,6 +14,6 @@ public class BlockCommandFactory extends AbstractCommandFactory{
 
     @Override
     public ICommand instance() {
-        return new BlockCommand();
+        return new BlockCommand(this.blockStart, this.blockEnd);
     }
 }

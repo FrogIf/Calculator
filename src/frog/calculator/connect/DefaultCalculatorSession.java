@@ -24,9 +24,4 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
         return this.resolverResultFactory.createResolverResultBean(expression == null ? null : expression.newInstance());
     }
 
-    @Override
-    public boolean removeVariable(String symbol) {
-        return this.sessionRegister.remove(symbol);
-    }
-
 }
