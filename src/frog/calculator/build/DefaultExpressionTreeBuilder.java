@@ -27,8 +27,7 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
 
     @Override
     public IExpression build(char[] exp, ICalculatorSession session) throws BuildException {
-        CommandChain commandChain = new CommandChain(manager.getCommandDetector());
-        BuildContext context = new BuildContext(session, commandChain);
+        BuildContext context = new BuildContext(session, new CommandChain(manager.getCommandDetector()));
         Reference<IExpression> expRef = new Reference<>();
         try{
             IExpression root = INIT_ROOT;
@@ -58,8 +57,6 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
         }catch (Exception e){
             this.failed(context);
             throw e;
-        }finally {
-            commandChain.clear();
         }
     }
 

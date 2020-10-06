@@ -11,7 +11,7 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
 
     private T expression;
 
-    private ISet<SymbolRegister<T>> nextLetter = new AVLTreeSet<>(ComparableComparator.<SymbolRegister<T>>getInstance());
+    private final ISet<SymbolRegister<T>> nextLetter = new AVLTreeSet<>(ComparableComparator.<SymbolRegister<T>>getInstance());
 
     public SymbolRegister(){ }
 

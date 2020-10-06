@@ -9,7 +9,7 @@ import frog.calculator.execute.space.ISpace;
 public class SignalExpression extends EndPointExpression {
 
     public SignalExpression(String symbol) {
-        super(symbol, null);
+        super(symbol);
     }
 
     @Override

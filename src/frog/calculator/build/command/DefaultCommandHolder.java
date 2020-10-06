@@ -15,7 +15,7 @@ public class DefaultCommandHolder implements ICommandHolder {
     public ICommandFactory[] getCommandFactoryList() {
         IExpressionHolder holder = this.explainManager.getExpressionHolder();
         return new ICommandFactory[]{
-                new VariableCommandFactory("@", holder),
+                new VariableCommandFactory("@", holder.getAssign().symbol()),
                 new BlockCommandFactory(holder.getBlockStart().symbol(), holder.getBlockEnd().symbol())
         };
     }

@@ -21,7 +21,7 @@ public class DefaultCalculatorSession extends AbstractCalculatorSession {
     @Override
     public IResolveResult resolve(char[] expChars, int startIndex) {
         IExpression expression = sessionRegister.retrieve(expChars, startIndex);
-        return this.resolverResultFactory.createResolverResultBean(expression);
+        return this.resolverResultFactory.createResolverResultBean(expression == null ? null : expression.newInstance());
     }
 
     @Override

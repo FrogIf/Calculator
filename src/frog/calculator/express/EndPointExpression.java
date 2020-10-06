@@ -12,6 +12,10 @@ public class EndPointExpression extends AbstractExpression {
         this.operator = operator;
     }
 
+    public EndPointExpression(String symbol) {
+        super(symbol);
+    }
+
     @Override
     public boolean createBranch(IExpression childExpression) {
         // endpoint can't create branch.

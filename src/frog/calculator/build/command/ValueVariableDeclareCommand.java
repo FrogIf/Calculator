@@ -3,7 +3,6 @@ package frog.calculator.build.command;
 import frog.calculator.build.IBuildContext;
 import frog.calculator.build.IVariableTableManager;
 import frog.calculator.build.resolve.IResolveResult;
-import frog.calculator.build.resolve.IResolveResultFactory;
 import frog.calculator.build.resolve.TruncateResolver;
 import frog.calculator.exception.BuildException;
 import frog.calculator.express.ValueVariableExpression;
@@ -22,10 +21,10 @@ public class ValueVariableDeclareCommand extends AbstractCommand {
 
     private final TruncateResolver variableResolver;
 
-    public ValueVariableDeclareCommand(String command, String[] overExps, IResolveResultFactory resolveResultFactory) {
+    public ValueVariableDeclareCommand(String command, String assign) {
         this.command = command;
         this.offset = command.length();
-        this.variableResolver = new TruncateResolver(ValueVariableExpression::new, overExps);
+        this.variableResolver = new TruncateResolver(ValueVariableExpression::new, new String[] { assign });
     }
 
     @Override

@@ -1,5 +1,6 @@
 package frog.calculator.execute.holder;
 
+import frog.calculator.execute.base.AssignOpr;
 import frog.calculator.execute.base.BracketOpr;
 import frog.calculator.execute.base.RegionOpr;
 import frog.calculator.express.*;
@@ -22,7 +23,8 @@ public abstract class AbstractExpressionHolder implements IExpressionHolder {
     private final IExpression listFun = new ContainerExpression("[", separator.symbol(), listEnd.symbol(), new BracketOpr());
 
     // 变量赋值符
-    private final IExpression assign = new AssignExpression("=");
+//    private final IExpression assign = new AssignExpression("=");
+    private final IExpression assign = new MiddleExpression("=", 0, new AssignOpr());
 
     // 代码块起始表达式
     private final IExpression blockEnd = new SignalExpression("}");

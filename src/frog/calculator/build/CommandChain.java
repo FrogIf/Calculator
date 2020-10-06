@@ -88,13 +88,6 @@ class CommandChain {
         return commandOffset;
     }
 
-    /**
-     * 清理, 重回初始状态
-     */
-    public void clear(){
-        this.head = this.tail = null;
-    }
-
     private static class CommandNode {
         private final ICommand command;
         public CommandNode(ICommand command) {

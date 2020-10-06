@@ -22,6 +22,10 @@ public abstract class AbstractExpression implements IExpression {
         this.operator = operator;
     }
 
+    public AbstractExpression(String symbol) {
+        this.symbol = symbol;
+    }
+
     @Override
     public String symbol() {
         return this.symbol;
