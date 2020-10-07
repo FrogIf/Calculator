@@ -8,6 +8,7 @@ import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 import frog.calculator.util.collection.UnmodifiableList;
 
+// TODO 改用策略判断是否括号闭合, 而不是显示指定
 public class ContainerExpression extends AbstractExpression {
 
     private final String separatorSymbol;
