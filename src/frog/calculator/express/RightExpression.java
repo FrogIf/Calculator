@@ -4,7 +4,7 @@ import frog.calculator.execute.IOperator;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
 
-public class RightExpression extends AbstractBlockExpression {
+public class RightExpression extends AbstractUndetachableExpression {
 
     private IExpression left;
 

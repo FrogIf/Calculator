@@ -31,13 +31,13 @@ public class MathExpressionHolder implements IExpressionHolder {
             new MiddleExpression(MINUS, 1, new SubOpr()), // 减
             new MiddleExpression("*", 2, new MultOpr()),    // 乘
             new MiddleExpression("/", 2, new DivOpr()), // 除
-            new SignalExpression(","),  // TODO 改为middle expression, 优先级为0, 分割
-            new ContainerExpression("(", ",", ")", new BracketOpr()),   // 左括号(
-            new SignalExpression(")"),  // 右括号(
-            new ContainerExpression("[", ",", "]", new BracketOpr()),   // 左方括号[
-            new SignalExpression("]"),  // 右方括号]
-            new ContainerExpression("{", ",", "}", new RegionOpr()),    // 左大括号{
-            new SignalExpression("}"),  // 右大括号]
+            new EndPointExpression(","),
+            new ContainerExpression("(", new CommonPutStrategy(")"), new BracketOpr()),   // 左括号(
+            new EndPointExpression(")"),  // 右括号(
+            new ContainerExpression("[", new CommonPutStrategy("]"), new BracketOpr()),   // 左方括号[
+            new EndPointExpression("]"),  // 右方括号]
+            new ContainerExpression("{", new CommonPutStrategy("}"), new RegionOpr()),    // 左大括号{
+            new EndPointExpression("}"),  // 右大括号]
             new MiddleExpression("^", 2, new PowerOpr()),   // 幂运算
             new RightExpression("%", 4, new PercentOpr()),  // 百分号
             new RightExpression("!", 4, new FactorialOpr()),    // 阶乘
@@ -46,14 +46,6 @@ public class MathExpressionHolder implements IExpressionHolder {
             new LeftExpression("avg", FUNCTION_BUILD_FACTOR, new AverageOpr()), // 求平均数
             new LeftExpression("sum", FUNCTION_BUILD_FACTOR, new SumOpr())  // 求和
     };
-
-    /**
-     * 表达式定义检查
-     */
-    private static void check(){
-        // TODO 检查
-    }
-
 
     @Override
     public IExpression[] getExpressions() {
@@ -71,4 +63,28 @@ public class MathExpressionHolder implements IExpressionHolder {
         }
         return null;
     }
+
+    private static class CommonPutStrategy implements ContainerExpression.IPutStrategy {
+
+        private final String closeSymbol;
+
+        public CommonPutStrategy(String closeSymbol) {
+            this.closeSymbol = closeSymbol;
+        }
+
+        @Override
+        public boolean prepareNext(IExpression input) {
+            return ",".equals(input.symbol());
+        }
+
+        @Override
+        public boolean canClose(IExpression input) {
+            return closeSymbol.equals(input.symbol());
+        }
+
+        @Override
+        public ContainerExpression.IPutStrategy newInstance() {
+            return this;
+        }
+    };
 }

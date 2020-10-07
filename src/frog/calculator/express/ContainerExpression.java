@@ -11,23 +11,20 @@ import frog.calculator.util.collection.UnmodifiableList;
 // TODO 改用策略判断是否括号闭合, 而不是显示指定
 public class ContainerExpression extends AbstractExpression {
 
-    private final String separatorSymbol;
-
-    private final String closeSymbol;
-
     private IExpression suspendExpression;
 
     private LinkedList<IExpression> elements = new LinkedList<>();
 
+    private final IPutStrategy putStrategy;
+
     private boolean isClose;
 
-    public ContainerExpression(String openSymbol, String separatorSymbol, String closeSymbol, IOperator operator) {
-        super(openSymbol, operator);
-        if(closeSymbol == null){
-            throw new IllegalArgumentException("symbol is not enough.");
+    public ContainerExpression(String symbol, IPutStrategy putStrategy, IOperator operator) {
+        super(symbol, operator);
+        if(putStrategy == null){
+            throw new IllegalArgumentException("put strategy is null.");
         }
-        this.separatorSymbol = separatorSymbol;
-        this.closeSymbol = closeSymbol;
+        this.putStrategy = putStrategy;
         elements.add(new GhostExpression());
     }
 
@@ -35,7 +32,7 @@ public class ContainerExpression extends AbstractExpression {
     public final boolean createBranch(IExpression childExpression) {
         boolean success = false;
         if(!isClose){
-            if(this.separatorSymbol != null && this.separatorSymbol.equals(childExpression.symbol())){
+            if(this.putStrategy.prepareNext(childExpression)){
                 this.elements.add(new GhostExpression());
                 success = true;
             }else{
@@ -62,7 +59,7 @@ public class ContainerExpression extends AbstractExpression {
                 return expression;
             }
         }else{  // 如果容器未关闭
-            if(this.closeSymbol.equals(expression.symbol())){   // 检测到是闭合符号, 闭合容器
+            if(putStrategy.canClose(expression)){   // 检测到是闭合符号, 闭合容器
                 root = reversal();
             }else if(expression.buildFactor() <= this.buildFactor()){ // buildFactor 小于等于当前buildFactor, 将当前表达式作为输入表达式的子表达式
                 if(expression.createBranch(this)){
@@ -97,17 +94,17 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-        if(role == ROLE_ARG_LIST){
-            throw new IllegalStateException("the expression has output as argument list.");
-        }
+//        if(role == ROLE_ARG_LIST){
+//            throw new IllegalStateException("the expression has output as argument list.");
+//        }
         return super.interpret();
     }
 
     @Override
     public IList<IExpression> children() {
-        if(role == ROLE_SPACE){
-            throw new IllegalStateException("this expression has output as a space.");
-        }
+//        if(role == ROLE_SPACE){
+//            throw new IllegalStateException("this expression has output as a space.");
+//        }
         return new UnmodifiableList<>(this.elements);
     }
 
@@ -123,7 +120,7 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public IExpression newInstance() {
-        ContainerExpression containerExpression = new ContainerExpression(this.symbol, this.separatorSymbol, this.closeSymbol, this.operator);
+        ContainerExpression containerExpression = new ContainerExpression(this.symbol, putStrategy.newInstance(), this.operator);
         this.copyProperty(containerExpression);
         Iterator<IExpression> itr = this.elements.iterator();
         containerExpression.elements = new LinkedList<>();
@@ -139,6 +136,11 @@ public class ContainerExpression extends AbstractExpression {
 
     private static final int ROLE_UNDEFINE = 1;
 
-    private int role = ROLE_UNDEFINE;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
+//    private int role = ROLE_UNDEFINE;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
 
+    public interface IPutStrategy {
+        boolean prepareNext(IExpression input);
+        boolean canClose(IExpression input);
+        IPutStrategy newInstance();
+    }
 }
