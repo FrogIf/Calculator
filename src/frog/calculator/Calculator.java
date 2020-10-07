@@ -1,6 +1,6 @@
 package frog.calculator;
 
-import frog.calculator.build.DefaultExpressionTreeBuilder;
+import frog.calculator.build.MathExpressionTreeBuilder;
 import frog.calculator.build.IExpressionTreeBuilder;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
@@ -32,7 +32,7 @@ public final class Calculator {
         this.calculatorManager = configure.getCalculatorManager();
         this.listeners = this.calculatorManager.getCalculatorListeners();
 
-        builder = new DefaultExpressionTreeBuilder(calculatorManager.getBuildManager());
+        builder = new MathExpressionTreeBuilder(calculatorManager.getBuildManager());
     }
 
     // 字符ASCII码在IGNORE_CODE之前的均会被忽略(不包括IGNORE_CODE本身)

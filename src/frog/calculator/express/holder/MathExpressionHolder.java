@@ -12,7 +12,7 @@ import frog.calculator.util.Arrays;
 /**
  * 系统原生表达式持有者, 是系统默认的表达式集, explain依赖该符号与表达式之间的映射关系进行explain
  */
-public class OriginExpressionHolder implements IExpressionHolder {
+public class MathExpressionHolder implements IExpressionHolder {
 
     public static final String PLUS = "+";
 

@@ -8,16 +8,16 @@ import frog.calculator.exception.CalculatorError;
 import frog.calculator.exception.DuplicateSymbolException;
 import frog.calculator.express.IExpression;
 import frog.calculator.express.holder.IExpressionHolder;
-import frog.calculator.express.holder.OriginExpressionHolder;
+import frog.calculator.express.holder.MathExpressionHolder;
 
 /**
  * 默认使用的解释管理器
  */
-public class CommonBuildManager implements IBuildManager {
+public class MathExpressionBuildManager implements IBuildManager {
 
     private final ICommandHolder commandHolder = new DefaultCommandHolder();
 
-    private final IExpressionHolder expressionHolder = new OriginExpressionHolder();
+    private final IExpressionHolder expressionHolder = new MathExpressionHolder();
 
 //    private final IResolveResultFactory resolverResultFactory = new CommonResolveResultFactory();
 
@@ -25,7 +25,7 @@ public class CommonBuildManager implements IBuildManager {
 
     private final ICommandDetector detector;
 
-    public CommonBuildManager() {
+    public MathExpressionBuildManager() {
         this.resolver = this.initResolver();
         this.detector = this.initCommandDetector();
     }
@@ -81,8 +81,8 @@ public class CommonBuildManager implements IBuildManager {
         // plus and minus resolver
         // plus and minus can represent (positive and negative) or (add and sub)
         // this resolver can transform like python
-        IExpression plusExp = expressionHolder.getExpressionBySymbol(OriginExpressionHolder.PLUS);
-        IExpression minusExp = expressionHolder.getExpressionBySymbol(OriginExpressionHolder.MINUS);
+        IExpression plusExp = expressionHolder.getExpressionBySymbol(MathExpressionHolder.PLUS);
+        IExpression minusExp = expressionHolder.getExpressionBySymbol(MathExpressionHolder.MINUS);
         IResolver addSubResolver = new PMResolver(plusExp, minusExp);
 
         // symbol resolver, can parse symbol which was supported by framework.

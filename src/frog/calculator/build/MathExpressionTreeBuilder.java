@@ -13,7 +13,7 @@ import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.Reference;
 import frog.calculator.util.StringUtils;
 
-public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
+public class MathExpressionTreeBuilder implements IExpressionTreeBuilder {
 
     // 表达式树初始节点, 当有其它表达式节点参与构建时, 会自动使用该节点替换初始节点
     private static final IExpression INIT_ROOT = new StartExpression();
@@ -21,7 +21,7 @@ public class DefaultExpressionTreeBuilder implements IExpressionTreeBuilder {
     // 计算器管理器
     private final IBuildManager manager;
 
-    public DefaultExpressionTreeBuilder(IBuildManager manager) {
+    public MathExpressionTreeBuilder(IBuildManager manager) {
         this.manager = manager;
     }
 

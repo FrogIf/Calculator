@@ -1,6 +1,6 @@
 package frog.calculator;
 
-import frog.calculator.build.CommonBuildManager;
+import frog.calculator.build.MathExpressionBuildManager;
 import frog.calculator.build.IBuildManager;
 import frog.calculator.connect.DefaultSessionFactory;
 import frog.calculator.connect.ICalculatorSession;
@@ -11,7 +11,7 @@ import frog.calculator.util.collection.UnmodifiableList;
 
 public class DefaultCalculatorManager implements ICalculatorManager {
 
-    private IBuildManager manager = new CommonBuildManager();
+    private IBuildManager manager = new MathExpressionBuildManager();
 
     private ISessionFactory sessionFactory = new DefaultSessionFactory();
 
