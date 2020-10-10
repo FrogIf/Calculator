@@ -1,15 +1,11 @@
 package frog.calculator.execute.util;
 
-import frog.calculator.execute.exception.IncorrectStructureException;
 import frog.calculator.execute.exception.NonsupportRangeException;
-import frog.calculator.express.IExpression;
-import frog.calculator.math.number.BaseNumber;
 import frog.calculator.execute.space.Coordinate;
 import frog.calculator.execute.space.FixedAlignSpace;
 import frog.calculator.execute.space.IRange;
 import frog.calculator.execute.space.ISpace;
-import frog.calculator.util.collection.IList;
-import frog.calculator.util.collection.LinkedList;
+import frog.calculator.math.number.BaseNumber;
 
 public class OperateUtil {
 

@@ -11,7 +11,6 @@ public interface ICommand extends ISymbol {
 
     /**
      * 该命令导致的表达式偏移量
-     * TODO 这个偏移量应该去掉, 否则, 这里与expression存在一定的耦合
      * @return 偏移量
      */
     int offset();

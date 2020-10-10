@@ -14,7 +14,7 @@ public class VariableTableManager implements IVariableTableManager {
 
     private final Stack<IRegister<IExpression>> localRegisterStack = new Stack<>();
 
-    private final static IResolveResultFactory resolveResultFactory = new CommonResolveResultFactory();
+    private static final IResolveResultFactory resolveResultFactory = new CommonResolveResultFactory();
 
     @Override
     public void createLocalVariableTable() {
@@ -53,6 +53,6 @@ public class VariableTableManager implements IVariableTableManager {
             }
         }
 
-        return this.resolveResultFactory.createResolverResultBean(expression);
+        return resolveResultFactory.createResolverResultBean(expression);
     }
 }

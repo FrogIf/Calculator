@@ -8,7 +8,6 @@ import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 import frog.calculator.util.collection.UnmodifiableList;
 
-// TODO 改用策略判断是否括号闭合, 而不是显示指定
 public class ContainerExpression extends AbstractExpression {
 
     private IExpression suspendExpression;
@@ -94,17 +93,11 @@ public class ContainerExpression extends AbstractExpression {
 
     @Override
     public ISpace<BaseNumber> interpret() {
-//        if(role == ROLE_ARG_LIST){
-//            throw new IllegalStateException("the expression has output as argument list.");
-//        }
         return super.interpret();
     }
 
     @Override
     public IList<IExpression> children() {
-//        if(role == ROLE_SPACE){
-//            throw new IllegalStateException("this expression has output as a space.");
-//        }
         return new UnmodifiableList<>(this.elements);
     }
 
@@ -129,14 +122,6 @@ public class ContainerExpression extends AbstractExpression {
         }
         return containerExpression;
     }
-
-    private static final int ROLE_SPACE = 2;
-
-    private static final int ROLE_ARG_LIST = 0;
-
-    private static final int ROLE_UNDEFINE = 1;
-
-//    private int role = ROLE_UNDEFINE;  // 标记一个surround expression对象是作为参数列表输出还是space输出, 1 : 未确定, 0 : 参数列表, 2 : space
 
     public interface IPutStrategy {
         boolean prepareNext(IExpression input);

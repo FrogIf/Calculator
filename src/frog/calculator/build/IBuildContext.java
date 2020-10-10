@@ -2,6 +2,7 @@ package frog.calculator.build;
 
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.express.IExpression;
+import frog.calculator.util.collection.IList;
 
 /**
  * 构建上下文

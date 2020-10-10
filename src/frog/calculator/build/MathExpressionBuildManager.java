@@ -19,8 +19,6 @@ public class MathExpressionBuildManager implements IBuildManager {
 
     private final IExpressionHolder expressionHolder = new MathExpressionHolder();
 
-//    private final IResolveResultFactory resolverResultFactory = new CommonResolveResultFactory();
-
     private final IResolver resolver;
 
     private final ICommandDetector detector;
@@ -28,16 +26,6 @@ public class MathExpressionBuildManager implements IBuildManager {
     public MathExpressionBuildManager() {
         this.resolver = this.initResolver();
         this.detector = this.initCommandDetector();
-    }
-
-//    @Override
-//    public IResolveResult assembleResolveResult(IExpression expression) {
-//        return resolverResultFactory.createResolverResultBean(expression);
-//    }
-
-    @Override
-    public ICommandHolder getCommandHolder() {
-        return this.commandHolder;
     }
 
     @Override
@@ -62,17 +50,6 @@ public class MathExpressionBuildManager implements IBuildManager {
         }
         return new DefaultCommandDetector(register);
     }
-
-    @Override
-    public IExpressionHolder getExpressionHolder() {
-        return this.expressionHolder;
-    }
-
-//    @Override
-//    public IResolveResultFactory getResolverFactory() {
-//        return this.resolverResultFactory;
-//    }
-
 
     private IResolver initResolver() {
         // value resolver
