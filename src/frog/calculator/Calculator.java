@@ -15,32 +15,17 @@ import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.Arrays;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
+import frog.calculator.util.collection.LinkedList;
 
 public final class Calculator {
 
-    // 计算管理器
-    private final ICalculatorManager calculatorManager;
+    private final IExpressionTreeBuilder builder = new MathExpressionTreeBuilder();
 
-    private final IExpressionTreeBuilder builder;
+    private static final NothingCaluclatorSession DO_NOTHING_SESSION = new NothingCaluclatorSession();
 
-    private final ICalculatorConfigure configure;
-
-    private final NothingCaluclatorSession DO_NOTHING_SESSION = new NothingCaluclatorSession();
-
-    private final IList<ICalculateListener> listeners;
+    private final IList<ICalculateListener> listeners = new LinkedList<>();
 
     private final ISessionFactory sessionFactory = new DefaultSessionFactory();
-
-    public Calculator(ICalculatorConfigure configure) {
-        if (configure == null) {
-            throw new IllegalArgumentException("calculator manager is null.");
-        }
-        this.configure = configure;
-        this.calculatorManager = configure.getCalculatorManager();
-        this.listeners = this.calculatorManager.getCalculatorListeners();
-
-        builder = new MathExpressionTreeBuilder(calculatorManager.getBuildManager());
-    }
 
     // 字符ASCII码在IGNORE_CODE之前的均会被忽略(不包括IGNORE_CODE本身)
     private static final int IGNORE_CODE = 33;
@@ -129,6 +114,10 @@ public final class Calculator {
 
     public ICalculatorSession getSession(){
         return this.sessionFactory.createSession();
+    }
+
+    public void addCalculateListener(ICalculateListener calculateListener){
+        this.listeners.add(calculateListener);
     }
 
 }

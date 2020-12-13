@@ -2,13 +2,13 @@ package frog.calculator.math.number;
 
 public final class BaseNumber {
 
-    private final static ComplexNumber COMPLEX_ZERO = new ComplexNumber(new PolynomialNumber(RationalNumber.ZERO, null));
+    private static final ComplexNumber COMPLEX_ZERO = new ComplexNumber(new PolynomialNumber(RationalNumber.ZERO, null));
 
-    private final static ComplexNumber COMPLEX_ONE = new ComplexNumber(new PolynomialNumber(RationalNumber.ONE, null));
+    private static final ComplexNumber COMPLEX_ONE = new ComplexNumber(new PolynomialNumber(RationalNumber.ONE, null));
 
-    public final static BaseNumber ZERO = new BaseNumber(COMPLEX_ZERO);
+    public static final BaseNumber ZERO = new BaseNumber(COMPLEX_ZERO);
 
-    public final static BaseNumber ONE = new BaseNumber(COMPLEX_ONE);
+    public static final BaseNumber ONE = new BaseNumber(COMPLEX_ONE);
 
     private final ComplexNumber complex;
 

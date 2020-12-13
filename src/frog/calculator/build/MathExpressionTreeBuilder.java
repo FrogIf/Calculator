@@ -21,12 +21,8 @@ public class MathExpressionTreeBuilder implements IExpressionTreeBuilder {
     // 表达式树初始节点, 当有其它表达式节点参与构建时, 会自动使用该节点替换初始节点
     private static final IExpression INIT_ROOT = new StartExpression();
 
-    // 计算器管理器
-    private final IBuildManager manager;
-
-    public MathExpressionTreeBuilder(IBuildManager manager) {
-        this.manager = manager;
-    }
+    // 构建管理器
+    private final IBuildManager manager = new MathExpressionBuildManager();
 
     @Override
     public IExpression build(char[] exp, ICalculatorSession session) throws BuildException {
@@ -38,10 +34,10 @@ public class MathExpressionTreeBuilder implements IExpressionTreeBuilder {
             context.setRoot(INIT_ROOT);
 
             for (int i = 0; i < exp.length; ) {
-                // resolve
+                // 解析
                 int pos = this.resolve(exp, i, context, expRef);
 
-                // build
+                // 构建
                 IExpression expression = expRef.getObj();
                 expression.buildInit(order++, null, context); // TODO Context
                 root = root.assembleTree(expression);
@@ -51,6 +47,9 @@ public class MathExpressionTreeBuilder implements IExpressionTreeBuilder {
 
                 context.setRoot(root);
 
+                if(pos <= i){
+                    throw new BuildException("resolve failed, pos is not right.");
+                }
                 i = pos;
             }
 
@@ -108,11 +107,11 @@ public class MathExpressionTreeBuilder implements IExpressionTreeBuilder {
     }
 
     private void failed(IBuildContext context){
-
+        // TODO 失败后处理
     }
 
     private void finish(IBuildContext context){
-
+        // TODO 完成后处理
     }
 
     /**

@@ -3,14 +3,12 @@ package frog.test;
 import java.util.Scanner;
 
 import frog.calculator.Calculator;
-import frog.calculator.CommonCalculatorConfigure;
 import frog.calculator.connect.ICalculatorSession;
 
 public class Bootstrap {
 
 	public static void main(String[] args){
-        CommonCalculatorConfigure configure = new CommonCalculatorConfigure();
-        Calculator calculator = new Calculator(configure);
+        Calculator calculator = new Calculator();
 
         Scanner sc = new Scanner(System.in);
 
