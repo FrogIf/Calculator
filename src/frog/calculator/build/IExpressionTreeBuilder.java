@@ -4,6 +4,9 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.express.IExpression;
 
+/**
+ * 表达式树构建者
+ */
 public interface IExpressionTreeBuilder {
 
     /**

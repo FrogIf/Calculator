@@ -2,7 +2,10 @@ package frog.calculator;
 
 import frog.calculator.build.MathExpressionTreeBuilder;
 import frog.calculator.build.IExpressionTreeBuilder;
+import frog.calculator.connect.DefaultSessionFactory;
 import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.connect.ISessionFactory;
+import frog.calculator.connect.NothingCaluclatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.execute.space.Coordinate;
 import frog.calculator.execute.space.IRange;
@@ -22,7 +25,11 @@ public final class Calculator {
 
     private final ICalculatorConfigure configure;
 
+    private final NothingCaluclatorSession DO_NOTHING_SESSION = new NothingCaluclatorSession();
+
     private final IList<ICalculateListener> listeners;
+
+    private final ISessionFactory sessionFactory = new DefaultSessionFactory();
 
     public Calculator(ICalculatorConfigure configure) {
         if (configure == null) {
@@ -54,6 +61,10 @@ public final class Calculator {
         chars = new char[i];
         Arrays.copy(fix, chars, 0, i);
         return chars;
+    }
+
+    public String calculate(String expression) throws BuildException{
+        return this.calculate(expression, DO_NOTHING_SESSION);
     }
 
     /**
@@ -95,12 +106,7 @@ public final class Calculator {
         IRange range = result.getRange();
         int[] widths = range.maxWidths();
         if(widths.length == 1 && widths[0] == 1){
-
-            if(configure.outputDecimal()){
-                return result.get(new Coordinate(0)).toDecimal(this.configure.getPrecision());
-            }else{
-                return result.get(new Coordinate(0)).toString();
-            }
+            return result.get(new Coordinate(0)).toString();
         }else{
             StringBuilder sb = new StringBuilder("[");
             int[] coordinateArr = new int[range.dimension()];
@@ -112,7 +118,7 @@ public final class Calculator {
                     if(j > 0){
                         sb.append(',');
                     }
-                    sb.append(number == null ? "null" : number.toDecimal(this.configure.getPrecision()));
+                    sb.append(number == null ? "null" : number.toString());
                 }
                 if(i > 0){ sb.append(';'); }
             }
@@ -122,7 +128,7 @@ public final class Calculator {
     }
 
     public ICalculatorSession getSession(){
-        return this.calculatorManager.createSession();
+        return this.sessionFactory.createSession();
     }
 
 }

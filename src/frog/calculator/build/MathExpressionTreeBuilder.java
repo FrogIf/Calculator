@@ -13,6 +13,9 @@ import frog.calculator.math.number.BaseNumber;
 import frog.calculator.util.Reference;
 import frog.calculator.util.StringUtils;
 
+/**
+ * 数学表达式树构建者
+ */
 public class MathExpressionTreeBuilder implements IExpressionTreeBuilder {
 
     // 表达式树初始节点, 当有其它表达式节点参与构建时, 会自动使用该节点替换初始节点

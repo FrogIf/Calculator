@@ -1,7 +1,10 @@
 package frog.calculator.math.number;
 
 public interface INumber {
-
+    /**
+     * 获取一个数的相反数
+     * @return
+     */
     INumber not();
 
     /**

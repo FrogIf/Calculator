@@ -1,17 +1,15 @@
 package frog.test;
 
+import java.util.Scanner;
+
 import frog.calculator.Calculator;
 import frog.calculator.CommonCalculatorConfigure;
 import frog.calculator.connect.ICalculatorSession;
 
-import java.util.Scanner;
+public class Bootstrap {
 
-public class TestApp {
-
-    public static void main(String[] args){
+	public static void main(String[] args){
         CommonCalculatorConfigure configure = new CommonCalculatorConfigure();
-        configure.setPrecision(20);
-        configure.setOutputDecimal(false);
         Calculator calculator = new Calculator(configure);
 
         Scanner sc = new Scanner(System.in);
