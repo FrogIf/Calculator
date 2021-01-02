@@ -48,10 +48,8 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
         }
 
         if(startIndex == expChars.length - 1){
-            if(!replace){
-                if(register.expression != null && expression != null){
-                    throw new DuplicateSymbolException("duplicate define expression : " + expression.symbol());
-                }
+            if(!replace && register.expression != null && expression != null){
+                throw new DuplicateSymbolException("duplicate define expression : " + expression.symbol());
             }
 
             register.expression = expression;
@@ -64,8 +62,8 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
 
     @Override
     public T find(String symbol) {
-        T expression = this.retrieve(symbol.toCharArray(), 0);
-        if(expression != null && symbol.equals(expression.symbol())){
+        T exp = this.retrieve(symbol.toCharArray(), 0);
+        if(exp != null && symbol.equals(exp.symbol())){
             return expression;
         }
         return null;
@@ -109,13 +107,11 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
             result = hasExists;
         }else if(chars.length > startIndex){
             SymbolRegister<T> register = this.nextLetter.find(new SymbolRegister<>(chars[startIndex + 1]));
-            if(register != null){
-                if(register.remove(chars, startIndex + 1)){
-                    if(register.isEmpty()){
-                        this.nextLetter.remove(register);
-                    }
-                    result = true;
+            if(register != null  && register.remove(chars, startIndex + 1)){
+                if(register.isEmpty()){
+                    this.nextLetter.remove(register);
                 }
+                result = true;
             }
         }
         return result;
@@ -158,7 +154,7 @@ public class SymbolRegister<T extends ISymbol> implements IRegister<T>, Comparab
     }
 
     @Override
-    public int compareTo(SymbolRegister o) {
+    public int compareTo(SymbolRegister<T> o) {
         return this.symbol - o.symbol;
     }
 

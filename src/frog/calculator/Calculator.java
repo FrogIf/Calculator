@@ -88,6 +88,7 @@ public final class Calculator {
             throw e;
         }
 
+        // TODO 改成直接返回Number对象
         IRange range = result.getRange();
         int[] widths = range.maxWidths();
         if(widths.length == 1 && widths[0] == 1){
