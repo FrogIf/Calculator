@@ -1,4 +1,4 @@
-package frog.logger;
+package frog.calculator.logger;
 
 public class LoggerFactory {
 
