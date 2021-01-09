@@ -31,6 +31,10 @@ public class LinkedList<E> extends AbstractCollection<E> implements IList<E>{
         return top.item;
     }
 
+    /**
+     * 移除最后一个元素, 如果集合为空, 则返回null
+     * @return 最后一个元素
+     */
     public E postRemove(){
         if(head.next == null){ return null; }
 

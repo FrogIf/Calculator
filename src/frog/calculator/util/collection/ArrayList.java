@@ -53,9 +53,7 @@ public class ArrayList<E> extends AbstractCollection<E> implements IList<E> {
     private void ensureCapacityInternal(int needCapacity){
         if(needCapacity > array.length){
             Object[] newArr = new Object[array.length + (array.length >> 1)];
-            for(int i = 0; i < array.length; i++){
-                newArr[i] = array[i];
-            }
+            System.arraycopy(array, 0, newArr, 0, array.length);
             array = newArr;
         }
     }
