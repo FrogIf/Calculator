@@ -3,9 +3,13 @@
 
 setlocal enabledelayedexpansion
 
-set cdD=%cd%\src
-set aimD=classes
-set bootClass=frog.test.TestApp
+set rootDir=%cd%
+set cdD=%rootDir%\src
+set targetRoot=target
+set aimD=%targetRoot%\classes
+set bootClass=frog.test.Bootstrap
+set resource=%rootDir%\resource
+set outputName=calculator
 
 if exist %aimD% (
 	echo update project
@@ -17,6 +21,7 @@ if exist %aimD% (
 md %aimD%
 
 echo start compile ...
+
 for /r src %%s in (*) do (
     if "%%~xs" neq ".java" (
 		set tmpD=%%~dps
@@ -33,7 +38,17 @@ for /r src %%s in (*) do (
         javac -encoding UTF-8 -classpath src;lib\* %%s -d %aimD%
 	)
 )
+
+xcopy %resource%\* %aimD% /s/e
+cd %aimD%
+jar -cvfm %outputName%.jar META-INF/MENIFEST.MF *
+
+cd %rootDir%
+copy %aimD%\%outputName%.jar %targetRoot%
+echo del /f/s/q %aimD%\%outputName%.jar
+del /f/s/q %aimD%\%outputName%.jar
+
 echo compile finish
 
 echo starting java application ...
-java -XX:+UseSerialGC -XX:+PrintGCDetails -classpath %aimD%;lib\* %bootClass%
+java -jar -XX:+UseSerialGC -XX:+PrintGCDetails %targetRoot%\%outputName%.jar
