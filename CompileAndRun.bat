@@ -41,7 +41,7 @@ for /r src %%s in (*) do (
 
 xcopy %resource%\* %aimD% /s/e
 cd %aimD%
-jar -cvfm %outputName%.jar META-INF/MENIFEST.MF *
+jar -cvfm %outputName%.jar META-INF/boot.txt *
 
 cd %rootDir%
 copy %aimD%\%outputName%.jar %targetRoot%
