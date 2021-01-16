@@ -1,5 +1,6 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.value.IValue;
 
@@ -11,23 +12,21 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
 
     protected final IExecutor executor;
 
-    protected final String literal;
-
-    protected ISyntaxTreeContext context = null;
+    protected final String word;
 
     protected final int priority;
 
     protected int position = -1;
 
-    protected AbstractSyntaxNode(IExecutor executor, String literal, int priority){
+    protected AbstractSyntaxNode(IExecutor executor, String word, int priority){
         this.executor = executor;
-        this.literal = literal;
+        this.word = word;
         this.priority = priority;
     }
 
     @Override
-    public final String literal(){
-        return this.literal;
+    public final String word(){
+        return this.word;
     }
 
     @Override
@@ -88,7 +87,7 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
     }
 
     @Override
-    public IValue execute(){
+    public IValue execute(IExecuteContext context){
         return this.executor.execute(this, context);
     }
 }

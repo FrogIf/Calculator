@@ -1,5 +1,7 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.IBuildContext;
+
 /**
  * syntax node构建者
  */
@@ -11,6 +13,6 @@ public interface ISyntaxNodeBuilder {
      * @param context 语法树上下文
      * @return 构建出的syntax node
      */
-    ISyntaxNode build(int order, ISyntaxTreeContext context);
+    ISyntaxNode build(int order, IBuildContext context);
     
 }

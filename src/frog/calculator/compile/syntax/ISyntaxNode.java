@@ -1,15 +1,16 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.util.collection.IList;
 import frog.calculator.value.IValue;
 
 public interface ISyntaxNode {
 
     /**
-     * 字面量
+     * 语法节点符号
      * @return
      */
-    String literal();
+    String word();
 
     /**
      * 优先级
@@ -53,6 +54,6 @@ public interface ISyntaxNode {
      * 执行
      * @return
      */
-    IValue execute();
+    IValue execute(IExecuteContext context);
 
 }

@@ -1,5 +1,6 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.IBuildContext;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
@@ -15,8 +16,8 @@ public class OpenSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBui
 
     private final AssociateType associateType;
 
-    public OpenSyntaxNode(IExecutor executor, String literal, int priority) {
-        this(executor, literal, priority, AssociateType.ALL);
+    public OpenSyntaxNode(IExecutor executor, String word, int priority) {
+        this(executor, word, priority, AssociateType.ALL);
     }
 
     public OpenSyntaxNode(IExecutor executor, String literal, int priority, AssociateType associateType) {
@@ -69,8 +70,8 @@ public class OpenSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBui
     }
 
     @Override
-    public ISyntaxNode build(int position, ISyntaxTreeContext context) {
-        OpenSyntaxNode node = new OpenSyntaxNode(this.executor, this.literal, this.priority, this.associateType);
+    public ISyntaxNode build(int position, IBuildContext context) {
+        OpenSyntaxNode node = new OpenSyntaxNode(this.executor, this.word, this.priority, this.associateType);
         node.position = position;
         return node;
     }

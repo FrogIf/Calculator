@@ -1,10 +1,10 @@
 package frog.calculator.compile.lexical;
 
+import frog.calculator.compile.IBuildContext;
 import frog.calculator.compile.semantic.NumberExecutor;
 import frog.calculator.compile.syntax.CloseSyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeBuilder;
-import frog.calculator.compile.syntax.ISyntaxTreeContext;
 
 public class NumberToken implements IToken {
 
@@ -27,7 +27,7 @@ public class NumberToken implements IToken {
     private class NumberNodeBuilder implements ISyntaxNodeBuilder {
 
         @Override
-        public ISyntaxNode build(int order, ISyntaxTreeContext context) {
+        public ISyntaxNode build(int order, IBuildContext context) {
             return new CloseSyntaxNode(NumberExecutor.getInstance(), NumberToken.this.numberStr);
         }
 

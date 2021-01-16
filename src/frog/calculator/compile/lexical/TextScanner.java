@@ -24,5 +24,10 @@ public class TextScanner implements IScanner {
     public char next() {
         return content[++index];
     }
+
+    @Override
+    public int position() {
+        return this.index;
+    }
     
 }

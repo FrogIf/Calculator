@@ -1,5 +1,6 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.IBuildContext;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
@@ -17,8 +18,8 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
 
     private final LinkedList<ISyntaxNode> rightChildren;
 
-    public DynamicOpenSyntaxNode(IExecutor executor, String literal, int priority, IOpenStatusManager manager) {
-        super(executor, literal, priority);
+    public DynamicOpenSyntaxNode(IExecutor executor, String word, int priority, IOpenStatusManager manager) {
+        super(executor, word, priority);
         this.manager = manager;
         InitOpenStatus openStatus = new InitOpenStatus();
         this.manager.init(openStatus);
@@ -69,9 +70,8 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
     }
 
     @Override
-    public ISyntaxNode build(int position, ISyntaxTreeContext context) {
-        DynamicOpenSyntaxNode node = new DynamicOpenSyntaxNode(executor, literal, priority, manager);
-        node.context = context;
+    public ISyntaxNode build(int position, IBuildContext context) {
+        DynamicOpenSyntaxNode node = new DynamicOpenSyntaxNode(executor, word, priority, manager);
         node.position = position;
         return node;
     }

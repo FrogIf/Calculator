@@ -1,7 +1,6 @@
 package frog.calculator.compile.semantic;
 
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.compile.syntax.ISyntaxTreeContext;
 import frog.calculator.math.number.BaseNumber;
 import frog.calculator.math.number.RationalNumber;
 import frog.calculator.value.IValue;
@@ -19,7 +18,7 @@ public class NumberExecutor implements IExecutor {
     }
 
     @Override
-    public IValue execute(ISyntaxNode token, ISyntaxTreeContext context) {
+    public IValue execute(ISyntaxNode token, IExecuteContext context) {
         return null;
     }
 

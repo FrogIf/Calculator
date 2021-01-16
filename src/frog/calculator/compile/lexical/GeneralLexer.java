@@ -29,7 +29,8 @@ public class GeneralLexer implements ILexer {
      * 以字母开头, 符合如下正则: [a-zA-Z]+[a-zA-Z0-9_]*
      */
     private IToken parseWord(IScanner scanner){
-        StringBuilder word = new StringBuilder(scanner.current());
+        StringBuilder word = new StringBuilder();
+        word.append(scanner.current());
         char ch;
         while(scanner.hasNext() 
             && (
@@ -53,7 +54,8 @@ public class GeneralLexer implements ILexer {
      * 数字开头, 符合如下正则: [0-9]+(\.{1}[0-9]*_{1}[0-9]+)?
      */
     private IToken parseNumber(IScanner scanner){
-        StringBuilder numberBuilder = new StringBuilder(scanner.current());
+        StringBuilder numberBuilder = new StringBuilder();
+        numberBuilder.append(scanner.current());
 
         boolean hasDot = false; // 记录是否已经找到小数点
         while(scanner.hasNext()){

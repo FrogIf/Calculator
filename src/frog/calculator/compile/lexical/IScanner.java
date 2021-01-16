@@ -19,4 +19,9 @@ public interface IScanner {
      * 获取下一个字符
      */
     char next();
+
+    /**
+     * 当前字符的索引值
+     */
+    int position();
 }

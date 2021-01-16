@@ -1,5 +1,6 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.IBuildContext;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.util.collection.IList;
 
@@ -8,8 +9,8 @@ import frog.calculator.util.collection.IList;
  */
 public final class CloseSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBuilder {
 
-    public CloseSyntaxNode(IExecutor executor, String literal) {
-        super(executor, literal, -1);
+    public CloseSyntaxNode(IExecutor executor, String word) {
+        super(executor, word, -1);
     }
 
     @Override
@@ -31,10 +32,9 @@ public final class CloseSyntaxNode extends AbstractSyntaxNode implements ISyntax
     }
 
     @Override
-    public ISyntaxNode build(int position, ISyntaxTreeContext context) {
-        CloseSyntaxNode node = new CloseSyntaxNode(this.executor, this.literal);
+    public ISyntaxNode build(int position, IBuildContext context) {
+        CloseSyntaxNode node = new CloseSyntaxNode(this.executor, this.word);
         node.position = position;
-        node.context = context;
         return node;
     }
     

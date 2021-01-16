@@ -1,7 +1,6 @@
 package frog.calculator.compile.semantic;
 
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.compile.syntax.ISyntaxTreeContext;
 import frog.calculator.value.IValue;
 
 /**
@@ -14,6 +13,6 @@ public interface IExecutor {
      * @param context 语法树上下文
      * @return 执行结果
      */
-    IValue execute(ISyntaxNode token, ISyntaxTreeContext context);
+    IValue execute(ISyntaxNode token, IExecuteContext context);
 
 }
