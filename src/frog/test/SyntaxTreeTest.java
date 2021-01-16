@@ -63,8 +63,10 @@ public class SyntaxTreeTest {
             Iterator<ISyntaxNode> itr = children.iterator();
             while(itr.hasNext()){
                 ISyntaxNode next = itr.next();
-                sb.append(StringUtils.leftFill(next.word(), ' ', level * 4)).append('\n');
-                printTree(next, level + 1, sb);
+                if(next != null){
+                    sb.append(StringUtils.leftFill(next.word(), ' ', level * 4)).append('\n');
+                    printTree(next, level + 1, sb);
+                }
             }
         }
     }

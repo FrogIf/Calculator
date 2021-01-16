@@ -11,18 +11,18 @@ public class TextScanner implements IScanner {
     }
 
     @Override
-    public char current() {
+    public char peek() {
         return content[index];
     }
 
     @Override
     public boolean hasNext() {
-        return index < content.length - 1;
+        return index < content.length;
     }
 
     @Override
-    public char next() {
-        return content[++index];
+    public char read() {
+        return content[index++];
     }
 
     @Override

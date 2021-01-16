@@ -13,7 +13,7 @@ public class GeneralLexer implements ILexer {
 
     @Override
     public IToken parse(IScanner scanner) {
-        char ch = scanner.current();
+        char ch = scanner.peek();
         if(ch >= '0' && ch <= '9'){
             return parseNumber(scanner);
         }else if((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')){
@@ -30,23 +30,24 @@ public class GeneralLexer implements ILexer {
      */
     private IToken parseWord(IScanner scanner){
         StringBuilder word = new StringBuilder();
-        word.append(scanner.current());
-        char ch;
-        while(scanner.hasNext() 
-            && (
-                ((ch = scanner.next()) >= 'A' && ch <= 'Z') 
-                || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') 
-                || ch == '_'
-                )
-            ){
-                word.append(ch);
-        }
-        String text = word.toString();
-        IToken t = this.repository.find(text);
-        if(t == null){
-            t = new NamingToken(text);
+        word.append(scanner.read());
+        IToken t = this.repository.retrieve(scanner);
+        if(t == null || isNormalChar(scanner.peek())){
+            if(t != null){
+                word.append(t.getSyntaxBuilder().word());
+            }
+            do{
+                word.append(scanner.read());
+            }while(scanner.hasNext() && isNormalChar(scanner.peek()));
+            t = new NamingToken(word.toString());
         }
         return t;
+    }
+
+    private final boolean isNormalChar(char ch){
+        return (ch >= 'A' && ch <= 'Z') 
+        || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') 
+        || ch == '_';
     }
 
     /**
@@ -55,18 +56,18 @@ public class GeneralLexer implements ILexer {
      */
     private IToken parseNumber(IScanner scanner){
         StringBuilder numberBuilder = new StringBuilder();
-        numberBuilder.append(scanner.current());
+        numberBuilder.append(scanner.read());
 
         boolean hasDot = false; // 记录是否已经找到小数点
         while(scanner.hasNext()){
-            char ch = scanner.next();
+            char ch = scanner.peek();
             if(ch >= '0' && ch <= '9'){
-                numberBuilder.append(ch);
+                numberBuilder.append(scanner.read());
             }else if(ch == '.' && !hasDot){
                 hasDot = true;
-                numberBuilder.append(ch);
+                numberBuilder.append(scanner.read());
             }else if(ch == '_' && hasDot){
-                numberBuilder.append(ch);
+                numberBuilder.append(scanner.read());
             }else{
                 break;
             }

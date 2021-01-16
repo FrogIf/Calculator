@@ -31,6 +31,11 @@ public class NumberToken implements IToken {
             return new CloseSyntaxNode(NumberExecutor.getInstance(), NumberToken.this.numberStr);
         }
 
+        @Override
+        public String word() {
+            return NumberToken.this.numberStr;
+        }
+
     }  
     
 }

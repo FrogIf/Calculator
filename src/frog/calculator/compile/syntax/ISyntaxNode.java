@@ -1,10 +1,11 @@
 package frog.calculator.compile.syntax;
 
+import frog.calculator.compile.IWord;
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.util.collection.IList;
 import frog.calculator.value.IValue;
 
-public interface ISyntaxNode {
+public interface ISyntaxNode extends IWord{
 
     /**
      * 语法节点符号

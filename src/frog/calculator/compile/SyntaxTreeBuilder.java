@@ -27,7 +27,7 @@ public class SyntaxTreeBuilder {
         while(scanner.hasNext()){
             IToken token = lexer.parse(scanner);
             if(token == null){
-                throw new UnrecognizedTokenException(scanner.current(), scanner.position());
+                throw new UnrecognizedTokenException(scanner.peek(), scanner.position());
             }
             ISyntaxNode node = token.getSyntaxBuilder().build(order, context);
             root = root.associate(node);

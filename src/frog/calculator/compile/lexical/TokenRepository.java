@@ -96,21 +96,22 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
         }
     }
 
-    @Override
-    public IToken find(String word) {
-        IToken t = this.retrieve(new TextScanner(word));
-        if(t != null && word.equals(t.word())){
-            return t;
-        }
-        return null;
-    }
+    // @Override
+    // public IToken find(String word) {
+    //     IToken t = this.retrieve(new TextScanner(word));
+    //     if(t != null && word.equals(t.word())){
+    //         return t;
+    //     }
+    //     return null;
+    // }
 
     @Override
     public IToken retrieve(IScanner scanner) {
-        char ch = scanner.current();
+        char ch = scanner.peek();
         TokenRepository fr = new TokenRepository(ch);
         TokenRepository treeRegister = nextLetter.find(fr);
         if(treeRegister != null){
+            scanner.read();
             return treeRegister.retrieveNext(scanner, fr);
         }else{
             return this.token;
@@ -118,9 +119,10 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
     }
 
     private IToken retrieveNext(IScanner scanner, TokenRepository fr){
-        fr.symbol = scanner.next();
+        fr.symbol = scanner.peek();
         TokenRepository treeRegister = nextLetter.find(fr);
         if(treeRegister != null){
+            scanner.read();
             return treeRegister.retrieveNext(scanner, fr);
         }else{
             return this.token;

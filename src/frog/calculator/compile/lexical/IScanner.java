@@ -7,7 +7,7 @@ public interface IScanner {
     /**
      * 当前字符
      */
-    char current();
+    char peek();
 
     /**
      * 是否有下一个
@@ -16,9 +16,9 @@ public interface IScanner {
     boolean hasNext();
 
     /**
-     * 获取下一个字符
+     * 获取当前字符, 并移动至下一个
      */
-    char next();
+    char read();
 
     /**
      * 当前字符的索引值
