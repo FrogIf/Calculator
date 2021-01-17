@@ -17,6 +17,9 @@ public class LinkedList<E> extends AbstractCollection<E> implements IList<E>{
         node.item = e;
         node.next = head.next;
         head.next = node;
+        if(tail == null){
+            tail = node;
+        }
         modCount++;
     }
 
@@ -28,6 +31,9 @@ public class LinkedList<E> extends AbstractCollection<E> implements IList<E>{
         Node<E> top = head.next;
         head.next = top.next;
         modCount--;
+        if(modCount == 0){
+            tail = null;
+        }
         return top.item;
     }
 
