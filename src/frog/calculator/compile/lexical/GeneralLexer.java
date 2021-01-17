@@ -30,7 +30,6 @@ public class GeneralLexer implements ILexer {
      */
     private IToken parseWord(IScanner scanner){
         StringBuilder word = new StringBuilder();
-        word.append(scanner.read());
         IToken t = this.repository.retrieve(scanner);
         if(t == null || isNormalChar(scanner.peek())){
             if(t != null){

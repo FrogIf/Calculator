@@ -62,28 +62,9 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
         }else{  // 两个node都是close
             // 使失败
             parent = null;
-            child = null;
         }
 
-        ISyntaxNode root =  null;
-        if(parent != null && parent.branchOff(child)){
-            root = parent;
-            if(!parent.isOpen()){
-                IOpenStatusChangeListener listener = this.getOpenStatusChangeListener();
-                root = listener != null ? listener.onChange(root) : root;
-            }
-        }
-        return root;
-    }
-
-    /**
-     * 当开闭状态改变时
-     * @param selfNode 改变的节点自身
-     * @return 新的语法树根节点
-     */
-    protected IOpenStatusChangeListener getOpenStatusChangeListener(){
-        // 默认情况下, 不监听状态改变
-        return null;
+        return parent != null && parent.branchOff(child) ? parent : null;
     }
 
     @Override

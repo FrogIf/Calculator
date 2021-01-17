@@ -10,13 +10,16 @@ public class NumberToken implements IToken {
 
     private final String numberStr;
 
+    private final ISyntaxNodeBuilder nodeBuilder;
+
     public NumberToken(String number) {
         this.numberStr = number;
+        this.nodeBuilder = new NumberNodeBuilder();
     }
 
     @Override
     public ISyntaxNodeBuilder getSyntaxBuilder() {
-        return new NumberNodeBuilder();
+        return this.nodeBuilder;
     }
 
     @Override

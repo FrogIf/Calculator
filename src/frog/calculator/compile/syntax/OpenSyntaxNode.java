@@ -37,7 +37,7 @@ public class OpenSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBui
     public boolean branchOff(ISyntaxNode child) {
         ISyntaxNode root = null;
 
-        if((associateType.score & 1) > 0){
+        if(this.rightChild == null && (associateType.score & 1) > 0){
             if(leftChild == null){
                 this.leftChild = child;
                 return true;

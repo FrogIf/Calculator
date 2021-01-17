@@ -21,10 +21,8 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
     public DynamicOpenSyntaxNode(IExecutor executor, String word, int priority, IOpenStatusManager manager) {
         super(executor, word, priority);
         this.manager = manager;
-        InitOpenStatus openStatus = new InitOpenStatus();
-        this.manager.init(openStatus);
-        this.leftChildren = openStatus.left ? new LinkedList<>() : null;
-        this.rightChildren = openStatus.right ? new LinkedList<>() : null;
+        this.leftChildren = manager.initLeft ? new LinkedList<>() : null;
+        this.rightChildren = manager.initRight ? new LinkedList<>() : null;
     }
 
 	@Override
@@ -76,28 +74,25 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
         return node;
     }
 
-    @Override
-    protected IOpenStatusChangeListener getOpenStatusChangeListener(){
-        return this.manager;
-    }
+    public abstract class IOpenStatusManager {
 
-    public interface IOpenStatusManager extends IOpenStatusChangeListener {
+        private final boolean initLeft;
 
-        void init(InitOpenStatus openStatus);
+        private final boolean initRight;
 
-        boolean leftOpen(ISyntaxNode node);
-
-        boolean rightOpen(ISyntaxNode node);
-
-    }
-
-    public static class InitOpenStatus {
-        boolean left = true;
-        boolean right = true;
-        public void setStatus(boolean left, boolean right){
-            this.left = left;
-            this.right = right;
+        /**
+         * @param left 左侧结构初始open状态
+         * @param right 右侧结构初始open状态
+         */
+        protected IOpenStatusManager(boolean left, boolean right){
+            this.initLeft = left;
+            this.initRight = right;
         }
+
+        abstract boolean leftOpen(ISyntaxNode node);
+
+        abstract boolean rightOpen(ISyntaxNode node);
+
     }
     
 }
