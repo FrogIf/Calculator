@@ -34,9 +34,9 @@ public class NamingToken implements IToken {
         }
 
         @Override
-        public ISyntaxNode build(int order, IBuildContext context) {
+        public ISyntaxNode build(int position, IBuildContext context) {
             //TODO naming token exectuor
-            return new CloseSyntaxNode(null, NamingToken.this.word);
+            return new CloseSyntaxNode(null, NamingToken.this.word, position);
         }
 
     }

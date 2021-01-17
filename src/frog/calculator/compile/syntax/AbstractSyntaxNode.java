@@ -40,35 +40,12 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
     }
 
     @Override
-    public final ISyntaxNode associate(ISyntaxNode input){
-        boolean open = this.isOpen();
-        ISyntaxNode parent = this;
-        ISyntaxNode child = input;
-        if(input.isOpen() != open){    // 两个open状态不相同
-            if(!open){  // this不是open
-                parent = input;
-                child = this;
-            }
-        }else if(open){    // 两个node都处于open状态
-            int p = this.priority() - input.priority();
-            /**
-             * 1. 优先级相等, input位置靠后
-             * 2. input优先级小
-             */
-            if((p == 0 && this.position() < input.position()) || p > 0){
-                parent = input;
-                child = this;
-            }
-        }else{  // 两个node都是close
-            // 使失败
-            parent = null;
-        }
-
-        return parent != null && parent.branchOff(child) ? parent : null;
+    public IValue execute(IExecuteContext context){
+        return this.executor.execute(this, context);
     }
 
     @Override
-    public IValue execute(IExecuteContext context){
-        return this.executor.execute(this, context);
+    public String toString(){
+        return this.word;
     }
 }

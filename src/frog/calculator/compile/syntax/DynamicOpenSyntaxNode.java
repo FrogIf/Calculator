@@ -1,6 +1,7 @@
 package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.IBuildContext;
+import frog.calculator.compile.ISyntaxTreeBuilder;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
@@ -12,7 +13,7 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
 
     private boolean leftOpen = true;
 
-    private boolean rightOpen = false;
+    private boolean rightOpen = true;
 
     private final LinkedList<ISyntaxNode> leftChildren;
 
@@ -31,25 +32,29 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
     }
 
     @Override
-    public boolean branchOff(ISyntaxNode child) {
-        if(leftOpen){
-            addChildren(this.leftChildren, child);
-            this.leftOpen = this.manager.leftOpen(child);
-        }else if(rightOpen){
-            addChildren(this.rightChildren, child);
-            this.rightOpen = this.manager.rightOpen(child);
+    public boolean branchOff(ISyntaxNode child, IBuildContext context) {
+        if(leftOpen && child.position() < this.position()){
+            addChildren(this.leftChildren, child, context);
         }else{
-            return false;
+            this.leftOpen = false;
+            if(rightOpen){
+                addChildren(this.rightChildren, child, context);
+                this.rightOpen = this.manager.isOpen(child);
+            }else{
+                return false;
+            }
         }
         return true;
     }
 
-    private void addChildren(LinkedList<ISyntaxNode> children, ISyntaxNode child){
+    private void addChildren(LinkedList<ISyntaxNode> children, ISyntaxNode child, IBuildContext context){
         ISyntaxNode last = children.last();
         if(last == null){
             children.add(child);
         }else{
-            ISyntaxNode c = last.associate(child);
+            ISyntaxTreeBuilder builder = context.getBuilder();
+            // 局部重新构建
+            ISyntaxNode c = builder.associate(last, child, context);
             if(c != null){
                 children.postRemove();
                 children.add(c);
@@ -89,10 +94,7 @@ public class DynamicOpenSyntaxNode extends AbstractSyntaxNode implements ISyntax
             this.initRight = right;
         }
 
-        abstract boolean leftOpen(ISyntaxNode node);
-
-        abstract boolean rightOpen(ISyntaxNode node);
-
+        abstract boolean isOpen(ISyntaxNode node);
     }
     
 }

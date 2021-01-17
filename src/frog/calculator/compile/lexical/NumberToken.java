@@ -30,8 +30,8 @@ public class NumberToken implements IToken {
     private class NumberNodeBuilder implements ISyntaxNodeBuilder {
 
         @Override
-        public ISyntaxNode build(int order, IBuildContext context) {
-            return new CloseSyntaxNode(NumberExecutor.getInstance(), NumberToken.this.numberStr);
+        public ISyntaxNode build(int position, IBuildContext context) {
+            return new CloseSyntaxNode(NumberExecutor.getInstance(), NumberToken.this.numberStr, position);
         }
 
         @Override

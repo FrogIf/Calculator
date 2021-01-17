@@ -9,8 +9,9 @@ import frog.calculator.util.collection.IList;
  */
 public final class CloseSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBuilder {
 
-    public CloseSyntaxNode(IExecutor executor, String word) {
+    public CloseSyntaxNode(IExecutor executor, String word, int position) {
         super(executor, word, -1);
+        this.position = position;
     }
 
     @Override
@@ -20,7 +21,7 @@ public final class CloseSyntaxNode extends AbstractSyntaxNode implements ISyntax
     }
 
     @Override
-    public boolean branchOff(ISyntaxNode child) {
+    public boolean branchOff(ISyntaxNode child, IBuildContext context) {
         // close syntax node can't branch off.
         return false;
     }
@@ -33,9 +34,7 @@ public final class CloseSyntaxNode extends AbstractSyntaxNode implements ISyntax
 
     @Override
     public ISyntaxNode build(int position, IBuildContext context) {
-        CloseSyntaxNode node = new CloseSyntaxNode(this.executor, this.word);
-        node.position = position;
-        return node;
+        return new CloseSyntaxNode(this.executor, this.word, position);
     }
     
 }

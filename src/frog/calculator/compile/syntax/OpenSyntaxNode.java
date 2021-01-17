@@ -1,6 +1,7 @@
 package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.IBuildContext;
+import frog.calculator.compile.ISyntaxTreeBuilder;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
@@ -34,15 +35,16 @@ public class OpenSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBui
     }
 
     @Override
-    public boolean branchOff(ISyntaxNode child) {
+    public boolean branchOff(ISyntaxNode child, IBuildContext context) {
         ISyntaxNode root = null;
 
+        ISyntaxTreeBuilder builder = context.getBuilder();
         if(child.position() < this.position && (associateType.score & 1) > 0){
             if(leftChild == null){
                 this.leftChild = child;
                 return true;
             }
-            root = this.leftChild.associate(child);
+            root = builder.associate(this.leftChild, child, context);
             if(root != null){
                 this.leftChild = root;
                 return true;
@@ -54,7 +56,7 @@ public class OpenSyntaxNode extends AbstractSyntaxNode implements ISyntaxNodeBui
                 this.rightChild = child;
                 return true;
             }
-            root = this.rightChild.associate(child);
+            root = builder.associate(this.rightChild, child, context);
             if(root != null){
                 this.rightChild = root;
                 return true;
