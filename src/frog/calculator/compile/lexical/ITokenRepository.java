@@ -30,13 +30,6 @@ public interface ITokenRepository {
     void replace(String word, IToken token);
 
     /**
-     * 根据指定的字符, 查找token对象
-     * @param word 需要查找的token符号
-     * @return 查找结果, 如果没有查到, 返回null
-     */
-    // IToken find(String word);
-
-    /**
      * 检索获取与输入字符数组匹配的最长符号对象
      * @param scanner 表达式扫描器
      * @return 匹配结果, 如果没有匹配结果, 则返回null

@@ -1,5 +1,7 @@
 package frog.calculator.compile.lexical;
 
+import frog.calculator.compile.lexical.exception.UnrecognizedTokenException;
+
 /**
  * 常规词法解析器
  */
@@ -12,16 +14,21 @@ public class GeneralLexer implements ILexer {
     }
 
     @Override
-    public IToken parse(IScanner scanner) {
+    public IToken parse(IScanner scanner) throws UnrecognizedTokenException{
         char ch = scanner.peek();
+        IToken result = null;
         if(ch >= '0' && ch <= '9'){
-            return parseNumber(scanner);
+            result = parseNumber(scanner);
         }else if((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')){
-            return parseWord(scanner);
+            result = parseWord(scanner);
         }else{
             // 其它符号的解析, 只能是内置的
-            return this.repository.retrieve(scanner);
+            result = this.repository.retrieve(scanner);
         }
+        if(result == null){
+            throw new UnrecognizedTokenException(ch, scanner.position());
+        }
+        return result;
     }
 
     /**

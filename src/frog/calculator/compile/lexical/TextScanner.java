@@ -1,5 +1,8 @@
 package frog.calculator.compile.lexical;
 
+/**
+ * 字符文本扫描器
+ */
 public class TextScanner implements IScanner {
 
     private final char[] content;

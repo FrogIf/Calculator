@@ -1,7 +1,8 @@
-package frog.calculator.compile;
+package frog.calculator.compile.syntax;
 
-import frog.calculator.compile.syntax.ISyntaxNode;
-
+/**
+ * 语法节点组装者, 将两个语法节点按照语法规则组装成树
+ */
 public interface IAssembler {
 
     /**

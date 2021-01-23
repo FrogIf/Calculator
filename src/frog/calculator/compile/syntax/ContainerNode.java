@@ -1,6 +1,5 @@
 package frog.calculator.compile.syntax;
 
-import frog.calculator.compile.IAssembler;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.LinkedList;

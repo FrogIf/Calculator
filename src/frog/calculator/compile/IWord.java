@@ -1,5 +1,9 @@
 package frog.calculator.compile;
 
+
+/**
+ * 字
+ */
 public interface IWord {
 
     /**

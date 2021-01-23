@@ -2,7 +2,7 @@ package frog.test;
 
 import java.util.Scanner;
 
-import frog.calculator.compile.GeneralSyntaxTreeBuilder;
+import frog.calculator.compile.syntax.*;
 import frog.calculator.compile.exception.CompileException;
 import frog.calculator.compile.lexical.GeneralLexer;
 import frog.calculator.compile.lexical.ILexer;

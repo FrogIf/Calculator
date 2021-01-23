@@ -4,6 +4,9 @@ import frog.calculator.compile.syntax.TerminalNode;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
+/**
+ * 非内置的token
+ */
 public class NamingToken implements IToken {
 
     private final String word;

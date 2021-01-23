@@ -2,6 +2,9 @@ package frog.calculator.compile.lexical;
 
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
+/**
+ * 公共的token, 用于平凡token的封装
+ */
 public class CommonToken implements IToken {
 
     private final ISyntaxNodeGenerator builder;

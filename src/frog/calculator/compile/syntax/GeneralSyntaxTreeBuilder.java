@@ -1,16 +1,19 @@
-package frog.calculator.compile;
+package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.exception.CompileException;
-import frog.calculator.compile.exception.SyntaxException;
-import frog.calculator.compile.exception.UnrecognizedTokenException;
+import frog.calculator.compile.syntax.exception.SyntaxException;
 import frog.calculator.compile.lexical.ILexer;
 import frog.calculator.compile.lexical.IScanner;
-import frog.calculator.compile.lexical.IToken;
-import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.collection.Stack;
 
-public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler{
+/**
+ * 通用的语法树构建器
+ */
+public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler {
 
+    /**
+     * 词法解析器
+     */
     private final ILexer lexer;
 
     public GeneralSyntaxTreeBuilder(ILexer lexer) {
@@ -18,17 +21,14 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler{
     }
 
     public ISyntaxNode build(IScanner scanner) throws CompileException {
-        IToken token = lexer.parse(scanner);
-        int order = 0;
-        ISyntaxNode root = token.getSyntaxNodeGenerator().generate(order++);
-        Stack<ISyntaxNode> activeStack = new Stack<>();
-        while(scanner.hasNext()){
-            token = lexer.parse(scanner);
-            if(token == null){
-                throw new UnrecognizedTokenException(scanner.peek(), scanner.position());
-            }
+        int position = 0;
+        ISyntaxNode root = lexer.parse(scanner).getSyntaxNodeGenerator().generate(position++);
 
-            ISyntaxNode node = token.getSyntaxNodeGenerator().generate(order);
+        // 栈结构, 用于存储构建过程中, 激活的语法节点, 这些节点只会作为父节点
+        Stack<ISyntaxNode> activeStack = new Stack<>();
+
+        while(scanner.hasNext()){
+            ISyntaxNode node = lexer.parse(scanner).getSyntaxNodeGenerator().generate(position);
             
             ISyntaxNode activeNode = null;
             boolean hasInsert = false;
@@ -53,7 +53,7 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler{
                     activeStack.push(node);
                 }
             }
-            order++;
+            position++;
         }
         
         return root;

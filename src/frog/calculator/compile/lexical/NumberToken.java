@@ -5,6 +5,9 @@ import frog.calculator.compile.syntax.TerminalNode;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
+/**
+ * 数字持有者token
+ */
 public class NumberToken implements IToken {
 
     private final String numberStr;

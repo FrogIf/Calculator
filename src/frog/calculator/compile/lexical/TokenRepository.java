@@ -8,6 +8,9 @@ import frog.calculator.util.collection.ISet;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.LinkedList;
 
+/**
+ * token存储仓库
+ */
 public class TokenRepository implements ITokenRepository, Comparable<TokenRepository> {
 
     private char symbol = 0;
@@ -43,7 +46,7 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
 
         if(startIndex == expChars.length - 1){
             if(!replace && register.token != null && token != null){
-                throw new DuplicateTokenException("duplicate define expression : " + token.word());
+                throw new DuplicateTokenException(token.word());
             }
 
             register.token = token;
@@ -95,15 +98,6 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
             // do nothing, the DuplicateTokenException will not be trigger.
         }
     }
-
-    // @Override
-    // public IToken find(String word) {
-    //     IToken t = this.retrieve(new TextScanner(word));
-    //     if(t != null && word.equals(t.word())){
-    //         return t;
-    //     }
-    //     return null;
-    // }
 
     @Override
     public IToken retrieve(IScanner scanner) {

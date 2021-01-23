@@ -5,6 +5,9 @@ import frog.calculator.math.number.BaseNumber;
 import frog.calculator.math.number.RationalNumber;
 import frog.calculator.value.IValue;
 
+/**
+ * 数字执行器
+ */
 public class NumberExecutor implements IExecutor {
 
     private static final NumberExecutor INSTANCE = new NumberExecutor();

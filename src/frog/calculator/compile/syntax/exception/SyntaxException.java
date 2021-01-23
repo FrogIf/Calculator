@@ -1,5 +1,8 @@
-package frog.calculator.compile.exception;
+package frog.calculator.compile.syntax.exception;
 
+/**
+ * 语法异常
+ */
 public class SyntaxException extends BuildException {
     
     public SyntaxException(String word, int position, int line) {
