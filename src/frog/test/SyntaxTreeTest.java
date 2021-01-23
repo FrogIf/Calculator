@@ -2,7 +2,7 @@ package frog.test;
 
 import java.util.Scanner;
 
-import frog.calculator.compile.SyntaxTreeBuilder;
+import frog.calculator.compile.GeneralSyntaxTreeBuilder;
 import frog.calculator.compile.exception.CompileException;
 import frog.calculator.compile.lexical.GeneralLexer;
 import frog.calculator.compile.lexical.ILexer;
@@ -27,7 +27,7 @@ public class SyntaxTreeTest {
             tokenRespository.insert(t);
         }
         ILexer lexer = new GeneralLexer(tokenRespository);
-        SyntaxTreeBuilder builder = new SyntaxTreeBuilder(lexer);
+        GeneralSyntaxTreeBuilder builder = new GeneralSyntaxTreeBuilder(lexer);
 
         while(sc.hasNext()){
             String expression = sc.nextLine();

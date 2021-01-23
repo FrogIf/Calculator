@@ -1,24 +1,23 @@
 package frog.calculator.compile.lexical;
 
-import frog.calculator.compile.IBuildContext;
 import frog.calculator.compile.semantic.NumberExecutor;
-import frog.calculator.compile.syntax.CloseSyntaxNode;
+import frog.calculator.compile.syntax.TerminalNode;
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.compile.syntax.ISyntaxNodeBuilder;
+import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
 public class NumberToken implements IToken {
 
     private final String numberStr;
 
-    private final ISyntaxNodeBuilder nodeBuilder;
+    private final ISyntaxNodeGenerator nodeBuilder;
 
     public NumberToken(String number) {
         this.numberStr = number;
-        this.nodeBuilder = new NumberNodeBuilder();
+        this.nodeBuilder = new NumberNodeGenerator();
     }
 
     @Override
-    public ISyntaxNodeBuilder getSyntaxBuilder() {
+    public ISyntaxNodeGenerator getSyntaxNodeGenerator() {
         return this.nodeBuilder;
     }
 
@@ -27,11 +26,11 @@ public class NumberToken implements IToken {
         return this.numberStr;
     }
 
-    private class NumberNodeBuilder implements ISyntaxNodeBuilder {
+    private class NumberNodeGenerator implements ISyntaxNodeGenerator {
 
         @Override
-        public ISyntaxNode build(int position, IBuildContext context) {
-            return new CloseSyntaxNode(NumberExecutor.getInstance(), NumberToken.this.numberStr, position);
+        public ISyntaxNode generate(int position) {
+            return new TerminalNode(NumberExecutor.getInstance(), NumberToken.this.numberStr, position);
         }
 
         @Override

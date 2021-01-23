@@ -1,20 +1,20 @@
 package frog.calculator.compile.lexical;
 
-import frog.calculator.compile.syntax.ISyntaxNodeBuilder;
+import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
 public class CommonToken implements IToken {
 
-    private final ISyntaxNodeBuilder builder;
+    private final ISyntaxNodeGenerator builder;
 
     private final String word;
 
-    public CommonToken(String word, ISyntaxNodeBuilder builder){
+    public CommonToken(String word, ISyntaxNodeGenerator builder){
         this.word = word;
         this.builder = builder;
     }
 
     @Override
-    public ISyntaxNodeBuilder getSyntaxBuilder() {
+    public ISyntaxNodeGenerator getSyntaxNodeGenerator() {
         return this.builder;
     }
 

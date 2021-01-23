@@ -1,23 +1,22 @@
 package frog.calculator.compile.lexical;
 
-import frog.calculator.compile.IBuildContext;
-import frog.calculator.compile.syntax.CloseSyntaxNode;
+import frog.calculator.compile.syntax.TerminalNode;
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.compile.syntax.ISyntaxNodeBuilder;
+import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
 public class NamingToken implements IToken {
 
     private final String word;
 
-    private final ISyntaxNodeBuilder builder;
+    private final ISyntaxNodeGenerator builder;
 
     public NamingToken(String word) {
         this.word = word;
-        this.builder = new NamingTokenBuilder();
+        this.builder = new NamingNodeGenerator();
     }
 
     @Override
-    public ISyntaxNodeBuilder getSyntaxBuilder() {
+    public ISyntaxNodeGenerator getSyntaxNodeGenerator() {
         return this.builder;
     }
 
@@ -26,7 +25,7 @@ public class NamingToken implements IToken {
         return this.word;
     }
 
-    private class NamingTokenBuilder implements ISyntaxNodeBuilder {
+    private class NamingNodeGenerator implements ISyntaxNodeGenerator {
 
         @Override
         public String word() {
@@ -34,9 +33,9 @@ public class NamingToken implements IToken {
         }
 
         @Override
-        public ISyntaxNode build(int position, IBuildContext context) {
-            //TODO naming token exectuor
-            return new CloseSyntaxNode(null, NamingToken.this.word, position);
+        public ISyntaxNode generate(int position) {
+            // TODO naming token exectuor
+            return new TerminalNode(null, NamingToken.this.word, position);
         }
 
     }

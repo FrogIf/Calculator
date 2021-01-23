@@ -45,13 +45,14 @@ public class LinkedList<E> extends AbstractCollection<E> implements IList<E>{
         if(head.next == null){ return null; }
 
         Node<E> cursor = head;
-        while(cursor.next.next != null){
+        while(cursor.next != tail){
             cursor = cursor.next;
         }
 
-        E e = cursor.next.item;
+        E e = tail.item;
         cursor.next = null;
-
+        tail = cursor;
+        
         modCount--;
         return e;
     }

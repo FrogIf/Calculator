@@ -33,7 +33,7 @@ public class GeneralLexer implements ILexer {
         IToken t = this.repository.retrieve(scanner);
         if(t == null || isNormalChar(scanner.peek())){
             if(t != null){
-                word.append(t.getSyntaxBuilder().word());
+                word.append(t.getSyntaxNodeGenerator().word());
             }
             do{
                 word.append(scanner.read());
