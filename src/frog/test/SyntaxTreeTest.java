@@ -11,7 +11,7 @@ import frog.calculator.compile.lexical.ITokenRepository;
 import frog.calculator.compile.lexical.TextScanner;
 import frog.calculator.compile.lexical.TokenRepository;
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.config.MathTokenHolder;
+import frog.calculator.platform.MathTokenHolder;
 import frog.calculator.util.StringUtils;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;

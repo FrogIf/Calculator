@@ -1,4 +1,4 @@
-package frog.calculator.config;
+package frog.calculator.platform;
 
 import frog.calculator.compile.lexical.IToken;
 
