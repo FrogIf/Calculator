@@ -497,6 +497,10 @@ class PositiveInteger {
 
     /**
      * 获取两个正整数的最大公约数
+     * 1. a, b都是偶数, 则gcd(a, b) = 2 * gcd(a/2, b/2)
+     * 2. a是偶数, b是奇数, 则gcd(a, b) = gcd(a/2, b)
+     * 3. gcd(a, b) = gcd(a - b, a)
+     * 4. 如果a, b都是奇数, 则 a - b是偶数, 且 |a - b| < max(a, b)
      * @param a 数a
      * @param ah a的非0高位位置
      * @param b 数b
@@ -506,9 +510,12 @@ class PositiveInteger {
     static int[] gcd(int[] a, int ah, int[] b, int bh){
         int[] d = ONE;
 
-        while(compare(a, ah, ZERO, 0) != 0 && compare(b, bh, ZERO, 0) != 0){
+        int ac = 1;
+        int bc = 1;
+        while((ac = compare(a, ah, ONE, 0)) > 0 && (bc = compare(b, bh, ONE, 0)) > 0){
             boolean aIsOdd = isOdd(a);
             boolean bIsOdd = isOdd(b);
+
             if(aIsOdd && bIsOdd){
                 ah = highPos(a);
                 bh = highPos(b);
@@ -529,8 +536,15 @@ class PositiveInteger {
             }
         }
 
-        if(compare(a, highPos(a), ZERO, 0) == 0){ return multiply(d, highPos(d), b, highPos(b)); }
-        else{ return multiply(d, highPos(d), a, highPos(a)); }
+        if(ac < 0 || bc < 0){   // 说明其中一个为0
+            if(ac < 0){
+                return multiply(d, highPos(d), b, highPos(b));
+            }else{
+                return multiply(d, highPos(d), a, highPos(a)); 
+            }
+        }else{  // 其中一个为1
+            return d;
+        }
     }
 
     /**
@@ -544,7 +558,7 @@ class PositiveInteger {
         int carry = 0;
         int i = 0;
         for(; i < h + 1; i++){
-            int m = num[i] << 1 + carry;
+            int m = (num[i] << 1) + carry;
             result[i] = m % SCALE;
             carry = m / SCALE;
         }
@@ -626,5 +640,20 @@ class PositiveInteger {
 
         return res;
     }
+
+    // public static String arrayToString(int[] arr){
+    //     StringBuilder sb = new StringBuilder();
+    //     int h = highPos(arr);
+    //     for(int i = h; i >= 0; i--){
+    //         int a = arr[i];
+    //         int b = a;
+    //         while(h != i && SCALE / 10 > b){
+    //             b *= 10;
+    //             sb.append("0");
+    //         }
+    //         sb.append(a);
+    //     }
+    //     return sb.toString();
+    // }
 
 }
