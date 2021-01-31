@@ -6,7 +6,6 @@ import frog.calculator.compile.semantic.IResult;
 
 /**
  * abstract node, 提供一些公共的逻辑, 所有的node都应继承这个抽象类, 而不应该继承ISyntaxNode接口
- * 继承该抽象类的node, open状态一旦变为false, 将不会再变为true
  */
 public abstract class AbstractSyntaxNode implements ISyntaxNode {
 

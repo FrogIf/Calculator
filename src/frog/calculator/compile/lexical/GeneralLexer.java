@@ -1,5 +1,6 @@
 package frog.calculator.compile.lexical;
 
+import frog.calculator.compile.ICompileManager;
 import frog.calculator.compile.lexical.exception.UnrecognizedTokenException;
 
 /**
@@ -9,8 +10,14 @@ public class GeneralLexer implements ILexer {
 
     private final ITokenRepository repository;
 
-    public GeneralLexer(ITokenRepository repository){
+    private final INamedTokenFactory namedTokenFactory;
+
+    private final INumberTokenFactory numberTokenFactory;
+
+    public GeneralLexer(ITokenRepository repository, ICompileManager manager){
         this.repository = repository;
+        this.namedTokenFactory = manager.getNamedTokenFactory();
+        this.numberTokenFactory = manager.getNumberTokenFactory();
     }
 
     @Override
@@ -45,7 +52,7 @@ public class GeneralLexer implements ILexer {
             do{
                 word.append(scanner.read());
             }while(scanner.hasNext() && isNormalChar(scanner.peek()));
-            t = new NamingToken(word.toString());
+            this.namedTokenFactory.create(word.toString());
         }
         return t;
     }
@@ -79,7 +86,7 @@ public class GeneralLexer implements ILexer {
             }
         }
 
-        return numberBuilder.length() > 0 ? new NumberToken(numberBuilder.toString())  : null;
+        return numberBuilder.length() > 0 ? this.numberTokenFactory.create(numberBuilder.toString())  : null;
     }
     
 }

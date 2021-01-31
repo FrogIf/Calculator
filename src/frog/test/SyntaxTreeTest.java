@@ -11,6 +11,7 @@ import frog.calculator.compile.lexical.ITokenRepository;
 import frog.calculator.compile.lexical.TextScanner;
 import frog.calculator.compile.lexical.TokenRepository;
 import frog.calculator.compile.syntax.ISyntaxNode;
+import frog.calculator.platform.GeneralCompileManager;
 import frog.calculator.platform.MathTokenHolder;
 import frog.calculator.util.StringUtils;
 import frog.calculator.util.collection.IList;
@@ -26,7 +27,7 @@ public class SyntaxTreeTest {
         for(IToken t : holder.getTokens()){
             tokenRespository.insert(t);
         }
-        ILexer lexer = new GeneralLexer(tokenRespository);
+        ILexer lexer = new GeneralLexer(tokenRespository, new GeneralCompileManager());
         GeneralSyntaxTreeBuilder builder = new GeneralSyntaxTreeBuilder(lexer);
 
         while(sc.hasNext()){
