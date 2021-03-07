@@ -505,7 +505,7 @@ class PositiveInteger {
      * @param ah a的非0高位位置
      * @param b 数b
      * @param bh b的非0高位位置
-     * @return 最大公约数, 这里0和一个数的最大公约数是该数本身
+     * @return 最大公约数
      */
     static int[] gcd(int[] a, int ah, int[] b, int bh){
         int[] d = ONE;

@@ -13,6 +13,10 @@ public class MathTokenHolder implements ITokenHolder {
     private static final ISyntaxNodeGenerator[] builders = new ISyntaxNodeGenerator[] { 
         new NonterminalNode(null, "+", 10),
         new NonterminalNode(null, "-", 10), 
+        new NonterminalNode(null, "++", 10),
+        new NonterminalNode(null, "+-", 10),
+        new NonterminalNode(null, "-+", 10),
+        new NonterminalNode(null, "--", 10),
         new NonterminalNode(null, "*", 20), 
         new NonterminalNode(null, "/", 20),
         new NonterminalNode(null, "^", 30), 
