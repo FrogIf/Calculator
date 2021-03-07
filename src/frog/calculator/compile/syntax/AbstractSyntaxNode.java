@@ -39,8 +39,8 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
     }
 
     @Override
-    public IResult execute(IExecuteContext context){
-        return this.executor.execute(this, context);
+    public void execute(IExecuteContext context){
+        this.executor.execute(this, context);
     }
 
     @Override

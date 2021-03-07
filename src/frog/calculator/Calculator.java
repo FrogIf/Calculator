@@ -1,11 +1,11 @@
 package frog.calculator;
 
-import frog.calculator.build.MathExpressionTreeBuilder;
 import frog.calculator.build.IExpressionTreeBuilder;
+import frog.calculator.build.MathExpressionTreeBuilder;
 import frog.calculator.connect.DefaultSessionFactory;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.connect.ISessionFactory;
-import frog.calculator.connect.NothingCaluclatorSession;
+import frog.calculator.connect.NothingCalculatorSession;
 import frog.calculator.exception.BuildException;
 import frog.calculator.execute.space.Coordinate;
 import frog.calculator.execute.space.IRange;
@@ -21,7 +21,7 @@ public final class Calculator {
 
     private final IExpressionTreeBuilder builder = new MathExpressionTreeBuilder();
 
-    private static final NothingCaluclatorSession DO_NOTHING_SESSION = new NothingCaluclatorSession();
+    private static final NothingCalculatorSession DO_NOTHING_SESSION = new NothingCalculatorSession();
 
     private final IList<ICalculateListener> listeners = new LinkedList<>();
 

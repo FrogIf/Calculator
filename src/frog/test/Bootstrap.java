@@ -1,9 +1,9 @@
 package frog.test;
 
-import java.util.Scanner;
-
 import frog.calculator.Calculator;
 import frog.calculator.connect.ICalculatorSession;
+
+import java.util.Scanner;
 
 public class Bootstrap {
 

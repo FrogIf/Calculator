@@ -55,6 +55,6 @@ public interface ISyntaxNode extends IWord {
      * 执行
      * @return
      */
-    IResult execute(IExecuteContext context);
+    void execute(IExecuteContext context);
 
 }

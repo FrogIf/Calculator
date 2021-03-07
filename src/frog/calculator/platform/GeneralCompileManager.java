@@ -4,10 +4,10 @@ import frog.calculator.compile.ICompileManager;
 import frog.calculator.compile.lexical.INamedTokenFactory;
 import frog.calculator.compile.lexical.INumberTokenFactory;
 import frog.calculator.compile.lexical.IToken;
-import frog.calculator.compile.semantic.exec.NumberExecutor;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 import frog.calculator.compile.syntax.TerminalNode;
+import frog.calculator.microexec.impl.base.NumberExecutor;
 
 public class GeneralCompileManager implements ICompileManager {
 
@@ -67,7 +67,7 @@ public class GeneralCompileManager implements ICompileManager {
         
     }
 
-    public class NumberTokenFactory implements INumberTokenFactory {
+    public static class NumberTokenFactory implements INumberTokenFactory {
 
         @Override
         public IToken create(String word) {
@@ -101,7 +101,7 @@ public class GeneralCompileManager implements ICompileManager {
     
             @Override
             public ISyntaxNode generate(int position) {
-                return new TerminalNode(NumberExecutor.getInstance(), NumberToken.this.numberStr, position);
+                return new TerminalNode(new NumberExecutor(), NumberToken.this.numberStr, position);
             }
     
             @Override
