@@ -2,7 +2,6 @@ package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IExecutor;
-import frog.calculator.compile.semantic.IResult;
 
 /**
  * abstract node, 提供一些公共的逻辑, 所有的node都应继承这个抽象类, 而不应该继承ISyntaxNode接口
@@ -17,7 +16,7 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
 
     protected int position = -1;
 
-    protected AbstractSyntaxNode(IExecutor executor, String word, int priority){
+    protected AbstractSyntaxNode(String word, int priority, IExecutor executor){
         this.executor = executor;
         this.word = word;
         this.priority = priority;

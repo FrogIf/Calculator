@@ -37,12 +37,6 @@ public class RealNumber extends AbstractBaseNumber implements Comparable<RealNum
         this.rationalNumber = new RationalNumber(integerNumber);
     }
 
-    @Override
-    public int compareTo(RealNumber o) {
-        // TODO 比较大小
-        return 0;
-    }
-
     public RealNumber add(RealNumber num) {
         if (this.rationalNumber != null && num.rationalNumber != null) {  // 两个有理数的运算
             return new RealNumber(this.rationalNumber.add(num.rationalNumber));
@@ -154,6 +148,28 @@ public class RealNumber extends AbstractBaseNumber implements Comparable<RealNum
             return this.rationalNumber;
         }else{
             return null;
+        }
+    }
+
+    @Override
+    public int compareTo(RealNumber that) {
+        if(that.irrationalNumber == null && this.irrationalNumber == null){ // 两者都是有理数
+            return this.rationalNumber.compareTo(that.rationalNumber);
+        }else if(that.irrationalNumber != null && that.irrationalNumber != null){
+            // TODO 无理数之间的比较
+        }else{
+            // TODO 无理数与有理数之间的比较
+        }
+        throw new UnsupportedOperationException("can't compart for the moment.");
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        if(this == that){ return true; }
+        if(that instanceof RealNumber){
+            return this.compareTo((RealNumber) that) == 0;
+        }else{
+            return false;
         }
     }
 }

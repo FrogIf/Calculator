@@ -1,20 +1,22 @@
 package frog.test;
 
-import frog.calculator.Calculator;
-import frog.calculator.connect.ICalculatorSession;
+import frog.calculator.ICalculator;
+import frog.calculator.SimpleCalculator;
+import frog.calculator.math.number.ComplexNumber;
+import frog.calculator.math.number.NumberRoundingMode;
 
 import java.util.Scanner;
 
 public class Bootstrap {
 
 	public static void main(String[] args){
-        Calculator calculator = new Calculator();
+        ICalculator<ComplexNumber> calculator = new SimpleCalculator();
 
         Scanner sc = new Scanner(System.in);
 
         System.out.println("**********Calculator************");
 
-        ICalculatorSession session = calculator.getSession();
+        // ICalculatorSession session = calculator.getSession();
 
         while(sc.hasNext()){
             String expression = sc.nextLine();
@@ -24,7 +26,9 @@ public class Bootstrap {
             }
 
             try{
-                System.out.println(calculator.calculate(expression, session));
+                ComplexNumber result = calculator.calculate(expression, null);
+                result.setScale(10, NumberRoundingMode.HALF_UP);
+                System.out.println(result.toString());
             }catch (Exception e){
                 e.printStackTrace();
             }

@@ -59,7 +59,7 @@ public class GeneralCompileManager implements ICompileManager {
         
                 @Override
                 public ISyntaxNode generate(int position) {
-                    return new TerminalNode(null, NamingToken.this.word, position);
+                    return new TerminalNode(NamingToken.this.word, position, null);
                 }
         
             }
@@ -101,7 +101,7 @@ public class GeneralCompileManager implements ICompileManager {
     
             @Override
             public ISyntaxNode generate(int position) {
-                return new TerminalNode(new NumberExecutor(), NumberToken.this.numberStr, position);
+                return new TerminalNode(NumberToken.this.numberStr, position, new NumberExecutor());
             }
     
             @Override
