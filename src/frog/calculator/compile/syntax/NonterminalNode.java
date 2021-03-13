@@ -76,7 +76,13 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
 
     @Override
     public IList<ISyntaxNode> children() {
-        return new ArrayList<>(new ISyntaxNode[]{this.leftChild, this.rightChild});
+        if(AssociateType.ALL == this.associateType){
+            return new ArrayList<>(new ISyntaxNode[]{this.leftChild, this.rightChild});
+        }else if(AssociateType.LEFT == this.associateType){
+            return new ArrayList<>(new ISyntaxNode[]{this.leftChild});
+        }else{
+            return new ArrayList<>(new ISyntaxNode[]{this.rightChild});
+        }
     }
 
     @Override

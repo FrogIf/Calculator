@@ -13,6 +13,10 @@ public class AddExecutor extends AbstractDyadicExecutor {
     @Override
     protected ComplexNumber evaluate(ISyntaxNode self, ComplexNumber childA, ComplexNumber childB,
                                      MicroExecuteContext context) {
-        return childA.add(childB);
+        if(childA == null){
+            return childB;
+        }else{
+            return childA.add(childB);
+        }
     }
 }

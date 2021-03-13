@@ -2,6 +2,10 @@ package frog.calculator.math.number;
 
 public class NumberUtil {
 
+    private NumberUtil(){
+        // do nothing
+    }
+
     private static final IntegerNumber TWO = IntegerNumber.valueOf(2);
 
     /**
@@ -16,7 +20,7 @@ public class NumberUtil {
             ComplexNumber result = ComplexNumber.ONE;
             IntegerNumber positiveIntPow = intPow.abs();
             while(!positiveIntPow.equals(IntegerNumber.ZERO)){
-                if(intPow.isOdd()){
+                if(positiveIntPow.isOdd()){
                     result = result.mult(base);
                 }
                 base = base.mult(base);
@@ -46,8 +50,8 @@ public class NumberUtil {
 
         IntegerNumber result = IntegerNumber.ONE;
         while(IntegerNumber.ONE.compareTo(intNum) < 0){
-            intNum = intNum.sub(1);
             result = result.mult(intNum);
+            intNum = intNum.sub(1);
         }
 
         return new ComplexNumber(result);

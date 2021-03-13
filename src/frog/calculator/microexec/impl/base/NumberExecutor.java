@@ -14,11 +14,6 @@ import frog.calculator.util.collection.IList;
 public class NumberExecutor extends AbstractMicroExecutor {
 
     @Override
-    protected void checkChildrenBeforeExecute(String word, IList<ISyntaxNode> children) {
-        // check nothing
-    }
-
-    @Override
     protected IList<ComplexNumber> evaluate(ISyntaxNode self, IList<ComplexNumber> children, MicroExecuteContext context) {
         ComplexNumber number = parse(self.word());
         ArrayList<ComplexNumber> result = new ArrayList<>(1);

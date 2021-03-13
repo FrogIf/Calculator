@@ -46,4 +46,12 @@ public class StringUtils {
         }
         return true;
     }
+
+    public static String valueOf(Object obj, String valIfNull){
+        return obj == null ? valIfNull : obj.toString();
+    }
+
+    public static String valueOf(Object obj){
+        return valueOf(obj, "null");
+    }
 }

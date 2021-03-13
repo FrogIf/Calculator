@@ -80,10 +80,11 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if(!RealNumber.ZERO.equals(this.realPart)){
+        boolean ipZero = RealNumber.ZERO.equals(this.imaginaryPart);
+        if(ipZero || !RealNumber.ZERO.equals(this.realPart)){
             sb.append(this.realPart.toString());
         }
-        if(!RealNumber.ZERO.equals(this.imaginaryPart)){
+        if(!ipZero){
             if(sb.length() > 0){
                 sb.append('+');
             }

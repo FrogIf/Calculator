@@ -8,6 +8,10 @@ import frog.calculator.microexec.MicroExecuteContext;
 public class SubExecutor extends AbstractDyadicExecutor {
     @Override
     protected ComplexNumber evaluate(ISyntaxNode self, ComplexNumber childA, ComplexNumber childB, MicroExecuteContext context) {
-        return childA.sub(childB);
+        if(childA == null){
+            return childB.not();
+        }else{
+            return childA.sub(childB);
+        }
     }
 }

@@ -10,15 +10,12 @@ import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;
 
 public class SumExecutor extends AbstractMicroExecutor {
-    @Override
-    protected void checkChildrenBeforeExecute(String word, IList<ISyntaxNode> children) {
-        if(children.isEmpty()){
-            throw new IncorrectStructureException(word, "there is no children");
-        }
-    }
 
     @Override
     protected IList<ComplexNumber> evaluate(ISyntaxNode self, IList<ComplexNumber> children, MicroExecuteContext context) {
+        if(children.isEmpty()){
+            throw new IncorrectStructureException(self.word(), "there is no children");
+        }
         Iterator<ComplexNumber> iterator = children.iterator();
         ComplexNumber sum = ComplexNumber.ZERO;
         while (iterator.hasNext()){
