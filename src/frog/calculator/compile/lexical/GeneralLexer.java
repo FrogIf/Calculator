@@ -45,7 +45,7 @@ public class GeneralLexer implements ILexer {
     private IToken parseWord(IScanner scanner){
         StringBuilder word = new StringBuilder();
         IToken t = this.repository.retrieve(scanner);
-        if(t == null || isNormalChar(scanner.peek())){
+        if(t == null || (scanner.hasNext() && isNormalChar(scanner.peek()))){
             if(t != null){
                 word.append(t.getSyntaxNodeGenerator().word());
             }

@@ -1,4 +1,4 @@
-package frog.test;
+package frog;
 
 import frog.calculator.ICalculator;
 import frog.calculator.SimpleCalculator;
