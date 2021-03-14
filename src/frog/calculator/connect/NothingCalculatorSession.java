@@ -16,7 +16,7 @@ public class NothingCalculatorSession implements ICalculatorSession {
 
     @Override
     public ISyntaxNode getVariable(String name) {
-        return null;
+        throw new UnsupportedOperationException("this session can't store vairable.");
     }
 
 }

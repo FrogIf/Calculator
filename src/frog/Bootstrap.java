@@ -2,6 +2,8 @@ package frog;
 
 import frog.calculator.ICalculator;
 import frog.calculator.SimpleCalculator;
+import frog.calculator.connect.GeneralCalculatorSession;
+import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.math.number.ComplexNumber;
 import frog.calculator.math.number.NumberRoundingMode;
 
@@ -16,8 +18,7 @@ public class Bootstrap {
 
         System.out.println("**********Calculator************");
 
-        // ICalculatorSession session = calculator.getSession();
-
+        ICalculatorSession session = new GeneralCalculatorSession();
         while(sc.hasNext()){
             String expression = sc.nextLine();
             if("exit".equals(expression)) {
@@ -26,7 +27,7 @@ public class Bootstrap {
             }
 
             try{
-                ComplexNumber result = calculator.calculate(expression, null);
+                ComplexNumber result = calculator.calculate(expression, session);
                 result.setScale(10, NumberRoundingMode.HALF_UP);
                 System.out.println(result.toString());
             }catch (Exception e){
