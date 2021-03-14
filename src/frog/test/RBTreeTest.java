@@ -17,6 +17,9 @@ public class RBTreeTest {
 
     public static void main(String[] args){
         for(int i = 0; i < 1000000; i++){
+            if(!repeatCheck()){
+                break;
+            }
             if(!checkRbTreeContent()){
                 break;
             }
@@ -48,14 +51,15 @@ public class RBTreeTest {
             rbSet.add(str);
         }
 
-        // Iterator<String> rbItr = rbSet.iterator();
-        // while(rbItr.hasNext()){
-        //     String str = rbItr.next();
-        //     if(!standardSet.contains(str)){
-        //         System.out.println("ans not contain : " + str);
-        //         return false;
-        //     }
-        // }
+        Iterator<String> rbItr = rbSet.iterator();
+        while(rbItr.hasNext()){
+            String str = rbItr.next();
+            if(!standardSet.contains(str)){
+                System.out.println("ans not contain : " + str);
+                System.out.println("standardSet : [" + setToString(standardSet) + "]");
+                return false;
+            }
+        }
 
         java.util.Iterator<String> sdItr = standardSet.iterator();
         while(sdItr.hasNext()){
@@ -71,41 +75,6 @@ public class RBTreeTest {
             return false;
         }
 
-        return true;
-    }
-
-
-    /**
-     * avl树插入存在问题, 调试
-     * @return
-     */
-    private static boolean checkInteger(){
-        String errorStr = "fthrTnyVuZJZT,etAIfy,r,JBvDViqgESoAph,JibAgUmgyjWcl,pWdNYmOpnHEYu,DhmnYjArImypQbUjZV,ZLyUWjkN,QBjRXhwseZhKzm,LYqeVCdDs,zdTDzpQA,TjpPYmXRiHKAA,gASBgCfcidiWfxoTLI,IeNovImlA,tAKDofZ,TOmybRsmcRnnoFZChw,lxpxEYjjMAEgdO,jbdhEVKDidYiUO,ctSn,r";
-        ArrayList<String> origin = new ArrayList<>(errorStr.split(","));
-        IList<Integer> numList = new ArrayList<>();
-        Iterator<String> iterator = origin.iterator();
-        while(iterator.hasNext()){
-            numList.add(iterator.next().hashCode());
-        }
-        IList<Integer> list = numList;
-
-        ISet<Integer> avlSet = new AVLTreeSet<Integer>((a, b) -> a - b);
-        Set<Integer> standardSet = new TreeSet<>((a, b) -> a - b);
-        
-        // 重复校验测试
-        Iterator<Integer> itr = list.iterator();
-        while(itr.hasNext()){
-            Integer str = itr.next();
-            if(114 == str){
-                System.out.println("----");
-            }
-            boolean avlAdd = avlSet.add(str);
-            boolean ansAdd = standardSet.add(str);
-            if(avlAdd != ansAdd){
-                System.out.println("----error----");
-                return false;
-            }
-        }
         return true;
     }
 
@@ -136,7 +105,7 @@ public class RBTreeTest {
             boolean rbAdd = rbSet.add(str);
             boolean avlAdd = avlSet.add(str);
             boolean ansAdd = standardSet.add(str);
-            if(rbAdd != ansAdd){
+            if(rbAdd != avlAdd){
                 System.out.println("----error----");
                 Iterator<String> errItr = list.iterator();
                 StringBuilder sb = new StringBuilder();
@@ -155,6 +124,28 @@ public class RBTreeTest {
             i++;
         }
         return true;
+    }
+
+
+
+    private static String setToString(Set<String> set){
+        java.util.Iterator<String> itr = set.iterator();
+        StringBuilder sb = new StringBuilder();
+        while(itr.hasNext()){
+            String str = itr.next();
+            sb.append(str).append(',');
+        }
+        return sb.toString();
+    }
+
+    private static String isetToString(ISet<String> sets){
+        Iterator<String> itr = sets.iterator();
+        StringBuilder sb = new StringBuilder();
+        while(itr.hasNext()){
+            String str = itr.next();
+            sb.append(str).append(',');
+        }
+        return sb.toString();
     }
 
     /**
@@ -177,14 +168,14 @@ public class RBTreeTest {
     private static final IComparator<String> COMPARATOR = new IComparator<String>(){
         @Override
         public int compare(String a, String b) {
-            return a.hashCode() - b.hashCode();
+            return a.compareTo(b);
         }
     };
 
     private static final Comparator<String> COMPARATOR2 = new Comparator<String>(){
         @Override
         public int compare(String o1, String o2) {
-            return o1.hashCode() - o2.hashCode();
+            return o1.compareTo(o2);
         } 
     };
     
