@@ -7,9 +7,9 @@ import frog.calculator.math.number.IntegerNumber;
 /**
  * 最大公约数准确性测试
  */
-public class GcdTest {
+public class GcdTest implements ITest{
 
-    public static void test(){
+    public void test(){
         Random r = new Random();
         int i = Integer.MAX_VALUE;
         while(i > 0){

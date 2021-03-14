@@ -1,5 +1,7 @@
 package frog.test.util;
 
+import java.util.Random;
+
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.StringUtils;
 import frog.calculator.util.collection.IList;
@@ -37,6 +39,19 @@ public class DebugUtil {
                 }
             }
         }
+    }
+
+    public static String randomString(){
+        Random r = new Random();
+        int len = r.nextInt(20) + 1;
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0; i < len; i++){
+            int pos = r.nextInt(52);
+            int a = pos / 27 * ('a' - 'A') + 'A' + pos % 26;
+            sb.append((char)a);
+        }
+        return sb.toString();
     }
     
 }

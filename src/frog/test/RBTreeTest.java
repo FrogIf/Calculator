@@ -1,7 +1,6 @@
 package frog.test;
 
 import java.util.Comparator;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,10 +11,12 @@ import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.ISet;
 import frog.calculator.util.collection.Iterator;
 import frog.calculator.util.collection.RBTreeSet;
+import frog.test.util.DebugUtil;
 
-public class RBTreeTest {
+public class RBTreeTest implements ITest{
 
-    public static void main(String[] args){
+    @Override
+    public void test() {
         for(int i = 0; i < 1000000; i++){
             if(!repeatCheck()){
                 break;
@@ -29,7 +30,7 @@ public class RBTreeTest {
     private static boolean checkRbTreeContent(){
         IList<String> list = new ArrayList<>();
         for(int i = 0; i < 100; i++){
-            list.add(randomString());
+            list.add(DebugUtil.randomString());
         }
 
         return checkContent(list);
@@ -105,7 +106,7 @@ public class RBTreeTest {
     private static boolean repeatCheck(){
         IList<String> list = new ArrayList<>();
         for(int i = 0; i < 100; i++){
-            list.add(randomString());
+            list.add(DebugUtil.randomString());
         }
 
         return checkString(list);
@@ -165,23 +166,6 @@ public class RBTreeTest {
         while(itr.hasNext()){
             String str = itr.next();
             sb.append(str).append(',');
-        }
-        return sb.toString();
-    }
-
-    /**
-     * 生成随机字符串[a-zA-Z]
-     * @return
-     */
-    private static String randomString(){
-        Random r = new Random();
-        int len = r.nextInt(20) + 1;
-        StringBuilder sb = new StringBuilder();
-
-        for(int i = 0; i < len; i++){
-            int pos = r.nextInt(52);
-            int a = pos / 27 * ('a' - 'A') + 'A' + pos % 26;
-            sb.append((char)a);
         }
         return sb.toString();
     }
