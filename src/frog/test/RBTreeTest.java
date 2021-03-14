@@ -38,6 +38,7 @@ public class RBTreeTest {
     private static boolean checkContent(IList<String> list){
         Set<String> standardSet = new TreeSet<>(COMPARATOR2);
         ISet<String> rbSet = new RBTreeSet<>(COMPARATOR);
+        ISet<String> avlSet = new AVLTreeSet<>(COMPARATOR);
 
         Iterator<String> itr = list.iterator();
         while(itr.hasNext()){
@@ -49,11 +50,22 @@ public class RBTreeTest {
         while(sdItr0.hasNext()){
             String str = sdItr0.next();
             rbSet.add(str);
+            avlSet.add(str);
         }
 
         Iterator<String> rbItr = rbSet.iterator();
         while(rbItr.hasNext()){
             String str = rbItr.next();
+            if(!standardSet.contains(str)){
+                System.out.println("ans not contain : " + str);
+                System.out.println("standardSet : [" + setToString(standardSet) + "]");
+                return false;
+            }
+        }
+
+        Iterator<String> avlItr = avlSet.iterator();
+        while(avlItr.hasNext()){
+            String str = avlItr.next();
             if(!standardSet.contains(str)){
                 System.out.println("ans not contain : " + str);
                 System.out.println("standardSet : [" + setToString(standardSet) + "]");
@@ -68,10 +80,19 @@ public class RBTreeTest {
                 System.out.println("rb not contain : " + str);
                 return false;
             }
+            if(!avlSet.contains(str)){
+                System.out.println("avl not contain : " + str);
+                return false;
+            }
         }
 
         if(rbSet.size() != standardSet.size()){
             System.out.println("the size not right. rb : " + rbSet.size() + ", ans : " + standardSet.size());
+            return false;
+        }
+
+        if(avlSet.size() != standardSet.size()){
+            System.out.println("the size not right. avl : " + avlSet.size() + ", ans : " + standardSet.size());
             return false;
         }
 
