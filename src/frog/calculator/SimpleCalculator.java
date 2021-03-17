@@ -14,9 +14,9 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.math.number.ComplexNumber;
 import frog.calculator.microexec.MicroExecuteContext;
+import frog.calculator.microexec.MicroTokenHolder;
 import frog.calculator.platform.GeneralCompileManager;
 import frog.calculator.platform.ITokenHolder;
-import frog.calculator.platform.MathTokenHolder;
 import frog.calculator.util.collection.IList;
 
 public class SimpleCalculator implements ICalculator<ComplexNumber> {
@@ -24,7 +24,7 @@ public class SimpleCalculator implements ICalculator<ComplexNumber> {
     private final ISyntaxTreeBuilder builder;
 
     public SimpleCalculator(){
-        ITokenHolder holder = new MathTokenHolder();
+        ITokenHolder holder = new MicroTokenHolder();
         ITokenRepository tokenRespository = new TokenRepository();
         try {
             for(IToken t : holder.getTokens()){

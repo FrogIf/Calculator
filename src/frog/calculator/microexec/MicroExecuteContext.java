@@ -1,7 +1,6 @@
 package frog.calculator.microexec;
 
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.connect.GeneralCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.math.number.ComplexNumber;
 import frog.calculator.util.collection.IList;

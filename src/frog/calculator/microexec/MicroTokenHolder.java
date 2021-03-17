@@ -1,4 +1,4 @@
-package frog.calculator.platform;
+package frog.calculator.microexec;
 
 import frog.calculator.compile.lexical.CommonToken;
 import frog.calculator.compile.lexical.IToken;
@@ -19,8 +19,9 @@ import frog.calculator.microexec.impl.ext.FactorialExecutor;
 import frog.calculator.microexec.impl.ext.PercentExecutor;
 import frog.calculator.microexec.impl.fun.AverageExecutor;
 import frog.calculator.microexec.impl.fun.SumExecutor;
+import frog.calculator.platform.ITokenHolder;
 
-public class MathTokenHolder implements ITokenHolder {
+public class MicroTokenHolder implements ITokenHolder {
 
     private static final ISyntaxNodeGenerator[] builders = new ISyntaxNodeGenerator[] { 
         new NonterminalNode("+", 10, new AddExecutor()),

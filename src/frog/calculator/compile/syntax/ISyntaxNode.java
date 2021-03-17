@@ -2,7 +2,6 @@ package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.IWord;
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IResult;
 import frog.calculator.util.collection.IList;
 
 public interface ISyntaxNode extends IWord {
