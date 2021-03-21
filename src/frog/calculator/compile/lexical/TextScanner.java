@@ -14,18 +14,19 @@ public class TextScanner implements IScanner {
     }
 
     @Override
-    public char peek() {
+    public char read() {
         return content[index];
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean isNotEnd() {
         return index < content.length;
     }
 
     @Override
-    public char read() {
-        return content[index++];
+    public boolean moveToNext() {
+        index++;
+        return index < content.length;
     }
 
     @Override

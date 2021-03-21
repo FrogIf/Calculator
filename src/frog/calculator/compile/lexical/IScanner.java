@@ -5,20 +5,20 @@ package frog.calculator.compile.lexical;
  */
 public interface IScanner {
     /**
-     * 当前字符
-     */
-    char peek();
-
-    /**
-     * 是否有下一个
-     * @return true - 有; false - 无
-     */
-    boolean hasNext();
-
-    /**
-     * 获取当前字符, 并移动至下一个
+     * 获取当前字符
      */
     char read();
+
+    /**
+     * 是否没有结束
+     * @return true - 是; false - 否
+     */
+    boolean isNotEnd();
+
+    /**
+     * 移动至下一个
+     */
+    boolean moveToNext();
 
     /**
      * 当前字符的索引值
