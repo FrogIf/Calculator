@@ -1,4 +1,4 @@
-package frog.calculator.microexec.exception;
+package frog.calculator.micro.exception;
 
 import frog.calculator.exception.CalculatorExpression;
 

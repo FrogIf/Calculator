@@ -1,4 +1,4 @@
-package frog.calculator.microexec.exception;
+package frog.calculator.micro.exception;
 
 public class NonsupportOperateException extends RuntimeException {
     public NonsupportOperateException(String trigger, String msg){

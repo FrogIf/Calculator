@@ -1,8 +1,8 @@
-package frog.calculator.microexec;
+package frog.calculator.micro.exec;
 
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.math.number.ComplexNumber;
-import frog.calculator.microexec.exception.IncorrectStructureException;
+import frog.calculator.micro.exception.IncorrectStructureException;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
 

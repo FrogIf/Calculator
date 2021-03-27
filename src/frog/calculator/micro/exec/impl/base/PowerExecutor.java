@@ -1,11 +1,11 @@
-package frog.calculator.microexec.impl.base;
+package frog.calculator.micro.exec.impl.base;
 
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.math.number.ComplexNumber;
 import frog.calculator.math.number.NumberUtil;
-import frog.calculator.microexec.AbstractDyadicExecutor;
-import frog.calculator.microexec.MicroExecuteContext;
-import frog.calculator.microexec.exception.IncorrectStructureException;
+import frog.calculator.micro.exception.IncorrectStructureException;
+import frog.calculator.micro.exec.AbstractDyadicExecutor;
+import frog.calculator.micro.exec.MicroExecuteContext;
 import frog.calculator.util.StringUtils;
 
 public class PowerExecutor extends AbstractDyadicExecutor {

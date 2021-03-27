@@ -7,12 +7,7 @@ import frog.calculator.util.collection.TreeMap;
 
 public class GeneralCalculatorSession implements ICalculatorSession {
 
-    private final IMap<String, ISyntaxNode> variableMap = new TreeMap<>(new IComparator<String>(){
-        @Override
-        public int compare(String a, String b) {
-            return a.compareTo(b);
-        }
-    });
+    private final IMap<String, ISyntaxNode> variableMap = new TreeMap<>(IComparator.STRING_DEFAULT_COMPARATOR);
 
     @Override
     public void addVariable(ISyntaxNode node) {

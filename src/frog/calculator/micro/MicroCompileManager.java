@@ -1,4 +1,4 @@
-package frog.calculator.platform;
+package frog.calculator.micro;
 
 import frog.calculator.compile.ICompileManager;
 import frog.calculator.compile.lexical.INamedTokenFactory;
@@ -7,9 +7,9 @@ import frog.calculator.compile.lexical.IToken;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 import frog.calculator.compile.syntax.TerminalNode;
-import frog.calculator.microexec.impl.base.NumberExecutor;
+import frog.calculator.micro.exec.impl.base.NumberExecutor;
 
-public class GeneralCompileManager implements ICompileManager {
+public class MicroCompileManager implements ICompileManager {
 
     @Override
     public INamedTokenFactory getNamedTokenFactory() {
@@ -20,7 +20,7 @@ public class GeneralCompileManager implements ICompileManager {
     public INumberTokenFactory getNumberTokenFactory() {
         return new NumberTokenFactory();
     }
-    
+
 
     private static class NamedTokenFactory implements INamedTokenFactory {
 
@@ -110,5 +110,5 @@ public class GeneralCompileManager implements ICompileManager {
             }
         } 
     }
-    
+
 }

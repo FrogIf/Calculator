@@ -13,9 +13,9 @@ import frog.calculator.compile.syntax.ISyntaxTreeBuilder;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.math.number.ComplexNumber;
-import frog.calculator.microexec.MicroExecuteContext;
-import frog.calculator.microexec.MicroTokenHolder;
-import frog.calculator.platform.GeneralCompileManager;
+import frog.calculator.micro.MicroCompileManager;
+import frog.calculator.micro.MicroTokenHolder;
+import frog.calculator.micro.exec.MicroExecuteContext;
 import frog.calculator.platform.ITokenHolder;
 import frog.calculator.util.collection.IList;
 
@@ -33,14 +33,13 @@ public class SimpleCalculator implements ICalculator<ComplexNumber> {
         } catch (DuplicateTokenException e) {
             throw new CalculatorError(e.getMessage());
         }    
-        ILexer lexer = new GeneralLexer(tokenRespository, new GeneralCompileManager());
+        ILexer lexer = new GeneralLexer(tokenRespository, new MicroCompileManager());
         builder = new GeneralSyntaxTreeBuilder(lexer);
     }
 
     public ComplexNumber calculate(String expression, ICalculatorSession session) {
         ISyntaxNode expRoot = this.builder.build(new TextScanner(expression));
-        MicroExecuteContext context = new MicroExecuteContext();
-        context.setSession(session);
+        MicroExecuteContext context = new MicroExecuteContext(session);
         expRoot.execute(context);
         IList<ComplexNumber> result = context.getResult();
         if(result.size() == 1){

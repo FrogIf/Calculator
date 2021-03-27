@@ -1,4 +1,4 @@
-package frog.calculator.microexec;
+package frog.calculator.micro;
 
 import frog.calculator.compile.lexical.CommonToken;
 import frog.calculator.compile.lexical.IToken;
@@ -7,23 +7,25 @@ import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 import frog.calculator.compile.syntax.NonterminalNode;
 import frog.calculator.compile.syntax.TerminalNode;
 import frog.calculator.compile.syntax.NonterminalNode.AssociateType;
-import frog.calculator.microexec.impl.base.AddExecutor;
-import frog.calculator.microexec.impl.base.BracketExecutor;
-import frog.calculator.microexec.impl.base.ComplexMarkExecutor;
-import frog.calculator.microexec.impl.base.DivExecutor;
-import frog.calculator.microexec.impl.base.DotExecutor;
-import frog.calculator.microexec.impl.base.MultExecutor;
-import frog.calculator.microexec.impl.base.PowerExecutor;
-import frog.calculator.microexec.impl.base.SubExecutor;
-import frog.calculator.microexec.impl.ext.FactorialExecutor;
-import frog.calculator.microexec.impl.ext.PercentExecutor;
-import frog.calculator.microexec.impl.fun.AverageExecutor;
-import frog.calculator.microexec.impl.fun.SumExecutor;
+import frog.calculator.micro.exec.impl.base.AddExecutor;
+import frog.calculator.micro.exec.impl.base.BracketExecutor;
+import frog.calculator.micro.exec.impl.base.ComplexMarkExecutor;
+import frog.calculator.micro.exec.impl.base.DivExecutor;
+import frog.calculator.micro.exec.impl.base.DotExecutor;
+import frog.calculator.micro.exec.impl.base.EqualExecutor;
+import frog.calculator.micro.exec.impl.base.MultExecutor;
+import frog.calculator.micro.exec.impl.base.PowerExecutor;
+import frog.calculator.micro.exec.impl.base.SubExecutor;
+import frog.calculator.micro.exec.impl.ext.FactorialExecutor;
+import frog.calculator.micro.exec.impl.ext.PercentExecutor;
+import frog.calculator.micro.exec.impl.fun.AverageExecutor;
+import frog.calculator.micro.exec.impl.fun.SumExecutor;
 import frog.calculator.platform.ITokenHolder;
 
 public class MicroTokenHolder implements ITokenHolder {
 
     private static final ISyntaxNodeGenerator[] builders = new ISyntaxNodeGenerator[] { 
+        new NonterminalNode("=", 0, new EqualExecutor()),
         new NonterminalNode("+", 10, new AddExecutor()),
         new NonterminalNode("-", 10, new SubExecutor()), 
         new NonterminalNode("++", 10, new AddExecutor()),
