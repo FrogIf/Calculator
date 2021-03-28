@@ -287,6 +287,19 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }
     }
 
+    public static RationalNumber valueOf(String numString){
+        int dot1 = numString.indexOf('.');
+        int dot2 = numString.indexOf('_');
+        RationalNumber rationalNumber;
+        if(dot2 == -1){ // 没有循环节
+            rationalNumber = new RationalNumber(numString);
+        }else{  // 有循环节
+            numString = numString.replace("_", "");
+            rationalNumber = new RationalNumber(numString, dot2 - dot1 - 1);
+        }
+        return rationalNumber;
+    }
+
     @Override
     public boolean equals(Object o){
         if(this == o){ return true; }

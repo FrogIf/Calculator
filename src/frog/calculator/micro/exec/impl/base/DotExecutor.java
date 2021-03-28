@@ -1,24 +1,48 @@
 package frog.calculator.micro.exec.impl.base;
 
+import frog.calculator.common.exec.AbstractDyadicExecutor;
+import frog.calculator.common.exec.exception.ExecuteException;
+import frog.calculator.common.exec.result.NestValue;
+import frog.calculator.compile.semantic.IExecuteContext;
+import frog.calculator.compile.semantic.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.math.number.ComplexNumber;
-import frog.calculator.micro.exception.IncorrectStructureException;
-import frog.calculator.micro.exec.AbstractMicroExecutor;
-import frog.calculator.micro.exec.MicroExecuteContext;
+import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.Iterator;
 
 /**
  * 逗号分隔符运算器
  */
-public class DotExecutor extends AbstractMicroExecutor{
+public class DotExecutor extends AbstractDyadicExecutor{
 
     @Override
-    protected IList<ComplexNumber> evaluate(ISyntaxNode self, IList<ComplexNumber> children,
-            MicroExecuteContext context) {
-        if(children.size() < 2){
-            throw new IncorrectStructureException(self.word(), "need param count greater than 2, but is " + children.size());
+    protected IValue evaluate(ISyntaxNode self, IValue childA, IValue childB, IExecuteContext context) {
+        ArrayList<IValue> vals = new ArrayList<>();
+        if(childA instanceof NestValue){
+            deconstruction((NestValue)childA, vals);
+        }else{
+            vals.add(childA);
         }
-        return children;
+
+        if(childB instanceof NestValue){
+            deconstruction((NestValue)childB, vals);
+        }else{
+            vals.add(childB);
+        }
+        return new NestValue(vals, NestValue.Direction.HORIZONTAL);
+    }
+
+    private void deconstruction(NestValue val, IList<IValue> vals){
+        IList<IValue> nestValList = val.getValues();
+        Iterator<IValue> itr = nestValList.iterator();
+        while(itr.hasNext()){
+            IValue nv = itr.next();
+            if(nv instanceof NestValue){
+                throw new ExecuteException("can't deconstruction this struct.");
+            }else{
+                vals.add(nv);
+            }
+        }
     }
     
 }

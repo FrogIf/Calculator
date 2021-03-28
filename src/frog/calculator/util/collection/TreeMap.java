@@ -35,7 +35,7 @@ public class TreeMap<K, V> implements IMap<K, V> {
         InnerEntry<K, V> entry = new InnerEntry<>();
         entry.key = key;
         entry.value = value;
-        this.entrySet.add(entry);
+        this.entrySet.replace(entry);
         return value;
     }
 

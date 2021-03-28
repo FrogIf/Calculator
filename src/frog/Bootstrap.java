@@ -2,6 +2,7 @@ package frog;
 
 import frog.calculator.ICalculator;
 import frog.calculator.SimpleCalculator;
+import frog.calculator.common.exec.result.SymbolValue;
 import frog.calculator.connect.GeneralCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.math.number.ComplexNumber;
@@ -19,6 +20,10 @@ public class Bootstrap {
         System.out.println("**********Calculator************");
 
         ICalculatorSession session = new GeneralCalculatorSession();
+
+        session.addVariable("c", null);
+        session.addVariable("c", new SymbolValue("aaa"));
+        System.out.println(session.getVariable("c"));
         while(sc.hasNext()){
             String expression = sc.nextLine();
             if("exit".equals(expression)) {

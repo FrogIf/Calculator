@@ -10,6 +10,7 @@ import frog.calculator.compile.syntax.NonterminalNode.AssociateType;
 import frog.calculator.micro.exec.impl.base.AddExecutor;
 import frog.calculator.micro.exec.impl.base.BracketExecutor;
 import frog.calculator.micro.exec.impl.base.ComplexMarkExecutor;
+import frog.calculator.micro.exec.impl.base.DeclareExecutor;
 import frog.calculator.micro.exec.impl.base.DivExecutor;
 import frog.calculator.micro.exec.impl.base.DotExecutor;
 import frog.calculator.micro.exec.impl.base.EqualExecutor;
@@ -25,7 +26,7 @@ import frog.calculator.platform.ITokenHolder;
 public class MicroTokenHolder implements ITokenHolder {
 
     private static final ISyntaxNodeGenerator[] builders = new ISyntaxNodeGenerator[] { 
-        new NonterminalNode("=", 0, new EqualExecutor()),
+        new NonterminalNode("=", 5, new EqualExecutor()),
         new NonterminalNode("+", 10, new AddExecutor()),
         new NonterminalNode("-", 10, new SubExecutor()), 
         new NonterminalNode("++", 10, new AddExecutor()),
@@ -40,6 +41,7 @@ public class MicroTokenHolder implements ITokenHolder {
         new NonterminalNode("i", 40, AssociateType.LEFT, new ComplexMarkExecutor()),
         new NonterminalNode("sum", 50, AssociateType.RIGHT, new SumExecutor()),
         new NonterminalNode("avg", 50, AssociateType.RIGHT, new AverageExecutor()),
+        new NonterminalNode("@", 60, AssociateType.RIGHT, new DeclareExecutor()),
         new ContainerNode("(", ")", new BracketExecutor()),
         new NonterminalNode(",", 0, new DotExecutor()),
         new TerminalNode(")", null)

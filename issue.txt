@@ -1,0 +1,9 @@
+1. 
+@a=1
+报错
+
+2. 
+@b=3
+b=4
+报错
+-- 解决方案, 不使用SymbolValue类型, 而是使用VariableValue{name:string;value:IValue}

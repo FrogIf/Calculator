@@ -1,23 +1,27 @@
 package frog.calculator.micro.exec.impl.base;
 
+import frog.calculator.common.exec.exception.IncorrectStructureException;
+import frog.calculator.common.exec.exception.NonsupportOperateException;
+import frog.calculator.common.exec.result.GeneralResult;
+import frog.calculator.common.exec.result.SymbolValue;
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IExecutor;
+import frog.calculator.compile.semantic.IResult;
+import frog.calculator.compile.semantic.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.micro.exception.IncorrectStructureException;
-import frog.calculator.micro.exec.MicroExecuteContext;
 import frog.calculator.util.collection.IList;
 
 public class DeclareExecutor implements IExecutor{
 
     @Override
-    public void execute(ISyntaxNode token, IExecuteContext context) {
-        IList<ISyntaxNode> children = token.children();
-        if(children.size() != 1){
-            throw new IncorrectStructureException(token.word(), "declare expect one child, but here is :" + children.size());
+    public IResult execute(ISyntaxNode self, IExecuteContext context) {
+        IList<ISyntaxNode> children = self.children();
+        if(children == null || children.size() != 1){
+            throw new NonsupportOperateException(self.word(), "can't execute, expect 1 child, but " + (children == null ? "null" : children.size()));
         }
-        ISyntaxNode node = children.get(0);
-        MicroExecuteContext microExecuteContext = (MicroExecuteContext) context;
-        microExecuteContext.addVariable(node);
+        String word = children.get(0).word();
+        context.addVariable(children.get(0).word(), null);
+        return new GeneralResult(new SymbolValue(word));
     }
     
 }

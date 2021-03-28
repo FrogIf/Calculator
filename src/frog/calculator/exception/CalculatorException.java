@@ -1,14 +1,14 @@
 package frog.calculator.exception;
 
-public class CalculatorExpression extends RuntimeException {
+public class CalculatorException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public CalculatorExpression(){
+    public CalculatorException(){
         // do nothing
     }
 
-    public CalculatorExpression(String msg){
+    public CalculatorException(String msg){
         super(msg);
     }
     

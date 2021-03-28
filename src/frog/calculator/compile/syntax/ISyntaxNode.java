@@ -2,6 +2,7 @@ package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.IWord;
 import frog.calculator.compile.semantic.IExecuteContext;
+import frog.calculator.compile.semantic.IResult;
 import frog.calculator.util.collection.IList;
 
 public interface ISyntaxNode extends IWord {
@@ -54,6 +55,6 @@ public interface ISyntaxNode extends IWord {
      * 执行
      * @return
      */
-    void execute(IExecuteContext context);
+    IResult execute(IExecuteContext context);
 
 }

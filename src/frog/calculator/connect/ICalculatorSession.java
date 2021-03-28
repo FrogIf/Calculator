@@ -1,6 +1,6 @@
 package frog.calculator.connect;
 
-import frog.calculator.compile.syntax.ISyntaxNode;
+import frog.calculator.compile.semantic.IValue;
 
 /**
  * 计算器会话<br/>
@@ -9,8 +9,8 @@ import frog.calculator.compile.syntax.ISyntaxNode;
  */
 public interface ICalculatorSession {
 
-    void addVariable(ISyntaxNode node);
+    void addVariable(String name, IValue value);
 
-    ISyntaxNode getVariable(String name);
+    IValue getVariable(String name);
 
 }

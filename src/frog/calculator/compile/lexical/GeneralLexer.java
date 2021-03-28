@@ -77,7 +77,7 @@ public class GeneralLexer implements ILexer {
                 }
                 word.append(ch);
             }
-            this.namedTokenFactory.create(word.toString());
+            t = this.namedTokenFactory.create(word.toString());
         }
         return t;
     }

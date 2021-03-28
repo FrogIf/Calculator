@@ -1,5 +1,6 @@
 package frog.calculator;
 
+import frog.calculator.common.exec.GeneralExecuteContext;
 import frog.calculator.compile.lexical.GeneralLexer;
 import frog.calculator.compile.lexical.ILexer;
 import frog.calculator.compile.lexical.IToken;
@@ -7,17 +8,21 @@ import frog.calculator.compile.lexical.ITokenRepository;
 import frog.calculator.compile.lexical.TextScanner;
 import frog.calculator.compile.lexical.TokenRepository;
 import frog.calculator.compile.lexical.exception.DuplicateTokenException;
+import frog.calculator.compile.semantic.IResult;
+import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.IResult.ResultType;
 import frog.calculator.compile.syntax.GeneralSyntaxTreeBuilder;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxTreeBuilder;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.math.number.ComplexNumber;
+import frog.calculator.micro.ComplexValue;
 import frog.calculator.micro.MicroCompileManager;
 import frog.calculator.micro.MicroTokenHolder;
-import frog.calculator.micro.exec.MicroExecuteContext;
+import frog.calculator.micro.MicroUtil;
 import frog.calculator.platform.ITokenHolder;
-import frog.calculator.util.collection.IList;
+import frog.test.util.DebugUtil;
 
 public class SimpleCalculator implements ICalculator<ComplexNumber> {
 
@@ -39,11 +44,11 @@ public class SimpleCalculator implements ICalculator<ComplexNumber> {
 
     public ComplexNumber calculate(String expression, ICalculatorSession session) {
         ISyntaxNode expRoot = this.builder.build(new TextScanner(expression));
-        MicroExecuteContext context = new MicroExecuteContext(session);
-        expRoot.execute(context);
-        IList<ComplexNumber> result = context.getResult();
-        if(result.size() == 1){
-            return result.get(0);
+        GeneralExecuteContext context = new GeneralExecuteContext(session);
+        IResult result = expRoot.execute(context);
+        if(result.getResultType() == ResultType.VALUE){
+            IValue value = result.getValue();
+            return MicroUtil.getNumber(value, context);
         }else{
             return null;
         }

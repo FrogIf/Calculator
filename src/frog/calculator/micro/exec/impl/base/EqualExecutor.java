@@ -1,17 +1,23 @@
 package frog.calculator.micro.exec.impl.base;
 
+import frog.calculator.common.exec.AbstractDyadicExecutor;
+import frog.calculator.common.exec.exception.NonsupportOperateException;
+import frog.calculator.common.exec.result.SymbolValue;
+import frog.calculator.compile.semantic.IExecuteContext;
+import frog.calculator.compile.semantic.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
-import frog.calculator.math.number.ComplexNumber;
-import frog.calculator.micro.exec.AbstractMicroExecutor;
-import frog.calculator.micro.exec.MicroExecuteContext;
-import frog.calculator.util.collection.IList;
 
-public class EqualExecutor extends AbstractMicroExecutor {
+public class EqualExecutor extends AbstractDyadicExecutor {
 
     @Override
-    protected IList<ComplexNumber> evaluate(ISyntaxNode self, IList<ComplexNumber> children,
-            MicroExecuteContext context) {
-        return null;
+    protected IValue evaluate(ISyntaxNode self, IValue childA, IValue childB, IExecuteContext context) {
+        if(childA instanceof SymbolValue){
+            context.addVariable(((SymbolValue)childA).getSymbol(), childB);
+        }else{
+            throw new NonsupportOperateException(self.word(), "can't operate for " + childA.getClass());
+        }
+        return childB;
     }
+
     
 }

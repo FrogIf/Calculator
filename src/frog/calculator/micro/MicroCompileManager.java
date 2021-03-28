@@ -8,6 +8,7 @@ import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 import frog.calculator.compile.syntax.TerminalNode;
 import frog.calculator.micro.exec.impl.base.NumberExecutor;
+import frog.calculator.micro.exec.impl.base.VariableExecutor;
 
 public class MicroCompileManager implements ICompileManager {
 
@@ -59,7 +60,7 @@ public class MicroCompileManager implements ICompileManager {
         
                 @Override
                 public ISyntaxNode generate(int position) {
-                    return new TerminalNode(NamingToken.this.word, position, null);
+                    return new TerminalNode(NamingToken.this.word, position, new VariableExecutor());
                 }
         
             }

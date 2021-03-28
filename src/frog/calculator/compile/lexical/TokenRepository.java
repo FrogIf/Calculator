@@ -104,8 +104,12 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
         char ch = scanner.read();
         TokenRepository fr = new TokenRepository(ch);
         TokenRepository treeRegister = nextLetter.find(fr);
-        if(treeRegister != null && scanner.moveToNext()){
-            return treeRegister.retrieveNext(scanner, fr);
+        if(treeRegister != null){
+            if(scanner.moveToNext()){
+                return treeRegister.retrieveNext(scanner, fr);
+            }else{
+                return treeRegister.token;
+            }
         }else{
             return this.token;
         }
@@ -114,8 +118,12 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
     private IToken retrieveNext(IScanner scanner, TokenRepository fr){
         fr.symbol = scanner.read();
         TokenRepository treeRegister = nextLetter.find(fr);
-        if(treeRegister != null && scanner.moveToNext()){
-            return treeRegister.retrieveNext(scanner, fr);
+        if(treeRegister != null){
+            if(scanner.moveToNext()){
+                return treeRegister.retrieveNext(scanner, fr);
+            }else{
+                return treeRegister.token;
+            }
         }else{
             return this.token;
         }

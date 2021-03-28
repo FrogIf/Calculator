@@ -43,6 +43,15 @@ public class RBTreeSet<T> extends AbstractCollection<T> implements ISet<T>{
 
     @Override
     public boolean add(T t) {
+        return add(t, false);
+    }
+
+    @Override
+    public void replace(T e) {
+        add(e, true);
+    }
+
+    private boolean add(T t, boolean replace) {
         if(this.root == null){
             RBNode<T> node = new RBNode<>();
             node.data = t;
@@ -59,7 +68,12 @@ public class RBTreeSet<T> extends AbstractCollection<T> implements ISet<T>{
                 p = cursor;
                 mark = comparator.compare(t, cursor.data);
                 if(mark == 0){
-                    return false;
+                    if(replace){
+                        cursor.data = t;
+                        return true;
+                    }else{
+                        return false;
+                    }
                 }else if(mark > 0){
                     cursor = cursor.right;
                 }else{

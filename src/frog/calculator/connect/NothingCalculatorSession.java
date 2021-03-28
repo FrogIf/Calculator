@@ -1,6 +1,6 @@
 package frog.calculator.connect;
 
-import frog.calculator.compile.syntax.ISyntaxNode;
+import frog.calculator.compile.semantic.IValue;
 
 /**
  * 不起任何作用的calculator session
@@ -10,12 +10,12 @@ import frog.calculator.compile.syntax.ISyntaxNode;
 public class NothingCalculatorSession implements ICalculatorSession {
 
     @Override
-    public void addVariable(ISyntaxNode node) {
+    public void addVariable(String name, IValue value) {
         throw new UnsupportedOperationException("this session can't store vairable.");
     }
 
     @Override
-    public ISyntaxNode getVariable(String name) {
+    public IValue getVariable(String name) {
         throw new UnsupportedOperationException("this session can't store vairable.");
     }
 

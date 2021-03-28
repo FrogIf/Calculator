@@ -2,6 +2,7 @@ package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IExecutor;
+import frog.calculator.compile.semantic.IResult;
 
 /**
  * abstract node, 提供一些公共的逻辑, 所有的node都应继承这个抽象类, 而不应该继承ISyntaxNode接口
@@ -38,8 +39,8 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
     }
 
     @Override
-    public void execute(IExecuteContext context){
-        this.executor.execute(this, context);
+    public IResult execute(IExecuteContext context){
+        return this.executor.execute(this, context);
     }
 
     @Override
