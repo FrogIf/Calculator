@@ -1,13 +1,11 @@
 package frog.calculator.micro.exec.impl.base;
 
-import frog.calculator.common.exec.exception.IncorrectStructureException;
 import frog.calculator.common.exec.exception.NonsupportOperateException;
 import frog.calculator.common.exec.result.GeneralResult;
-import frog.calculator.common.exec.result.SymbolValue;
+import frog.calculator.common.exec.result.VariableValue;
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IExecutor;
 import frog.calculator.compile.semantic.IResult;
-import frog.calculator.compile.semantic.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.collection.IList;
 
@@ -21,7 +19,7 @@ public class DeclareExecutor implements IExecutor{
         }
         String word = children.get(0).word();
         context.addVariable(children.get(0).word(), null);
-        return new GeneralResult(new SymbolValue(word));
+        return new GeneralResult(new VariableValue(word));
     }
     
 }

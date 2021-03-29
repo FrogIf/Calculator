@@ -3,7 +3,7 @@ package frog.calculator.micro;
 import frog.calculator.common.exec.AbstractSingleElementExecutor;
 import frog.calculator.common.exec.exception.NonsupportOperateException;
 import frog.calculator.common.exec.result.NestValue;
-import frog.calculator.common.exec.result.SymbolValue;
+import frog.calculator.common.exec.result.VariableValue;
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
@@ -18,7 +18,7 @@ public abstract class MicroListElementExecutor extends AbstractSingleElementExec
     protected IValue evaluate(ISyntaxNode self, IValue child, IExecuteContext context) {
         IList<ComplexNumber> args = new ArrayList<>();
         if(child != null){
-            if(child instanceof ComplexValue || child instanceof SymbolValue){
+            if(child instanceof ComplexValue || child instanceof VariableValue){
                 args.add(MicroUtil.getNumber(child, context));
             }else if(child instanceof NestValue){
                 NestValue vals = (NestValue) child;

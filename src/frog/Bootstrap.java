@@ -21,9 +21,6 @@ public class Bootstrap {
 
         ICalculatorSession session = new GeneralCalculatorSession();
 
-        session.addVariable("c", null);
-        session.addVariable("c", new SymbolValue("aaa"));
-        System.out.println(session.getVariable("c"));
         while(sc.hasNext()){
             String expression = sc.nextLine();
             if("exit".equals(expression)) {
