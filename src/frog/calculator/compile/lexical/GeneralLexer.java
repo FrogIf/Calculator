@@ -60,26 +60,20 @@ public class GeneralLexer implements ILexer {
      * 执行结束时, scanner会指向结尾 或者 未读字符的起始位置
      */
     private IToken parseWord(IScanner scanner){
-        IToken t = this.repository.retrieve(scanner);
-
-        // 贪婪策略, 继续读取后面的字符
-        if(scanner.isNotEnd() && isNormalChar(scanner.read())) {
-            StringBuilder word = new StringBuilder();
-            if(t != null){
-                word.append(t.word());
-            }
-            word.append(scanner.read());
-
-            while(scanner.moveToNext()){
-                char ch = scanner.read();
-                if(!isNormalChar(ch)){
-                    break;
-                }
-                word.append(ch);
-            }
-            t = this.namedTokenFactory.create(word.toString());
+        StringBuilder wordBuilder = new StringBuilder();
+        wordBuilder.append(scanner.read());
+        char ch;
+        while(scanner.moveToNext() && isNormalChar(ch = scanner.read())){
+            wordBuilder.append(ch);
         }
-        return t;
+
+        String word = wordBuilder.toString();
+        IToken token = this.repository.retrieve(word);
+        if(token == null){
+            token = this.namedTokenFactory.create(word);
+        }
+
+        return token;
     }
 
     private final boolean isNormalChar(char ch){

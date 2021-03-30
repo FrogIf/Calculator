@@ -130,6 +130,25 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
     }
 
     @Override
+    public IToken retrieve(String word) {
+        char[] chars = word.toCharArray();
+        int i = 0;
+        TokenRepository fr = new TokenRepository();
+        TokenRepository base = this;
+        TokenRepository tr = null;
+        for(; i < chars.length; i++){
+            fr.symbol = chars[i];
+            tr = base.nextLetter.find(fr);
+            if(tr == null){
+                break;
+            }else{
+                base = tr;
+            }
+        }
+        return tr == null ? null : tr.token;
+    }
+
+    @Override
     public boolean isEmpty() {
         return this.token == null && this.nextLetter.isEmpty();
     }
