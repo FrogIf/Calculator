@@ -19,8 +19,12 @@ public abstract class AbstractGeneralExecutor implements IExecutor {
             Iterator<ISyntaxNode> iterator = children.iterator();
             while (iterator.hasNext()){
                 ISyntaxNode child = iterator.next();
-                IResult result = child.execute(context);
-                childResults.add(result);
+                if(child != null){
+                    IResult result = child.execute(context);
+                    childResults.add(result);
+                }else{
+                    childResults.add(new GeneralResult(IResult.ResultType.UNKNOWN));
+                }
             }
         }
 

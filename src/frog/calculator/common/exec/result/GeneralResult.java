@@ -9,6 +9,10 @@ public class GeneralResult extends AbstractResult {
         // do nothing
     }
 
+    public GeneralResult(ResultType resultType){
+        this.resultType = resultType;
+    }
+
     public GeneralResult(IValue value){
         this.setValue(value);
     }

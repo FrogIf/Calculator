@@ -2,7 +2,6 @@ package frog;
 
 import frog.calculator.ICalculator;
 import frog.calculator.SimpleCalculator;
-import frog.calculator.common.exec.result.SymbolValue;
 import frog.calculator.connect.GeneralCalculatorSession;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.math.number.ComplexNumber;

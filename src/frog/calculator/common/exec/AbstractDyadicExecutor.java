@@ -1,7 +1,7 @@
 package frog.calculator.common.exec;
 
+import frog.calculator.common.exec.exception.ExecuteException;
 import frog.calculator.common.exec.exception.IncorrectStructureException;
-import frog.calculator.common.exec.exception.NonsupportOperateException;
 import frog.calculator.common.exec.result.GeneralResult;
 import frog.calculator.compile.semantic.IExecuteContext;
 import frog.calculator.compile.semantic.IResult;
@@ -22,14 +22,20 @@ public abstract class AbstractDyadicExecutor extends AbstractGeneralExecutor {
         }
         IResult r0 = children.get(0);
         IResult r1 = children.get(1);
-        if(r0.getResultType() == ResultType.VALUE && r1.getResultType() == ResultType.VALUE){
-            IValue resultVal = evaluate(self, r0.getValue(), r1.getValue(), context);
-            return new GeneralResult(resultVal);
-        }else{
-            throw new NonsupportOperateException(self.word(), "can't operate for this type : " + r0.getResultType().name() 
-            + " and " + r1.getResultType().name());
-        }
+        IValue resultVal = evaluate(self, getValue(r0), getValue(r1), context);
+        return new GeneralResult(resultVal);
     }
 
     protected abstract IValue evaluate(ISyntaxNode self, IValue childA, IValue childB, IExecuteContext context);
+
+    private IValue getValue(IResult result){
+        ResultType resultType = result.getResultType();
+        if(resultType == ResultType.VALUE){
+            return result.getValue();
+        }else if(resultType == ResultType.UNKNOWN){
+            return null;
+        }else{
+            throw new ExecuteException("can't get value from type : " + resultType.name());
+        }
+    }
 }

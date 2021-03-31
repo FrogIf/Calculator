@@ -4,7 +4,8 @@ public interface IResult {
 
     enum ResultType {
         VOID,
-        VALUE
+        VALUE,
+        UNKNOWN
     }
 
     ResultType getResultType();

@@ -18,6 +18,8 @@ public class MicroUtil {
         }else if(value instanceof VariableValue){
             IValue val = ((VariableValue)value).getValue();
             return getNumber(val, context);
+        }else if(value == null){
+            return null;
         }else{
             throw new ExecuteException("can't get value from " + value.getClass());
         }

@@ -2,7 +2,7 @@ package frog.calculator.compile.semantic;
 
 public abstract class AbstractResult implements IResult {
 
-    protected ResultType resultType = ResultType.VOID;
+    protected ResultType resultType = ResultType.UNKNOWN;
 
     protected IValue value;
 
