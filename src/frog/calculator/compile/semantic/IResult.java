@@ -1,20 +1,20 @@
 package frog.calculator.compile.semantic;
 
-/**
- * 执行结果
- */
 public interface IResult {
 
-    /**
-     * 是否执行成功
-     * @return
-     */
-    boolean success();
+    enum ResultType {
+        VOID,
+        VALUE,
+        UNKNOWN
+    }
+
+    ResultType getResultType();
 
     /**
-     * 执行结果
-     * @return
+     * 获取value
+     * @return value
+     * @throws NoValueException 没有可以获取到的值
      */
-    IValue value();
+    IValue getValue() throws NoValueException;
     
 }

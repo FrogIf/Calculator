@@ -7,11 +7,6 @@ import frog.calculator.compile.syntax.ISyntaxNode;
  */
 public interface IExecutor {
 
-    /**
-     * 执行
-     * @param context 语法树上下文
-     * @return 执行结果
-     */
-    IResult execute(ISyntaxNode token, IExecuteContext context);
+    IResult execute(ISyntaxNode self, IExecuteContext context);
 
 }

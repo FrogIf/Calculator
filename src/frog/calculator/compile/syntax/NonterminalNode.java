@@ -19,12 +19,12 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
 
     private final AssociateType associateType;
 
-    public NonterminalNode(IExecutor executor, String word, int priority) {
-        this(executor, word, priority, AssociateType.ALL);
+    public NonterminalNode(String word, int priority, IExecutor executor) {
+        this(word, priority, AssociateType.ALL, executor);
     }
 
-    public NonterminalNode(IExecutor executor, String literal, int priority, AssociateType associateType) {
-        super(executor, literal, priority);
+    public NonterminalNode(String literal, int priority, AssociateType associateType, IExecutor executor) {
+        super(literal, priority, executor);
         if(associateType == null){
             throw new IllegalArgumentException("assocaite type is null.");
         }
@@ -76,12 +76,18 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
 
     @Override
     public IList<ISyntaxNode> children() {
-        return new ArrayList<>(new ISyntaxNode[]{this.leftChild, this.rightChild});
+        if(AssociateType.ALL == this.associateType){
+            return new ArrayList<>(new ISyntaxNode[]{this.leftChild, this.rightChild});
+        }else if(AssociateType.LEFT == this.associateType){
+            return new ArrayList<>(new ISyntaxNode[]{this.leftChild});
+        }else{
+            return new ArrayList<>(new ISyntaxNode[]{this.rightChild});
+        }
     }
 
     @Override
     public ISyntaxNode generate(int position) {
-        NonterminalNode node = new NonterminalNode(this.executor, this.word, this.priority, this.associateType);
+        NonterminalNode node = new NonterminalNode(this.word, this.priority, this.associateType, this.executor);
         node.position = position;
         return node;
     }

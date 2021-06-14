@@ -27,7 +27,7 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler 
         // 栈结构, 用于存储构建过程中, 激活的语法节点, 这些节点只会作为父节点
         Stack<ISyntaxNode> activeStack = new Stack<>();
 
-        while(scanner.hasNext()){
+        while(scanner.isNotEnd()){
             ISyntaxNode node = lexer.parse(scanner).getSyntaxNodeGenerator().generate(position);
             
             ISyntaxNode activeNode = null;

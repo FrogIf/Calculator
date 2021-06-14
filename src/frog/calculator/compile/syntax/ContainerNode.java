@@ -13,8 +13,8 @@ public class ContainerNode extends AbstractSyntaxNode implements ISyntaxNodeGene
 
     private final String end;
 
-    public ContainerNode(IExecutor executor, String start, String end) {
-        super(executor, start, -1);
+    public ContainerNode(String start, String end, IExecutor executor) {
+        super(start, -1, executor);
         this.children = new LinkedList<>();
         this.end = end;
     }
@@ -61,7 +61,7 @@ public class ContainerNode extends AbstractSyntaxNode implements ISyntaxNodeGene
 
     @Override
     public ISyntaxNode generate(int position) {
-        ContainerNode node = new ContainerNode(executor, word, end);
+        ContainerNode node = new ContainerNode(word, end, executor);
         node.position = position;
         return node;
     }

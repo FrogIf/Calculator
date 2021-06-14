@@ -5,11 +5,11 @@ import frog.calculator.util.StringUtils;
 /**
  * 有理数
  */
-public final class RationalNumber implements INumber, Comparable<RationalNumber> {
+public final class RationalNumber extends AbstractBaseNumber implements Comparable<RationalNumber>{
 
     private final IntegerNumber numerator;    // 分子
 
-    private final IntegerNumber denominator;  // 分母
+    private final IntegerNumber denominator;  // 分母, 只可能是正数
 
     public static final RationalNumber ZERO = new RationalNumber(IntegerNumber.ZERO, IntegerNumber.ONE);
 
@@ -22,8 +22,12 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             denominator = IntegerNumber.ONE;
         }
         this.denominator = denominator.abs();
-        byte sign = (byte) (numerator.getSign() ^ denominator.getSign());
+        int sign = numerator.getSign() ^ denominator.getSign();
         this.numerator = sign == numerator.getSign() ? numerator : numerator.not();
+    }
+
+    public RationalNumber(IntegerNumber numerator) {
+        this(numerator, null);
     }
 
     public RationalNumber(String numerator, String denominator){
@@ -47,7 +51,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             bottom = bottom.div(gcd);
         }
 
-        byte sign = (byte) (top.getSign() ^ bottom.getSign());
+        int sign = top.getSign() ^ bottom.getSign();
         this.numerator = top.getSign() == sign ? top : top.not();
         this.denominator = bottom.abs();
     }
@@ -78,7 +82,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
                 bottom = bottom.div(gcd);
             }
         }
-        byte sign = (byte) (top.getSign() ^ bottom.getSign());
+        int sign = top.getSign() ^ bottom.getSign();
         this.numerator = top.getSign() == sign ? top : top.not();
         this.denominator = bottom.abs();
     }
@@ -140,7 +144,7 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
                 bottom = bottom.div(gcd);
             }
 
-            byte sign = negative ? IntegerNumber.NEGATIVE : IntegerNumber.POSITIVE;
+            int sign = negative ? NumberConstant.SIGN_NEGATIVE : NumberConstant.SIGN_POSITIVE;
             this.numerator = top.getSign() == sign ? top : top.abs();
             this.denominator = bottom.abs();
         }
@@ -212,12 +216,15 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
         }
     }
 
-    private RationalNumber upend(){
+    /**
+     * 颠倒分子分母
+     */
+    public RationalNumber upend(){
         return new RationalNumber(this.denominator, this.numerator);
     }
 
-    @Override
-    public String toDecimal(int precision) {
+    public String toDecimal() {
+        // TODO 保留小数位数, 舍入策略等
         if(IntegerNumber.ONE.equals(this.denominator)){
             return this.numerator.toString();
         }else{
@@ -228,12 +235,12 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 //            if(bcount > Integer.MAX_VALUE){
 //                throw new IllegalArgumentException("precision is too large.");
 //            }
-            IntegerNumber remEx = rem.decLeftShift(precision);
+            IntegerNumber remEx = rem.decLeftShift(this.scale);
 
             IntegerNumber decimal = remEx.div(this.denominator, remainder);
             String decimalStr = decimal.toString();
-            if(decimalStr.length() < precision){
-                decimalStr = StringUtils.leftFill(decimalStr, '0', precision - decimalStr.length());
+            if(decimalStr.length() < this.scale){
+                decimalStr = StringUtils.leftFill(decimalStr, '0', this.scale - decimalStr.length());
             }
             if(IntegerNumber.ZERO.equals(remainder.getRemainder()) && decimalStr.endsWith("0")){
                 decimalStr = StringUtils.rightTrim(decimalStr, '0');
@@ -244,16 +251,24 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
     @Override
     public String toString() {
-        return numerator.toString() + "/" + denominator.toString();
+        if(RESERVE_STRUCTURE == this.scale){
+            if(denominator.equals(IntegerNumber.ONE)){
+                return numerator.toString();
+            }else{
+                return numerator.toString() + "/" + denominator.toString();
+            }
+        }else{
+            return this.toDecimal();
+        }
     }
 
     @Override
     public int compareTo(RationalNumber o) {
         if(this == o) return 0;
 
-        byte sign = this.numerator.getSign();
+        int sign = this.numerator.getSign();
         if(sign != o.numerator.getSign()){
-            if(sign == IntegerNumber.POSITIVE){
+            if(sign == NumberConstant.SIGN_POSITIVE){
                 return 1;
             }else{
                 return -1;
@@ -265,11 +280,24 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
             }else{
                 mark = this.numerator.mult(o.denominator).compareTo(o.numerator.mult(this.denominator));
             }
-            if(sign == IntegerNumber.NEGATIVE){
+            if(sign == NumberConstant.SIGN_NEGATIVE){
                 mark = -mark;
             }
             return mark;
         }
+    }
+
+    public static RationalNumber valueOf(String numString){
+        int dot1 = numString.indexOf('.');
+        int dot2 = numString.indexOf('_');
+        RationalNumber rationalNumber;
+        if(dot2 == -1){ // 没有循环节
+            rationalNumber = new RationalNumber(numString);
+        }else{  // 有循环节
+            numString = numString.replace("_", "");
+            rationalNumber = new RationalNumber(numString, dot2 - dot1 - 1);
+        }
+        return rationalNumber;
     }
 
     @Override
@@ -291,7 +319,10 @@ public final class RationalNumber implements INumber, Comparable<RationalNumber>
 
     }
 
-    public IntegerNumber convertToInteger() {
+    /**
+     * 转换为整数, 如果转换失败, 则返回null
+     */
+    public IntegerNumber toInteger() {
         if(this.denominator == null || this.denominator.equals(IntegerNumber.ONE)){
             return this.numerator;
         }

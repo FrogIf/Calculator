@@ -8,13 +8,13 @@ import frog.calculator.util.collection.IList;
  */
 public final class TerminalNode extends AbstractSyntaxNode implements ISyntaxNodeGenerator {
 
-    public TerminalNode(IExecutor executor, String word, int position) {
-        super(executor, word, -1);
+    public TerminalNode(String word, int position, IExecutor executor) {
+        super(word, -1, executor);
         this.position = position;
     }
 
-    public TerminalNode(IExecutor executor, String word) {
-        super(executor, word, -1);
+    public TerminalNode(String word, IExecutor executor) {
+        super(word, -1, executor);
     }
 
     @Override
@@ -43,7 +43,7 @@ public final class TerminalNode extends AbstractSyntaxNode implements ISyntaxNod
 
     @Override
     public ISyntaxNode generate(int position) {
-        return new TerminalNode(this.executor, this.word, position);
+        return new TerminalNode(this.word, position, this.executor);
     }
     
 }

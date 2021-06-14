@@ -101,30 +101,51 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
 
     @Override
     public IToken retrieve(IScanner scanner) {
-        char ch = scanner.peek();
+        char ch = scanner.read();
         TokenRepository fr = new TokenRepository(ch);
         TokenRepository treeRegister = nextLetter.find(fr);
         if(treeRegister != null){
-            scanner.read();
-            return treeRegister.retrieveNext(scanner, fr);
+            if(scanner.moveToNext()){
+                return treeRegister.retrieveNext(scanner, fr);
+            }else{
+                return treeRegister.token;
+            }
         }else{
             return this.token;
         }
     }
 
     private IToken retrieveNext(IScanner scanner, TokenRepository fr){
-        if(scanner.hasNext()){
-            fr.symbol = scanner.peek();
-            TokenRepository treeRegister = nextLetter.find(fr);
-            if(treeRegister != null){
-                scanner.read();
+        fr.symbol = scanner.read();
+        TokenRepository treeRegister = nextLetter.find(fr);
+        if(treeRegister != null){
+            if(scanner.moveToNext()){
                 return treeRegister.retrieveNext(scanner, fr);
             }else{
-                return this.token;
+                return treeRegister.token;
             }
         }else{
             return this.token;
         }
+    }
+
+    @Override
+    public IToken retrieve(String word) {
+        char[] chars = word.toCharArray();
+        int i = 0;
+        TokenRepository fr = new TokenRepository();
+        TokenRepository base = this;
+        TokenRepository tr = null;
+        for(; i < chars.length; i++){
+            fr.symbol = chars[i];
+            tr = base.nextLetter.find(fr);
+            if(tr == null){
+                break;
+            }else{
+                base = tr;
+            }
+        }
+        return tr == null ? null : tr.token;
     }
 
     @Override

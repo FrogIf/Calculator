@@ -22,7 +22,8 @@ public class GeneralLexer implements ILexer {
 
     @Override
     public IToken parse(IScanner scanner) throws UnrecognizedTokenException{
-        char ch = scanner.peek();
+        char ch = skipBlank(scanner);
+
         IToken result = null;
         if(ch >= '0' && ch <= '9'){
             result = parseNumber(scanner);
@@ -35,26 +36,44 @@ public class GeneralLexer implements ILexer {
         if(result == null){
             throw new UnrecognizedTokenException(ch, scanner.position());
         }
+
+        // 跳过后空格
+        if(scanner.isNotEnd()){
+            skipBlank(scanner);
+        }
+
         return result;
+    }
+
+    private char skipBlank(IScanner scanner){
+        char ch = scanner.read();
+        while(ch == ' ' && scanner.moveToNext()){
+            ch = scanner.read();
+        }
+        return ch;
     }
 
     /**
      * 解析单词
      * 以字母开头, 符合如下正则: [a-zA-Z]+[a-zA-Z0-9_]*
+     * 
+     * 执行结束时, scanner会指向结尾 或者 未读字符的起始位置
      */
     private IToken parseWord(IScanner scanner){
-        StringBuilder word = new StringBuilder();
-        IToken t = this.repository.retrieve(scanner);
-        if(t == null || isNormalChar(scanner.peek())){
-            if(t != null){
-                word.append(t.getSyntaxNodeGenerator().word());
-            }
-            do{
-                word.append(scanner.read());
-            }while(scanner.hasNext() && isNormalChar(scanner.peek()));
-            this.namedTokenFactory.create(word.toString());
+        StringBuilder wordBuilder = new StringBuilder();
+        wordBuilder.append(scanner.read());
+        char ch;
+        while(scanner.moveToNext() && isNormalChar(ch = scanner.read())){
+            wordBuilder.append(ch);
         }
-        return t;
+
+        String word = wordBuilder.toString();
+        IToken token = this.repository.retrieve(word);
+        if(token == null){
+            token = this.namedTokenFactory.create(word);
+        }
+
+        return token;
     }
 
     private final boolean isNormalChar(char ch){
@@ -66,21 +85,23 @@ public class GeneralLexer implements ILexer {
     /**
      * 解析数字
      * 数字开头, 符合如下正则: [0-9]+(\.{1}[0-9]*_{1}[0-9]+)?
+     * <br/>
+     * 执行结束时, scanner会指向结尾 或者 未读字符的起始位置
      */
     private IToken parseNumber(IScanner scanner){
         StringBuilder numberBuilder = new StringBuilder();
         numberBuilder.append(scanner.read());
 
         boolean hasDot = false; // 记录是否已经找到小数点
-        while(scanner.hasNext()){
-            char ch = scanner.peek();
+        while(scanner.moveToNext()){
+            char ch = scanner.read();
             if(ch >= '0' && ch <= '9'){
-                numberBuilder.append(scanner.read());
+                numberBuilder.append(ch);
             }else if(ch == '.' && !hasDot){
                 hasDot = true;
-                numberBuilder.append(scanner.read());
+                numberBuilder.append(ch);
             }else if(ch == '_' && hasDot){
-                numberBuilder.append(scanner.read());
+                numberBuilder.append(ch);
             }else{
                 break;
             }

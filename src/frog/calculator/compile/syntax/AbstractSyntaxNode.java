@@ -17,7 +17,7 @@ public abstract class AbstractSyntaxNode implements ISyntaxNode {
 
     protected int position = -1;
 
-    protected AbstractSyntaxNode(IExecutor executor, String word, int priority){
+    protected AbstractSyntaxNode(String word, int priority, IExecutor executor){
         this.executor = executor;
         this.word = word;
         this.priority = priority;

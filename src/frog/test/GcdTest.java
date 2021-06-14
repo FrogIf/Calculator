@@ -4,9 +4,12 @@ import java.util.Random;
 
 import frog.calculator.math.number.IntegerNumber;
 
-public class GcdTest {
+/**
+ * 最大公约数准确性测试
+ */
+public class GcdTest implements ITest{
 
-    public static void main(String[] args){
+    public void test(){
         Random r = new Random();
         int i = Integer.MAX_VALUE;
         while(i > 0){
