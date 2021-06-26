@@ -101,11 +101,12 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
 
     @Override
     public IToken retrieve(IScanner scanner) {
-        char ch = scanner.read();
+        char ch = scanner.peek();
         TokenRepository fr = new TokenRepository(ch);
         TokenRepository treeRegister = nextLetter.find(fr);
         if(treeRegister != null){
-            if(scanner.moveToNext()){
+            scanner.take();
+            if(scanner.isNotEnd()){
                 return treeRegister.retrieveNext(scanner, fr);
             }else{
                 return treeRegister.token;
@@ -116,10 +117,11 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
     }
 
     private IToken retrieveNext(IScanner scanner, TokenRepository fr){
-        fr.symbol = scanner.read();
+        fr.symbol = scanner.peek();
         TokenRepository treeRegister = nextLetter.find(fr);
         if(treeRegister != null){
-            if(scanner.moveToNext()){
+            scanner.take();
+            if(scanner.isNotEnd()){
                 return treeRegister.retrieveNext(scanner, fr);
             }else{
                 return treeRegister.token;

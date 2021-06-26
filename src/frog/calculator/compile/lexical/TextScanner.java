@@ -14,8 +14,12 @@ public class TextScanner implements IScanner {
     }
 
     @Override
-    public char read() {
-        return content[index];
+    public char peek() {
+        if(index < content.length){
+            return content[index];
+        }else{
+            throw new ReadOutOfBoundsException();
+        }
     }
 
     @Override
@@ -24,9 +28,11 @@ public class TextScanner implements IScanner {
     }
 
     @Override
-    public boolean moveToNext() {
+    public void take() {
         index++;
-        return index < content.length;
+        if(index > content.length){
+            throw new ReadOutOfBoundsException();
+        }
     }
 
     @Override

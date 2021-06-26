@@ -1,12 +1,12 @@
 package frog.calculator.compile.lexical;
 
 /**
- * 数字koken工厂
+ * koken工厂
  */
-public interface INumberTokenFactory {
+public interface ITokenFactory {
     
     /**
-     * 创建一个数字token
+     * token
      * @param word
      * @return
      */

@@ -4,10 +4,12 @@ package frog.calculator.compile.lexical;
  * 表达式扫描器
  */
 public interface IScanner {
+
     /**
-     * 获取当前字符
+     * 预读当前字符
+     * @return
      */
-    char read();
+    char peek() throws ReadOutOfBoundsException;
 
     /**
      * 是否没有结束
@@ -16,12 +18,12 @@ public interface IScanner {
     boolean isNotEnd();
 
     /**
-     * 移动至下一个
+     * 移动到下一个位置
      */
-    boolean moveToNext();
+    void take() throws ReadOutOfBoundsException;
 
     /**
-     * 当前字符的索引值
+     * 当前所处位置
      */
     int position();
 }

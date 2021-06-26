@@ -1,29 +1,28 @@
 package frog.calculator.micro;
 
 import frog.calculator.compile.ICompileManager;
-import frog.calculator.compile.lexical.INamedTokenFactory;
-import frog.calculator.compile.lexical.INumberTokenFactory;
+import frog.calculator.compile.lexical.ITokenFactory;
+import frog.calculator.compile.lexical.ITokenRepository;
+import frog.calculator.compile.lexical.TokenRepository;
+import frog.calculator.compile.lexical.exception.DuplicateTokenException;
+import frog.calculator.compile.lexical.fetcher.ITokenFetcher;
+import frog.calculator.compile.lexical.fetcher.IdentifierTokenFetcher;
+import frog.calculator.compile.lexical.fetcher.InnerTokenFetcher;
+import frog.calculator.compile.lexical.fetcher.NumberTokenFetcher;
+import frog.calculator.compile.lexical.fetcher.PlusMinusTokenFetcher;
 import frog.calculator.compile.lexical.IToken;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 import frog.calculator.compile.syntax.TerminalNode;
+import frog.calculator.exception.CalculatorError;
 import frog.calculator.micro.exec.impl.base.NumberExecutor;
 import frog.calculator.micro.exec.impl.base.VariableExecutor;
+import frog.calculator.util.collection.ArrayList;
+import frog.calculator.util.collection.IList;
 
 public class MicroCompileManager implements ICompileManager {
 
-    @Override
-    public INamedTokenFactory getNamedTokenFactory() {
-        return new NamedTokenFactory();
-    }
-
-    @Override
-    public INumberTokenFactory getNumberTokenFactory() {
-        return new NumberTokenFactory();
-    }
-
-
-    private static class NamedTokenFactory implements INamedTokenFactory {
+    private static class IdentifierTokenFactory implements ITokenFactory {
 
         @Override
         public IToken create(String word) {
@@ -68,7 +67,7 @@ public class MicroCompileManager implements ICompileManager {
         
     }
 
-    public static class NumberTokenFactory implements INumberTokenFactory {
+    public static class NumberTokenFactory implements ITokenFactory {
 
         @Override
         public IToken create(String word) {
@@ -110,6 +109,46 @@ public class MicroCompileManager implements ICompileManager {
                 return NumberToken.this.numberStr;
             }
         } 
+    }
+
+    @Override
+    public IList<ITokenFetcher> getTokenFetchers() {
+        IList<ITokenFetcher> fetchers = new ArrayList<>();
+
+        // 数字fetcher
+        fetchers.add(new NumberTokenFetcher(new NumberTokenFactory()));
+        // 标识符fetcher
+        fetchers.add(new IdentifierTokenFetcher(new IdentifierTokenFactory()));
+
+        ITokenRepository tokenRepository = new TokenRepository();
+        IToken[] tokens = MicroTokenHolder.getTokens();
+        try {
+            for(IToken t : tokens){
+                tokenRepository.insert(t);
+            }
+        } catch (DuplicateTokenException e) {
+            throw new CalculatorError(e.getMessage());
+        }
+        // 内置符号fetcher
+        fetchers.add(new InnerTokenFetcher(tokenRepository));
+
+        // 正负号fetcher
+        fetchers.add(new PlusMinusTokenFetcher(new ITokenFactory(){
+
+            @Override
+            public IToken create(String word) {
+                if("+".equals(word)){
+                    return MicroTokenHolder.ADD_TOKEN;
+                }else if("-".equals(word)){
+                    return MicroTokenHolder.SUB_TOKEN;
+                }else{
+                    throw new IllegalArgumentException("can't recognized word : " + word);
+                }
+            }
+            
+        }));
+
+        return fetchers;
     }
 
 }

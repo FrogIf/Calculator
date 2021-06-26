@@ -21,18 +21,15 @@ import frog.calculator.micro.exec.impl.ext.FactorialExecutor;
 import frog.calculator.micro.exec.impl.ext.PercentExecutor;
 import frog.calculator.micro.exec.impl.fun.AverageExecutor;
 import frog.calculator.micro.exec.impl.fun.SumExecutor;
-import frog.calculator.platform.ITokenHolder;
 
-public class MicroTokenHolder implements ITokenHolder {
+class MicroTokenHolder {
+
+    private MicroTokenHolder(){
+        // do nothing
+    }
 
     private static final ISyntaxNodeGenerator[] builders = new ISyntaxNodeGenerator[] { 
         new NonterminalNode("=", 5, new EqualExecutor()),
-        new NonterminalNode("+", 10, new AddExecutor()),
-        new NonterminalNode("-", 10, new SubExecutor()), 
-        new NonterminalNode("++", 10, new AddExecutor()),
-        new NonterminalNode("+-", 10, new SubExecutor()),
-        new NonterminalNode("-+", 10, new SubExecutor()),
-        new NonterminalNode("--", 10, new AddExecutor()),
         new NonterminalNode("*", 20, new MultExecutor()), 
         new NonterminalNode("/", 20, new DivExecutor()),
         new NonterminalNode("^", 30, new PowerExecutor()), 
@@ -47,8 +44,11 @@ public class MicroTokenHolder implements ITokenHolder {
         new TerminalNode(")", null)
     };
 
-    @Override
-    public IToken[] getTokens() {
+    public static final IToken ADD_TOKEN =  new CommonToken("+", new NonterminalNode("+", 10, new AddExecutor()));
+
+    public static final IToken SUB_TOKEN =  new CommonToken("-", new NonterminalNode("-", 10, new SubExecutor()));
+
+    public static IToken[] getTokens() {
         IToken[] tokens = new IToken[builders.length];
         for(int i = 0, len = builders.length; i < len; i++){
             ISyntaxNodeGenerator b = builders[i];

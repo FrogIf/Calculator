@@ -1,40 +1,69 @@
 package frog.calculator.compile.lexical;
 
-import frog.calculator.compile.ICompileManager;
 import frog.calculator.compile.lexical.exception.UnrecognizedTokenException;
+import frog.calculator.compile.lexical.fetcher.ITokenFetcher;
+import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
+import frog.calculator.util.collection.IList;
+import frog.calculator.util.collection.Iterator;
 
 /**
  * 常规词法解析器
  */
 public class GeneralLexer implements ILexer {
 
-    private final ITokenRepository repository;
+    private final ITokenFetcher[] tokenFetchers;
 
-    private final INamedTokenFactory namedTokenFactory;
-
-    private final INumberTokenFactory numberTokenFactory;
-
-    public GeneralLexer(ITokenRepository repository, ICompileManager manager){
-        this.repository = repository;
-        this.namedTokenFactory = manager.getNamedTokenFactory();
-        this.numberTokenFactory = manager.getNumberTokenFactory();
+    private GeneralLexer(ITokenFetcher[] fetcherArray){
+        // 根据order排序
+        for(int i = 1; i < fetcherArray.length; i++){
+            ITokenFetcher fa = fetcherArray[i];
+            int j = i - 1;
+            ITokenFetcher fb;
+            for(; j > -1; j--){
+                fb = fetcherArray[j];
+                if(fa.order() < fb.order()){
+                    fetcherArray[j + 1] = fb;
+                }else{
+                    break;
+                }
+            }
+            fetcherArray[j + 1] = fa;
+        }
+        tokenFetchers = fetcherArray;
     }
+
+    private static final IToken GUARD_TOKEN = new IToken(){
+        @Override
+        public String word() {
+            return "";
+        }
+
+        @Override
+        public ISyntaxNodeGenerator getSyntaxNodeGenerator() {
+            return null;
+        }
+    };
 
     @Override
     public IToken parse(IScanner scanner) throws UnrecognizedTokenException{
-        char ch = skipBlank(scanner);
+        skipBlank(scanner);
 
-        IToken result = null;
-        if(ch >= '0' && ch <= '9'){
-            result = parseNumber(scanner);
-        }else if((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')){
-            result = parseWord(scanner);
-        }else{
-            // 其它符号的解析, 只能是内置的
-            result = this.repository.retrieve(scanner);
+        IToken result = GUARD_TOKEN;
+
+        for(int i = 0; i < tokenFetchers.length; i++){
+            ITokenFetcher fetcher = tokenFetchers[i];
+            IToken token = fetcher.fetch(scanner);
+            // 最长匹配原则
+            if(token != null && token.word().length() > result.word().length()){
+                result = token;
+            }
+            if(token != null && !fetcher.overridable()){
+                break;
+            }
         }
-        if(result == null){
-            throw new UnrecognizedTokenException(ch, scanner.position());
+
+        if(result == GUARD_TOKEN){
+            throw new UnrecognizedTokenException(scanner.peek(), scanner.position());
         }
 
         // 跳过后空格
@@ -45,69 +74,24 @@ public class GeneralLexer implements ILexer {
         return result;
     }
 
-    private char skipBlank(IScanner scanner){
-        char ch = scanner.read();
-        while(ch == ' ' && scanner.moveToNext()){
-            ch = scanner.read();
-        }
-        return ch;
-    }
-
-    /**
-     * 解析单词
-     * 以字母开头, 符合如下正则: [a-zA-Z]+[a-zA-Z0-9_]*
-     * 
-     * 执行结束时, scanner会指向结尾 或者 未读字符的起始位置
-     */
-    private IToken parseWord(IScanner scanner){
-        StringBuilder wordBuilder = new StringBuilder();
-        wordBuilder.append(scanner.read());
+    private void skipBlank(IScanner scanner){
         char ch;
-        while(scanner.moveToNext() && isNormalChar(ch = scanner.read())){
-            wordBuilder.append(ch);
-        }
-
-        String word = wordBuilder.toString();
-        IToken token = this.repository.retrieve(word);
-        if(token == null){
-            token = this.namedTokenFactory.create(word);
-        }
-
-        return token;
-    }
-
-    private final boolean isNormalChar(char ch){
-        return (ch >= 'A' && ch <= 'Z') 
-        || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') 
-        || ch == '_';
-    }
-
-    /**
-     * 解析数字
-     * 数字开头, 符合如下正则: [0-9]+(\.{1}[0-9]*_{1}[0-9]+)?
-     * <br/>
-     * 执行结束时, scanner会指向结尾 或者 未读字符的起始位置
-     */
-    private IToken parseNumber(IScanner scanner){
-        StringBuilder numberBuilder = new StringBuilder();
-        numberBuilder.append(scanner.read());
-
-        boolean hasDot = false; // 记录是否已经找到小数点
-        while(scanner.moveToNext()){
-            char ch = scanner.read();
-            if(ch >= '0' && ch <= '9'){
-                numberBuilder.append(ch);
-            }else if(ch == '.' && !hasDot){
-                hasDot = true;
-                numberBuilder.append(ch);
-            }else if(ch == '_' && hasDot){
-                numberBuilder.append(ch);
-            }else{
+        do{
+            ch = scanner.peek();
+            if(ch != ' '){
                 break;
             }
-        }
-
-        return numberBuilder.length() > 0 ? this.numberTokenFactory.create(numberBuilder.toString())  : null;
+            scanner.take();
+        }while(scanner.isNotEnd());
     }
-    
+
+    public static GeneralLexer build(IList<ITokenFetcher> tList){
+        ITokenFetcher[] fetcherArray = new ITokenFetcher[tList.size()];
+        int i = 0;
+        Iterator<ITokenFetcher> itr = tList.iterator();
+        while(itr.hasNext()){
+            fetcherArray[i++] = itr.next();
+        }
+        return new GeneralLexer(fetcherArray);
+    }
 }
