@@ -18,6 +18,7 @@ public class IdentifierTokenFetcher implements ITokenFetcher {
         char ch;
         while(scanner.isNotEnd() && isNormalChar(ch = scanner.peek())){
             wordBuilder.append(ch);
+            scanner.take();
         }
         return wordBuilder.length() == 0 ? null : this.identifierTokenFactory.create(wordBuilder.toString());
     }
