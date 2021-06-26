@@ -51,16 +51,16 @@ public class GeneralLexer implements ILexer {
         IToken result = GUARD_TOKEN;
 
         int startPos = operator.position();
-        int offset = 0;
+        int endPos = startPos;
         for(int i = 0; i < tokenFetchers.length; i++){
             ITokenFetcher fetcher = tokenFetchers[i];
             operator.moveToMark();
             IToken token = fetcher.fetch(operator);
             // 最长匹配原则
             if(token != null){
-                if(token.word().length() > result.word().length()){
+                if(operator.position() > endPos){
                     result = token;
-                    offset = operator.position() - startPos;
+                    endPos = operator.position();
                 }
                 if(!fetcher.overridable()){
                     break;
@@ -68,7 +68,7 @@ public class GeneralLexer implements ILexer {
             }
         }
 
-        operator.markTo(offset);
+        operator.markTo(endPos - startPos);
         operator.moveToMark();
 
         if(result == GUARD_TOKEN){
@@ -83,15 +83,18 @@ public class GeneralLexer implements ILexer {
         return result;
     }
 
-    private void skipBlank(IScanner scanner){
+    private void skipBlank(IScannerOperator operator){
+        int start = operator.position();
         char ch;
         do{
-            ch = scanner.peek();
+            ch = operator.peek();
             if(ch != ' '){
                 break;
             }
-            scanner.take();
-        }while(scanner.isNotEnd());
+            operator.take();
+        }while(operator.isNotEnd());
+        operator.markTo(operator.position() - start);
+        operator.moveToMark();
     }
 
     public static GeneralLexer build(IList<ITokenFetcher> tList){
