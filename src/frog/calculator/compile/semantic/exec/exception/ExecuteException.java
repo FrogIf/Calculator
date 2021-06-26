@@ -1,4 +1,4 @@
-package frog.calculator.common.exec.exception;
+package frog.calculator.compile.semantic.exec.exception;
 
 import frog.calculator.exception.CalculatorException;
 

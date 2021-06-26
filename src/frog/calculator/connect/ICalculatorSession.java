@@ -1,6 +1,6 @@
 package frog.calculator.connect;
 
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.result.IValue;
 
 /**
  * 计算器会话<br/>

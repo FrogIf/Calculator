@@ -1,6 +1,6 @@
 package frog.calculator.connect;
 
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.result.IValue;
 import frog.calculator.util.IComparator;
 import frog.calculator.util.collection.IMap;
 import frog.calculator.util.collection.TreeMap;

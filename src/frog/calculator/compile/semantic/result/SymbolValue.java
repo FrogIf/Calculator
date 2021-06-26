@@ -1,6 +1,4 @@
-package frog.calculator.common.exec.result;
-
-import frog.calculator.compile.semantic.IValue;
+package frog.calculator.compile.semantic.result;
 
 /**
  * 符号

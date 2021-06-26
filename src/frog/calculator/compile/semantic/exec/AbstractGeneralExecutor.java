@@ -1,9 +1,8 @@
-package frog.calculator.common.exec;
+package frog.calculator.compile.semantic.exec;
 
-import frog.calculator.common.exec.result.GeneralResult;
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IExecutor;
-import frog.calculator.compile.semantic.IResult;
+import frog.calculator.compile.semantic.result.GeneralResult;
+import frog.calculator.compile.semantic.result.IResult;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.Iterator;

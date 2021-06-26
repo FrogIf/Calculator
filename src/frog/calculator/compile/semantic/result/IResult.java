@@ -1,4 +1,6 @@
-package frog.calculator.compile.semantic;
+package frog.calculator.compile.semantic.result;
+
+import frog.calculator.compile.semantic.NoValueException;
 
 public interface IResult {
 

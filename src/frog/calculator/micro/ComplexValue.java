@@ -1,6 +1,6 @@
 package frog.calculator.micro;
 
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.result.IValue;
 import frog.calculator.math.number.ComplexNumber;
 
 public class ComplexValue implements IValue{

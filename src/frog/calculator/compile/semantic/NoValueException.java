@@ -1,6 +1,6 @@
 package frog.calculator.compile.semantic;
 
-import frog.calculator.compile.semantic.IResult.ResultType;
+import frog.calculator.compile.semantic.result.IResult.ResultType;
 import frog.calculator.exception.CalculatorException;
 
 public class NoValueException extends CalculatorException {

@@ -1,5 +1,7 @@
 package frog.calculator.compile.lexical;
 
+import frog.calculator.compile.lexical.exception.ReadOutOfBoundsException;
+
 /**
  * 字符文本扫描器
  */

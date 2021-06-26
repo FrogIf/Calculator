@@ -1,8 +1,8 @@
 package frog.calculator.micro;
 
-import frog.calculator.common.exec.AbstractDyadicExecutor;
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.exec.AbstractDyadicExecutor;
+import frog.calculator.compile.semantic.result.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.math.number.ComplexNumber;
 

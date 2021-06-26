@@ -1,7 +1,7 @@
 package frog.calculator.micro.exec.impl.base;
 
-import frog.calculator.common.exec.exception.IncorrectStructureException;
 import frog.calculator.compile.semantic.IExecuteContext;
+import frog.calculator.compile.semantic.exec.exception.IncorrectStructureException;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.math.number.ComplexNumber;
 import frog.calculator.math.number.NumberUtil;

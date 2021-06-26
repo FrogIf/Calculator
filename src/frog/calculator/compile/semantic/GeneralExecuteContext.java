@@ -1,7 +1,6 @@
-package frog.calculator.common.exec;
+package frog.calculator.compile.semantic;
 
-import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.result.IValue;
 import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.util.IComparator;
 import frog.calculator.util.collection.IMap;

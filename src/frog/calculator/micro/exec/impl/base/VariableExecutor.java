@@ -1,11 +1,11 @@
 package frog.calculator.micro.exec.impl.base;
 
-import frog.calculator.common.exec.exception.IncorrectStructureException;
-import frog.calculator.common.exec.result.GeneralResult;
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IExecutor;
-import frog.calculator.compile.semantic.IResult;
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.exec.IExecutor;
+import frog.calculator.compile.semantic.exec.exception.IncorrectStructureException;
+import frog.calculator.compile.semantic.result.GeneralResult;
+import frog.calculator.compile.semantic.result.IResult;
+import frog.calculator.compile.semantic.result.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.collection.IList;
 

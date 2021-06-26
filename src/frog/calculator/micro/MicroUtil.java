@@ -1,9 +1,9 @@
 package frog.calculator.micro;
 
-import frog.calculator.common.exec.exception.ExecuteException;
-import frog.calculator.common.exec.result.VariableValue;
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.exec.exception.ExecuteException;
+import frog.calculator.compile.semantic.result.IValue;
+import frog.calculator.compile.semantic.result.VariableValue;
 import frog.calculator.math.number.ComplexNumber;
 
 public class MicroUtil {

@@ -1,6 +1,6 @@
 package frog.calculator.connect;
 
-import frog.calculator.compile.semantic.IValue;
+import frog.calculator.compile.semantic.result.IValue;
 
 /**
  * 不起任何作用的calculator session

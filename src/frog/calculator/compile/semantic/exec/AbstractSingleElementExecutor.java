@@ -1,12 +1,12 @@
-package frog.calculator.common.exec;
+package frog.calculator.compile.semantic.exec;
 
-import frog.calculator.common.exec.exception.IncorrectStructureException;
-import frog.calculator.common.exec.exception.NonsupportOperateException;
-import frog.calculator.common.exec.result.GeneralResult;
 import frog.calculator.compile.semantic.IExecuteContext;
-import frog.calculator.compile.semantic.IResult;
-import frog.calculator.compile.semantic.IValue;
-import frog.calculator.compile.semantic.IResult.ResultType;
+import frog.calculator.compile.semantic.exec.exception.IncorrectStructureException;
+import frog.calculator.compile.semantic.exec.exception.NonsupportOperateException;
+import frog.calculator.compile.semantic.result.GeneralResult;
+import frog.calculator.compile.semantic.result.IResult;
+import frog.calculator.compile.semantic.result.IValue;
+import frog.calculator.compile.semantic.result.IResult.ResultType;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.collection.IList;
 

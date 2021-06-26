@@ -1,12 +1,12 @@
 package frog.calculator;
 
-import frog.calculator.common.exec.GeneralExecuteContext;
 import frog.calculator.compile.lexical.GeneralLexer;
 import frog.calculator.compile.lexical.ILexer;
 import frog.calculator.compile.lexical.TextScanner;
-import frog.calculator.compile.semantic.IResult;
-import frog.calculator.compile.semantic.IValue;
-import frog.calculator.compile.semantic.IResult.ResultType;
+import frog.calculator.compile.semantic.GeneralExecuteContext;
+import frog.calculator.compile.semantic.result.IResult;
+import frog.calculator.compile.semantic.result.IValue;
+import frog.calculator.compile.semantic.result.IResult.ResultType;
 import frog.calculator.compile.syntax.GeneralSyntaxTreeBuilder;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxTreeBuilder;

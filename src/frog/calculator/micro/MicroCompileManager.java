@@ -1,6 +1,5 @@
 package frog.calculator.micro;
 
-import frog.calculator.compile.ICompileManager;
 import frog.calculator.compile.lexical.ITokenFactory;
 import frog.calculator.compile.lexical.ITokenRepository;
 import frog.calculator.compile.lexical.TokenRepository;
@@ -20,7 +19,7 @@ import frog.calculator.micro.exec.impl.base.VariableExecutor;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
 
-public class MicroCompileManager implements ICompileManager {
+public class MicroCompileManager {
 
     private static class IdentifierTokenFactory implements ITokenFactory {
 
@@ -111,7 +110,6 @@ public class MicroCompileManager implements ICompileManager {
         } 
     }
 
-    @Override
     public IList<ITokenFetcher> getTokenFetchers() {
         IList<ITokenFetcher> fetchers = new ArrayList<>();
 

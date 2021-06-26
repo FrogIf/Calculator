@@ -1,6 +1,5 @@
-package frog.calculator.common.exec.result;
+package frog.calculator.compile.semantic.result;
 
-import frog.calculator.compile.semantic.IValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.util.collection.IList;
 import frog.calculator.util.collection.UnmodifiableList;
