@@ -45,30 +45,39 @@ public class GeneralLexer implements ILexer {
     };
 
     @Override
-    public IToken parse(IScanner scanner) throws UnrecognizedTokenException{
-        skipBlank(scanner);
+    public IToken parse(IScannerOperator operator) throws UnrecognizedTokenException{
+        skipBlank(operator);
 
         IToken result = GUARD_TOKEN;
 
+        int startPos = operator.position();
+        int offset = 0;
         for(int i = 0; i < tokenFetchers.length; i++){
             ITokenFetcher fetcher = tokenFetchers[i];
-            IToken token = fetcher.fetch(scanner);
+            operator.moveToMark();
+            IToken token = fetcher.fetch(operator);
             // 最长匹配原则
-            if(token != null && token.word().length() > result.word().length()){
-                result = token;
-            }
-            if(token != null && !fetcher.overridable()){
-                break;
+            if(token != null){
+                if(token.word().length() > result.word().length()){
+                    result = token;
+                    offset = operator.position() - startPos;
+                }
+                if(!fetcher.overridable()){
+                    break;
+                }
             }
         }
 
+        operator.markTo(offset);
+        operator.moveToMark();
+
         if(result == GUARD_TOKEN){
-            throw new UnrecognizedTokenException(scanner.peek(), scanner.position());
+            throw new UnrecognizedTokenException(operator.peek(), operator.position());
         }
 
         // 跳过后空格
-        if(scanner.isNotEnd()){
-            skipBlank(scanner);
+        if(operator.isNotEnd()){
+            skipBlank(operator);
         }
 
         return result;

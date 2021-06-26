@@ -15,7 +15,13 @@ public class IdentifierTokenFetcher implements ITokenFetcher {
     @Override
     public IToken fetch(IScanner scanner) {
         StringBuilder wordBuilder = new StringBuilder();
-        char ch;
+        char ch = scanner.peek();
+        if((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || ch == '_'){
+            wordBuilder.append(ch);
+            scanner.take();
+        }else{
+            return null;
+        }
         while(scanner.isNotEnd() && isNormalChar(ch = scanner.peek())){
             wordBuilder.append(ch);
             scanner.take();

@@ -4,6 +4,7 @@ import frog.calculator.compile.exception.CompileException;
 import frog.calculator.compile.syntax.exception.SyntaxException;
 import frog.calculator.compile.lexical.ILexer;
 import frog.calculator.compile.lexical.IScanner;
+import frog.calculator.compile.lexical.IScannerOperator;
 import frog.calculator.util.collection.Stack;
 
 /**
@@ -20,15 +21,15 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler 
         this.lexer = lexer;
     }
 
-    public ISyntaxNode build(IScanner scanner) throws CompileException {
+    public ISyntaxNode build(IScannerOperator scannerOperator) throws CompileException {
         int position = 0;
-        ISyntaxNode root = lexer.parse(scanner).getSyntaxNodeGenerator().generate(position++);
+        ISyntaxNode root = lexer.parse(scannerOperator).getSyntaxNodeGenerator().generate(position++);
 
         // 栈结构, 用于存储构建过程中, 激活的语法节点, 这些节点只会作为父节点
         Stack<ISyntaxNode> activeStack = new Stack<>();
 
-        while(scanner.isNotEnd()){
-            ISyntaxNode node = lexer.parse(scanner).getSyntaxNodeGenerator().generate(position);
+        while(scannerOperator.isNotEnd()){
+            ISyntaxNode node = lexer.parse(scannerOperator).getSyntaxNodeGenerator().generate(position);
             
             ISyntaxNode activeNode = null;
             boolean hasInsert = false;
@@ -47,7 +48,7 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler 
             }else{
                 root = this.associate(root, node);
                 if(root == null){
-                    throw new SyntaxException(node.word(), scanner.position(), 0);
+                    throw new SyntaxException(node.word(), scannerOperator.position(), 0);
                 }
                 if(node.isRightOpen() && root != node){
                     activeStack.push(node);

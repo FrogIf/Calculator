@@ -13,6 +13,6 @@ public interface ILexer {
      * @return 返回解析结果
      * @throws UnrecognizedTokenException 如果无法进行词法解析, 将抛出此异常
      */
-    IToken parse(IScanner scanner) throws UnrecognizedTokenException;
+    IToken parse(IScannerOperator operator) throws UnrecognizedTokenException;
     
 }

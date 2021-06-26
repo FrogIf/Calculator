@@ -2,7 +2,7 @@ package frog.calculator;
 
 import frog.calculator.compile.lexical.GeneralLexer;
 import frog.calculator.compile.lexical.ILexer;
-import frog.calculator.compile.lexical.TextScanner;
+import frog.calculator.compile.lexical.TextScannerOperator;
 import frog.calculator.compile.semantic.GeneralExecuteContext;
 import frog.calculator.compile.semantic.result.IResult;
 import frog.calculator.compile.semantic.result.IValue;
@@ -25,7 +25,7 @@ public class SimpleCalculator implements ICalculator<ComplexNumber> {
     }
 
     public ComplexNumber calculate(String expression, ICalculatorSession session) {
-        ISyntaxNode expRoot = this.builder.build(new TextScanner(expression));
+        ISyntaxNode expRoot = this.builder.build(new TextScannerOperator(expression));
         // System.out.println(DebugUtil.getSyntaxTree(expRoot));
         GeneralExecuteContext context = new GeneralExecuteContext(session);
         IResult result = expRoot.execute(context);
