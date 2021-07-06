@@ -14,6 +14,9 @@ import frog.calculator.connect.ICalculatorSession;
 import frog.calculator.math.number.ComplexNumber;
 import frog.calculator.micro.MicroCompileManager;
 import frog.calculator.micro.MicroUtil;
+import frog.calculator.util.collection.IList;
+import frog.test.util.tree.SyntaxTreeDisplayUtil;
+import frog.test.util.tree.SyntaxTreeDisplayUtil.ITreeNodeReader;
 
 public class SimpleCalculator implements ICalculator<ComplexNumber> {
 
@@ -26,7 +29,20 @@ public class SimpleCalculator implements ICalculator<ComplexNumber> {
 
     public ComplexNumber calculate(String expression, ICalculatorSession session) {
         ISyntaxNode expRoot = this.builder.build(new TextScannerOperator(expression));
-        // System.out.println(DebugUtil.getSyntaxTree(expRoot));
+        String treeDisplayStr = SyntaxTreeDisplayUtil.drawTree(expRoot, new ITreeNodeReader<ISyntaxNode>(){
+
+            @Override
+            public String label(ISyntaxNode node) {
+                return node.word();
+            }
+
+            @Override
+            public IList<ISyntaxNode> children(ISyntaxNode parent) {
+                return parent.children();
+            }
+
+        });
+        System.out.println(treeDisplayStr);
         GeneralExecuteContext context = new GeneralExecuteContext(session);
         IResult result = expRoot.execute(context);
         if(result.getResultType() == ResultType.VALUE){

@@ -27,6 +27,14 @@ public class StringUtils {
         return sb.toString() + str;
     }
 
+    public static String rightFill(String str, char ch, int count){
+        StringBuilder sb = new StringBuilder(str);
+        for(int i = 0; i < count; i++){
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
     public static String rightTrim(String str, char ch){
         int i = str.length() - 1;
         while(i > 0 && str.charAt(i) == ch){
@@ -53,5 +61,26 @@ public class StringUtils {
 
     public static String valueOf(Object obj){
         return valueOf(obj, "null");
+    }
+
+    // 一个字符串的两端全部填充
+    public static String bothFill(char left, int leftRepeat, String center, char right, int rightRepeat) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < leftRepeat; i++){
+            sb.append(left);
+        }
+        sb.append(center);
+        for(int i = 0; i < rightRepeat; i++){
+            sb.append(right);
+        }
+        return sb.toString();
+    }
+
+    public static String repeat(String element, int repeat){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < repeat; i++){
+            sb.append(element);
+        }
+        return sb.toString();
     }
 }
