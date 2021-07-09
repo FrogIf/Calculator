@@ -14,59 +14,61 @@ public class SyntaxTreeDisplayUtil {
      */
 
     public static <T> String drawTree(T treeRoot, ITreeNodeReader<T> reader){
-        AnchorNode root = new AnchorNode(fixChildCount(treeRoot, reader)).setLabel(reader.label(treeRoot)).setSource(treeRoot);
+        AnchorNode root = new AnchorNode(fetchChildCount(treeRoot, reader)).setLabel(reader.label(treeRoot)).setSource(treeRoot);
+        root.col = root.children.length >> 1;
 
         Stack<Integer> viewCountStack = new Stack<>();  // 记录遍历的子节点个数
-        ArrayList<int[]> maxColIndexEachRow = new ArrayList<>(); // 记录每层的最大索引位置, 之所以使用数组, 是为了方便修改
+        ArrayList<int[]> maxColIndexEachRow = new ArrayList<>(); // 记录每层的最大索引值, 之所以使用数组泛型, 是为了方便修改
         int rowIndex = 0;
 
         // 深度优先, 确定节点的相对位置
         AnchorNode cursor = root;
         viewCountStack.push(0);
-        maxColIndexEachRow.add(new int[]{-1});
+        maxColIndexEachRow.add(new int[]{ root.col });
         while(cursor != null){
             if(cursor.children.length > viewCountStack.top()){
-                Integer index = viewCountStack.pop();
-                viewCountStack.push(index + 1);
-                if(index == 0){ // 说明children还是空的
+                Integer childCount = viewCountStack.pop();
+                viewCountStack.push(childCount + 1);
+                if(childCount == 0){ // 说明children还是空的
                     IList<T> sourceChildren = reader.children((T)cursor.source);
-                    int maxColIndex = maxColIndexEachRow.get(rowIndex)[0];
-                    int cs = sourceChildren.size();
-                    int midIndex = -1;
-                    if((cs & 1) == 0){  // 如果是偶数个子节点, 增加一个空白中间节点
-                        midIndex = cs >> 1;
-                    }
                     Iterator<T> itr = sourceChildren.iterator();
                     int i = 0;
+                    int colStart = cursor.col - cursor.children.length >> 1;
                     while(itr.hasNext()){
-                        if(i == midIndex){
-                            cursor.setChild(i, new AnchorNode(0).setParent(cursor).setCol(maxColIndex + i));    // 空的占位节点
-                            i++;
-                        }
                         T node = itr.next();
                         if(node == null){
-                            cursor.setChild(i, new AnchorNode(0).setCol(maxColIndex + i).setLabel("").setParent(cursor).setSource(new Object()));
+                            cursor.setChild(i, new AnchorNode(0).setLabel("").setParent(cursor).setCol(colStart + i));
                         }else{
-                            cursor.setChild(i, new AnchorNode(fixChildCount(node, reader)).setCol(maxColIndex + i).setLabel(reader.label(node)).setParent(cursor).setSource(node));
+                            cursor.setChild(i, new AnchorNode(fetchChildCount(node, reader))
+                                    .setLabel(reader.label(node)).setParent(cursor).setSource(node).setCol(colStart + i)
+                                );
                         }
                         i++;
                     }
                 }
-                cursor = cursor.children[index];    // 向下一层移动
+                cursor = cursor.children[childCount];    // 向下一层移动
                 rowIndex++;
                 if(maxColIndexEachRow.size() == rowIndex){
                     maxColIndexEachRow.add(new int[]{cursor.parent.col});
                 }
                 viewCountStack.push(0);
             }else{
-                // 如果是叶子节点, 或者所有子节点都已经遍历完成
+                // 所有子节点都已经遍历完成
                 if(cursor.children.length > 0){
                     cursor.col = (cursor.children[0].col + cursor.children[cursor.children.length - 1].col) >> 1;
-                    maxColIndexEachRow.get(rowIndex)[0] = cursor.col;
-                }else{
                     int[] maxColInfo = maxColIndexEachRow.get(rowIndex);
-                    maxColInfo[0] = maxColInfo[0] + 1;
-                    cursor.setCol(maxColInfo[0]);
+                    if(maxColInfo[0] < cursor.col){
+                        maxColInfo[0] = cursor.col;
+                    }
+                }else{  // 如果是叶子节点
+                    int[] maxColInfo = maxColIndexEachRow.get(rowIndex);
+                    AnchorNode parent = cursor.parent;
+                    if(parent != null && parent.children.length == 2 && parent.children[1] == cursor){
+                        maxColInfo[0] = maxColInfo[0] + 2;
+                    }else{
+                        maxColInfo[0] = maxColInfo[0] + 1;
+                    }
+                    cursor.col = maxColInfo[0];
                 }
                 cursor = cursor.parent; // 向上一层移动
                 rowIndex--;
@@ -94,11 +96,9 @@ public class SyntaxTreeDisplayUtil {
                 cursor = cursor.children[index];
                 viewCountStack.push(0);
             }else{
-                if(cursor.source != null){  // 说明不是占位节点
-                    int w = colWidth[cursor.col];
-                    if(w < cursor.label.length()){
-                        colWidth[cursor.col] = cursor.label.length() + 1;   // 宽度扩充1, 防止同层相邻节点混在一起
-                    }
+                int w = colWidth[cursor.col];
+                if(w < cursor.label.length()){
+                    colWidth[cursor.col] = cursor.label.length() + 1;   // 宽度扩充1, 防止同层相邻节点混在一起
                 }
                 cursor = cursor.parent;
                 viewCountStack.pop();
@@ -122,24 +122,18 @@ public class SyntaxTreeDisplayUtil {
                 if(n.parent != null){
                     int parentCol = n.parent.col;   // 父节点所在列
                     int pos = judgeNodePosInChildren(n, n.parent);
-                    int width = colWidth[n.col] - (n.col == 0 ? 0 : colWidth[n.col - 1]);
-                    int leftFillNum = (width - 1) >> 1;
-                    int rightFillNum = width - 1 - leftFillNum;
-                    int distance = colWidth[n.col] - (i == 0 ? 0 : colWidth[layer[i - 1].col]);
-                    int blank = distance - width;
-                    if(n.source == null){   // 占位节点
-                        if(n.col == parentCol){
-                            canvas.append(StringUtils.bothFill('─', leftFillNum + blank, "┴", '─', rightFillNum));
-                        }else{
-                            canvas.append(StringUtils.repeat("─", leftFillNum + blank + rightFillNum));
-                        }
-                    }else if(n.col < parentCol){   // 该节点在父节点的左边
+                    int labelWidth = colWidth[n.col] - (n.col == 0 ? 0 : colWidth[n.col - 1]);
+                    int labelLeftFill = (labelWidth - 1) >> 1;
+                    int labelRightFill = labelWidth - 1 - labelLeftFill;
+                    int unfill = colWidth[n.col] - (i == 0 ? 0 : colWidth[layer[i - 1].col]);
+                    int blank = unfill - labelWidth;
+                    if(n.col < parentCol){   // 该节点在父节点的左边
                         if(pos == -1){  // 最左
-                            canvas.append(StringUtils.bothFill(' ', leftFillNum + blank, "┌", '─', rightFillNum));
+                            canvas.append(StringUtils.bothFill(' ', labelLeftFill + blank, "┌", '─', labelRightFill));
                         }else if(pos == 1){ // 最右, 这种情况不会出现, 除非是bug
-                            canvas.append(StringUtils.repeat("/", blank + width));
+                            canvas.append(StringUtils.repeat("/", blank + labelWidth));
                         }else{  // 中间
-                            canvas.append(StringUtils.bothFill('─', blank + leftFillNum, "┬", '─', rightFillNum));
+                            canvas.append(StringUtils.bothFill('─', blank + labelLeftFill, "┬", '─', labelRightFill));
                         }
                     }else if(n.col > parentCol){ // 该节点在父节点的右边
                         AnchorNode preBrother;
@@ -160,25 +154,26 @@ public class SyntaxTreeDisplayUtil {
                             int fixRightFillNum = fixWidth - 1 - fixLeftFillNum;
                             preStr = StringUtils.bothFill('─', fixFill + fixLeftFillNum, "┴", '─', fixRightFillNum);
                             hasFillLen = preStr.length();
+                            canvas.append(preStr);
                         }
                         if(pos == -1){  // 最左
-                            canvas.append(StringUtils.repeat("\\", blank + width - hasFillLen));
+                            canvas.append(StringUtils.repeat("\\", blank + labelWidth - hasFillLen));
                         }else if(pos == 1){ // 最右
-                            canvas.append(StringUtils.bothFill('─', blank + leftFillNum - hasFillLen, "┐", ' ', rightFillNum));
+                            canvas.append(StringUtils.bothFill('─', blank + labelLeftFill - hasFillLen, "┐", ' ', labelRightFill));
                         }else{  // 中间
-                            canvas.append(StringUtils.bothFill('─', blank + leftFillNum - hasFillLen, "┬", '─', rightFillNum));
+                            canvas.append(StringUtils.bothFill('─', blank + labelLeftFill - hasFillLen, "┬", '─', labelRightFill));
                         }
                     }else{ // 该节点在父节点的正下方
                         if(n.parent.children.length > 1){
                             if(pos == -1){  // 最左孩子
-                                canvas.append(StringUtils.bothFill(' ', blank + leftFillNum, "├", '─', rightFillNum));
+                                canvas.append(StringUtils.bothFill(' ', blank + labelLeftFill, "├", '─', labelRightFill));
                             }else if(pos == 1){ // 最右孩子
-                                canvas.append(StringUtils.bothFill('─', blank + leftFillNum, "┤", ' ', rightFillNum));
+                                canvas.append(StringUtils.bothFill('─', blank + labelLeftFill, "┤", ' ', labelRightFill));
                             }else{
-                                canvas.append(StringUtils.bothFill('─', blank + leftFillNum, "┼", '─', rightFillNum));
+                                canvas.append(StringUtils.bothFill('─', blank + labelLeftFill, "┼", '─', labelRightFill));
                             }
                         }else{  // 父节点只有这一个子节点
-                            canvas.append(StringUtils.bothFill(' ', blank + leftFillNum, "│", ' ', rightFillNum));
+                            canvas.append(StringUtils.bothFill(' ', blank + labelLeftFill, "│", ' ', labelRightFill));
                         }
                     }
                 }
@@ -195,15 +190,10 @@ public class SyntaxTreeDisplayUtil {
                     nextLayer[nextLayerIndex++] = n.children[j];
                 }
 
-                int width = colWidth[n.col] - (n.col == 0 ? 0 : colWidth[n.col - 1]);
-                int distance = colWidth[n.col] - (i == 0 ? 0 : colWidth[layer[i - 1].col]);
-                String exceptCurrentBlank = StringUtils.leftFill("", ' ', distance - width);
-                String fillBlank = StringUtils.leftFill(exceptCurrentBlank, ' ', width);
-                if(n.source == null){
-                    canvas.append(fillBlank);
-                }else{
-                    canvas.append(exceptCurrentBlank).append(fixLabel(n.label, width));
-                }
+                int labelWidth = colWidth[n.col] - (n.col == 0 ? 0 : colWidth[n.col - 1]);
+                int unfill = colWidth[n.col] - (i == 0 ? 0 : colWidth[layer[i - 1].col]);
+                String blank = StringUtils.leftFill("", ' ', unfill - labelWidth);
+                canvas.append(blank).append(fixLabel(n.label, labelWidth));
             }
 
             layer = nextLayer;
@@ -242,14 +232,9 @@ public class SyntaxTreeDisplayUtil {
         }
     }
 
-    private static <T> int fixChildCount(T parent, ITreeNodeReader<T> reader){
+    private static <T> int fetchChildCount(T parent, ITreeNodeReader<T> reader){
         IList<T> children = reader.children(parent);
-        int childrenCount = children == null ? 0 : children.size();
-        if(childrenCount > 0 && childrenCount % 2 == 0){
-            return childrenCount + 1;
-        }else{
-            return childrenCount;
-        }
+        return children == null ? 0 : children.size();
     }
 
     private static class AnchorNode {
