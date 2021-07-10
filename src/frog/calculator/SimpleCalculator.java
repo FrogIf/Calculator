@@ -29,20 +29,24 @@ public class SimpleCalculator implements ICalculator<ComplexNumber> {
 
     public ComplexNumber calculate(String expression, ICalculatorSession session) {
         ISyntaxNode expRoot = this.builder.build(new TextScannerOperator(expression));
-        String treeDisplayStr = SyntaxTreeDisplayUtil.drawTree(expRoot, new ITreeNodeReader<ISyntaxNode>(){
-
-            @Override
-            public String label(ISyntaxNode node) {
-                return node.word();
-            }
-
-            @Override
-            public IList<ISyntaxNode> children(ISyntaxNode parent) {
-                return parent.children();
-            }
-
-        });
-        System.out.println(treeDisplayStr);
+        try{
+            String treeDisplayStr = SyntaxTreeDisplayUtil.drawTree(expRoot, new ITreeNodeReader<ISyntaxNode>(){
+    
+                @Override
+                public String label(ISyntaxNode node) {
+                    return node.word();
+                }
+    
+                @Override
+                public IList<ISyntaxNode> children(ISyntaxNode parent) {
+                    return parent.children();
+                }
+    
+            });
+            System.out.println(treeDisplayStr);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         GeneralExecuteContext context = new GeneralExecuteContext(session);
         IResult result = expRoot.execute(context);
         if(result.getResultType() == ResultType.VALUE){

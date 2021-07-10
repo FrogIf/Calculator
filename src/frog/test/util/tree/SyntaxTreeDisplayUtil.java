@@ -8,18 +8,20 @@ import frog.calculator.util.collection.Stack;
 
 public class SyntaxTreeDisplayUtil {
 
-    /*
-     * 直接报错: 1+2+3+4*5+6*(7+8)
-     * 结构错乱: 3+4*5+6*7
+    /**
+     * 根据树结构, 拼装可视化的树
+     * @param <T> 树节点类型
+     * @param treeRoot 树的根节点
+     * @param reader 树节点读取器, 提供读取该树根节点以及文本
+     * @return 可视化树文本
      */
-
     public static <T> String drawTree(T treeRoot, ITreeNodeReader<T> reader){
         AnchorNode root = new AnchorNode(fetchChildCount(treeRoot, reader)).setLabel(reader.label(treeRoot)).setSource(treeRoot);
         root.col = root.children.length >> 1;
 
         Stack<Integer> viewCountStack = new Stack<>();  // 记录遍历的子节点个数
         ArrayList<int[]> maxColIndexEachRow = new ArrayList<>(); // 记录每层的最大索引值, 之所以使用数组泛型, 是为了方便修改
-        int rowIndex = 0;
+        int currentRowIndex = 0;
 
         // 深度优先, 确定节点的相对位置
         AnchorNode cursor = root;
@@ -27,51 +29,75 @@ public class SyntaxTreeDisplayUtil {
         maxColIndexEachRow.add(new int[]{ root.col });
         while(cursor != null){
             if(cursor.children.length > viewCountStack.top()){
-                Integer childCount = viewCountStack.pop();
+                int childCount = viewCountStack.pop();
                 viewCountStack.push(childCount + 1);
-                if(childCount == 0){ // 说明children还是空的
+                if(childCount == 0){ // 说明children还是空的, 初始化子节点
+                    int currentRowMaxCol = 0;
+                    int nextRowIndex = currentRowIndex + 1;
+                    if(nextRowIndex < maxColIndexEachRow.size()){
+                        currentRowMaxCol = maxColIndexEachRow.get(nextRowIndex)[0];
+                    }
+                    @SuppressWarnings("unchecked")
                     IList<T> sourceChildren = reader.children((T)cursor.source);
+                    int col = cursor.col - (cursor.children.length >> 1);
+                    if(col < 0){ col = 0; }
+                    if(currentRowMaxCol >= col){
+                        col = currentRowMaxCol + 1;
+                    }
+                    int skipColIndex = col + (cursor.children.length == 2 ? 1 : -1);
                     Iterator<T> itr = sourceChildren.iterator();
                     int i = 0;
-                    int colStart = cursor.col - cursor.children.length >> 1;
                     while(itr.hasNext()){
+                        if(skipColIndex == col){
+                            col++;
+                        }
                         T node = itr.next();
                         if(node == null){
-                            cursor.setChild(i, new AnchorNode(0).setLabel("").setParent(cursor).setCol(colStart + i));
+                            cursor.setChild(i, new AnchorNode(0).setLabel("").setParent(cursor).setCol(col));
                         }else{
                             cursor.setChild(i, new AnchorNode(fetchChildCount(node, reader))
-                                    .setLabel(reader.label(node)).setParent(cursor).setSource(node).setCol(colStart + i)
+                                    .setLabel(reader.label(node)).setParent(cursor).setSource(node).setCol(col)
                                 );
                         }
                         i++;
+                        col++;
+                    }
+                    if(maxColIndexEachRow.size() == nextRowIndex){
+                        maxColIndexEachRow.add(new int[]{ col - 1 });
+                    }else{
+                        maxColIndexEachRow.get(nextRowIndex)[0] = col - 1;
                     }
                 }
                 cursor = cursor.children[childCount];    // 向下一层移动
-                rowIndex++;
-                if(maxColIndexEachRow.size() == rowIndex){
-                    maxColIndexEachRow.add(new int[]{cursor.parent.col});
-                }
+                currentRowIndex++;
                 viewCountStack.push(0);
             }else{
-                // 所有子节点都已经遍历完成
-                if(cursor.children.length > 0){
-                    cursor.col = (cursor.children[0].col + cursor.children[cursor.children.length - 1].col) >> 1;
-                    int[] maxColInfo = maxColIndexEachRow.get(rowIndex);
-                    if(maxColInfo[0] < cursor.col){
-                        maxColInfo[0] = cursor.col;
+                if(cursor.children.length > 0){ // 所有子节点都已经遍历完成, 重新计算父节点的位置
+                    int[] maxColInfo = maxColIndexEachRow.get(currentRowIndex);
+                    int col = (cursor.children[0].col + cursor.children[cursor.children.length - 1].col) >> 1;
+                    if(col > cursor.col){
+                        int offset = col - cursor.col;
+                        cursor.col = col;
+                        if(cursor.parent != null){
+                            AnchorNode[] brothers = cursor.parent.children;
+                            int len = brothers.length;
+                            boolean startMove = false;
+                            for(int i = 0; i < len;i++){
+                                AnchorNode bro = brothers[i];
+                                if(startMove){
+                                    bro.col = bro.col + offset;
+                                }else{
+                                    startMove = !startMove && bro == cursor;
+                                }
+                            }
+                            maxColInfo[0] = brothers[len - 1].col;
+                        }else{
+                            maxColInfo[0] = col;
+                        }
                     }
-                }else{  // 如果是叶子节点
-                    int[] maxColInfo = maxColIndexEachRow.get(rowIndex);
-                    AnchorNode parent = cursor.parent;
-                    if(parent != null && parent.children.length == 2 && parent.children[1] == cursor){
-                        maxColInfo[0] = maxColInfo[0] + 2;
-                    }else{
-                        maxColInfo[0] = maxColInfo[0] + 1;
-                    }
-                    cursor.col = maxColInfo[0];
                 }
                 cursor = cursor.parent; // 向上一层移动
-                rowIndex--;
+                currentRowIndex--;
                 viewCountStack.pop();
             }
         }
