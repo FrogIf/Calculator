@@ -3,7 +3,6 @@ package frog.calculator.compile.syntax;
 import frog.calculator.compile.exception.CompileException;
 import frog.calculator.compile.syntax.exception.SyntaxException;
 import frog.calculator.compile.lexical.ILexer;
-import frog.calculator.compile.lexical.IScanner;
 import frog.calculator.compile.lexical.IScannerOperator;
 import frog.calculator.util.collection.Stack;
 
@@ -25,17 +24,21 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler 
         int position = 0;
         ISyntaxNode root = lexer.parse(scannerOperator).getSyntaxNodeGenerator().generate(position++);
 
-        // 栈结构, 用于存储构建过程中, 激活的语法节点, 这些节点只会作为父节点
+        // 栈结构, 用于存储构建过程中, 激活的语法节点, 这些节点只会作为父节点, 这个stack中的, 都是isRightOpen == true
         Stack<ISyntaxNode> activeStack = new Stack<>();
+        if(root.isRightOpen()){
+            activeStack.push(root);
+        }
 
+        ISyntaxNode prevNode = root;    // 记录上一个节点
         while(scannerOperator.isNotEnd()){
             ISyntaxNode node = lexer.parse(scannerOperator).getSyntaxNodeGenerator().generate(position);
-            
+
             ISyntaxNode activeNode = null;
             boolean hasInsert = false;
             while(activeStack.size() > 0 && !hasInsert){
                 activeNode = activeStack.pop();
-                hasInsert = judgeParent(activeNode, node) == activeNode && activeNode.branchOff(node, this);
+                hasInsert = (prevNode == activeNode || judgeParent(activeNode, node) == activeNode) && activeNode.branchOff(node, this);
             }
 
             if(hasInsert){
@@ -50,10 +53,11 @@ public class GeneralSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler 
                 if(root == null){
                     throw new SyntaxException(node.word(), scannerOperator.position(), 0);
                 }
-                if(node.isRightOpen() && root != node){
+                if(node.isRightOpen()){
                     activeStack.push(node);
                 }
             }
+            prevNode = node;
             position++;
         }
         
