@@ -129,6 +129,8 @@ public class DeducibleNode extends AbstractSyntaxNode implements ISyntaxNodeGene
     public ISyntaxNode generate(int position) {
         DeducibleNode node = new DeducibleNode(this.word, this.priority, this.associateType, this.executor);
         node.position = position;
+        node.end = end;
+        node.next = next;
         return node;
     }
 
