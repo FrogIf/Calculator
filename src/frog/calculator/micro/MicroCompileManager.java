@@ -12,7 +12,7 @@ import frog.calculator.compile.lexical.fetcher.PlusMinusTokenFetcher;
 import frog.calculator.compile.lexical.IToken;
 import frog.calculator.compile.syntax.ISyntaxNode;
 import frog.calculator.compile.syntax.ISyntaxNodeGenerator;
-import frog.calculator.compile.syntax.TerminalNode;
+import frog.calculator.compile.syntax.UndeducibleNode;
 import frog.calculator.exception.CalculatorError;
 import frog.calculator.micro.exec.impl.base.NumberExecutor;
 import frog.calculator.micro.exec.impl.base.VariableExecutor;
@@ -58,7 +58,7 @@ public class MicroCompileManager {
         
                 @Override
                 public ISyntaxNode generate(int position) {
-                    return new TerminalNode(NamingToken.this.word, position, new VariableExecutor());
+                    return new UndeducibleNode(NamingToken.this.word, position, new VariableExecutor());
                 }
         
             }
@@ -100,7 +100,7 @@ public class MicroCompileManager {
     
             @Override
             public ISyntaxNode generate(int position) {
-                return new TerminalNode(NumberToken.this.numberStr, position, new NumberExecutor());
+                return new UndeducibleNode(NumberToken.this.numberStr, position, new NumberExecutor());
             }
     
             @Override

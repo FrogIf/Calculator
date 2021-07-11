@@ -4,16 +4,16 @@ import frog.calculator.compile.semantic.exec.IExecutor;
 import frog.calculator.util.collection.IList;
 
 /**
- * 终结节点, 其左右都没有子树
+ * 不可推演节点, 其左右都没有子树
  */
-public final class TerminalNode extends AbstractSyntaxNode implements ISyntaxNodeGenerator {
+public final class UndeducibleNode extends AbstractSyntaxNode implements ISyntaxNodeGenerator {
 
-    public TerminalNode(String word, int position, IExecutor executor) {
+    public UndeducibleNode(String word, int position, IExecutor executor) {
         super(word, -1, executor);
         this.position = position;
     }
 
-    public TerminalNode(String word, IExecutor executor) {
+    public UndeducibleNode(String word, IExecutor executor) {
         super(word, -1, executor);
     }
 
@@ -43,7 +43,7 @@ public final class TerminalNode extends AbstractSyntaxNode implements ISyntaxNod
 
     @Override
     public ISyntaxNode generate(int position) {
-        return new TerminalNode(this.word, position, this.executor);
+        return new UndeducibleNode(this.word, position, this.executor);
     }
     
 }

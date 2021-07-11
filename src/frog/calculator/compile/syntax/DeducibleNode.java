@@ -1,13 +1,14 @@
 package frog.calculator.compile.syntax;
 
 import frog.calculator.compile.semantic.exec.IExecutor;
+import frog.calculator.compile.syntax.exception.SyntaxException;
 import frog.calculator.util.collection.ArrayList;
 import frog.calculator.util.collection.IList;
 
 /**
- * 非终结节点, 左侧和右侧都只有一个子节点, 并且open状态永远是true
+ * 可推演节点, 左侧和右侧都只有一个子节点
  */
-public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGenerator {
+public class DeducibleNode extends AbstractSyntaxNode implements ISyntaxNodeGenerator {
 
     private ISyntaxNode leftChild;
 
@@ -15,15 +16,19 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
 
     private final boolean leftOpen;
 
-    private final boolean rightOpen;
+    private boolean rightOpen;
 
     private final AssociateType associateType;
 
-    public NonterminalNode(String word, int priority, IExecutor executor) {
+    private String end;
+
+    private String next;
+
+    public DeducibleNode(String word, int priority, IExecutor executor) {
         this(word, priority, AssociateType.ALL, executor);
     }
 
-    public NonterminalNode(String literal, int priority, AssociateType associateType, IExecutor executor) {
+    public DeducibleNode(String literal, int priority, AssociateType associateType, IExecutor executor) {
         super(literal, priority, executor);
         if(associateType == null){
             throw new IllegalArgumentException("assocaite type is null.");
@@ -31,6 +36,22 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
         this.leftOpen = (associateType.score & 1) > 0;
         this.rightOpen = (associateType.score & 2) > 0;
         this.associateType = associateType;
+    }
+
+    public DeducibleNode setEnd(String end){
+        if(this.end != null){
+            throw new IllegalStateException("the end has been assign.");
+        }
+        this.end = end;
+        return this;
+    }
+
+    public DeducibleNode setNextRequired(String next){
+        if(this.next != null){
+            throw new IllegalStateException("the end has been assign.");
+        }
+        this.next = next;
+        return this;
     }
 
     @Override
@@ -60,6 +81,25 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
         }
 
         if(this.rightOpen){
+            // 如果指定了next, 那么该节点的下一个节点必须是next
+            if(this.next != null){
+                if(this.position + 1 == child.position() && this.next.equals(child.word())){
+                    this.rightOpen = false;
+                }else{
+                    throw new SyntaxException(child.word(), child.position());
+                }
+            }
+            this.rightOpen = this.end == null || !this.end.equals(child.word());
+            if(!this.rightOpen) {
+                if(this.rightChild != null){
+                    if(!child.branchOff(this.rightChild, assembler)){
+                        return false;
+                    }
+                    this.rightChild = child;
+                }
+                return true;
+            }
+
             if(rightChild == null){
                 this.rightChild = child;
                 return true;
@@ -87,7 +127,7 @@ public class NonterminalNode extends AbstractSyntaxNode implements ISyntaxNodeGe
 
     @Override
     public ISyntaxNode generate(int position) {
-        NonterminalNode node = new NonterminalNode(this.word, this.priority, this.associateType, this.executor);
+        DeducibleNode node = new DeducibleNode(this.word, this.priority, this.associateType, this.executor);
         node.position = position;
         return node;
     }

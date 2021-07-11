@@ -13,7 +13,7 @@ import frog.calculator.util.collection.Iterator;
 /**
  * 逗号分隔符运算器
  */
-public class DotExecutor extends AbstractDyadicExecutor{
+public class CommaExecutor extends AbstractDyadicExecutor{
 
     @Override
     protected IValue evaluate(ISyntaxNode self, IValue childA, IValue childB, IExecuteContext context) {

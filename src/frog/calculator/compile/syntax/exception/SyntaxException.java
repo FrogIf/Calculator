@@ -9,6 +9,10 @@ public class SyntaxException extends BuildException {
         super("error syntax near : " + word + " line : " + line + ", word at : " + position);
     }
 
+    public SyntaxException(String word, int position) {
+        super("error syntax near : " + word + " , word at : " + position);
+    }
+
     private static final long serialVersionUID = 1L;
     
 }
