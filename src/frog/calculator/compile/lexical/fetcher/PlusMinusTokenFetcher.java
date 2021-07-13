@@ -23,7 +23,7 @@ public class PlusMinusTokenFetcher implements ITokenFetcher {
             return null;
         }
 
-        while(scanner.isNotEnd() && ((ch = scanner.peek()) == '+' || ch == '-' || ch == ' ')){
+        while(scanner.isNotEnd() && ((ch = scanner.peek()) == '+' || ch == '-')){
             mark += (ch == '-' ? 1 : 0);
             scanner.take();
         }
