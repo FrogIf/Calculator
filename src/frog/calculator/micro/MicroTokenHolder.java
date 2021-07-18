@@ -11,7 +11,7 @@ import frog.calculator.micro.exec.impl.base.ComplexMarkExecutor;
 import frog.calculator.micro.exec.impl.base.DeclareExecutor;
 import frog.calculator.micro.exec.impl.base.DivExecutor;
 import frog.calculator.micro.exec.impl.base.CommaExecutor;
-import frog.calculator.micro.exec.impl.base.EqualExecutor;
+import frog.calculator.micro.exec.impl.base.AssignExecutor;
 import frog.calculator.micro.exec.impl.base.MultExecutor;
 import frog.calculator.micro.exec.impl.base.PowerExecutor;
 import frog.calculator.micro.exec.impl.base.SubExecutor;
@@ -27,7 +27,7 @@ class MicroTokenHolder {
     }
 
     private static final ISyntaxNodeGenerator[] builders = new ISyntaxNodeGenerator[] { 
-        new DeducibleNode("=", 5, new EqualExecutor()),
+        new DeducibleNode("=", 5, new AssignExecutor()),
         new DeducibleNode("*", 20, new MultExecutor()), 
         new DeducibleNode("/", 20, new DivExecutor()),
         new DeducibleNode("^", 30, new PowerExecutor()), 

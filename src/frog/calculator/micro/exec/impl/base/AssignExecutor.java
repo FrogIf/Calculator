@@ -7,7 +7,7 @@ import frog.calculator.compile.semantic.result.IValue;
 import frog.calculator.compile.semantic.result.VariableValue;
 import frog.calculator.compile.syntax.ISyntaxNode;
 
-public class EqualExecutor extends AbstractDyadicExecutor {
+public class AssignExecutor extends AbstractDyadicExecutor {
 
     @Override
     protected IValue evaluate(ISyntaxNode self, IValue childA, IValue childB, IExecuteContext context) {
