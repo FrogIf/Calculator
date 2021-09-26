@@ -1,4 +1,4 @@
-package sch.frog.calculator.connect;
+package sch.frog.calculator.runtime;
 
 import sch.frog.calculator.compile.semantic.result.IValue;
 
@@ -12,5 +12,9 @@ public interface ICalculatorSession {
     void addVariable(String name, IValue value);
 
     IValue getVariable(String name);
+
+    RuntimeConfiguration getRuntimeConfiguration();
+
+    void setRuntimeConfiguration(RuntimeConfiguration configuration);
 
 }

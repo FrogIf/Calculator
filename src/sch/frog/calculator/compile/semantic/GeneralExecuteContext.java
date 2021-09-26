@@ -1,7 +1,7 @@
 package sch.frog.calculator.compile.semantic;
 
 import sch.frog.calculator.compile.semantic.result.IValue;
-import sch.frog.calculator.connect.ICalculatorSession;
+import sch.frog.calculator.runtime.ICalculatorSession;
 import sch.frog.calculator.util.IComparator;
 import sch.frog.calculator.util.collection.IMap;
 import sch.frog.calculator.util.collection.Iterator;

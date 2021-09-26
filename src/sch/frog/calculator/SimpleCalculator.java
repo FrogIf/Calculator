@@ -10,13 +10,13 @@ import sch.frog.calculator.compile.semantic.result.IResult.ResultType;
 import sch.frog.calculator.compile.syntax.GeneralSyntaxTreeBuilder;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
 import sch.frog.calculator.compile.syntax.ISyntaxTreeBuilder;
-import sch.frog.calculator.connect.ICalculatorSession;
 import sch.frog.calculator.math.number.ComplexNumber;
 import sch.frog.calculator.micro.MicroCompileManager;
 import sch.frog.calculator.micro.MicroUtil;
+import sch.frog.calculator.runtime.ICalculatorSession;
+import sch.frog.calculator.util.TreeDisplayUtil;
+import sch.frog.calculator.util.TreeDisplayUtil.ITreeNodeReader;
 import sch.frog.calculator.util.collection.IList;
-import sch.frog.test.util.TreeDisplayUtil;
-import sch.frog.test.util.TreeDisplayUtil.ITreeNodeReader;
 
 public class SimpleCalculator implements ICalculator<ComplexNumber> {
 

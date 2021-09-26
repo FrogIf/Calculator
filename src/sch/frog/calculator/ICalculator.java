@@ -1,6 +1,6 @@
 package sch.frog.calculator;
 
-import sch.frog.calculator.connect.ICalculatorSession;
+import sch.frog.calculator.runtime.ICalculatorSession;
 
 public interface ICalculator<R> {
 

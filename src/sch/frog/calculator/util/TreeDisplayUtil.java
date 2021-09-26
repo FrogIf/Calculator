@@ -1,6 +1,5 @@
-package sch.frog.test.util;
+package sch.frog.calculator.util;
 
-import sch.frog.calculator.util.StringUtils;
 import sch.frog.calculator.util.collection.ArrayList;
 import sch.frog.calculator.util.collection.IList;
 import sch.frog.calculator.util.collection.Iterator;

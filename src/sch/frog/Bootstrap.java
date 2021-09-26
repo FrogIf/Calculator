@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 import sch.frog.calculator.ICalculator;
 import sch.frog.calculator.SimpleCalculator;
-import sch.frog.calculator.connect.GeneralCalculatorSession;
-import sch.frog.calculator.connect.ICalculatorSession;
+import sch.frog.calculator.runtime.GeneralCalculatorSession;
+import sch.frog.calculator.runtime.ICalculatorSession;
 import sch.frog.calculator.math.number.ComplexNumber;
 import sch.frog.calculator.math.number.NumberRoundingMode;
 
