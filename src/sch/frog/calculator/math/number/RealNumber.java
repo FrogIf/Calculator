@@ -172,4 +172,14 @@ public class RealNumber extends AbstractBaseNumber implements Comparable<RealNum
             return false;
         }
     }
+
+    @Override
+    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
+    }
+
+    @Override
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
+    }
 }

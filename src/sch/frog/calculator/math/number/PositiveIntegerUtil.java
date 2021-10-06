@@ -1,6 +1,7 @@
 package sch.frog.calculator.math.number;
 
 import sch.frog.calculator.math.exception.DivideByZeroException;
+import sch.frog.calculator.math.exception.OutOfRangeException;
 
 /**
  * 正整数工具类 所有 正整数的大数操作, 都将在这里完成 包内可见, 主要是这个类并不符合知道最少原则, 暴露出去没有意义,
@@ -645,6 +646,69 @@ class PositiveIntegerUtil {
         }
 
         return res;
+    }
+
+    /**
+     * 十进制左移
+     * @param num 待左移的数
+     * @param highPos num非0高位位置
+     * @param bcount 左移位数
+     * @param bHighPos 左移位数高位
+     * @return 左移的结果
+     */
+    public static int[] decLeftShift(int[] num, int highPos, int[] bcount, int bHighPos){
+        if(bHighPos == 0){
+            return decLeftShift(num, highPos, bcount[0]);
+        }else{
+            int[][] divideResult = divideOneWord(bcount, bHighPos, 9);
+            int[] q = divideResult[0];
+            int[] r = divideResult[1];  // 显然r < SCALE
+            int rVal = r[0];
+            long qInt = 0;
+            if(q.length > 2){   // 超出数组最大容量
+                throw new OutOfRangeException();
+            }else if(q.length == 2){
+                long l = q[1] * 1L * SCALE + q[0];
+                if(l > Integer.MAX_VALUE){
+                    throw new OutOfRangeException();
+                }
+                qInt = (int)l;
+            }else{
+                qInt = q[0];
+            }
+
+            num = decLeftShift(num, highPos, rVal);
+            highPos = highPos(num);
+            long len = qInt + highPos + 1;
+            if(len > Integer.MAX_VALUE){
+                throw new OutOfRangeException();
+            }
+
+            int[] result = new int[(int)len];
+            for(int j = highPos, i = (int)len - 1; j >= 0; i--, j--){
+                result[i] = num[j];
+            }
+            
+            return result;
+        }
+    }
+
+    /**
+     * 将正整数转为数组形式
+     * @param absNum 正整数
+     * @return 数值数组
+     */
+    public static int[] convertToNumberArray(int absNum){
+        int[] result;
+        if(absNum < PositiveIntegerUtil.SCALE){
+            result = new int[1];
+            result[0] = absNum;
+        }else{
+            result = new int[2];
+            result[0] = absNum % PositiveIntegerUtil.SCALE;
+            result[1] = absNum / PositiveIntegerUtil.SCALE;
+        }
+        return result;
     }
 
     // public static String arrayToString(int[] arr){

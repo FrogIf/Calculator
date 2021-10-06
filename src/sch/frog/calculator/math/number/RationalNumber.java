@@ -223,26 +223,27 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         return new RationalNumber(this.denominator, this.numerator);
     }
 
-    public String toDecimal() {
+    @Override
+    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
         // TODO 保留小数位数, 舍入策略等
         if(IntegerNumber.ONE.equals(this.denominator)){
             return this.numerator.toString();
         }else{
             IntegerNumber.Remainder remainder = new IntegerNumber.Remainder();
             IntegerNumber quotient = this.numerator.div(this.denominator, remainder);
-            IntegerNumber rem = remainder.getRemainder();
+            IntegerNumber rem = remainder.getValue();
 //            long bcount = (long) precision;
 //            if(bcount > Integer.MAX_VALUE){
 //                throw new IllegalArgumentException("precision is too large.");
 //            }
-            IntegerNumber remEx = rem.decLeftShift(this.scale);
+            IntegerNumber remEx = rem.decLeftShift(scale);
 
             IntegerNumber decimal = remEx.div(this.denominator, remainder);
             String decimalStr = decimal.toString();
-            if(decimalStr.length() < this.scale){
-                decimalStr = StringUtils.leftFill(decimalStr, '0', this.scale - decimalStr.length());
+            if(decimalStr.length() < scale){
+                decimalStr = StringUtils.leftFill(decimalStr, '0', scale - decimalStr.length());
             }
-            if(IntegerNumber.ZERO.equals(remainder.getRemainder()) && decimalStr.endsWith("0")){
+            if(IntegerNumber.ZERO.equals(remainder.getValue()) && decimalStr.endsWith("0")){
                 decimalStr = StringUtils.rightTrim(decimalStr, '0');
             }
             return quotient.toString() + "." + decimalStr;
@@ -251,14 +252,10 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
 
     @Override
     public String toString() {
-        if(RESERVE_STRUCTURE == this.scale){
-            if(denominator.equals(IntegerNumber.ONE)){
-                return numerator.toString();
-            }else{
-                return numerator.toString() + "/" + denominator.toString();
-            }
+        if(denominator.equals(IntegerNumber.ONE)){
+            return numerator.toString();
         }else{
-            return this.toDecimal();
+            return numerator.toString() + "/" + denominator.toString();
         }
     }
 
@@ -326,6 +323,11 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         if(this.denominator == null || this.denominator.equals(IntegerNumber.ONE)){
             return this.numerator;
         }
+        return null;
+    }
+
+    @Override
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
         return null;
     }
 }

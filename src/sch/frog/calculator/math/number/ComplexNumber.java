@@ -134,4 +134,14 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
             return this.realPart.toRational();
         }
     }
+
+    @Override
+    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
+    }
+
+    @Override
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
+    }
 }

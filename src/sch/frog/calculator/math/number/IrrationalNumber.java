@@ -41,4 +41,14 @@ public class IrrationalNumber extends AbstractBaseNumber {
     public IrrationalNumber not() {
         return null;
     }
+
+    @Override
+    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
+    }
+
+    @Override
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
+    }
 }

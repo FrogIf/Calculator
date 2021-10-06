@@ -5,11 +5,11 @@ public class NumberConstant {
     /**
      * 正
      */
-    public static final int SIGN_POSITIVE = 0;
+    public static final int SIGN_POSITIVE = IntegerNumber.POSITIVE;
 
     /**
      * 负
      */
-    public static final int SIGN_NEGATIVE = 1;
+    public static final int SIGN_NEGATIVE = IntegerNumber.NEGATIVE;
 
 }

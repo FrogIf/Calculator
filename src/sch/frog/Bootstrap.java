@@ -7,7 +7,6 @@ import sch.frog.calculator.SimpleCalculator;
 import sch.frog.calculator.runtime.GeneralCalculatorSession;
 import sch.frog.calculator.runtime.ICalculatorSession;
 import sch.frog.calculator.math.number.ComplexNumber;
-import sch.frog.calculator.math.number.NumberRoundingMode;
 
 public class Bootstrap {
 
@@ -29,7 +28,6 @@ public class Bootstrap {
 
             try{
                 ComplexNumber result = calculator.calculate(expression, session);
-                result.setScale(10, NumberRoundingMode.HALF_UP);
                 System.out.println(result.toString());
             }catch (Exception e){
                 e.printStackTrace();
