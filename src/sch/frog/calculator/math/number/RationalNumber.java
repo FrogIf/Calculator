@@ -7,7 +7,7 @@ import sch.frog.calculator.util.StringUtils;
  */
 public final class RationalNumber extends AbstractBaseNumber implements Comparable<RationalNumber>{
 
-    private final IntegerNumber numerator;    // 分子
+    private final IntegerNumber numerator;    // 分子, 正负号记录在分子上
 
     private final IntegerNumber denominator;  // 分母, 只可能是正数
 
@@ -69,12 +69,12 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             top = IntegerNumber.valueOf(decimal.replace(".", ""));
 
             int len = decimal.length() - pos - 1;
-            StringBuilder denominator = new StringBuilder(len + 1);
-            denominator.append("1");
+            StringBuilder denominatorBuilder = new StringBuilder(len + 1);
+            denominatorBuilder.append("1");
             for(int i = 0; i < len; i++){
-                denominator.append('0');
+                denominatorBuilder.append('0');
             }
-            bottom = IntegerNumber.valueOf(denominator.toString());
+            bottom = IntegerNumber.valueOf(denominatorBuilder.toString());
 
             IntegerNumber gcd = bottom.gcd(top);
             if(gcd != IntegerNumber.ONE){
@@ -223,6 +223,82 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         return new RationalNumber(this.denominator, this.numerator);
     }
 
+    /**
+     * 绝对值
+     */
+    public RationalNumber abs(){
+        if(this.numerator.getSign() == IntegerNumber.POSITIVE){
+            return this;
+        }else{
+            return new RationalNumber(this.numerator.not(), this.denominator);
+        }
+    }
+
+    @Override
+    public int compareTo(RationalNumber o) {
+        if(this == o) return 0;
+
+        int sign = this.numerator.getSign();
+        if(sign != o.numerator.getSign()){
+            if(sign == NumberConstant.SIGN_POSITIVE){
+                return 1;
+            }else{
+                return -1;
+            }
+        }else{
+            int mark;
+            if(this.denominator.equals(o.denominator)){
+                mark = this.numerator.compareTo(o.numerator);
+            }else{
+                mark = this.numerator.mult(o.denominator).compareTo(o.numerator.mult(this.denominator));
+            }
+            if(sign == NumberConstant.SIGN_NEGATIVE){
+                mark = -mark;
+            }
+            return mark;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o){ return true; }
+
+        if(o == null || o.getClass() != RationalNumber.class){
+            return false;
+        }
+
+        RationalNumber that = (RationalNumber) o;
+        if(!that.numerator.equals(this.numerator)){
+            return false;
+        }else if((that.denominator == null) != (this.denominator == null)){
+            return false;
+        }else{
+            return this.denominator == null || this.denominator.equals(that.denominator);
+        }
+    }
+
+    @Override
+    public int hashCode(){
+        return this.numerator.hashCode() + this.denominator.hashCode();
+    }
+
+    public static RationalNumber valueOf(String numString){
+        int dot1 = numString.indexOf('.');
+        int dot2 = numString.indexOf('_');
+        RationalNumber rationalNumber;
+        if(dot2 == -1){ // 没有循环节
+            rationalNumber = new RationalNumber(numString);
+        }else{  // 有循环节
+            numString = numString.replace("_", "");
+            rationalNumber = new RationalNumber(numString, dot2 - dot1 - 1);
+        }
+        return rationalNumber;
+    }
+
+    public static RationalNumber valueOf(double value){
+        return valueOf(Double.toString(value));
+    }
+
     @Override
     public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
         // TODO 保留小数位数, 舍入策略等
@@ -260,60 +336,8 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     }
 
     @Override
-    public int compareTo(RationalNumber o) {
-        if(this == o) return 0;
-
-        int sign = this.numerator.getSign();
-        if(sign != o.numerator.getSign()){
-            if(sign == NumberConstant.SIGN_POSITIVE){
-                return 1;
-            }else{
-                return -1;
-            }
-        }else{
-            int mark;
-            if(this.denominator.equals(o.denominator)){
-                mark = this.numerator.compareTo(o.numerator);
-            }else{
-                mark = this.numerator.mult(o.denominator).compareTo(o.numerator.mult(this.denominator));
-            }
-            if(sign == NumberConstant.SIGN_NEGATIVE){
-                mark = -mark;
-            }
-            return mark;
-        }
-    }
-
-    public static RationalNumber valueOf(String numString){
-        int dot1 = numString.indexOf('.');
-        int dot2 = numString.indexOf('_');
-        RationalNumber rationalNumber;
-        if(dot2 == -1){ // 没有循环节
-            rationalNumber = new RationalNumber(numString);
-        }else{  // 有循环节
-            numString = numString.replace("_", "");
-            rationalNumber = new RationalNumber(numString, dot2 - dot1 - 1);
-        }
-        return rationalNumber;
-    }
-
-    @Override
-    public boolean equals(Object o){
-        if(this == o){ return true; }
-
-        if(o == null || o.getClass() != RationalNumber.class){
-            return false;
-        }
-
-        RationalNumber that = (RationalNumber) o;
-        if(!that.numerator.equals(this.numerator)){
-            return false;
-        }else if((that.denominator == null) != (this.denominator == null)){
-            return false;
-        }else{
-            return this.denominator == null || this.denominator.equals(that.denominator);
-        }
-
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+        return null;
     }
 
     /**
@@ -323,11 +347,6 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         if(this.denominator == null || this.denominator.equals(IntegerNumber.ONE)){
             return this.numerator;
         }
-        return null;
-    }
-
-    @Override
-    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
         return null;
     }
 }

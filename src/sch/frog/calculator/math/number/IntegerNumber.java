@@ -45,7 +45,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
     /*
      * 用于存储number的真实值, 可读数字中每9个数作为一个元素存入该数组中, 低位存储于低索引处, 高位存储于高索引处(little-endian)
-     * 例如: 666666123456789 在数组中排列为: {123456789, 666666}
+     * 例如: 666666123456789 在数组中排列为: 123456789, 666666
      */
     private final int[] values;
 
@@ -57,7 +57,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     private IntegerNumber(int sign, String literal) {
         this.sign = sign;
         this.literal = literal;
-        this.values = this.generateVal(literal);
+        this.values = generateVal(literal);
         this.highPos = values.length - 1;
     }
 
@@ -483,7 +483,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
     @Override
     public int hashCode(){
-        return (this.sign << 31) | this.values[0];
+        return (this.sign << 31) | this.values[this.highPos];
     }
 
     @Override
