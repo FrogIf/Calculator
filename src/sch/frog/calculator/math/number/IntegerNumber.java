@@ -11,12 +11,12 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     /**
      * 正
      */
-    static final int POSITIVE = 0;
+    private static final int SIGN_POSITIVE = 0;
 
     /**
      * 负
      */
-    static final int NEGATIVE = 1;
+    private static final int SIGN_NEGATIVE = 1;
 
     /**
      * 符号, 记录该数是正数(POSITIVE), 还是负数(NEGATIVE)
@@ -31,17 +31,17 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     /**
      * 0
      */
-    public static final IntegerNumber ZERO = new IntegerNumber(POSITIVE, PositiveIntegerUtil.ZERO);
+    public static final IntegerNumber ZERO = new IntegerNumber(SIGN_POSITIVE, PositiveIntegerUtil.ZERO);
 
     /**
      * 1
      */
-    public static final IntegerNumber ONE = new IntegerNumber(POSITIVE, PositiveIntegerUtil.ONE);
+    public static final IntegerNumber ONE = new IntegerNumber(SIGN_POSITIVE, PositiveIntegerUtil.ONE);
 
     /**
      * -1
      */
-    public static final IntegerNumber NEGATIVE_ONE = new IntegerNumber(NEGATIVE, PositiveIntegerUtil.ONE);
+    public static final IntegerNumber NEGATIVE_ONE = new IntegerNumber(SIGN_NEGATIVE, PositiveIntegerUtil.ONE);
 
     /*
      * 用于存储number的真实值, 可读数字中每9个数作为一个元素存入该数组中, 低位存储于低索引处, 高位存储于高索引处(little-endian)
@@ -118,10 +118,10 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
                 result = ZERO;
             }else{
                 int[] values;
-                byte sign = POSITIVE;
+                byte sign = SIGN_POSITIVE;
                 if(c < 0){
                     values = PositiveIntegerUtil.subtract(right.values, right.highPos, left.values, left.highPos);
-                    sign = NEGATIVE;
+                    sign = SIGN_NEGATIVE;
                 }else{
                     values = PositiveIntegerUtil.subtract(left.values, left.highPos, right.values, right.highPos);
                 }
@@ -142,7 +142,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
         int absNum = num < 0 ? -num : num;
 
-        boolean sameSign = num < 0 == (this.sign == NEGATIVE) && operator == POSITIVE;    // true - 同号, false - 异号
+        boolean sameSign = num < 0 == (this.sign == SIGN_NEGATIVE) && operator == SIGN_POSITIVE;    // true - 同号, false - 异号
         if(absNum < PositiveIntegerUtil.SCALE){
             if(sameSign){
                 return new IntegerNumber(this.sign, PositiveIntegerUtil.addOneWord(this.values, this.highPos, absNum));
@@ -174,7 +174,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 和
      */
     public IntegerNumber add(IntegerNumber num){
-        return accumulation(this, num, POSITIVE);
+        return accumulation(this, num, SIGN_POSITIVE);
     }
 
     /**
@@ -183,7 +183,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 和
      */
     public IntegerNumber add(int num){
-        return accumulationOneWord(num, POSITIVE);
+        return accumulationOneWord(num, SIGN_POSITIVE);
     }
 
     /**
@@ -192,7 +192,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 差
      */
     public IntegerNumber sub(IntegerNumber num){
-        return accumulation(this, num, NEGATIVE);
+        return accumulation(this, num, SIGN_NEGATIVE);
     }
 
     /**
@@ -201,7 +201,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 差
      */
     public IntegerNumber sub(int num){
-        return accumulationOneWord(num, NEGATIVE);
+        return accumulationOneWord(num, SIGN_NEGATIVE);
     }
 
     /**
@@ -219,9 +219,9 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 积
      */
     public IntegerNumber mult(int num){
-        int inputSign = POSITIVE;
+        int inputSign = SIGN_POSITIVE;
         if(num < 0){
-            inputSign = NEGATIVE;
+            inputSign = SIGN_NEGATIVE;
             num = -num;
         }
         int[] result = PositiveIntegerUtil.multiply(this.values, this.highPos, new int[]{ num }, 0);
@@ -247,14 +247,14 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
         if(num == 0){
             throw new DivideByZeroException();
         }
-        int inputSign = POSITIVE;
+        int inputSign = SIGN_POSITIVE;
         if(num < 0){
             num = -num;
-            inputSign = NEGATIVE;
+            inputSign = SIGN_NEGATIVE;
         }
         int[][] result = PositiveIntegerUtil.divide(this.values, this.highPos, new int[]{ num }, 0);
         if(remainder != null){
-            remainder.value = new IntegerNumber(POSITIVE, result[1]);
+            remainder.value = new IntegerNumber(SIGN_POSITIVE, result[1]);
         }
         return new IntegerNumber((byte) (this.sign ^ inputSign), result[0]);
     }
@@ -271,7 +271,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
         }
         int[][] result = PositiveIntegerUtil.divide(this.values, this.highPos, num.values, num.highPos);
         if(remainder != null){
-            remainder.value = new IntegerNumber(POSITIVE, result[1]);
+            remainder.value = new IntegerNumber(SIGN_POSITIVE, result[1]);
         }
         return new IntegerNumber((byte) (this.sign ^ num.sign), result[0]);
     }
@@ -299,7 +299,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 最大公约数
      */
     public IntegerNumber gcd(IntegerNumber num){
-        return new IntegerNumber(POSITIVE, PositiveIntegerUtil.gcd(this.values, this.highPos, num.values, num.highPos));
+        return new IntegerNumber(SIGN_POSITIVE, PositiveIntegerUtil.gcd(this.values, this.highPos, num.values, num.highPos));
     }
 
     /**
@@ -315,8 +315,8 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 绝对值
      */
     public IntegerNumber abs() {
-        if(this.sign == NEGATIVE){
-            return new IntegerNumber(POSITIVE, this.values);
+        if(this.sign == SIGN_NEGATIVE){
+            return new IntegerNumber(SIGN_POSITIVE, this.values);
         }else{
             return this;
         }
@@ -339,10 +339,10 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
             int absNum;
             if(number < 0){
                 absNum = -number;
-                sign = NEGATIVE;
+                sign = SIGN_NEGATIVE;
             }else{
                 absNum = number;
-                sign = POSITIVE;
+                sign = SIGN_POSITIVE;
             }
 
             return new IntegerNumber(sign, PositiveIntegerUtil.convertToNumberArray(absNum));
@@ -355,19 +355,19 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 解析结果, 如果输入为空或者不是以数字开头, 将会报错
      */
     public static IntegerNumber valueOf(String number){
-        number = checkAndFixNumber(number);
-        if("0".equals(number) || "-0".equals(number)){
+        number = fixNumber(number);
+        if("0".equals(number)){
             return ZERO;
         }else if("1".equals(number)){
             return ONE;
         }else{
-            int sign = POSITIVE;
+            int sign = SIGN_POSITIVE;
             String numStr = number;
             if(number.startsWith("-")){
-                sign = NEGATIVE;
+                sign = SIGN_NEGATIVE;
                 numStr = number.substring(1);
             }
-            if(numStr.indexOf(SCIENTIFIC_MARK) > 0){
+            if(numStr.indexOf(NumberConstant.SCIENTIFIC_MARK) > 0){
                 return new IntegerNumber(sign, parseScientificNotation(numStr));
             }else{
                 return new IntegerNumber(sign, numStr);
@@ -380,7 +380,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @param number
      * @return
      */
-    private static String checkAndFixNumber(String number){
+    private static String fixNumber(String number){
         if(number == null){
             throw new IllegalArgumentException("input number is blank.");
         }else{
@@ -389,16 +389,34 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
                 throw new IllegalArgumentException("input number is blank.");
             }
         }
-        if(number.startsWith("0")){
-            int pz = 0;
-            for(int i = 0, len = number.length(); i < len - 1; i++){
-                if(number.charAt(i) == '0'){
+        int start = -1;
+        char startCh = number.charAt(0);
+        if(startCh == '0'){
+            start = 0;
+        }else if(startCh == '-'){
+            start = 1;
+        }
+
+        if(start != -1){
+            int pz = start;
+            int ePos = -1;
+            int len = number.length();
+            for(int i = start; i < len; i++){
+                char ch = number.charAt(i);
+                if(ch == '0'){
                     pz++;
                 }else{
+                    if(ch == NumberConstant.SCIENTIFIC_MARK){
+                        ePos = i;
+                    }
                     break;
                 }
             }
-            number = number.substring(pz);
+            if(pz >= len || ePos == pz){
+                number = "0";
+            }else{
+                number = (start == 1 ? "-" : "") + number.substring(pz);
+            }
         }
         return number;
     }
@@ -433,14 +451,14 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * 获取当前值的正负
      * @return
      */
-    public int getSign(){
-        return this.sign;
+    public NumberSign getSign(){
+        return this.sign == SIGN_NEGATIVE ? NumberSign.NEGATIVE : NumberSign.POSITIVE;
     }
 
     public int compareTo(int num){
         if(num == 0){
-            return this.values[this.highPos] - this.sign << 30;
-        }else if(num < 0 == (this.sign == NEGATIVE) && this.highPos < 2){
+            return this.values[this.highPos] - (this.sign << 30);
+        }else if(num < 0 == (this.sign == SIGN_NEGATIVE) && this.highPos < 2){
             long mark = ((long)this.values[this.highPos] * PositiveIntegerUtil.SCALE * this.highPos + this.values[0] - (num < 0 ? -num : num));
             if(mark == 0){
                 return 0;
@@ -457,13 +475,13 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     @Override
     public int compareTo(IntegerNumber o) {
         if(this.sign == o.sign){    // 同号
-            if(this.sign == POSITIVE){
+            if(this.sign == SIGN_POSITIVE){
                 return PositiveIntegerUtil.compare(this.values, this.highPos, o.values, o.highPos);
             }else{
                 return -PositiveIntegerUtil.compare(this.values, this.highPos, o.values, o.highPos);
             }
         }else{  // 异号
-            if(this.sign == POSITIVE){
+            if(this.sign == SIGN_POSITIVE){
                 return 1;
             }else{
                 return -1;
@@ -487,21 +505,24 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     }
 
     @Override
-    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
-        return this.decimal(scale, roundingMode, fillWithZero, MAX_ENTIRELY_DISPLAY_POS);
+    public String decimal(int scale, NumberRoundingMode roundingMode) {
+        return this.decimal(scale, roundingMode, NumberConstant.SCIENTIFIC_THRESHOLD);
     }
 
-    private String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero, int scientificThreshold) {
+    private String decimal(int scale, NumberRoundingMode roundingMode, int scientificThreshold) {
         if(this.highPos > scientificThreshold){
-            return this.scientificNotation(scale, roundingMode, fillWithZero);
+            return this.scientificNotation(scale, roundingMode);
         }else{
-            return this.toIntegerString();
+            return this.toPlainString();
         }
     }
 
-    private String toIntegerString(){
+    /**
+     * 朴素输出, 不以科学计数法的方式输出
+     */
+    String toPlainString(){
         StringBuilder sb = new StringBuilder();
-        if(this.sign == NEGATIVE){ sb.append('-'); }
+        if(this.sign == SIGN_NEGATIVE){ sb.append('-'); }
         sb.append(values[highPos]);
         for(int i = highPos - 1; i >= 0; i--){
             this.appendToStringBuilder(sb, values[i]);
@@ -510,8 +531,10 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     }
 
     @Override
-    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
-        long n = ((long)this.highPos) * PositiveIntegerUtil.SINGLE_ELEMENT_LEN;
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode) {
+        long n = ((long)this.highPos) * PositiveIntegerUtil.SINGLE_ELEMENT_LEN; // 科学计数法指数值
+
+        // 确定小数点前面的数字, 并拼接小数点后面部分
         int hVal = this.values[this.highPos];
         StringBuilder dotAfterBuilder = new StringBuilder();
         while(hVal >= 10){
@@ -519,70 +542,30 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
             dotAfterBuilder.insert(0, Integer.toString(hVal % 10));
             hVal /= 10;
         }
-        String afterDotStr = "";
-        for(int i = this.highPos - 1; i >= 0; i--){
+        int extraDecBitCount = roundingMode.extraDecBitCount();
+        int i = this.highPos - 1;
+        while(i >= 0){
             this.appendToStringBuilder(dotAfterBuilder, this.values[i]);
-            if(scale + 1 < dotAfterBuilder.length()){
+            i--;
+            if(dotAfterBuilder.length() >= scale + extraDecBitCount){
                 break;
             }
         }
-        int realScale = scale;
-        if(scale > dotAfterBuilder.length()){
-            realScale = dotAfterBuilder.length();
-        }
-        afterDotStr = dotAfterBuilder.substring(0, realScale);
-        int current = realScale == 0 ? hVal : dotAfterBuilder.charAt(realScale - 1) - '0';
-        int nextNum = (dotAfterBuilder.length() > realScale) ? (dotAfterBuilder.charAt(realScale) - '0') : 0;
-        int next2 = (dotAfterBuilder.length() > realScale + 1) ? (dotAfterBuilder.charAt(realScale + 1) - '0') : 0;
-        int carry = roundingMode.round(current, nextNum, next2);
 
-        char[] chars = afterDotStr.toCharArray();
-        int unZero = -1;
-        for(int i = chars.length - 1; i >= 0; i--){
-            if(carry == 0){
-                if(unZero != -1){ break; }
-                if(chars[i] != '0'){
-                    unZero = i;
-                }
-            }else{
-                int c = chars[i] - '0' + carry;
-                char numCh = chars[i] = (char)(c % 10 + '0');
-                if(unZero == -1 && numCh != '0'){
-                    unZero = i;
-                }
-                carry = c / 10;
+        for(; i >= 0; i--){
+            if(this.values[i] != 0){
+                dotAfterBuilder.append("1");
             }
         }
 
-        afterDotStr = String.valueOf(chars, 0, unZero + 1);
-
-        if(carry > 0){
-            hVal += carry;
-            if(hVal >= 10){
-                afterDotStr = hVal % 10 + afterDotStr;
-                hVal = hVal / 10;
-                if(afterDotStr.length() > scale){
-                    afterDotStr = afterDotStr.substring(0, scale);
-                }
-            }
-        }
-
+        // 执行舍入
+        String number = (this.sign == SIGN_NEGATIVE ? "-" : "") + 
+                hVal + (dotAfterBuilder.length() == 0 ? "" : ("." + dotAfterBuilder.toString()));
         
-        if(fillWithZero && scale > afterDotStr.length()){
-            afterDotStr = StringUtils.rightFill(afterDotStr, '0', scale - afterDotStr.length());
-        }
-
-        String signMark = this.sign == POSITIVE ? "" : "-";
-        if("".equals(afterDotStr)){
-            return signMark + hVal + SCIENTIFIC_MARK + n;
-        }else{
-            return signMark + hVal + "." + afterDotStr + SCIENTIFIC_MARK + n;
-        }
+        return InnerNumberUtil.scientificNotationTransfer(number, scale, roundingMode, n);
     }
 
     private String literal;
-
-    private static final int MAX_ENTIRELY_DISPLAY_POS = 1000;
 
     @Override
     public String toString() {
@@ -590,7 +573,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
          * 如果采用科学计数法, 则保留10位小数, 并四舍五入
          */
         if(literal == null){
-            literal = this.decimal(10, NumberRoundingMode.HALF_UP, false, 20);
+            literal = this.decimal(0, NumberRoundingMode.HALF_UP, 20);
         }
         return literal;
     }
@@ -615,8 +598,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
         }
     }
 
-    private static final char SCIENTIFIC_MARK = 'E';
-
     /**
      * 解析科学计数法(只支持正整数)
      * 1.2345E16
@@ -626,7 +607,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     private static int[] parseScientificNotation(final String origin){
         String originStr = origin;
         int dotPos = origin.indexOf('.');
-        int ePos = origin.indexOf(SCIENTIFIC_MARK);
+        int ePos = origin.indexOf(NumberConstant.SCIENTIFIC_MARK);
 
         if(ePos < 0 || ePos < dotPos){
             throw new IllegalArgumentException("number format incorrect for scientific notation : " + origin);

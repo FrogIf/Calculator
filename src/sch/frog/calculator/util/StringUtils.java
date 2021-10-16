@@ -37,7 +37,7 @@ public class StringUtils {
 
     public static String rightTrim(String str, char ch){
         int i = str.length() - 1;
-        while(i > 0 && str.charAt(i) == ch){
+        while(i >= 0 && str.charAt(i) == ch){
             i--;
         }
         str = str.substring(0, i + 1);

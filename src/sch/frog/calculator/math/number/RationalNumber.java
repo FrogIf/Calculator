@@ -22,7 +22,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             denominator = IntegerNumber.ONE;
         }
         this.denominator = denominator.abs();
-        int sign = numerator.getSign() ^ denominator.getSign();
+        NumberSign sign = numerator.getSign() == denominator.getSign() ? NumberSign.POSITIVE : NumberSign.NEGATIVE;
         this.numerator = sign == numerator.getSign() ? numerator : numerator.not();
     }
 
@@ -51,7 +51,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             bottom = bottom.div(gcd);
         }
 
-        int sign = top.getSign() ^ bottom.getSign();
+        NumberSign sign = top.getSign() == bottom.getSign() ? NumberSign.POSITIVE : NumberSign.NEGATIVE;
         this.numerator = top.getSign() == sign ? top : top.not();
         this.denominator = bottom.abs();
     }
@@ -82,7 +82,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
                 bottom = bottom.div(gcd);
             }
         }
-        int sign = top.getSign() ^ bottom.getSign();
+        NumberSign sign = top.getSign() == bottom.getSign() ? NumberSign.POSITIVE : NumberSign.NEGATIVE;
         this.numerator = top.getSign() == sign ? top : top.not();
         this.denominator = bottom.abs();
     }
@@ -144,7 +144,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
                 bottom = bottom.div(gcd);
             }
 
-            int sign = negative ? NumberConstant.SIGN_NEGATIVE : NumberConstant.SIGN_POSITIVE;
+            NumberSign sign = negative ? NumberSign.NEGATIVE : NumberSign.POSITIVE;
             this.numerator = top.getSign() == sign ? top : top.abs();
             this.denominator = bottom.abs();
         }
@@ -227,7 +227,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
      * 绝对值
      */
     public RationalNumber abs(){
-        if(this.numerator.getSign() == IntegerNumber.POSITIVE){
+        if(this.numerator.getSign() == NumberSign.POSITIVE){
             return this;
         }else{
             return new RationalNumber(this.numerator.not(), this.denominator);
@@ -238,9 +238,9 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     public int compareTo(RationalNumber o) {
         if(this == o) return 0;
 
-        int sign = this.numerator.getSign();
+        NumberSign sign = this.numerator.getSign();
         if(sign != o.numerator.getSign()){
-            if(sign == NumberConstant.SIGN_POSITIVE){
+            if(sign == NumberSign.POSITIVE){
                 return 1;
             }else{
                 return -1;
@@ -252,7 +252,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             }else{
                 mark = this.numerator.mult(o.denominator).compareTo(o.numerator.mult(this.denominator));
             }
-            if(sign == NumberConstant.SIGN_NEGATIVE){
+            if(sign == NumberSign.NEGATIVE){
                 mark = -mark;
             }
             return mark;
@@ -283,6 +283,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     }
 
     public static RationalNumber valueOf(String numString){
+        // TODO 科学计数法的解析
         int dot1 = numString.indexOf('.');
         int dot2 = numString.indexOf('_');
         RationalNumber rationalNumber;
@@ -300,30 +301,50 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     }
 
     @Override
-    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
-        // TODO 保留小数位数, 舍入策略等
+    public String decimal(int scale, NumberRoundingMode roundingMode) {
         if(IntegerNumber.ONE.equals(this.denominator)){
-            return this.numerator.toString();
+            return this.numerator.decimal(scale, roundingMode);
         }else{
-            IntegerNumber.Remainder remainder = new IntegerNumber.Remainder();
-            IntegerNumber quotient = this.numerator.div(this.denominator, remainder);
-            IntegerNumber rem = remainder.getValue();
-//            long bcount = (long) precision;
-//            if(bcount > Integer.MAX_VALUE){
-//                throw new IllegalArgumentException("precision is too large.");
-//            }
-            IntegerNumber remEx = rem.decLeftShift(scale);
-
-            IntegerNumber decimal = remEx.div(this.denominator, remainder);
-            String decimalStr = decimal.toString();
-            if(decimalStr.length() < scale){
-                decimalStr = StringUtils.leftFill(decimalStr, '0', scale - decimalStr.length());
+            int c = this.numerator.decBits() - this.denominator.decBits();
+            if(c > NumberConstant.SCIENTIFIC_THRESHOLD || c < 0 - NumberConstant.SCIENTIFIC_THRESHOLD){ // 采用科学计数法
+                return this.scientificNotation(scale, roundingMode);
+            }else{
+                return this.toPlainString(scale, roundingMode);
             }
-            if(IntegerNumber.ZERO.equals(remainder.getValue()) && decimalStr.endsWith("0")){
-                decimalStr = StringUtils.rightTrim(decimalStr, '0');
-            }
-            return quotient.toString() + "." + decimalStr;
         }
+    }
+
+    /**
+     * 以小数形式输出
+     * @param scale
+     * @param roundingMode
+     * @return
+     */
+    public String toPlainString(int scale, NumberRoundingMode roundingMode){
+        IntegerNumber.Remainder remainder = new IntegerNumber.Remainder();
+        IntegerNumber quotient = this.numerator.div(this.denominator, remainder);
+
+        StringBuilder number = new StringBuilder();
+        number.append(quotient.toPlainString());
+        int needLen = scale + roundingMode.extraDecBitCount();
+        if(needLen > 0){
+            IntegerNumber r = remainder.getValue();
+            IntegerNumber decLeftShift = r.decLeftShift(needLen);
+            IntegerNumber dq = decLeftShift.div(this.denominator, remainder);
+    
+            String dqStr = dq.toPlainString();
+            if(dqStr.length() < needLen){
+                dqStr = StringUtils.leftFill(dqStr, '0', needLen - dqStr.length());
+            }
+
+            number.append('.').append(dqStr);
+            if(remainder.getValue().compareTo(0) > 0){
+                number.append('1');
+            }
+        }else if(remainder.getValue().compareTo(0) > 0){
+            number.append(".1");
+        }
+        return NumberRoundingMode.roundOff(number.toString(), scale, roundingMode);
     }
 
     @Override
@@ -336,8 +357,39 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     }
 
     @Override
-    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
-        return null;
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode) {
+        if(IntegerNumber.ONE.equals(this.denominator)){
+            return this.numerator.scientificNotation(scale, roundingMode);
+        }else if(IntegerNumber.ZERO.equals(this.numerator)){
+            return NumberRoundingMode.roundOff("0", scale, roundingMode);
+        }else {
+            IntegerNumber.Remainder remainder = new IntegerNumber.Remainder();
+            int needLen = scale + roundingMode.extraDecBitCount(); // 需要的小数位数
+
+            int decBitInv = this.numerator.decBits() - this.denominator.decBits();
+            int enlarge = needLen - decBitInv + 1; // 放大的倍数
+            if(enlarge < 0){
+                enlarge = 0;
+            }
+
+            IntegerNumber newNumerator = this.numerator.decLeftShift(enlarge);
+
+            int start = newNumerator.getSign() == NumberSign.NEGATIVE ? 1 : 0;
+            IntegerNumber quotient = newNumerator.div(this.denominator, remainder);
+            String qStr = quotient.toPlainString();
+
+            String afterDot = qStr.substring(start + 1);
+            String number = qStr.substring(0, start + 1) + "." + afterDot;
+
+            int n = -(enlarge - afterDot.length());
+
+            // 判断是否有余数, 如果有, 需要在后面再加1, 使得舍入时, 能感知到有数据丢弃
+            if(remainder.getValue().compareTo(0) > 0){
+                number = number + "1";
+            }
+
+            return InnerNumberUtil.scientificNotationTransfer(number, scale, roundingMode, n);
+        }
     }
 
     /**
@@ -348,5 +400,10 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             return this.numerator;
         }
         return null;
+    }
+
+    @Override
+    public NumberSign getSign() {
+        return this.numerator.getSign();
     }
 }

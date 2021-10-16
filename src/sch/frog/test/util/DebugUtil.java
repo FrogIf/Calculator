@@ -7,6 +7,8 @@ import java.util.Random;
  */
 public class DebugUtil {
 
+    private static final Random r = new Random(12);
+
     private DebugUtil(){
         // do nothing
     }
@@ -16,7 +18,6 @@ public class DebugUtil {
      * @return 随机字符串
      */
     public static String randomString(){
-        Random r = new Random(12);
         int len = r.nextInt(20) + 1;
         StringBuilder sb = new StringBuilder();
 
@@ -27,5 +28,37 @@ public class DebugUtil {
         }
         return sb.toString();
     }
-    
+
+    public static String randomInteger(){
+        return (r.nextInt(2) == 0 ? "" : "-") + randomIntegerPositive();
+    }
+
+    public static String randomIntegerPositive(){
+        StringBuilder sb = new StringBuilder();
+        int count = r.nextInt(50) + 1;
+        if(count == 1){
+            sb.append(String.valueOf(r.nextInt(10)));
+        }else{
+            sb.append(String.valueOf(r.nextInt(9) + 1));
+        }
+        for(int i = 1; i < count; i++){
+            sb.append(String.valueOf(r.nextInt(10)));
+        }
+
+        return sb.toString();
+    }
+
+    public static String randomDecimal(){
+        StringBuilder sb = new StringBuilder(randomIntegerPositive());
+
+        int afterDot = r.nextInt(50);
+        if(afterDot > 0){
+            sb.append('.');
+            for(int i = 0; i < afterDot; i++){
+                sb.append(String.valueOf(r.nextInt(10)));
+            }
+        }
+
+        return (r.nextInt(2) == 0 ? "" : "-") + sb.toString();
+    }
 }

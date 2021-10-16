@@ -43,12 +43,18 @@ public class IrrationalNumber extends AbstractBaseNumber {
     }
 
     @Override
-    public String decimal(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+    public String decimal(int scale, NumberRoundingMode roundingMode) {
         return null;
     }
 
     @Override
-    public String scientificNotation(int scale, NumberRoundingMode roundingMode, boolean fillWithZero) {
+    public String scientificNotation(int scale, NumberRoundingMode roundingMode) {
+        return null;
+    }
+
+    @Override
+    public NumberSign getSign() {
+        // TODO Auto-generated method stub
         return null;
     }
 }

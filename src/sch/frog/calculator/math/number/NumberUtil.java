@@ -26,7 +26,7 @@ public class NumberUtil {
                 base = base.mult(base);
                 positiveIntPow = positiveIntPow.div(TWO);
             }
-            if(intPow.getSign() == NumberConstant.SIGN_NEGATIVE){  // 负指数
+            if(intPow.getSign() == NumberSign.NEGATIVE){  // 负指数
                 return ComplexNumber.ONE.div(result);
             }else{  // 正指数
                 return result;

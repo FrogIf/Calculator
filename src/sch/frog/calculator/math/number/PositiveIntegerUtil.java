@@ -407,13 +407,8 @@ class PositiveIntegerUtil {
             quotient[j] = (int) qhat;
         }
 
-        // fix
-        int i = quotient.length - 1;
-        for(; i > 0; i--){
-            if(quotient[i] != 0){
-                break;
-            }
-        }
+        // 去除高位0
+        int i = highPos(quotient);
         if(i < quotient.length - 1){
             int[] nq = new int[i + 1];
             for(; i > -1; i--){
@@ -422,7 +417,7 @@ class PositiveIntegerUtil {
             quotient = nq;
         }
 
-        return new int[][]{quotient, divideOneWord(u, u.length - 1, d)[0]};
+        return new int[][]{quotient, divideOneWord(u, highPos(u), d)[0]};
     }
 
     /**
