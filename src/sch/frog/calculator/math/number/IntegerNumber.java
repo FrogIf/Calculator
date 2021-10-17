@@ -367,7 +367,8 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
                 sign = SIGN_NEGATIVE;
                 numStr = number.substring(1);
             }
-            if(numStr.indexOf(NumberConstant.SCIENTIFIC_MARK) > 0){
+            int ePos = numStr.indexOf(NumberConstant.SCIENTIFIC_MARK);
+            if(ePos > 0){
                 return new IntegerNumber(sign, parseScientificNotation(numStr));
             }else{
                 return new IntegerNumber(sign, numStr);

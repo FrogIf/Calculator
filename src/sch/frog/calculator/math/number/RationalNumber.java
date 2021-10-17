@@ -162,18 +162,13 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             if(this.denominator.compareTo(num.denominator) == 0){
                 top = num.numerator.add(this.numerator);
                 bottom = num.denominator;
+                return new RationalNumber(top, bottom);
             }else{
                 bottom = this.denominator.mult(num.denominator);
                 top = this.denominator.mult(num.numerator).add(num.denominator.mult(this.numerator));
-
-                IntegerNumber gcd = bottom.gcd(top);
-                if(gcd != IntegerNumber.ONE){
-                    top = top.div(gcd);
-                    bottom = bottom.div(gcd);
-                }
+                return reduction(top, bottom);
             }
 
-            return new RationalNumber(top, bottom);
         }
     }
 
@@ -191,17 +186,38 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }else{
             IntegerNumber top = this.numerator.mult(num.numerator);
             IntegerNumber bottom = this.denominator.mult(num.denominator);
-            IntegerNumber gcd = top.gcd(bottom);
-            if(gcd != IntegerNumber.ONE){
-                top = top.div(gcd);
-                bottom = bottom.div(gcd);
-            }
-            return new RationalNumber(top, bottom);
+            return reduction(top, bottom);
         }
+    }
+
+    public RationalNumber mult(IntegerNumber num){
+        IntegerNumber top = this.numerator.mult(num);
+        IntegerNumber bottom = this.denominator;
+        return reduction(top, bottom);
     }
 
     public RationalNumber div(RationalNumber num){
         return this.mult(num.upend());
+    }
+
+    public RationalNumber div(IntegerNumber num){
+        NumberSign sign = num.getSign();
+        IntegerNumber top = this.numerator;
+        if(sign == NumberSign.NEGATIVE){
+            top = top.not();
+            num = num.abs();
+        }
+        IntegerNumber bottom = this.denominator.mult(num);
+        return reduction(top, bottom);
+    }
+
+    private static RationalNumber reduction(IntegerNumber top, IntegerNumber bottom){
+        IntegerNumber gcd = top.gcd(bottom);
+        if(!gcd.equals(IntegerNumber.ONE)){
+            return new RationalNumber(top.div(gcd), bottom.div(gcd));
+        }else{
+            return new RationalNumber(top, bottom);
+        }
     }
 
     public RationalNumber not(){
@@ -283,16 +299,36 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     }
 
     public static RationalNumber valueOf(String numString){
-        // TODO 科学计数法的解析
         int dot1 = numString.indexOf('.');
         int dot2 = numString.indexOf('_');
+        int ePos = numString.indexOf(NumberConstant.SCIENTIFIC_MARK);
+
+        String beforeE;
+        int eVal = 0;
+        if(ePos > 0){
+            beforeE = numString.substring(0, ePos);
+            eVal = Integer.parseInt(numString.substring(ePos + 1));
+        }else{
+            beforeE = numString;
+        }
+
         RationalNumber rationalNumber;
         if(dot2 == -1){ // 没有循环节
-            rationalNumber = new RationalNumber(numString);
+            rationalNumber = new RationalNumber(beforeE);
         }else{  // 有循环节
-            numString = numString.replace("_", "");
-            rationalNumber = new RationalNumber(numString, dot2 - dot1 - 1);
+            beforeE = beforeE.replace("_", "");
+            rationalNumber = new RationalNumber(beforeE, dot2 - dot1 - 1);
         }
+
+        // 存在科学计数法
+        if(eVal > 0){
+            IntegerNumber newNumerator = rationalNumber.numerator.decLeftShift(eVal);
+            rationalNumber = reduction(newNumerator, rationalNumber.denominator);
+        }else if(eVal < 0){
+            IntegerNumber newDenominator = rationalNumber.denominator.decLeftShift(-eVal);
+            rationalNumber = reduction(rationalNumber.numerator, newDenominator);
+        }
+
         return rationalNumber;
     }
 

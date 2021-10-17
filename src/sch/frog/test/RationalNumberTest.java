@@ -44,7 +44,14 @@ public class RationalNumberTest {
     public static void main(String[] args){
         // randomTest();
         // randomDecimalTest();
-        randomDecimalScale();
+        // randomDecimalScale();
+        testValueOf();
+    }
+
+    private static void testValueOf(){
+        String origin = "123.345_5E1";
+        RationalNumber valueOf = RationalNumber.valueOf(origin);
+        System.out.println(valueOf);
     }
 
     private static void randomDecimalScale(){
