@@ -1,4 +1,7 @@
-package sch.frog.test;
+package sch.frog.test.impl;
+
+import sch.frog.test.ICaseObject;
+import sch.frog.test.util.TestUtil;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -9,13 +12,13 @@ import java.util.Random;
 
 import sch.frog.calculator.math.number.IntegerNumber;
 import sch.frog.calculator.math.number.NumberRoundingMode;
-import sch.frog.test.util.DebugUtil;
+import sch.frog.test.AbstractTestContent;
 
 /**
- * 整数测试类
+ * 整数科学计数法测试
  */
-public class IntegerNumberTest {
-    
+public class IntegerScientificNotationTest extends AbstractTestContent<IntegerTestObject>{
+
     private static final NumberFormat formatter = new DecimalFormat("0.######E0", DecimalFormatSymbols.getInstance(Locale.ROOT));
 
     private static final Random r = new Random();
@@ -23,36 +26,21 @@ public class IntegerNumberTest {
     static{
         formatter.setMaximumFractionDigits(10000);
     }
-
-    public static void main(String[] args){
-        // manualTest("74858094452683656295977035133");
-        randomTest();
+    
+    @Override
+    protected IntegerTestObject generateCase() {
+        IntegerTestObject obj = new IntegerTestObject();
+        obj.setNumber(TestUtil.randomInteger());
+        return obj;
     }
 
-    private static void manualTest(String number){
-        if(singleTest(number)){
-            System.out.println("success");
-        }else{
-            System.out.println("failed");
-        }
-    }
-
-    private static void randomTest(){
-        for(int i = 0; i < 100000; i++){
-            if(!singleTest(DebugUtil.randomInteger())){
-                System.out.println("find error, stop.");
-                return;
-            }
-        }
-        System.out.println("success!");
-    }
-
-    private static boolean singleTest(String integerNumber){
-        String ans = formatter.format(new BigInteger(integerNumber));
-        IntegerNumber num = IntegerNumber.valueOf(integerNumber);
+    @Override
+    protected boolean singleStepTest(IntegerTestObject caseObj) {
+        String number = caseObj.getNumber();
+        String ans = formatter.format(new BigInteger(number));
+        IntegerNumber num = IntegerNumber.valueOf(number);
         int scale = r.nextInt(10);
         String val = num.scientificNotation(scale, NumberRoundingMode.DOWN);
-        System.out.println(String.format("origin : %s, result : %s, ans : %s", integerNumber, val, ans));
         return check(val, ans, scale);
     }
 
@@ -71,5 +59,29 @@ public class IntegerNumberTest {
         }
         return false;
     }
-    
+
+    @Override
+    public IntegerTestObject parse(String content) {
+        IntegerTestObject testObject = new IntegerTestObject();
+        testObject.setNumber(content);
+        return testObject;
+    }    
+}
+
+class IntegerTestObject implements ICaseObject{
+
+    private String number;
+
+    public void setNumber(String number){
+        this.number = number;
+    }
+
+    public String getNumber(){
+        return this.number;
+    }
+
+    @Override
+    public String content() {
+        return number;
+    }
 }

@@ -5,11 +5,11 @@ import java.util.Random;
 /**
  * 调试工具类
  */
-public class DebugUtil {
+public class TestUtil {
 
     private static final Random r = new Random(12);
 
-    private DebugUtil(){
+    private TestUtil(){
         // do nothing
     }
 
@@ -29,10 +29,16 @@ public class DebugUtil {
         return sb.toString();
     }
 
+    /**
+     * 生成随机整数
+     */
     public static String randomInteger(){
         return (r.nextInt(2) == 0 ? "" : "-") + randomIntegerPositive();
     }
 
+    /**
+     * 生成随机正整数
+     */
     public static String randomIntegerPositive(){
         StringBuilder sb = new StringBuilder();
         int count = r.nextInt(50) + 1;
@@ -48,6 +54,9 @@ public class DebugUtil {
         return sb.toString();
     }
 
+    /**
+     * 生成随机有理数
+     */
     public static String randomDecimal(){
         StringBuilder sb = new StringBuilder(randomIntegerPositive());
 

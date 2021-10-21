@@ -11,11 +11,10 @@ import sch.frog.calculator.util.collection.IList;
 import sch.frog.calculator.util.collection.ISet;
 import sch.frog.calculator.util.collection.Iterator;
 import sch.frog.calculator.util.collection.RBTreeSet;
-import sch.frog.test.util.DebugUtil;
+import sch.frog.test.util.TestUtil;
 
-public class RBTreeTest implements ITest{
+public class RBTreeTest{
 
-    @Override
     public void test() {
         for(int i = 0; i < 1000000; i++){
             if(!repeatCheck()){
@@ -30,7 +29,7 @@ public class RBTreeTest implements ITest{
     private static boolean checkRbTreeContent(){
         IList<String> list = new ArrayList<>();
         for(int i = 0; i < 100; i++){
-            list.add(DebugUtil.randomString());
+            list.add(TestUtil.randomString());
         }
 
         return checkContent(list);
@@ -106,7 +105,7 @@ public class RBTreeTest implements ITest{
     private static boolean repeatCheck(){
         IList<String> list = new ArrayList<>();
         for(int i = 0; i < 100; i++){
-            list.add(DebugUtil.randomString());
+            list.add(TestUtil.randomString());
         }
 
         return checkString(list);

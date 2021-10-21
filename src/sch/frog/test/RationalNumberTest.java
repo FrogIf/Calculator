@@ -12,7 +12,7 @@ import sch.frog.calculator.math.number.NumberRoundingMode;
 import sch.frog.calculator.math.number.RationalNumber;
 import sch.frog.calculator.util.StringUtils;
 import sch.frog.calculator.util.collection.IMap;
-import sch.frog.test.util.DebugUtil;
+import sch.frog.test.util.TestUtil;
 import sch.frog.calculator.util.collection.ISet;
 import sch.frog.calculator.util.collection.IMap.Entry;
 import sch.frog.calculator.util.collection.Iterator;
@@ -56,7 +56,7 @@ public class RationalNumberTest {
 
     private static void randomDecimalScale(){
         for(int i = 0; i < 1000; i++){
-            String decimal = DebugUtil.randomDecimal();
+            String decimal = TestUtil.randomDecimal();
             int scale = r.nextInt(10);
             System.out.println("origin : " + decimal + ", scale : " + scale);
             Iterator<Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
@@ -71,7 +71,7 @@ public class RationalNumberTest {
         for(int i = 0; i < 10000; i++){
             Iterator<Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
             while(itr.hasNext()){
-                if(!singleDecimal(DebugUtil.randomDecimal(), itr.next().getKey(), r.nextInt(10))){
+                if(!singleDecimal(TestUtil.randomDecimal(), itr.next().getKey(), r.nextInt(10))){
                     System.out.println("find error, stop.");
                     return;
                 }
@@ -110,7 +110,7 @@ public class RationalNumberTest {
 
     private static void randomTest(){
         for(int i = 0; i < 10000; i++){
-            String decimal = DebugUtil.randomDecimal();
+            String decimal = TestUtil.randomDecimal();
             Iterator<Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
             while(itr.hasNext()){
                 if(!singleTest(decimal, itr.next().getKey(), r.nextInt(10))){
@@ -172,7 +172,7 @@ public class RationalNumberTest {
     // 随机生成小于1的小数
     private static String randomLitterNumber(){
         int zeroCount = r.nextInt(10) + 5;
-        String num = DebugUtil.randomIntegerPositive();
+        String num = TestUtil.randomIntegerPositive();
         return "0." + StringUtils.leftFill(num, '0', zeroCount);
     }
 
