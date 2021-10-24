@@ -1,36 +1,34 @@
 package sch.frog;
 
+import java.io.PrintStream;
 import java.util.Scanner;
 
-import sch.frog.calculator.ICalculator;
-import sch.frog.calculator.SimpleCalculator;
-import sch.frog.calculator.runtime.GeneralCalculatorSession;
-import sch.frog.calculator.runtime.ICalculatorSession;
-import sch.frog.calculator.math.number.ComplexNumber;
-
+import sch.frog.calculator.facade.Calculator;
+import sch.frog.calculator.facade.ExecuteSession;
 public class Bootstrap {
 
 	public static void main(String[] args){
-        ICalculator<ComplexNumber> calculator = new SimpleCalculator();
+        PrintStream out = System.out;
+
+        Calculator calculator = new Calculator();
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("**********Calculator************");
+        out.println("**********Calculator************");
 
-        ICalculatorSession session = new GeneralCalculatorSession();
+        ExecuteSession session = new ExecuteSession();
 
         while(sc.hasNext()){
             String expression = sc.nextLine();
             if("exit".equals(expression)) {
-                System.out.println("bye !");
+                out.println("bye !");
                 break;
             }
 
             try{
-                ComplexNumber result = calculator.calculate(expression, session);
-                System.out.println(result.toString());
+                calculator.calculate(expression, out, session);
             }catch (Exception e){
-                e.printStackTrace();
+                e.printStackTrace(out);
             }
         }
 
