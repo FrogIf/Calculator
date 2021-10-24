@@ -61,6 +61,8 @@ public class NumberModeCommand implements ICommand {
                             session.setNumberMode(new NumberMode(NumberMode.Mode.FLOOR, scale));
                         }else if("scientific".equals(mode) || "e".equals(mode)){
                             session.setNumberMode(new NumberMode(NumberMode.Mode.SCIENFIFIC, scale));
+                        }else if("plain".equals(mode)){
+                            session.setNumberMode(new NumberMode(NumberMode.Mode.PLAIN, scale));
                         }else{
                             result.setSuccess(false);                            
                             result.setErrorMsg("unrecognized mode : " + mode);

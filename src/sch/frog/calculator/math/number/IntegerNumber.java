@@ -521,7 +521,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     /**
      * 朴素输出, 不以科学计数法的方式输出
      */
-    String toPlainString(){
+    public String toPlainString(){
         StringBuilder sb = new StringBuilder();
         if(this.sign == SIGN_NEGATIVE){ sb.append('-'); }
         sb.append(values[highPos]);

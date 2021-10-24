@@ -1,7 +1,11 @@
 package sch.frog.calculator.facade;
 
+import sch.frog.calculator.math.number.ComplexNumber;
 import sch.frog.calculator.math.number.IBaseNumber;
+import sch.frog.calculator.math.number.IntegerNumber;
 import sch.frog.calculator.math.number.NumberRoundingMode;
+import sch.frog.calculator.math.number.RationalNumber;
+import sch.frog.calculator.math.number.RealNumber;
 
 public class NumberMode {
     
@@ -31,7 +35,29 @@ public class NumberMode {
         HALF_EVEN((number, scale) -> number.decimal(scale, NumberRoundingMode.HALF_EVEN)),
         CELING((number, scale) -> number.decimal(scale, NumberRoundingMode.CEILING)),
         FLOOR((number, scale) -> number.decimal(scale, NumberRoundingMode.FLOOR)),
-        SCIENFIFIC((number, scale) -> number.scientificNotation(scale, NumberRoundingMode.HALF_UP));
+        SCIENFIFIC((number, scale) -> number.scientificNotation(scale, NumberRoundingMode.HALF_UP)),
+        PLAIN((number, scale) -> {
+            if(number instanceof ComplexNumber){
+                RationalNumber num = ((ComplexNumber)number).toRational();
+                if(num == null){
+                    return number.toString();
+                }else{
+                    return toPlainStringForRationalNumber(num, scale);
+                }
+            }else if(number instanceof RealNumber){
+                RationalNumber num = ((RealNumber)number).toRational();
+                if(num == null){
+                    return number.toString();
+                }else{
+                    return toPlainStringForRationalNumber(num, scale);
+                }
+            }else if(number instanceof RationalNumber){
+                return toPlainStringForRationalNumber((RationalNumber)number, scale);
+            }else if(number instanceof IntegerNumber){
+                return ((IntegerNumber)number).toPlainString();
+            }
+            return number.toString();
+        });
 
         private IModePolicy policy;
 
@@ -46,6 +72,19 @@ public class NumberMode {
 
     private interface IModePolicy{
         String handle(IBaseNumber number, int scale);
+    }
+
+    private static String toPlainStringForRationalNumber(RationalNumber num, int scale){
+        if(num == null){
+            return null;
+        }else{
+            IntegerNumber intNum = num.toInteger();
+            if(intNum == null){
+                return num.toPlainString(scale, NumberRoundingMode.HALF_UP);
+            }else{
+                return intNum.toPlainString();
+            }
+        }
     }
 
 }
