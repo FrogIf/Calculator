@@ -137,12 +137,36 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
 
     @Override
     public String decimal(int scale, NumberRoundingMode roundingMode) {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        boolean ipZero = RealNumber.ZERO.equals(this.imaginaryPart);
+        if(ipZero || !RealNumber.ZERO.equals(this.realPart)){
+            sb.append(this.realPart.decimal(scale, roundingMode));
+        }
+        if(!ipZero){
+            if(sb.length() > 0){
+                sb.append('+');
+            }
+            sb.append(this.imaginaryPart.decimal(scale, roundingMode));
+            sb.append('i');
+        }
+        return sb.toString();
     }
 
     @Override
     public String scientificNotation(int scale, NumberRoundingMode roundingMode) {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        boolean ipZero = RealNumber.ZERO.equals(this.imaginaryPart);
+        if(ipZero || !RealNumber.ZERO.equals(this.realPart)){
+            sb.append(this.realPart.scientificNotation(scale, roundingMode));
+        }
+        if(!ipZero){
+            if(sb.length() > 0){
+                sb.append('+');
+            }
+            sb.append(this.imaginaryPart.scientificNotation(scale, roundingMode));
+            sb.append('i');
+        }
+        return sb.toString();
     }
 
     @Override

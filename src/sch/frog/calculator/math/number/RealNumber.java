@@ -175,12 +175,12 @@ public class RealNumber extends AbstractBaseNumber implements Comparable<RealNum
 
     @Override
     public String decimal(int scale, NumberRoundingMode roundingMode) {
-        return null;
+        return this.rationalNumber.decimal(scale, roundingMode);
     }
 
     @Override
     public String scientificNotation(int scale, NumberRoundingMode roundingMode) {
-        return null;
+        return this.rationalNumber.scientificNotation(scale, roundingMode);
     }
 
     @Override
