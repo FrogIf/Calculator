@@ -55,4 +55,8 @@ public abstract class AbstractTestContent<C extends ICaseObject> {
         }
     }
 
+    public void simpleTest(){
+        // do nothing.
+    }
+
 }

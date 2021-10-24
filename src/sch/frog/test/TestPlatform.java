@@ -17,6 +17,8 @@ public class TestPlatform {
         testContents.add(new GcdTest());
         testContents.add(new TreeMapTest());
         testContents.add(new RoundOffTest());
+        testContents.add(new RBTreeTest());
+        testContents.add(new RationalNumberTest());
     }
 
     public static void main(String[] args){
@@ -26,6 +28,7 @@ public class TestPlatform {
             if(!next.repeatTest(TEST_COUNT)){
                 break;
             }
+            next.simpleTest();
         }
     }
 }

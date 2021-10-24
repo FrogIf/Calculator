@@ -15,6 +15,9 @@ import sch.frog.calculator.util.collection.TreeMap;
 import sch.frog.calculator.util.collection.IMap.Entry;
 import sch.frog.test.AbstractTestContent;
 
+/**
+ * 舍入测试
+ */
 public class RoundOffTest extends AbstractTestContent<RoundOffTestObj>{
 
     private static final IMap<NumberRoundingMode, RoundingMode> map = new TreeMap<>((a, b) -> a.compareTo(b));

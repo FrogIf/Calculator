@@ -5,6 +5,9 @@ import sch.frog.test.AbstractTestContent;
 import sch.frog.test.ICaseObject;
 import java.util.Random;
 
+/**
+ * 最大公约数准确性验证
+ */
 public class GcdTest extends AbstractTestContent<GcdTestObj> {
 
     private final Random r = new Random();

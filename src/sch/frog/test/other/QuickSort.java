@@ -1,7 +1,10 @@
-package sch.frog.test;
+package sch.frog.test.other;
 
 import java.util.Arrays;
 
+/**
+ * 快速排序
+ */
 public class QuickSort {
     
 

@@ -12,6 +12,9 @@ import sch.frog.test.AbstractTestContent;
 import sch.frog.test.ICaseObject;
 import sch.frog.test.util.TestUtil;
 
+/**
+ * TreeMap测试
+ */
 public class TreeMapTest extends AbstractTestContent<TreeMapTestObject> {
     private final Random r = new Random();
 
