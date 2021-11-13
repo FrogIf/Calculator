@@ -50,7 +50,8 @@ public class CommandExecutor {
     }
 
     private ExecResult execute(String command, IList<String> args, ExecuteSession session){
-        ICommand cmd = commandMap.get(command);
+        String commandFix = command.toLowerCase();
+        ICommand cmd = commandMap.get(commandFix);
         if(cmd == null){
             ExecResult execResult = new ExecResult();
             execResult.setSuccess(false);
@@ -70,7 +71,7 @@ public class CommandExecutor {
     }
 
     public void regist(ICommand command){
-        commandMap.put(command.literal(), command);
+        commandMap.put(command.literal().toLowerCase(), command);
     }
 
 }
