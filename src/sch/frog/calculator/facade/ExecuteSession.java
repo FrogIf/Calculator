@@ -15,7 +15,7 @@ public class ExecuteSession {
     /**
      * 指定舍入模式
      */
-    private NumberMode numberMode = new NumberMode(NumberMode.Mode.NONE, 0);
+    private NumberMode numberMode = new NumberMode(NumberMode.Mode.PLAIN, 10);
 
     public ExecuteSession(){
         this.calculateSession = new GeneralCalculatorSession();

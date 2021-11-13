@@ -706,19 +706,4 @@ class PositiveIntegerUtil {
         return result;
     }
 
-    // public static String arrayToString(int[] arr){
-    //     StringBuilder sb = new StringBuilder();
-    //     int h = highPos(arr);
-    //     for(int i = h; i >= 0; i--){
-    //         int a = arr[i];
-    //         int b = a;
-    //         while(h != i && SCALE / 10 > b){
-    //             b *= 10;
-    //             sb.append("0");
-    //         }
-    //         sb.append(a);
-    //     }
-    //     return sb.toString();
-    // }
-
 }
