@@ -7,8 +7,7 @@ set rootDir=%cd%
 set cdD=%rootDir%\src
 set targetRoot=target
 set aimD=%targetRoot%\classes
-set bootClass=frog.test.Bootstrap
-set resource=%rootDir%\resource
+set bootClass=sch.frog.Bootstrap
 set outputName=calculator
 
 if exist %aimD% (
@@ -22,26 +21,30 @@ md %aimD%
 
 echo start compile ...
 
-for /r src %%s in (*) do (
-    if "%%~xs" neq ".java" (
-		set tmpD=%%~dps
-		set "tmpD=!tmpD:%cdD%=%aimD%!"
-        if not exist !tmpD! mkdir !tmpD!
-		
-		set tmp=%%s
-        set "tmp=!tmp:%cdD%=%aimD%!"
-		
-		echo copy resouce file
-		copy %%s !tmp!
-    ) else (
-    	echo javac -encoding UTF-8 -classpath src;lib\* %%s -d %aimD%
-        javac -encoding UTF-8 -classpath src;lib\* %%s -d %aimD%
-	)
-)
+rem for /r src %%s in (*) do (
+rem     if "%%~xs" neq ".java" (
+rem 		set tmpD=%%~dps
+rem 		set "tmpD=!tmpD:%cdD%=%aimD%!"
+rem         if not exist !tmpD! mkdir !tmpD!
+rem 		
+rem 		set tmp=%%s
+rem         set "tmp=!tmp:%cdD%=%aimD%!"
+rem 		
+rem 		echo copy resouce file
+rem 		copy %%s !tmp!
+rem     ) else (
+rem     	echo javac -encoding UTF-8 -classpath src;lib\* %%s -d %aimD%
+rem         javac -encoding UTF-8 -classpath src;lib\* %%s -d %aimD%
+rem 	)
+rem )
 
-xcopy %resource%\* %aimD% /s/e
+javac -encoding UTF-8 -classpath src src\sch\frog\*.java -d %aimD%
+
 cd %aimD%
-jar -cvfm %outputName%.jar META-INF/boot.txt *
+
+md META-INF
+echo Main-Class: %bootClass% > META-INF/boot
+jar -cvfm %outputName%.jar META-INF/boot *
 
 cd %rootDir%
 copy %aimD%\%outputName%.jar %targetRoot%
