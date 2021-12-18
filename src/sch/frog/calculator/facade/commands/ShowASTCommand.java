@@ -9,7 +9,7 @@ public class ShowASTCommand implements ICommand {
 
     @Override
     public String literal() {
-        return "ShowAST";
+        return "show_ast";
     }
 
     @Override

@@ -10,7 +10,7 @@ public class NumberModeCommand implements ICommand {
 
     @Override
     public String literal() {
-        return "SetNumberMode";
+        return "num_mode";
     }
 
     @Override
