@@ -42,7 +42,7 @@ class PositiveIntegerUtil {
     /**
      * 获取一个正整数非0首位位置
      * @param arr 待判断的正整数
-     * @return 返回非0首位位置
+     * @return 返回非0首位位置, 如果该数是0, 则也会返回0
      */
     static int highPos(int[] arr){
         int l = arr.length - 1;
@@ -493,60 +493,52 @@ class PositiveIntegerUtil {
      * @param values 待判断整数
      * @return true : 奇数; false : 偶数
      */
-    static boolean isOdd(int[] values){
-        return (values[0] & 1) == 1;
+    static boolean isEven(int[] values){
+        return (values[0] & 1) == 0;
     }
 
     /**
      * 获取两个正整数的最大公约数
      * 1. a, b都是偶数, 则gcd(a, b) = 2 * gcd(a/2, b/2)
      * 2. a是偶数, b是奇数, 则gcd(a, b) = gcd(a/2, b)
-     * 3. gcd(a, b) = gcd(a - b, a)
-     * 4. 如果a, b都是奇数, 则 a - b是偶数, 且 |a - b| < max(a, b)
+     * 3. a是奇数, b是偶数, 则gcd(a, b) = gcd(a, b/2)
+     * 4. 如果a, b都是奇数, 则a - b是偶数, gcd(a, b) = gcd(|a - b|, min(a, b))
      * @param a 数a
      * @param ah a的非0高位位置
      * @param b 数b
      * @param bh b的非0高位位置
-     * @return 最大公约数
+     * @return 最大公约数, 如果入参中有一个为0, 则返回另一个
      */
     static int[] gcd(int[] a, int ah, int[] b, int bh){
-        int[] d = ONE;
+        if(ah == 0 && a[0] == 0){ return b; }
+        if(bh == 0 && b[0] == 0){ return a; }
 
-        int ac = 1;
-        int bc = 1;
-        while((ac = compare(a, ah, ONE, 0)) > 0 && (bc = compare(b, bh, ONE, 0)) > 0){
-            boolean aIsOdd = isOdd(a);
-            boolean bIsOdd = isOdd(b);
-
-            if(aIsOdd && bIsOdd){
-                ah = highPos(a);
-                bh = highPos(b);
-                int mark = compare(a, ah, b, bh);
-                if(mark > 0){
-                    a = subtract(a, ah, b, bh);
-                }else{
-                    b = subtract(b, bh, a, ah);
-                }
-            }else if(aIsOdd){
-                b = half(b, highPos(b));
-            }else if(bIsOdd){
-                a = half(a, highPos(a));
-            }else{
-                d = twice(d, highPos(d));
-                a = half(a, highPos(a));
-                b = half(b, highPos(b));
-            }
+        int[] k = ONE;
+        while(isEven(a) && isEven(b)){
+            k = twice(k, highPos(k));
+            a = half(a, highPos(a));
+            b = half(b, highPos(b));
         }
 
-        if(ac < 0 || bc < 0){   // 说明其中一个为0
-            if(ac < 0){
-                return multiply(d, highPos(d), b, highPos(b));
-            }else{
-                return multiply(d, highPos(d), a, highPos(a)); 
+        while(true){
+            while(isEven(a)){
+                a = half(a, highPos(a));
             }
-        }else{  // 其中一个为1
-            return d;
+            while(isEven(b)){
+                b = half(b, highPos(b));
+            }
+
+            int mark = compare(a, (ah = highPos(a)), b, (bh = highPos(b)));
+            if(mark == 0){
+                break;
+            }else if(mark > 0){   // a > b
+                a = subtract(a, ah, b, bh);
+            }else{ 
+                b = subtract(b, bh, a, ah);
+            }
         }
+        
+        return multiply(k, highPos(k), b, highPos(b));
     }
 
     /**

@@ -307,7 +307,15 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return true - 奇数; false - 偶数
      */
     public boolean isOdd(){
-        return PositiveIntegerUtil.isOdd(this.values);
+        return !PositiveIntegerUtil.isEven(this.values);
+    }
+
+    /**
+     * 判断是否是偶数
+     * @return true - 偶数; false - 奇数
+     */
+    public boolean isEven(){
+        return PositiveIntegerUtil.isEven(this.values);
     }
 
     /**
