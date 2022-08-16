@@ -1,9 +1,9 @@
-package sch.frog.calculator.facade;
+package sch.frog.calculator.facade.command;
 
 /**
  * 执行结果
  */
-public class ExecResult{
+public class CommandExecuteResult {
 
     private boolean success;
     

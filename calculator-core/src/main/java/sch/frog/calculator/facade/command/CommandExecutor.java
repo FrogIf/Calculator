@@ -1,5 +1,6 @@
-package sch.frog.calculator.facade;
+package sch.frog.calculator.facade.command;
 
+import sch.frog.calculator.facade.ExecuteSession;
 import sch.frog.calculator.util.IComparator;
 import sch.frog.calculator.util.collection.ArrayList;
 import sch.frog.calculator.util.collection.IList;
@@ -10,7 +11,7 @@ public class CommandExecutor {
 
     private final IMap<String, ICommand> commandMap = new TreeMap<>(IComparator.STRING_DEFAULT_COMPARATOR);
 
-    public ExecResult execute(String statement, ExecuteSession session){
+    public CommandExecuteResult execute(String statement, ExecuteSession session){
         if(!statement.startsWith(CommandConstants.PREFIX_MARK)){
             throw new IllegalArgumentException("[" + statement + "] is not command.");
         }
@@ -49,14 +50,14 @@ public class CommandExecutor {
         return execute(commandBuilder.toString(), args, session);
     }
 
-    private ExecResult execute(String command, IList<String> args, ExecuteSession session){
+    private CommandExecuteResult execute(String command, IList<String> args, ExecuteSession session){
         String commandFix = command.toLowerCase();
         ICommand cmd = commandMap.get(commandFix);
         if(cmd == null){
-            ExecResult execResult = new ExecResult();
-            execResult.setSuccess(false);
-            execResult.setErrorMsg("unrecognized command [" + command + "]");
-            return execResult;
+            CommandExecuteResult commandExecuteResult = new CommandExecuteResult();
+            commandExecuteResult.setSuccess(false);
+            commandExecuteResult.setErrorMsg("unrecognized command [" + command + "]");
+            return commandExecuteResult;
         }
         return cmd.execute(session, args);
     }

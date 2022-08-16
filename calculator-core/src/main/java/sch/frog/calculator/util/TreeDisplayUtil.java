@@ -81,12 +81,11 @@ public class TreeDisplayUtil {
                             AnchorNode[] brothers = cursor.parent.children;
                             int len = brothers.length;
                             boolean startMove = false;
-                            for(int i = 0; i < len;i++){
-                                AnchorNode bro = brothers[i];
-                                if(startMove){
+                            for (AnchorNode bro : brothers) {
+                                if (startMove) {
                                     bro.col = bro.col + offset;
-                                }else{
-                                    startMove = !startMove && bro == cursor;
+                                } else {
+                                    startMove = bro == cursor;
                                 }
                             }
                             maxColInfo[0] = brothers[len - 1].col;

@@ -1,13 +1,14 @@
-package sch.frog.calculator.facade;
+package sch.frog.calculator.facade.command;
 
-import sch.frog.calculator.facade.commands.NumberModeCommand;
-import sch.frog.calculator.facade.commands.ShowASTCommand;
+import sch.frog.calculator.facade.ExecuteSession;
+import sch.frog.calculator.facade.command.impl.NumberModeCommand;
+import sch.frog.calculator.facade.command.impl.ShowASTCommand;
 
-public class CommandManager {
+public class CommandHandler {
 
     private final CommandExecutor commandExecutor = new CommandExecutor();
 
-    public CommandManager(){
+    public CommandHandler(){
         commandExecutor.regist(new NumberModeCommand());
         commandExecutor.regist(new ShowASTCommand());
     }
@@ -16,7 +17,7 @@ public class CommandManager {
         return statement.startsWith(CommandConstants.PREFIX_MARK);
     }
 
-    public ExecResult execute(String statement, ExecuteSession session){
+    public CommandExecuteResult execute(String statement, ExecuteSession session){
         return commandExecutor.execute(statement, session);
     }
 

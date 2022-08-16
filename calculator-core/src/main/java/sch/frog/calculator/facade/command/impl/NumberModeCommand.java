@@ -1,21 +1,21 @@
-package sch.frog.calculator.facade.commands;
+package sch.frog.calculator.facade.command.impl;
 
 import sch.frog.calculator.util.collection.IList;
-import sch.frog.calculator.facade.ExecResult;
+import sch.frog.calculator.facade.command.CommandExecuteResult;
 import sch.frog.calculator.facade.ExecuteSession;
-import sch.frog.calculator.facade.ICommand;
+import sch.frog.calculator.facade.command.ICommand;
 import sch.frog.calculator.facade.NumberMode;
 
 public class NumberModeCommand implements ICommand {
 
     @Override
     public String literal() {
-        return "num_mode";
+        return "nummode";
     }
 
     @Override
-    public ExecResult execute(ExecuteSession session, IList<String> args) {
-        ExecResult result = new ExecResult();
+    public CommandExecuteResult execute(ExecuteSession session, IList<String> args) {
+        CommandExecuteResult result = new CommandExecuteResult();
         result.setSuccess(false);
         if(args.isEmpty()){
             result.setErrorMsg("no args can be used.");
@@ -56,11 +56,11 @@ public class NumberModeCommand implements ICommand {
                         }else if("half_even".equals(mode)){
                             session.setNumberMode(new NumberMode(NumberMode.Mode.HALF_EVEN, scale));
                         }else if("ceiling".equals(mode)){
-                            session.setNumberMode(new NumberMode(NumberMode.Mode.CELING, scale));
+                            session.setNumberMode(new NumberMode(NumberMode.Mode.CEILING, scale));
                         }else if("floor".equals(mode)){
                             session.setNumberMode(new NumberMode(NumberMode.Mode.FLOOR, scale));
                         }else if("scientific".equals(mode) || "e".equals(mode)){
-                            session.setNumberMode(new NumberMode(NumberMode.Mode.SCIENFIFIC, scale));
+                            session.setNumberMode(new NumberMode(NumberMode.Mode.SCIENTIFIC, scale));
                         }else if("plain".equals(mode)){
                             session.setNumberMode(new NumberMode(NumberMode.Mode.PLAIN, scale));
                         }else{
@@ -72,6 +72,12 @@ public class NumberModeCommand implements ICommand {
             }
         }
         return result;
+    }
+
+    @Override
+    public String help() {
+        // TODO 帮助文档
+        return null;
     }
 
 }
