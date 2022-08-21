@@ -1,12 +1,12 @@
 package sch.frog.test;
 
-import java.io.PrintStream;
-import java.util.Scanner;
-
 import sch.frog.calculator.facade.Calculator;
 import sch.frog.calculator.facade.ExecuteSession;
-import sch.frog.calculator.io.IInputStream;
+import sch.frog.calculator.facade.SessionConfiguration;
 import sch.frog.calculator.io.IOutputStream;
+
+import java.io.PrintStream;
+import java.util.Scanner;
 
 public class Bootstrap {
 
@@ -20,42 +20,32 @@ public class Bootstrap {
         out.println("**********Calculator************");
 
         ExecuteSession session = new ExecuteSession();
+        SessionConfiguration sessionConfiguration = session.getSessionConfiguration();
+        sessionConfiguration.setShowAST(true);
 
-        while(sc.hasNext()){
-            String expression = sc.nextLine();
-            if("exit".equals(expression)) {
-                out.println("bye !");
-                break;
-            }
+        try{
+            calculator.calculate(() -> {
+                String line = sc.nextLine();
+                if("exit".equals(line)){
+                    return null;
+                }
+                return line;
+            }, new IOutputStream() {
+                @Override
+                public void println(String text) {
+                    out.println(text);
+                }
 
-            try{
-                calculator.calculate(new IInputStream() {
-                    boolean read = false;
-                    @Override
-                    public String readLine() {
-                        if(read){
-                            return null;
-                        }
-                        read = true;
-                        return expression;
-
-                    }
-                }, new IOutputStream() {
-                    @Override
-                    public void println(String text) {
-                        out.println(text);
-                    }
-
-                    @Override
-                    public void print(String text) {
-                        out.print(text);
-                    }
-                }, session);
-            }catch (Exception e){
-                e.printStackTrace(out);
-            }
+                @Override
+                public void print(String text) {
+                    out.print(text);
+                }
+            }, session);
+        }catch (Exception e){
+            e.printStackTrace(out);
         }
 
+        out.println("bye !");
         sc.close();
     }
 }

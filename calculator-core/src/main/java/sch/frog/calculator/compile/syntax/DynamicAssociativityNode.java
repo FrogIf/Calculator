@@ -5,50 +5,50 @@ import sch.frog.calculator.util.collection.ArrayList;
 import sch.frog.calculator.util.collection.IList;
 
 /**
- * 可推演节点, 左侧和右侧都只有一个子节点
+ * 具有动态结合性节点的
+ * 需要指定策略来判断结合性
+ * 只有右结合性可以是动态的, 左结合性不支持动态
  */
-public class DeducibleNode extends AbstractSyntaxNode {
+public class DynamicAssociativityNode extends AbstractSyntaxNode {
 
     private ISyntaxNode leftChild;
 
     private ISyntaxNode rightChild;
 
+    private final IAssociativity rightAssociativity;
+
     private final boolean leftOpen;
 
-    private final boolean rightOpen;
+    private boolean rightOpen = true;
 
-    public DeducibleNode(String word, int priority, IExecutor executor, int position) {
-        this(word, priority, AssociateType.ALL, executor, position);
-    }
-
-    public DeducibleNode(String word, int priority, AssociateType associateType, IExecutor executor, int position) {
+    public DynamicAssociativityNode(String word, int priority, boolean leftOpen, IAssociativity rightAssociativity, IExecutor executor, int position) {
         super(word, priority, executor);
-        if(associateType == null){
-            throw new IllegalArgumentException("associate type is null.");
+        this.leftOpen = leftOpen;
+        this.rightAssociativity = rightAssociativity;
+        if(this.rightAssociativity == null){
+            throw new IllegalArgumentException("right associativity is required");
         }
-        this.leftOpen = (associateType.score & 1) > 0;
-        this.rightOpen = (associateType.score & 2) > 0;
         this.position = position;
     }
 
     @Override
     public boolean isLeftOpen() {
-        return this.leftOpen;
+        return leftOpen;
     }
 
     @Override
     public boolean isRightOpen() {
-        return this.rightOpen;
+        return rightOpen;
     }
 
     @Override
     public boolean branchOff(ISyntaxNode child, IAssembler assembler) {
+        String word = child.word();
         ISyntaxNode root;
 
         if(this.leftOpen && child.position() < this.position){
             if(leftChild == null){
                 this.leftChild = child;
-                return true;
             }else{
                 root = assembler.associate(this.leftChild, child);
                 if(root == null){ return false; }
@@ -57,7 +57,7 @@ public class DeducibleNode extends AbstractSyntaxNode {
             return true;
         }
 
-        if(this.rightOpen){
+        if(this.rightOpen && (this.rightOpen = this.rightAssociativity.peek(word))){
             if(rightChild == null){
                 this.rightChild = child;
             }else{
@@ -74,34 +74,18 @@ public class DeducibleNode extends AbstractSyntaxNode {
     @Override
     public IList<ISyntaxNode> children() {
         ArrayList<ISyntaxNode> children = new ArrayList<>();
-        if(this.leftOpen){
-            children.add(this.leftChild);
+        if(leftOpen){
+            children.add(leftChild);
         }
-        if(this.rightOpen){
-            children.add(this.rightChild);
+        if(this.rightChild != null){
+            children.add(rightChild);
         }
         return children;
     }
 
-    public enum AssociateType{
-        /**
-         * 左结合
-         */
-        LEFT(1),
-        /**
-         * 右结合
-         */
-        RIGHT(2),
-        /**
-         * 左右都可以结合
-         */
-        ALL(3);
+    public interface IAssociativity{
+        boolean peek(String word);
 
-        private final int score;
-
-        AssociateType(int score){
-            this.score = score;
-        }
+        IAssociativity copy();
     }
-    
 }

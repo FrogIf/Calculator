@@ -7,20 +7,20 @@ import sch.frog.calculator.compile.lexical.exception.ReadOutOfBoundsException;
  */
 public class TextScannerOperator implements IScannerOperator {
 
-    private final char[] content;
+    private final String content;
 
     private int index = 0;
 
     private int mark = index;
 
     public TextScannerOperator(String content){
-        this.content = content.toCharArray();
+        this.content = content;
     }
 
     @Override
     public char peek() {
-        if(index < content.length){
-            return content[index];
+        if(index < content.length()){
+            return content.charAt(index);
         }else{
             throw new ReadOutOfBoundsException();
         }
@@ -28,13 +28,13 @@ public class TextScannerOperator implements IScannerOperator {
 
     @Override
     public boolean isNotEnd() {
-        return index < content.length;
+        return index < content.length();
     }
 
     @Override
     public void take() {
         index++;
-        if(index > content.length){
+        if(index > content.length()){
             throw new ReadOutOfBoundsException();
         }
     }

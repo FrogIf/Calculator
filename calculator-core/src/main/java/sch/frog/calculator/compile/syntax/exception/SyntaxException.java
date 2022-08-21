@@ -6,7 +6,7 @@ package sch.frog.calculator.compile.syntax.exception;
 public class SyntaxException extends BuildException {
     
     public SyntaxException(String word, int position, int line) {
-        super("error syntax near : " + word + " line : " + line + ", word at : " + position);
+        super("error syntax near : " + word + ", line : " + line + ", word at : " + position);
     }
 
     public SyntaxException(String word, int position) {

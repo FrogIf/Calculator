@@ -3,15 +3,15 @@ package sch.frog.calculator.compile.lexical;
 import sch.frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
 /**
- * 公共的token, 用于平凡token的封装
+ * 通用token, 用于平凡token的封装
  */
-public class CommonToken implements IToken {
+public class GeneralToken implements IToken {
 
     private final ISyntaxNodeGenerator builder;
 
     private final String word;
 
-    public CommonToken(String word, ISyntaxNodeGenerator builder){
+    public GeneralToken(String word, ISyntaxNodeGenerator builder){
         this.word = word;
         this.builder = builder;
     }

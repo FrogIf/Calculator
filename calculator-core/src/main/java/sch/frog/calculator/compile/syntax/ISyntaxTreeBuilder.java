@@ -10,7 +10,7 @@ public interface ISyntaxTreeBuilder {
 
     /**
      * 将表达式构建为语法树
-     * @param scanner 表达式扫描器
+     * @param scannerOperator 表达式扫描器操作者
      * @return 语法树
      */
     ISyntaxNode build(IScannerOperator scannerOperator) throws CompileException;

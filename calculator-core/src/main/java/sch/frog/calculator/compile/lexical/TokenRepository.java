@@ -29,11 +29,11 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
 
     @Override
     public void insert(IToken token) throws DuplicateTokenException {
-        insert(token.word().toCharArray(), 0, token, new TokenRepository(), false);
+        insert(token.word(), 0, token, new TokenRepository(), false);
     }
 
-    private void insert(char[] expChars, int startIndex, IToken token, TokenRepository finder, boolean replace) throws DuplicateTokenException {
-        char ch = expChars[startIndex];
+    private void insert(String word, int startIndex, IToken token, TokenRepository finder, boolean replace) throws DuplicateTokenException {
+        char ch = word.charAt(startIndex);
 
         finder.symbol = ch;
 
@@ -44,14 +44,14 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
             register.symbol = ch;
         }
 
-        if(startIndex == expChars.length - 1){
+        if(startIndex == word.length() - 1){
             if(!replace && register.token != null && token != null){
                 throw new DuplicateTokenException(token.word());
             }
 
             register.token = token;
         }else{
-            register.insert(expChars, startIndex + 1, token, finder, replace);
+            register.insert(word, startIndex + 1, token, finder, replace);
         }
 
         nextLetter.add(register);
@@ -59,28 +59,27 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
 
     @Override
     public boolean remove(String word) {
-        char[] chars = word.toCharArray();
-        if(chars.length <= 0){
+        if(word.length() == 0){
             return false;
         }else{
-            TokenRepository register = this.nextLetter.find(new TokenRepository(chars[0]));
+            TokenRepository register = this.nextLetter.find(new TokenRepository(word.charAt(0)));
             if(register == null){
                 return false;
             }else{
-                return register.remove(chars, 0);
+                return register.remove(word, 0);
             }
         }
     }
 
-    private boolean remove(char[] chars, int startIndex){
+    private boolean remove(String word, int startIndex){
         boolean result = false;
-        if(chars.length == startIndex + 1){
+        if(word.length() == startIndex + 1){
             boolean hasExists = this.token != null;
             this.token = null;
             result = hasExists;
-        }else if(chars.length > startIndex){
-            TokenRepository register = this.nextLetter.find(new TokenRepository(chars[startIndex + 1]));
-            if(register != null  && register.remove(chars, startIndex + 1)){
+        }else if(word.length() > startIndex){
+            TokenRepository register = this.nextLetter.find(new TokenRepository(word.charAt(startIndex + 1)));
+            if(register != null  && register.remove(word, startIndex + 1)){
                 if(register.isEmpty()){
                     this.nextLetter.remove(register);
                 }
@@ -93,7 +92,7 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
     @Override
     public void replace(String symbol, IToken token) {
         try {
-            this.insert(symbol.toCharArray(), 0, token, new TokenRepository(), true);
+            this.insert(symbol, 0, token, new TokenRepository(), true);
         } catch (DuplicateTokenException e) {
             // do nothing, the DuplicateTokenException will not be trigger.
         }
@@ -133,13 +132,12 @@ public class TokenRepository implements ITokenRepository, Comparable<TokenReposi
 
     @Override
     public IToken retrieve(String word) {
-        char[] chars = word.toCharArray();
         int i = 0;
         TokenRepository fr = new TokenRepository();
         TokenRepository base = this;
         TokenRepository tr = null;
-        for(; i < chars.length; i++){
-            fr.symbol = chars[i];
+        for(int len = word.length(); i < len; i++){
+            fr.symbol = word.charAt(i);
             tr = base.nextLetter.find(fr);
             if(tr == null){
                 break;

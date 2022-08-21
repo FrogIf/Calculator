@@ -59,7 +59,7 @@ public class NumberMode {
             return number.toString();
         });
 
-        private IModePolicy policy;
+        private final IModePolicy policy;
 
         private Mode(IModePolicy policy){
             this.policy = policy;

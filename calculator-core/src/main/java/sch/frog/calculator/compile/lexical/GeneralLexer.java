@@ -2,35 +2,20 @@ package sch.frog.calculator.compile.lexical;
 
 import sch.frog.calculator.compile.lexical.exception.UnrecognizedTokenException;
 import sch.frog.calculator.compile.lexical.fetcher.ITokenFetcher;
+import sch.frog.calculator.compile.lexical.fetcher.MatcherTokenFetcher;
+import sch.frog.calculator.compile.lexical.fetcher.WordTokenFetcher;
+import sch.frog.calculator.compile.lexical.matcher.IMatcher;
 import sch.frog.calculator.compile.syntax.ISyntaxNodeGenerator;
-import sch.frog.calculator.util.collection.IList;
-import sch.frog.calculator.util.collection.Iterator;
 
 /**
  * 常规词法解析器
  */
 public class GeneralLexer implements ILexer {
 
-    private final ITokenFetcher[] tokenFetchers;
+    private final WordTokenFetcher wordTokenFetcher = new WordTokenFetcher();
 
-    private GeneralLexer(ITokenFetcher[] fetcherArray){
-        // 根据order排序
-        for(int i = 1; i < fetcherArray.length; i++){
-            ITokenFetcher fa = fetcherArray[i];
-            int j = i - 1;
-            ITokenFetcher fb;
-            for(; j > -1; j--){
-                fb = fetcherArray[j];
-                if(fa.order() < fb.order()){
-                    fetcherArray[j + 1] = fb;
-                }else{
-                    break;
-                }
-            }
-            fetcherArray[j + 1] = fa;
-        }
-        tokenFetchers = fetcherArray;
-    }
+    private final MatcherTokenFetcher matcherTokenFetcher = new MatcherTokenFetcher();
+    private final ITokenFetcher[] tokenFetchers = new ITokenFetcher[]{ wordTokenFetcher, matcherTokenFetcher };
 
     private static final IToken GUARD_TOKEN = new IToken(){
         @Override
@@ -52,18 +37,14 @@ public class GeneralLexer implements ILexer {
 
         int startPos = operator.position();
         int endPos = startPos;
-        for(int i = 0; i < tokenFetchers.length; i++){
-            ITokenFetcher fetcher = tokenFetchers[i];
+        for (ITokenFetcher fetcher : tokenFetchers) {
             operator.moveToMark();
             IToken token = fetcher.fetch(operator);
             // 最长匹配原则
-            if(token != null){
-                if(operator.position() > endPos){
+            if (token != null) {
+                if (operator.position() > endPos) {
                     result = token;
                     endPos = operator.position();
-                }
-                if(!fetcher.overridable()){
-                    break;
                 }
             }
         }
@@ -97,13 +78,11 @@ public class GeneralLexer implements ILexer {
         operator.moveToMark();
     }
 
-    public static GeneralLexer build(IList<ITokenFetcher> tList){
-        ITokenFetcher[] fetcherArray = new ITokenFetcher[tList.size()];
-        int i = 0;
-        Iterator<ITokenFetcher> itr = tList.iterator();
-        while(itr.hasNext()){
-            fetcherArray[i++] = itr.next();
-        }
-        return new GeneralLexer(fetcherArray);
+    public void register(IMatcher matcher, ISyntaxNodeGenerator generator){
+        this.matcherTokenFetcher.register(matcher, generator);
+    }
+
+    public void register(String word, ISyntaxNodeGenerator generator){
+        this.wordTokenFetcher.register(word, generator);
     }
 }
