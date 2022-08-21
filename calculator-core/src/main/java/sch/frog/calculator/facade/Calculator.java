@@ -1,12 +1,11 @@
 package sch.frog.calculator.facade;
 
-import sch.frog.calculator.compile.lexical.TextScannerOperator;
+import sch.frog.calculator.compile.lexical.IToken;
+import sch.frog.calculator.compile.lexical.TextScanner;
 import sch.frog.calculator.compile.semantic.GeneralExecuteContext;
 import sch.frog.calculator.compile.semantic.result.IResult;
 import sch.frog.calculator.compile.semantic.result.IValue;
-import sch.frog.calculator.compile.syntax.CommonSyntaxTreeBuilder;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
-import sch.frog.calculator.compile.syntax.ISyntaxTreeBuilder;
 import sch.frog.calculator.facade.NumberMode.Mode;
 import sch.frog.calculator.io.IInputStream;
 import sch.frog.calculator.io.IOutputStream;
@@ -20,8 +19,6 @@ import sch.frog.calculator.util.collection.IList;
 
 public class Calculator {
 
-    private final ISyntaxTreeBuilder builder;
-
     private final ITreeNodeReader<ISyntaxNode> treeNodeReader = new ITreeNodeReader<>() {
         @Override
         public String label(ISyntaxNode node) {
@@ -34,17 +31,16 @@ public class Calculator {
         }
     };
 
-    public Calculator(){
-        GeneralCompileManager manager = new GeneralCompileManager();
-        builder = new CommonSyntaxTreeBuilder(manager.getLexer());
-    }
+    private final GeneralCompileManager manager = new GeneralCompileManager();
 
     public void calculate(IInputStream in, IOutputStream out, ExecuteSession session){
         String line;
         SessionConfiguration configuration = session.getSessionConfiguration();
         boolean showAST = configuration.isShowAST();
         while((line = in.readLine()) != null){
-            ISyntaxNode expRoot = this.builder.build(new TextScannerOperator(line));
+            TextScanner textScanner = new TextScanner(line);
+            IList<IToken> tokens = manager.getLexer().tokenization(textScanner);
+            ISyntaxNode expRoot = manager.getAstTreeBuilder().build(tokens);
             if(showAST){
                 String treeDisplayStr = TreeDisplayUtil.drawTree(expRoot, treeNodeReader);
                 out.println(treeDisplayStr);

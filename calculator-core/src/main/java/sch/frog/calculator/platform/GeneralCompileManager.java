@@ -7,7 +7,9 @@ import sch.frog.calculator.compile.lexical.matcher.PlusMinusMatcher;
 import sch.frog.calculator.compile.lexical.matcher.WordMatcher;
 import sch.frog.calculator.compile.semantic.exec.DoNothingExecutor;
 import sch.frog.calculator.compile.semantic.exec.IExecutor;
+import sch.frog.calculator.compile.syntax.CommonSyntaxTreeBuilder;
 import sch.frog.calculator.compile.syntax.DynamicAssociativityNode;
+import sch.frog.calculator.compile.syntax.ISyntaxTreeBuilder;
 import sch.frog.calculator.micro.exec.impl.base.AssignExecutor;
 import sch.frog.calculator.micro.exec.impl.base.BracketExecutor;
 import sch.frog.calculator.micro.exec.impl.base.CommaExecutor;
@@ -28,6 +30,8 @@ import sch.frog.calculator.platform.LanguageRule.Type;
 public class GeneralCompileManager {
 
     private final GeneralLexer lexer = new GeneralLexer();
+
+    private final ISyntaxTreeBuilder astTreeBuilder = new CommonSyntaxTreeBuilder(lexer);
 
     private static final LanguageRule[] rules = new LanguageRule[]{
             rule(new NumberMatcher(), Integer.MAX_VALUE, Type.TERMINAL, new NumberExecutor()),
@@ -128,4 +132,7 @@ public class GeneralCompileManager {
         }
     }
 
+    public ISyntaxTreeBuilder getAstTreeBuilder() {
+        return astTreeBuilder;
+    }
 }

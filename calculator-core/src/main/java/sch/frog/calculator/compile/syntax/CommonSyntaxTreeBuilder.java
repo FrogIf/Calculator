@@ -2,9 +2,10 @@ package sch.frog.calculator.compile.syntax;
 
 import sch.frog.calculator.compile.exception.CompileException;
 import sch.frog.calculator.compile.lexical.ILexer;
-import sch.frog.calculator.compile.lexical.IScannerOperator;
 import sch.frog.calculator.compile.lexical.IToken;
 import sch.frog.calculator.compile.syntax.exception.SyntaxException;
+import sch.frog.calculator.util.collection.IList;
+import sch.frog.calculator.util.collection.Iterator;
 import sch.frog.calculator.util.collection.Stack;
 
 /**
@@ -21,9 +22,10 @@ public class CommonSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler {
         this.lexer = lexer;
     }
 
-    public ISyntaxNode build(IScannerOperator scannerOperator) throws CompileException {
+    public ISyntaxNode build(IList<IToken> tokens) throws CompileException {
         int position = 0;
-        IToken token = lexer.parse(scannerOperator);
+        Iterator<IToken> tokenItr = tokens.iterator();
+        IToken token = tokenItr.next();
         ISyntaxNode root = token.getSyntaxNodeGenerator().generate(token.word(), position++);
 
         // 栈结构, 用于存储构建过程中, 激活的语法节点, 这些节点只会作为父节点, 这个stack中的, 都是isRightOpen == true
@@ -33,8 +35,8 @@ public class CommonSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler {
         }
 
         ISyntaxNode prevNode = root;    // 记录上一个节点
-        while(scannerOperator.isNotEnd()){
-            token = lexer.parse(scannerOperator);
+        while(tokenItr.hasNext()){
+            token = tokenItr.next();
             ISyntaxNode node = token.getSyntaxNodeGenerator().generate(token.word(), position);
 
             ISyntaxNode activeNode = null;
@@ -54,7 +56,7 @@ public class CommonSyntaxTreeBuilder implements ISyntaxTreeBuilder, IAssembler {
             }else{
                 root = this.associate(root, node);
                 if(root == null){
-                    throw new SyntaxException(node.word(), scannerOperator.position(), 0);
+                    throw new SyntaxException(node.word(), token.position(), 0);
                 }
                 if(node.isRightOpen()){
                     activeStack.push(node);

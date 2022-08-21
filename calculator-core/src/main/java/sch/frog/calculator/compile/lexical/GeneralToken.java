@@ -11,14 +11,22 @@ public class GeneralToken implements IToken {
 
     private final String word;
 
-    public GeneralToken(String word, ISyntaxNodeGenerator builder){
+    private final int position;
+
+    public GeneralToken(String word, ISyntaxNodeGenerator builder, int position){
         this.word = word;
         this.builder = builder;
+        this.position = position;
     }
 
     @Override
     public ISyntaxNodeGenerator getSyntaxNodeGenerator() {
         return this.builder;
+    }
+
+    @Override
+    public int position() {
+        return this.position;
     }
 
     @Override

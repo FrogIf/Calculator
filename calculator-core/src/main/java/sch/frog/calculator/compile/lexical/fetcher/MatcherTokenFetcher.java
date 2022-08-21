@@ -48,13 +48,24 @@ public class MatcherTokenFetcher implements ITokenFetcher {
     public IToken fetch(IScanner scanner) {
         ISet<IMap.Entry<Integer, IMatcher>> entryISet = matcherMap.entrySet();
         Iterator<IMap.Entry<Integer, IMatcher>> iterator = entryISet.iterator();
+        IScanner.PointerSnapshot initSnapshot = scanner.snapshot();
+        IScanner.PointerSnapshot matchSnapshot = null;
+        int len = 0;
+        IToken result = null;
         while(iterator.hasNext()){
             IMap.Entry<Integer, IMatcher> entry = iterator.next();
             String match = entry.getValue().match(scanner);
-            if(StringUtils.isNotBlank(match)){
-                return new GeneralToken(match, syntaxNodeGeneratorMap.get(entry.getKey()));
+            if(StringUtils.isNotBlank(match) && match.length() > len){
+                result = new GeneralToken(match, syntaxNodeGeneratorMap.get(entry.getKey()), scanner.position());
+                matchSnapshot = scanner.snapshot();
+                len = match.length();
             }
         }
-        return null;
+        if(result == null){
+            scanner.applySnapshot(initSnapshot);
+        }else{
+            scanner.applySnapshot(matchSnapshot);
+        }
+        return result;
     }
 }

@@ -3,20 +3,18 @@ package sch.frog.calculator.compile.lexical.fetcher;
 import sch.frog.calculator.compile.lexical.GeneralToken;
 import sch.frog.calculator.compile.lexical.IScanner;
 import sch.frog.calculator.compile.lexical.IToken;
-import sch.frog.calculator.compile.lexical.TokenRepository;
 import sch.frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 
 public class WordTokenFetcher implements ITokenFetcher{
-
-    private final TokenRepository tokenRepository = new TokenRepository();
+    private final WordRepository wordRepository = new WordRepository();
 
     public void register(String word, ISyntaxNodeGenerator generator){
-        tokenRepository.insert(new GeneralToken(word, generator));
+        wordRepository.insert(new WordObj(word, generator));
     }
 
     @Override
     public IToken fetch(IScanner scanner) {
-        return tokenRepository.retrieve(scanner);
+        WordObj word = wordRepository.retrieve(scanner);
+        return word == null ? null : new GeneralToken(word.word(), word.generator(), scanner.position());
     }
-
 }
