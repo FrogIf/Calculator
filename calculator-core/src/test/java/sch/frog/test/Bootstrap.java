@@ -23,27 +23,24 @@ public class Bootstrap {
         SessionConfiguration sessionConfiguration = session.getSessionConfiguration();
         sessionConfiguration.setShowAST(true);
 
-        try{
-            calculator.calculate(() -> {
-                String line = sc.nextLine();
-                if("exit".equals(line)){
-                    return null;
-                }
-                return line;
-            }, new IOutputStream() {
-                @Override
-                public void println(String text) {
-                    out.println(text);
-                }
-
-                @Override
-                public void print(String text) {
-                    out.print(text);
-                }
-            }, session);
-        }catch (Exception e){
+        calculator.calculate(() -> {
+            String line = sc.nextLine();
+            if("exit".equals(line)){
+                return null;
+            }
+            return line;
+        }, new IOutputStream() {
+            @Override
+            public void println(String text) {
+                out.println(text);
+            }
+            @Override
+            public void print(String text) {
+                out.print(text);
+            }
+        }, session, e -> {
             e.printStackTrace(out);
-        }
+        });
 
         out.println("bye !");
         sc.close();

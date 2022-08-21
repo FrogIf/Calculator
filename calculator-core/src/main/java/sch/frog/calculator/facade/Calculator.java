@@ -33,25 +33,33 @@ public class Calculator {
 
     private final GeneralCompileManager manager = new GeneralCompileManager();
 
-    public void calculate(IInputStream in, IOutputStream out, ExecuteSession session){
+    public void calculate(IInputStream in, IOutputStream out, ExecuteSession session, IFallback fallback){
         String line;
         SessionConfiguration configuration = session.getSessionConfiguration();
         boolean showAST = configuration.isShowAST();
         while((line = in.readLine()) != null){
-            TextScanner textScanner = new TextScanner(line);
-            IList<IToken> tokens = manager.getLexer().tokenization(textScanner);
-            ISyntaxNode expRoot = manager.getAstTreeBuilder().build(tokens);
-            if(showAST){
-                String treeDisplayStr = TreeDisplayUtil.drawTree(expRoot, treeNodeReader);
-                out.println(treeDisplayStr);
-            }
+            try{
+                TextScanner textScanner = new TextScanner(line);
+                IList<IToken> tokens = manager.getLexer().tokenization(textScanner);
+                ISyntaxNode expRoot = manager.getAstTreeBuilder().build(tokens);
+                if(showAST){
+                    String treeDisplayStr = TreeDisplayUtil.drawTree(expRoot, treeNodeReader);
+                    out.println(treeDisplayStr);
+                }
 
-            GeneralExecuteContext context = new GeneralExecuteContext(session.getCalculatorSession());
-            IResult result = expRoot.execute(context);
-            if(result.getResultType() == IResult.ResultType.VALUE){
-                IValue value = result.getValue();
-                ComplexNumber number = MicroUtil.getNumber(value, context);
-                out.println(numberToString(number, session));
+                GeneralExecuteContext context = new GeneralExecuteContext(session.getCalculatorSession());
+                IResult result = expRoot.execute(context);
+                if(result.getResultType() == IResult.ResultType.VALUE){
+                    IValue value = result.getValue();
+                    ComplexNumber number = MicroUtil.getNumber(value, context);
+                    out.println(numberToString(number, session));
+                }
+            }catch (Exception e){
+                if(fallback == null){
+                    break;
+                }else{
+                    fallback.handle(e);
+                }
             }
         }
     }
