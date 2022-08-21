@@ -54,6 +54,7 @@ public class MatcherTokenFetcher implements ITokenFetcher {
         IToken result = null;
         while(iterator.hasNext()){
             IMap.Entry<Integer, IMatcher> entry = iterator.next();
+            scanner.applySnapshot(initSnapshot);
             String match = entry.getValue().match(scanner);
             if(StringUtils.isNotBlank(match) && match.length() > len){
                 result = new GeneralToken(match, syntaxNodeGeneratorMap.get(entry.getKey()), scanner.position());
