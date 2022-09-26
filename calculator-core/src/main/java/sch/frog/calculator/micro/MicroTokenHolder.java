@@ -16,6 +16,7 @@ import sch.frog.calculator.micro.exec.impl.base.PowerExecutor;
 import sch.frog.calculator.micro.exec.impl.base.SubExecutor;
 import sch.frog.calculator.micro.exec.impl.ext.FactorialExecutor;
 import sch.frog.calculator.micro.exec.impl.ext.PercentExecutor;
+import sch.frog.calculator.micro.exec.impl.fun.AbsExecutor;
 import sch.frog.calculator.micro.exec.impl.fun.AverageExecutor;
 import sch.frog.calculator.micro.exec.impl.fun.SumExecutor;
 
@@ -38,7 +39,8 @@ class MicroTokenHolder {
         new DeducibleNode("@", 60, DeducibleNode.AssociateType.RIGHT, new DeclareExecutor()),
         new DeducibleNode(",", 0, new CommaExecutor()),
         new DeducibleNode("(", -1, DeducibleNode.AssociateType.RIGHT, new BracketExecutor()).setEnd(")"),
-        new DeducibleNode(")", 0, DeducibleNode.AssociateType.LEFT, new BracketExecutor())
+        new DeducibleNode(")", 0, DeducibleNode.AssociateType.LEFT, new BracketExecutor()),
+        new DeducibleNode("abs", 50, DeducibleNode.AssociateType.RIGHT, new AbsExecutor())
     };
 
     public static final IToken ADD_TOKEN =  new CommonToken("+", new DeducibleNode("+", 10, new AddExecutor()));

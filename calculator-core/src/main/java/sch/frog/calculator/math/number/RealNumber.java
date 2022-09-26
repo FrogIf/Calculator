@@ -185,7 +185,7 @@ public class RealNumber extends AbstractBaseNumber implements Comparable<RealNum
 
     @Override
     public NumberSign getSign() {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO 考虑无理数符号部分
+        return rationalNumber.getSign();
     }
 }
