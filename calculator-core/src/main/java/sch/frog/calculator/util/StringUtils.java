@@ -3,11 +3,11 @@ package sch.frog.calculator.util;
 public class StringUtils {
 
     public static boolean isNotBlank(String str){
-        return str != null && !"".equals(str.trim());
+        return str != null && !str.isBlank();
     }
 
     public static boolean isBlank(String str){
-        return str == null || "".equals(str.trim());
+        return str == null || str.isBlank();
     }
 
     public static String concat(char[] chars){
