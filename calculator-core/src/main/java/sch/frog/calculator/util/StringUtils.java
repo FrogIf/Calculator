@@ -46,9 +46,8 @@ public class StringUtils {
 
     public static boolean startWith(char[] chars, int startIndex, String prefix){
         int i = startIndex, j = 0;
-        char[] preChars = prefix.toCharArray();
-        for(int lenA = chars.length, lenB = preChars.length; i < lenA && j < lenB; i++, j++){
-            if(chars[i] != preChars[j]){
+        for(int lenA = chars.length, lenB = prefix.length(); i < lenA && j < lenB; i++, j++){
+            if(chars[i] != prefix.charAt(j)){
                 return false;
             }
         }

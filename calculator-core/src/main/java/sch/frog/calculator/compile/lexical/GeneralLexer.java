@@ -2,108 +2,88 @@ package sch.frog.calculator.compile.lexical;
 
 import sch.frog.calculator.compile.lexical.exception.UnrecognizedTokenException;
 import sch.frog.calculator.compile.lexical.fetcher.ITokenFetcher;
+import sch.frog.calculator.compile.lexical.fetcher.MatcherTokenFetcher;
+import sch.frog.calculator.compile.lexical.fetcher.WordTokenFetcher;
+import sch.frog.calculator.compile.lexical.matcher.IMatcher;
 import sch.frog.calculator.compile.syntax.ISyntaxNodeGenerator;
 import sch.frog.calculator.util.collection.IList;
-import sch.frog.calculator.util.collection.Iterator;
+import sch.frog.calculator.util.collection.LinkedList;
 
 /**
  * 常规词法解析器
  */
 public class GeneralLexer implements ILexer {
 
-    private final ITokenFetcher[] tokenFetchers;
+    private final WordTokenFetcher wordTokenFetcher = new WordTokenFetcher();
 
-    private GeneralLexer(ITokenFetcher[] fetcherArray){
-        // 根据order排序
-        for(int i = 1; i < fetcherArray.length; i++){
-            ITokenFetcher fa = fetcherArray[i];
-            int j = i - 1;
-            ITokenFetcher fb;
-            for(; j > -1; j--){
-                fb = fetcherArray[j];
-                if(fa.order() < fb.order()){
-                    fetcherArray[j + 1] = fb;
-                }else{
-                    break;
-                }
-            }
-            fetcherArray[j + 1] = fa;
-        }
-        tokenFetchers = fetcherArray;
-    }
+    private final MatcherTokenFetcher matcherTokenFetcher = new MatcherTokenFetcher();
+    private final ITokenFetcher[] tokenFetchers = new ITokenFetcher[]{ wordTokenFetcher, matcherTokenFetcher };
 
     private static final IToken GUARD_TOKEN = new IToken(){
-        @Override
-        public String word() {
-            return "";
-        }
-
-        @Override
-        public ISyntaxNodeGenerator getSyntaxNodeGenerator() {
-            return null;
-        }
+        @Override public String word() { return ""; }
+        @Override public ISyntaxNodeGenerator getSyntaxNodeGenerator() { return null; }
+        @Override public int position() { return -1; }
     };
 
-    @Override
-    public IToken parse(IScannerOperator operator) throws UnrecognizedTokenException {
-        skipBlank(operator);
+    private IToken parse(IScanner scanner) throws UnrecognizedTokenException {
+        skipBlank(scanner);
 
         IToken result = GUARD_TOKEN;
 
-        int startPos = operator.position();
-        int endPos = startPos;
-        for(int i = 0; i < tokenFetchers.length; i++){
-            ITokenFetcher fetcher = tokenFetchers[i];
-            operator.moveToMark();
-            IToken token = fetcher.fetch(operator);
+        int len = 0;
+        IScanner.PointerSnapshot initPointerSnapshot = scanner.snapshot();
+        IScanner.PointerSnapshot matchPointerSnapshot = null;
+        for (ITokenFetcher fetcher : tokenFetchers) {
+            scanner.applySnapshot(initPointerSnapshot);
+            IToken token = fetcher.fetch(scanner);
             // 最长匹配原则
-            if(token != null){
-                if(operator.position() > endPos){
-                    result = token;
-                    endPos = operator.position();
-                }
-                if(!fetcher.overridable()){
-                    break;
-                }
+            if (token != null && token.word().length() > len) {
+                result = token;
+                matchPointerSnapshot = scanner.snapshot();
+                len = token.word().length();
             }
         }
-
-        operator.markTo(endPos - startPos);
-        operator.moveToMark();
+        if(matchPointerSnapshot != null){
+            scanner.applySnapshot(matchPointerSnapshot);
+        }
 
         if(result == GUARD_TOKEN){
-            throw new UnrecognizedTokenException(operator.peek(), operator.position());
+            throw new UnrecognizedTokenException(scanner.peek(), scanner.position());
         }
 
         // 跳过后空格
-        if(operator.isNotEnd()){
-            skipBlank(operator);
+        if(scanner.isNotEnd()){
+            skipBlank(scanner);
         }
 
         return result;
     }
 
-    private void skipBlank(IScannerOperator operator){
-        int start = operator.position();
-        char ch;
-        do{
-            ch = operator.peek();
-            if(ch != ' '){
-                break;
-            }
-            operator.take();
-        }while(operator.isNotEnd());
-        operator.markTo(operator.position() - start);
-        operator.moveToMark();
+    @Override
+    public IList<IToken> tokenization(IScanner scanner) throws UnrecognizedTokenException {
+        LinkedList<IToken> tokens = new LinkedList<>();
+        while(scanner.isNotEnd()){
+            IToken token = this.parse(scanner);
+            tokens.add(token);
+        }
+        return tokens;
     }
 
-    public static GeneralLexer build(IList<ITokenFetcher> tList){
-        ITokenFetcher[] fetcherArray = new ITokenFetcher[tList.size()];
-        int i = 0;
-        Iterator<ITokenFetcher> itr = tList.iterator();
-        while(itr.hasNext()){
-            fetcherArray[i++] = itr.next();
-        }
-        return new GeneralLexer(fetcherArray);
+    private void skipBlank(IScanner scanner){
+        do{
+            char ch = scanner.peek();
+            if(ch != ' ' && ch != '\t'){
+                break;
+            }
+            scanner.take();
+        }while(scanner.isNotEnd());
+    }
+
+    public void register(IMatcher matcher, ISyntaxNodeGenerator generator){
+        this.matcherTokenFetcher.register(matcher, generator);
+    }
+
+    public void register(String word, ISyntaxNodeGenerator generator){
+        this.wordTokenFetcher.register(word, generator);
     }
 }

@@ -3,6 +3,9 @@ package sch.frog.calculator.compile.lexical.fetcher;
 import sch.frog.calculator.compile.lexical.IScanner;
 import sch.frog.calculator.compile.lexical.IToken;
 
+/**
+ * token获取
+ */
 public interface ITokenFetcher {
     
     /**
@@ -12,15 +15,4 @@ public interface ITokenFetcher {
      */
     IToken fetch(IScanner scanner);
 
-    /**
-     * 获取优先级, 优先级高的先执行
-     * @return 返回一个数字, 数字越小, 优先级越高
-     */
-    int order();
-
-    /**
-     * 是否可以被接下来的fetcher覆盖
-     * @return
-     */
-    boolean overridable();
 }

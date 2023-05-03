@@ -1,14 +1,14 @@
 package sch.frog.calculator.compile.syntax;
 
-import sch.frog.calculator.util.collection.IList;
 import sch.frog.calculator.compile.semantic.exec.IExecutor;
+import sch.frog.calculator.util.collection.IList;
 
 /**
  * 不可推演节点, 其左右都没有子树
  */
-public final class UndeducibleNode extends AbstractSyntaxNode implements ISyntaxNodeGenerator {
+public final class UndeducibleNode extends AbstractSyntaxNode {
 
-    public UndeducibleNode(String word, int position, IExecutor executor) {
+    public UndeducibleNode(String word, IExecutor executor, int position) {
         super(word, -1, executor);
         this.position = position;
     }
@@ -39,11 +39,6 @@ public final class UndeducibleNode extends AbstractSyntaxNode implements ISyntax
     public IList<ISyntaxNode> children() {
         // terminal syntax node doesn't children.
         return null;
-    }
-
-    @Override
-    public ISyntaxNode generate(int position) {
-        return new UndeducibleNode(this.word, position, this.executor);
     }
     
 }

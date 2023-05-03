@@ -5,22 +5,22 @@ import sch.frog.calculator.compile.lexical.exception.ReadOutOfBoundsException;
 /**
  * 字符文本扫描器
  */
-public class TextScannerOperator implements IScannerOperator {
+public class TextScanner implements IScanner {
 
-    private final char[] content;
+    private final String content;
 
     private int index = 0;
 
     private int mark = index;
 
-    public TextScannerOperator(String content){
-        this.content = content.toCharArray();
+    public TextScanner(String content){
+        this.content = content;
     }
 
     @Override
     public char peek() {
-        if(index < content.length){
-            return content[index];
+        if(index < content.length()){
+            return content.charAt(index);
         }else{
             throw new ReadOutOfBoundsException();
         }
@@ -28,15 +28,17 @@ public class TextScannerOperator implements IScannerOperator {
 
     @Override
     public boolean isNotEnd() {
-        return index < content.length;
+        return index < content.length();
     }
 
     @Override
-    public void take() {
+    public char take() {
+        char ch = content.charAt(index);
         index++;
-        if(index > content.length){
+        if(index > content.length()){
             throw new ReadOutOfBoundsException();
         }
+        return ch;
     }
 
     @Override
@@ -45,13 +47,13 @@ public class TextScannerOperator implements IScannerOperator {
     }
 
     @Override
-    public void moveToMark() {
-        index = mark;
+    public PointerSnapshot snapshot() {
+        return new PointerSnapshot(this.index);
     }
 
     @Override
-    public void markTo(int offset) {
-        mark = mark + offset;
+    public void applySnapshot(PointerSnapshot snapshot) {
+        this.index = snapshot.getPointer();
     }
     
 }
