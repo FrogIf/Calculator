@@ -9,8 +9,8 @@ import java.util.Random;
 
 import java.text.DecimalFormat;
 
-import sch.frog.calculator.math.number.NumberRoundingMode;
-import sch.frog.calculator.math.number.RationalNumber;
+import sch.frog.calculator.number.NumberRoundingMode;
+import sch.frog.calculator.number.RationalNumber;
 import sch.frog.calculator.util.StringUtils;
 import sch.frog.calculator.util.collection.IMap;
 import sch.frog.calculator.util.collection.ISet;

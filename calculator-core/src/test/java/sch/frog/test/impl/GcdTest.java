@@ -1,6 +1,6 @@
 package sch.frog.test.impl;
 
-import sch.frog.calculator.math.number.IntegerNumber;
+import sch.frog.calculator.number.IntegerNumber;
 import sch.frog.test.AbstractTestContent;
 import sch.frog.test.ICaseObject;
 

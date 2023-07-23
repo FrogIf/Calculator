@@ -1,6 +1,6 @@
 package sch.frog.test.impl;
 
-import sch.frog.calculator.math.number.NumberRoundingMode;
+import sch.frog.calculator.number.NumberRoundingMode;
 import sch.frog.calculator.util.collection.IMap;
 import sch.frog.calculator.util.collection.ISet;
 import sch.frog.calculator.util.collection.Iterator;

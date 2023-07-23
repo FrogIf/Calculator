@@ -9,9 +9,9 @@ import sch.frog.calculator.compile.syntax.ISyntaxNode;
 import sch.frog.calculator.facade.NumberMode.Mode;
 import sch.frog.calculator.io.IInputStream;
 import sch.frog.calculator.io.IOutputStream;
-import sch.frog.calculator.math.number.ComplexNumber;
-import sch.frog.calculator.math.number.IBaseNumber;
-import sch.frog.calculator.micro.MicroUtil;
+import sch.frog.calculator.number.ComplexNumber;
+import sch.frog.calculator.number.IBaseNumber;
+import sch.frog.calculator.cell.CellUtil;
 import sch.frog.calculator.platform.GeneralCompileManager;
 import sch.frog.calculator.util.TreeDisplayUtil;
 import sch.frog.calculator.util.TreeDisplayUtil.ITreeNodeReader;
@@ -51,7 +51,7 @@ public class Calculator {
                 IResult result = expRoot.execute(context);
                 if(result.getResultType() == IResult.ResultType.VALUE){
                     IValue value = result.getValue();
-                    ComplexNumber number = MicroUtil.getNumber(value, context);
+                    ComplexNumber number = CellUtil.getNumber(value, context);
                     out.println(numberToString(number, session));
                 }
             }catch (Exception e){

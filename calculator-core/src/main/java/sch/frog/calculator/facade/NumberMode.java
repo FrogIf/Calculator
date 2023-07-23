@@ -1,11 +1,11 @@
 package sch.frog.calculator.facade;
 
-import sch.frog.calculator.math.number.ComplexNumber;
-import sch.frog.calculator.math.number.IBaseNumber;
-import sch.frog.calculator.math.number.IntegerNumber;
-import sch.frog.calculator.math.number.NumberRoundingMode;
-import sch.frog.calculator.math.number.RationalNumber;
-import sch.frog.calculator.math.number.RealNumber;
+import sch.frog.calculator.number.ComplexNumber;
+import sch.frog.calculator.number.IBaseNumber;
+import sch.frog.calculator.number.IntegerNumber;
+import sch.frog.calculator.number.NumberRoundingMode;
+import sch.frog.calculator.number.RationalNumber;
+import sch.frog.calculator.number.RealNumber;
 
 public class NumberMode {
     

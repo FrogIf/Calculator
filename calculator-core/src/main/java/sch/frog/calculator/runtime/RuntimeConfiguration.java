@@ -1,6 +1,6 @@
 package sch.frog.calculator.runtime;
 
-import sch.frog.calculator.math.number.NumberRoundingMode;
+import sch.frog.calculator.number.NumberRoundingMode;
 
 /**
  * 运行时配置, 可能动态的修改, 并随时生效
