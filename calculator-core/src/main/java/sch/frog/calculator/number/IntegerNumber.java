@@ -135,7 +135,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * IntegerNumber与int值进行加/减运算
      * @param num 参与运算的数
      * @param operator 参与的运算, 与
-     * @return
      */
     private IntegerNumber accumulationOneWord(int num, int operator){
         if(num == 0){ return this; }
@@ -287,7 +286,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
     /**
      * 获取该数的相反数
-     * @return
      */
     public IntegerNumber not() {
         return new IntegerNumber(1 ^ this.sign, this.values);
@@ -386,8 +384,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
     /**
      * 校验以及修正数字字符串
-     * @param number
-     * @return
      */
     private static String fixNumber(String number){
         if(number == null){
@@ -458,7 +454,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
     /**
      * 获取当前值的正负
-     * @return
      */
     public NumberSign getSign(){
         return this.sign == SIGN_NEGATIVE ? NumberSign.NEGATIVE : NumberSign.POSITIVE;
@@ -569,7 +564,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
 
         // 执行舍入
         String number = (this.sign == SIGN_NEGATIVE ? "-" : "") + 
-                hVal + (dotAfterBuilder.length() == 0 ? "" : ("." + dotAfterBuilder.toString()));
+                hVal + (dotAfterBuilder.length() == 0 ? "" : ("." + dotAfterBuilder));
         
         return InnerNumberUtil.scientificNotationTransfer(number, scale, roundingMode, n);
     }

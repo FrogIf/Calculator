@@ -46,7 +46,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }
 
         IntegerNumber gcd = bottom.gcd(top);
-        if(gcd != IntegerNumber.ONE){
+        if(!gcd.equals(IntegerNumber.ONE)){
             top = top.div(gcd);
             bottom = bottom.div(gcd);
         }
@@ -77,7 +77,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             bottom = IntegerNumber.valueOf(denominatorBuilder.toString());
 
             IntegerNumber gcd = bottom.gcd(top);
-            if(gcd != IntegerNumber.ONE){
+            if(!gcd.equals(IntegerNumber.ONE)){
                 top = top.div(gcd);
                 bottom = bottom.div(gcd);
             }
@@ -150,6 +150,9 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }
     }
 
+    /**
+     * 加法
+     */
     public RationalNumber add(RationalNumber num){
         if(this.equals(ZERO)){
             return num;
@@ -172,10 +175,16 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }
     }
 
+    /**
+     * 减法
+     */
     public RationalNumber sub(RationalNumber num){
         return this.add(num.not());
     }
 
+    /**
+     * 乘法
+     */
     public RationalNumber mult(RationalNumber num){
         if(this.equals(ZERO) || num.equals(ZERO)){ return ZERO; }
 
@@ -190,16 +199,24 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }
     }
 
+    /**
+     * 乘法
+     */
     public RationalNumber mult(IntegerNumber num){
         IntegerNumber top = this.numerator.mult(num);
-        IntegerNumber bottom = this.denominator;
-        return reduction(top, bottom);
+        return reduction(top, this.denominator);
     }
 
+    /**
+     * 除法
+     */
     public RationalNumber div(RationalNumber num){
         return this.mult(num.upend());
     }
 
+    /**
+     * 除法
+     */
     public RationalNumber div(IntegerNumber num){
         NumberSign sign = num.getSign();
         IntegerNumber top = this.numerator;
@@ -211,6 +228,9 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         return reduction(top, bottom);
     }
 
+    /**
+     * 约分
+     */
     private static RationalNumber reduction(IntegerNumber top, IntegerNumber bottom){
         IntegerNumber gcd = top.gcd(bottom);
         if(!gcd.equals(IntegerNumber.ONE)){
@@ -220,6 +240,9 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         }
     }
 
+    /**
+     * 取反
+     */
     public RationalNumber not(){
         if(this.equals(ONE)){
             return N_ONE;
@@ -342,7 +365,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             return this.numerator.decimal(scale, roundingMode);
         }else{
             int c = this.numerator.decBits() - this.denominator.decBits();
-            if(c > NumberConstant.SCIENTIFIC_THRESHOLD || c < 0 - NumberConstant.SCIENTIFIC_THRESHOLD){ // 采用科学计数法
+            if(c > NumberConstant.SCIENTIFIC_THRESHOLD || c < -NumberConstant.SCIENTIFIC_THRESHOLD){ // 采用科学计数法
                 return this.scientificNotation(scale, roundingMode);
             }else{
                 return this.toPlainString(scale, roundingMode);
@@ -352,9 +375,9 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
 
     /**
      * 以小数形式输出
-     * @param scale
-     * @param roundingMode
-     * @return
+     * @param scale 保留小数位数
+     * @param roundingMode 舍入模式
+     * @return 小数字符串
      */
     public String toPlainString(int scale, NumberRoundingMode roundingMode){
         IntegerNumber.Remainder remainder = new IntegerNumber.Remainder();
@@ -441,5 +464,19 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     @Override
     public NumberSign getSign() {
         return this.numerator.getSign();
+    }
+
+    /**
+     * 分子
+     */
+    public IntegerNumber getNumerator() {
+        return numerator;
+    }
+
+    /**
+     * 分母
+     */
+    public IntegerNumber getDenominator() {
+        return denominator;
     }
 }
