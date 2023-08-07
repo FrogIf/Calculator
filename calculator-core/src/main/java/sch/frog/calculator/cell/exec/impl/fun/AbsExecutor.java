@@ -4,21 +4,21 @@ import sch.frog.calculator.compile.semantic.IExecuteContext;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
 import sch.frog.calculator.number.ComplexNumber;
 import sch.frog.calculator.number.NumberSign;
-import sch.frog.calculator.number.RealNumber;
+import sch.frog.calculator.number.RationalNumber;
 import sch.frog.calculator.cell.CellSingleElementExecutor;
 
 public class AbsExecutor extends CellSingleElementExecutor {
     @Override
     protected ComplexNumber evaluate(ISyntaxNode self, ComplexNumber child, IExecuteContext context) {
-        RealNumber imaginaryPart = child.getImaginaryPart();
-        RealNumber realPart = child.getRealPart();
+        RationalNumber imaginaryPart = child.getImaginaryPart();
+        RationalNumber realPart = child.getRealPart();
         if(realPart != null){
             NumberSign sr = realPart.getSign();
             if(sr == NumberSign.NEGATIVE){
                 realPart = realPart.not();
             }
         }
-        if(imaginaryPart == null || imaginaryPart.equals(RealNumber.ZERO)){
+        if(imaginaryPart == null || imaginaryPart.equals(RationalNumber.ZERO)){
             return new ComplexNumber(realPart, imaginaryPart);
         }
 

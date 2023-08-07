@@ -5,7 +5,6 @@ import sch.frog.calculator.number.IBaseNumber;
 import sch.frog.calculator.number.IntegerNumber;
 import sch.frog.calculator.number.NumberRoundingMode;
 import sch.frog.calculator.number.RationalNumber;
-import sch.frog.calculator.number.RealNumber;
 
 public class NumberMode {
     
@@ -39,13 +38,6 @@ public class NumberMode {
         PLAIN((number, scale) -> {
             if(number instanceof ComplexNumber){
                 RationalNumber num = ((ComplexNumber)number).toRational();
-                if(num == null){
-                    return number.toString();
-                }else{
-                    return toPlainStringForRationalNumber(num, scale);
-                }
-            }else if(number instanceof RealNumber){
-                RationalNumber num = ((RealNumber)number).toRational();
                 if(num == null){
                     return number.toString();
                 }else{

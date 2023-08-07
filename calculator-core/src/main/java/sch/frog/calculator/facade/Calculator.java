@@ -19,7 +19,7 @@ import sch.frog.calculator.util.collection.IList;
 
 public class Calculator {
 
-    private final ITreeNodeReader<ISyntaxNode> treeNodeReader = new ITreeNodeReader<>() {
+    private final ITreeNodeReader<ISyntaxNode> treeNodeReader = new ITreeNodeReader<ISyntaxNode>() {
         @Override
         public String label(ISyntaxNode node) {
             return node.word();

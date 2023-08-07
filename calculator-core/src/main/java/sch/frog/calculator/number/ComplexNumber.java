@@ -5,46 +5,38 @@ package sch.frog.calculator.number;
  */
 public final class ComplexNumber extends AbstractBaseNumber implements Comparable<ComplexNumber> {
 
-    public static final ComplexNumber I = new ComplexNumber(null, RealNumber.ONE);
+    public static final ComplexNumber I = new ComplexNumber(null, RationalNumber.ONE);
 
-    public static final ComplexNumber ONE = new ComplexNumber(RealNumber.ONE, null);
+    public static final ComplexNumber ONE = new ComplexNumber(RationalNumber.ONE, null);
 
-    public static final ComplexNumber ZERO = new ComplexNumber(RealNumber.ZERO, null);
+    public static final ComplexNumber ZERO = new ComplexNumber(RationalNumber.ZERO, null);
 
-    private final RealNumber realPart;
+    private final RationalNumber realPart;
 
-    private final RealNumber imaginaryPart;
+    private final RationalNumber imaginaryPart;
 
-    public ComplexNumber(RealNumber realPart, RealNumber imaginaryPart) {
+    public ComplexNumber(RationalNumber realPart, RationalNumber imaginaryPart) {
         if(realPart == null && imaginaryPart == null){
             throw new IllegalArgumentException("can't init a empty object.");
         }
-        this.realPart = realPart == null ? RealNumber.ZERO : realPart;
-        this.imaginaryPart = imaginaryPart == null ? RealNumber.ZERO : imaginaryPart;
-    }
-
-    public ComplexNumber(RealNumber realPart){
-        if(realPart == null){
-            throw new IllegalArgumentException("can't init a empty object.");
-        }
-        this.realPart = realPart;
-        this.imaginaryPart = RealNumber.ZERO;
+        this.realPart = realPart == null ? RationalNumber.ZERO : realPart;
+        this.imaginaryPart = imaginaryPart == null ? RationalNumber.ZERO : imaginaryPart;
     }
 
     public ComplexNumber(IntegerNumber realPart){
         if(realPart == null){
             throw new IllegalArgumentException("can't init a empty object.");
         }
-        this.realPart = new RealNumber(realPart);
-        this.imaginaryPart = RealNumber.ZERO;
+        this.realPart = new RationalNumber(realPart);
+        this.imaginaryPart = RationalNumber.ZERO;
     }
 
     public ComplexNumber(RationalNumber realPart){
         if(realPart == null){
             throw new IllegalArgumentException("can't init a empty object.");
         }
-        this.realPart = new RealNumber(realPart);
-        this.imaginaryPart = RealNumber.ZERO;
+        this.realPart = realPart;
+        this.imaginaryPart = RationalNumber.ZERO;
     }
 
     public ComplexNumber add(ComplexNumber num){
@@ -67,9 +59,9 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
         /*
          * (a + bi)/(c + di) = (ac + bd)/(c*c + d*d) + ((bc - ad)/(c*c + d*d))i
          */
-        RealNumber cd = num.realPart.mult(num.realPart).add(num.imaginaryPart.mult(num.imaginaryPart));
-        RealNumber rp = this.realPart.mult(num.realPart).add(this.imaginaryPart.mult(num.imaginaryPart)).div(cd);
-        RealNumber ip = this.imaginaryPart.mult(num.realPart).sub(this.realPart.mult(num.imaginaryPart)).div(cd);
+        RationalNumber cd = num.realPart.mult(num.realPart).add(num.imaginaryPart.mult(num.imaginaryPart));
+        RationalNumber rp = this.realPart.mult(num.realPart).add(this.imaginaryPart.mult(num.imaginaryPart)).div(cd);
+        RationalNumber ip = this.imaginaryPart.mult(num.realPart).sub(this.realPart.mult(num.imaginaryPart)).div(cd);
         return new ComplexNumber(rp, ip);
     }
 
@@ -80,8 +72,8 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        boolean ipZero = RealNumber.ZERO.equals(this.imaginaryPart);
-        if(ipZero || !RealNumber.ZERO.equals(this.realPart)){
+        boolean ipZero = RationalNumber.ZERO.equals(this.imaginaryPart);
+        if(ipZero || !RationalNumber.ZERO.equals(this.realPart)){
             sb.append(this.realPart.toString());
         }
         if(!ipZero){
@@ -94,11 +86,11 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
         return sb.toString();
     }
 
-    public RealNumber getRealPart() {
+    public RationalNumber getRealPart() {
         return realPart;
     }
 
-    public RealNumber getImaginaryPart() {
+    public RationalNumber getImaginaryPart() {
         return imaginaryPart;
     }
 
@@ -117,7 +109,7 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
      * 转换为IntegerNumber, 如果转换失败, 返回null
      */
     public IntegerNumber toInteger(){
-        if(!RealNumber.ZERO.equals(this.imaginaryPart)){
+        if(!RationalNumber.ZERO.equals(this.imaginaryPart)){
             return null;
         }else{
             return this.realPart.toInteger();
@@ -128,18 +120,18 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
      * 转换为整数, 如果转换失败, 则返回null
      */
     public RationalNumber toRational(){
-        if(!RealNumber.ZERO.equals(this.imaginaryPart)){
+        if(!RationalNumber.ZERO.equals(this.imaginaryPart)){
             return null;
         }else{
-            return this.realPart.toRational();
+            return this.realPart;
         }
     }
 
     @Override
     public String decimal(int scale, NumberRoundingMode roundingMode) {
         StringBuilder sb = new StringBuilder();
-        boolean ipZero = RealNumber.ZERO.equals(this.imaginaryPart);
-        if(ipZero || !RealNumber.ZERO.equals(this.realPart)){
+        boolean ipZero = RationalNumber.ZERO.equals(this.imaginaryPart);
+        if(ipZero || !RationalNumber.ZERO.equals(this.realPart)){
             sb.append(this.realPart.decimal(scale, roundingMode));
         }
         if(!ipZero){
@@ -155,8 +147,8 @@ public final class ComplexNumber extends AbstractBaseNumber implements Comparabl
     @Override
     public String scientificNotation(int scale, NumberRoundingMode roundingMode) {
         StringBuilder sb = new StringBuilder();
-        boolean ipZero = RealNumber.ZERO.equals(this.imaginaryPart);
-        if(ipZero || !RealNumber.ZERO.equals(this.realPart)){
+        boolean ipZero = RationalNumber.ZERO.equals(this.imaginaryPart);
+        if(ipZero || !RationalNumber.ZERO.equals(this.realPart)){
             sb.append(this.realPart.scientificNotation(scale, roundingMode));
         }
         if(!ipZero){
