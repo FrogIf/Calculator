@@ -1,6 +1,6 @@
 package sch.frog.calculator.compile.syntax.exception;
 
-import sch.frog.calculator.compile.exception.CompileException;
+import sch.frog.calculator.exception.CompileException;
 
 /**
  * 语法树构建异常

@@ -1,6 +1,6 @@
 package sch.frog.calculator.compile.lexical.exception;
 
-import sch.frog.calculator.compile.exception.CompileException;
+import sch.frog.calculator.exception.CompileException;
 
 /**
  * 未识别的token异常

@@ -1,6 +1,4 @@
-package sch.frog.calculator.compile.exception;
-
-import sch.frog.calculator.exception.CalculatorException;
+package sch.frog.calculator.exception;
 
 /**
  * 编译异常

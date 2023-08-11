@@ -136,7 +136,7 @@ public enum NumberRoundingMode {
 
     private final RoundingPolicy policy;
 
-    private NumberRoundingMode(RoundingPolicy policy){
+    NumberRoundingMode(RoundingPolicy policy){
         this.policy = policy;
     }
 
@@ -161,7 +161,7 @@ public enum NumberRoundingMode {
     /**
      * 舍入策略
      */
-    private static interface RoundingPolicy{
+    private interface RoundingPolicy{
         /**
          * 舍入
          * @param positive 整个待舍入的数字是否是正数: true - 是, false - 否

@@ -1,6 +1,6 @@
 package sch.frog.calculator.compile.syntax;
 
-import sch.frog.calculator.compile.exception.CompileException;
+import sch.frog.calculator.exception.CompileException;
 import sch.frog.calculator.compile.lexical.ILexer;
 import sch.frog.calculator.compile.lexical.IToken;
 import sch.frog.calculator.compile.syntax.exception.SyntaxException;

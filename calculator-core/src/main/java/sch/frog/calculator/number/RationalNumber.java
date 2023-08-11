@@ -139,7 +139,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
             bottom = IntegerNumber.valueOf(nineSb.toString());
 
             IntegerNumber gcd = top.gcd(bottom);
-            if(gcd != IntegerNumber.ONE){
+            if(!gcd.equals(IntegerNumber.ONE)){
                 top = top.div(gcd);
                 bottom = bottom.div(gcd);
             }
