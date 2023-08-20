@@ -3,7 +3,7 @@ package sch.frog.calculator.cell.exec.impl.fun;
 import sch.frog.calculator.compile.semantic.IExecuteContext;
 import sch.frog.calculator.compile.semantic.exec.exception.IncorrectStructureException;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
-import sch.frog.calculator.number.ComplexNumber;
+import sch.frog.calculator.base.number.ComplexNumber;
 import sch.frog.calculator.util.collection.IList;
 import sch.frog.calculator.util.collection.Iterator;
 import sch.frog.calculator.cell.CellListElementExecutor;

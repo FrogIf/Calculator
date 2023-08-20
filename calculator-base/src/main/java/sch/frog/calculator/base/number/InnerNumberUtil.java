@@ -1,4 +1,4 @@
-package sch.frog.calculator.number;
+package sch.frog.calculator.base.number;
 
 /**
  * 该类仅供包内使用

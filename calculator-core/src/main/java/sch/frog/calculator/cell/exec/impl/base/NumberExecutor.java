@@ -6,8 +6,8 @@ import sch.frog.calculator.compile.semantic.exec.exception.IncorrectStructureExc
 import sch.frog.calculator.compile.semantic.result.GeneralResult;
 import sch.frog.calculator.compile.semantic.result.IResult;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
-import sch.frog.calculator.number.ComplexNumber;
-import sch.frog.calculator.number.RationalNumber;
+import sch.frog.calculator.base.number.ComplexNumber;
+import sch.frog.calculator.base.number.RationalNumber;
 import sch.frog.calculator.util.collection.IList;
 import sch.frog.calculator.cell.ComplexValue;
 

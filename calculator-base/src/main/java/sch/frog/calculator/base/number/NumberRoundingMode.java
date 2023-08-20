@@ -1,7 +1,7 @@
-package sch.frog.calculator.number;
+package sch.frog.calculator.base.number;
 
-import sch.frog.calculator.util.OutObject;
-import sch.frog.calculator.util.StringUtils;
+import sch.frog.calculator.base.util.OutObject;
+import sch.frog.calculator.base.util.StrUtils;
 
 /**
  * 舍入方式
@@ -261,9 +261,9 @@ public enum NumberRoundingMode {
         discard.value = false;
         if(lackLen > 0){    // 需要补位
             if(dotPos < 0){
-                return StringUtils.rightFill(number + '.', '0', lackLen - 1);
+                return StrUtils.rightFill(number + '.', '0', lackLen - 1);
             }else{
-                return StringUtils.rightFill(number, '0', lackLen);
+                return StrUtils.rightFill(number, '0', lackLen);
             }
         }else if(lackLen < 0){  // 需要截断
             for(int i = len + lackLen; i < len; i++){

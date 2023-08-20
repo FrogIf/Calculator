@@ -1,7 +1,7 @@
 package sch.frog.calculator.cell;
 
 import sch.frog.calculator.compile.semantic.result.IValue;
-import sch.frog.calculator.number.ComplexNumber;
+import sch.frog.calculator.base.number.ComplexNumber;
 
 public class ComplexValue implements IValue {
 

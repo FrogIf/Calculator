@@ -1,6 +1,6 @@
-package sch.frog.calculator.number;
+package sch.frog.calculator.base.number;
 
-import sch.frog.calculator.util.StringUtils;
+import sch.frog.calculator.base.util.StrUtils;
 
 /**
  * 有理数
@@ -34,12 +34,12 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         IntegerNumber top;
         IntegerNumber bottom;
 
-        if(StringUtils.isNotBlank(numerator)){
+        if(StrUtils.isNotBlank(numerator)){
             top = IntegerNumber.valueOf(numerator);
         }else{
             top = IntegerNumber.ZERO;
         }
-        if(StringUtils.isNotBlank(denominator)){
+        if(StrUtils.isNotBlank(denominator)){
             bottom = IntegerNumber.valueOf(denominator);
         }else{
             bottom = IntegerNumber.ONE;
@@ -57,7 +57,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     }
 
     public RationalNumber(String decimal){
-        if(StringUtils.isBlank(decimal)){
+        if(StrUtils.isBlank(decimal)){
             throw new IllegalArgumentException("decimal is blank.");
         }
         int pos = decimal.indexOf(".");
@@ -94,7 +94,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
      * @param repetend 小数循环节开始的位置(从0计), repetend取int类型是合理的, 由于语言或者计算机的限制, repetend不会超过int范围
      */
     public RationalNumber(String decimal, int repetend){
-        if(StringUtils.isBlank(decimal)){
+        if(StrUtils.isBlank(decimal)){
             throw new IllegalArgumentException("decimal is blank.");
         }
 
@@ -393,7 +393,7 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
     
             String dqStr = dq.toPlainString();
             if(dqStr.length() < needLen){
-                dqStr = StringUtils.leftFill(dqStr, '0', needLen - dqStr.length());
+                dqStr = StrUtils.leftFill(dqStr, '0', needLen - dqStr.length());
             }
 
             number.append('.').append(dqStr);

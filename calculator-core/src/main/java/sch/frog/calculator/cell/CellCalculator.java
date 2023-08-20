@@ -6,7 +6,7 @@ import sch.frog.calculator.compile.semantic.DoNothingExecuteContext;
 import sch.frog.calculator.compile.semantic.result.IResult;
 import sch.frog.calculator.compile.semantic.result.IValue;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
-import sch.frog.calculator.number.ComplexNumber;
+import sch.frog.calculator.base.number.ComplexNumber;
 import sch.frog.calculator.platform.GeneralCompileManager;
 import sch.frog.calculator.util.collection.IList;
 

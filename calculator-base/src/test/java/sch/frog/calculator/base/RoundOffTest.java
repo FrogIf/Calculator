@@ -1,26 +1,33 @@
-package sch.frog.test.impl;
+package sch.frog.calculator.base;
 
-import sch.frog.calculator.number.NumberRoundingMode;
-import sch.frog.calculator.util.collection.IMap;
-import sch.frog.calculator.util.collection.ISet;
-import sch.frog.calculator.util.collection.Iterator;
-import sch.frog.calculator.util.collection.TreeMap;
-import sch.frog.test.util.TestUtil;
-import sch.frog.test.ICaseObject;
+import sch.frog.calculator.base.number.NumberRoundingMode;
 
-import java.math.RoundingMode;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
 
-import sch.frog.test.AbstractTestContent;
+public class RoundOffTest {
 
-/**
- * 舍入测试
- */
-public class RoundOffTest extends AbstractTestContent<RoundOffTestObj>{
+    public static void main(String[] args){
+        int test = 10000;
+        RoundOffTest t = new RoundOffTest();
+        System.out.println("round off test");
+        for(int i = 0; i < test; i++){
+            RoundOffTestObj caseObj = t.generateCase();
+            if(!t.singleStepTest(caseObj)){
+                System.out.println(String.format("test failed, case object : %s, test class : %s",
+                        caseObj.content(), RoundOffTest.class.getSimpleName()));
+            }
+        }
+        System.out.println("round off test finish");
+    }
 
-    private static final IMap<NumberRoundingMode, RoundingMode> map = new TreeMap<>((a, b) -> a.compareTo(b));
-    private static final ISet<IMap.Entry<NumberRoundingMode, RoundingMode>> entrySet;
+    private static final Map<NumberRoundingMode, RoundingMode> map = new TreeMap<>(Enum::compareTo);
+    private static final Set<Map.Entry<NumberRoundingMode, RoundingMode>> entrySet;
     static{
         map.put(NumberRoundingMode.CEILING, RoundingMode.CEILING);
         map.put(NumberRoundingMode.FLOOR, RoundingMode.FLOOR);
@@ -34,7 +41,6 @@ public class RoundOffTest extends AbstractTestContent<RoundOffTestObj>{
 
     private static final Random r = new Random();
 
-    @Override
     protected RoundOffTestObj generateCase() {
         String decimal = TestUtil.randomDecimal();
         int dotPos = decimal.indexOf('.');
@@ -51,11 +57,10 @@ public class RoundOffTest extends AbstractTestContent<RoundOffTestObj>{
         return obj;
     }
 
-    @Override
     protected boolean singleStepTest(RoundOffTestObj caseObj) {
-        Iterator<IMap.Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
+        Iterator<Map.Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
         while(itr.hasNext()){
-            IMap.Entry<NumberRoundingMode, RoundingMode> entry = itr.next();
+            Map.Entry<NumberRoundingMode, RoundingMode> entry = itr.next();
             if(!test(caseObj.getNumber(), caseObj.getScale(), entry.getKey(), entry.getValue())){
                 return false;
             }
@@ -75,7 +80,6 @@ public class RoundOffTest extends AbstractTestContent<RoundOffTestObj>{
         return check;
     }
 
-    @Override
     protected RoundOffTestObj parse(String content) {
         String[] split = content.split("|");
         RoundOffTestObj obj = new RoundOffTestObj();
@@ -83,10 +87,11 @@ public class RoundOffTest extends AbstractTestContent<RoundOffTestObj>{
         obj.scale(Integer.parseInt(split[1]));
         return obj;
     }
-    
+
 }
 
-class RoundOffTestObj implements ICaseObject{
+
+class RoundOffTestObj {
 
     private String number;
 
@@ -108,7 +113,6 @@ class RoundOffTestObj implements ICaseObject{
         return this.number;
     }
 
-    @Override
     public String content() {
         return number + "|" + scale;
     }

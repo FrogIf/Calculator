@@ -1,34 +1,39 @@
-package sch.frog.test.impl;
+package sch.frog.calculator.base;
+
+import sch.frog.calculator.base.number.NumberRoundingMode;
+import sch.frog.calculator.base.number.RationalNumber;
+import sch.frog.calculator.base.util.StrUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
 
-import java.text.DecimalFormat;
+public class RationalNumberTest {
 
-import sch.frog.calculator.number.NumberRoundingMode;
-import sch.frog.calculator.number.RationalNumber;
-import sch.frog.calculator.util.StringUtils;
-import sch.frog.calculator.util.collection.IMap;
-import sch.frog.calculator.util.collection.ISet;
-import sch.frog.calculator.util.collection.Iterator;
-import sch.frog.calculator.util.collection.TreeMap;
-import sch.frog.test.util.TestUtil;
-import sch.frog.test.AbstractTestContent;
-import sch.frog.test.ICaseObject;
+    public static void main(String[] args){
+        int test = 10000;
+        System.out.println("rational number test");
+        RationalNumberTest t = new RationalNumberTest();
+        for(int i = 0; i < test; i++){
+            t.simpleTest();
+        }
+        System.out.println("rational number test finish");
+    }
 
-public class RationalNumberTest extends AbstractTestContent<RationalNumberCase>{
-
-    
     private static final NumberFormat formatter = new DecimalFormat("0.######E0", DecimalFormatSymbols.getInstance(Locale.ROOT));
 
     private static final Random r = new Random();
 
-    private static final IMap<NumberRoundingMode, RoundingMode> map = new TreeMap<>((a, b) -> a.compareTo(b));
-    private static final ISet<IMap.Entry<NumberRoundingMode, RoundingMode>> entrySet;
+    private static final Map<NumberRoundingMode, RoundingMode> map = new TreeMap<>(Enum::compareTo);
+    private static final Set<Map.Entry<NumberRoundingMode, RoundingMode>> entrySet;
     static{
         formatter.setMaximumFractionDigits(10000);
 
@@ -42,7 +47,6 @@ public class RationalNumberTest extends AbstractTestContent<RationalNumberCase>{
         entrySet = map.entrySet();
     }
 
-    @Override
     protected RationalNumberCase generateCase() {
         RationalNumberCase rationalNumberCase = new RationalNumberCase();
         if(r.nextInt(10) % 2 == 1){
@@ -50,12 +54,11 @@ public class RationalNumberTest extends AbstractTestContent<RationalNumberCase>{
         }else{
             rationalNumberCase.setDecimal(randomLitterNumber());
         }
-        rationalNumberCase.setScale(r.nextInt(10)); 
+        rationalNumberCase.setScale(r.nextInt(10));
 
         return rationalNumberCase;
     }
 
-    @Override
     protected boolean singleStepTest(RationalNumberCase caseObj) {
         if(!testRoundOff(caseObj.getDecimal(), caseObj.getScale())){
             return false;
@@ -70,11 +73,11 @@ public class RationalNumberTest extends AbstractTestContent<RationalNumberCase>{
      * plain string测试
      */
     private boolean testPlainString(String decimal, int scale){
-        Iterator<IMap.Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
+        Iterator<Map.Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
         while(itr.hasNext()){
-            IMap.Entry<NumberRoundingMode, RoundingMode> entry = itr.next();
+            Map.Entry<NumberRoundingMode, RoundingMode> entry = itr.next();
             RoundingMode roundingMode = entry.getValue();
-            String ans = new BigDecimal(decimal).setScale(scale, roundingMode).toPlainString(); 
+            String ans = new BigDecimal(decimal).setScale(scale, roundingMode).toPlainString();
             String result = RationalNumber.valueOf(decimal).toPlainString(scale, entry.getKey());
             if(!result.equals(ans)){
                 return false;
@@ -87,7 +90,7 @@ public class RationalNumberTest extends AbstractTestContent<RationalNumberCase>{
      * 舍入测试
      */
     private boolean testRoundOff(String decimal, int scale){
-        Iterator<IMap.Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
+        Iterator<Map.Entry<NumberRoundingMode, RoundingMode>> itr = entrySet.iterator();
         while(itr.hasNext()){
             if(!singleTest(decimal, itr.next().getKey(), scale)){
                 return false;
@@ -131,26 +134,24 @@ public class RationalNumberTest extends AbstractTestContent<RationalNumberCase>{
     private String randomLitterNumber(){
         int zeroCount = r.nextInt(10) + 5;
         String num = TestUtil.randomIntegerPositive();
-        return "0." + StringUtils.leftFill(num, '0', zeroCount);
+        return "0." + StrUtils.leftFill(num, '0', zeroCount);
     }
 
-    @Override
     protected RationalNumberCase parse(String content) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public void simpleTest(){
         String origin = "123.345_5E1";
         RationalNumber valueOf = RationalNumber.valueOf(origin);
         System.out.println(valueOf);
     }
-    
+
 }
 
 
-class RationalNumberCase implements ICaseObject{
+class RationalNumberCase {
 
     private String decimal;
 
@@ -172,7 +173,6 @@ class RationalNumberCase implements ICaseObject{
         return this.scale;
     }
 
-    @Override
     public String content() {
         return decimal + "|" + scale;
     }

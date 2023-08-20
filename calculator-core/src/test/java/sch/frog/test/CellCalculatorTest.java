@@ -1,8 +1,8 @@
 package sch.frog.test;
 
 import sch.frog.calculator.cell.CellCalculator;
-import sch.frog.calculator.number.ComplexNumber;
-import sch.frog.calculator.number.NumberRoundingMode;
+import sch.frog.calculator.base.number.ComplexNumber;
+import sch.frog.calculator.base.number.NumberRoundingMode;
 
 import java.util.Scanner;
 

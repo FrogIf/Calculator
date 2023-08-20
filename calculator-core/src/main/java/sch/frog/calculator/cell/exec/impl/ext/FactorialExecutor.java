@@ -2,8 +2,8 @@ package sch.frog.calculator.cell.exec.impl.ext;
 
 import sch.frog.calculator.compile.semantic.IExecuteContext;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
-import sch.frog.calculator.number.ComplexNumber;
-import sch.frog.calculator.number.NumberUtil;
+import sch.frog.calculator.base.number.ComplexNumber;
+import sch.frog.calculator.base.number.NumberUtil;
 import sch.frog.calculator.cell.CellSingleElementExecutor;
 
 /**

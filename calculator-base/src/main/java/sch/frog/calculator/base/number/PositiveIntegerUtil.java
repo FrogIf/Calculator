@@ -1,7 +1,7 @@
-package sch.frog.calculator.number;
+package sch.frog.calculator.base.number;
 
-import sch.frog.calculator.math.exception.DivideByZeroException;
-import sch.frog.calculator.math.exception.OutOfRangeException;
+import sch.frog.calculator.base.exception.DivideByZeroException;
+import sch.frog.calculator.base.exception.OutOfRangeException;
 
 /**
  * 正整数工具类 所有 正整数的大数操作, 都将在这里完成 包内可见, 主要是这个类并不符合知道最少原则, 暴露出去没有意义,

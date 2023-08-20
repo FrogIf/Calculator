@@ -1,4 +1,4 @@
-package sch.frog.calculator.math.exception;
+package sch.frog.calculator.base.exception;
 
 public class OutOfRangeException extends ArithmeticException{
     

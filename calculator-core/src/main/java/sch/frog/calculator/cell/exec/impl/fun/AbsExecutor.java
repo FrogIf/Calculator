@@ -2,9 +2,9 @@ package sch.frog.calculator.cell.exec.impl.fun;
 
 import sch.frog.calculator.compile.semantic.IExecuteContext;
 import sch.frog.calculator.compile.syntax.ISyntaxNode;
-import sch.frog.calculator.number.ComplexNumber;
-import sch.frog.calculator.number.NumberSign;
-import sch.frog.calculator.number.RationalNumber;
+import sch.frog.calculator.base.number.ComplexNumber;
+import sch.frog.calculator.base.number.NumberSign;
+import sch.frog.calculator.base.number.RationalNumber;
 import sch.frog.calculator.cell.CellSingleElementExecutor;
 
 public class AbsExecutor extends CellSingleElementExecutor {

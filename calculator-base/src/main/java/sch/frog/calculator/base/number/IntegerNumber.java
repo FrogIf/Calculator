@@ -1,7 +1,7 @@
-package sch.frog.calculator.number;
+package sch.frog.calculator.base.number;
 
-import sch.frog.calculator.math.exception.DivideByZeroException;
-import sch.frog.calculator.util.StringUtils;
+import sch.frog.calculator.base.exception.DivideByZeroException;
+import sch.frog.calculator.base.util.StrUtils;
 
 /**
  * 整数
@@ -582,7 +582,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
         return literal;
     }
 
-    private static final String FILL_ELEMENT = StringUtils.rightFill("", '0', PositiveIntegerUtil.SINGLE_ELEMENT_LEN);
+    private static final String FILL_ELEMENT = StrUtils.rightFill("", '0', PositiveIntegerUtil.SINGLE_ELEMENT_LEN);
 
     /**
      * 将一位数追加至StringBuilder中

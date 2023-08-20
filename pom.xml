@@ -5,15 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>sch.frog</groupId>
-    <artifactId>Calculator</artifactId>
+    <artifactId>calculator</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <modules>
         <module>calculator-core</module>
         <module>calculator-app</module>
+        <module>calculator-base</module>
     </modules>
 
     <properties>
+        <revision>1.0</revision>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

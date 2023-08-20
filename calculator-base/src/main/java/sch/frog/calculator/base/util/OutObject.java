@@ -1,4 +1,4 @@
-package sch.frog.calculator.util;
+package sch.frog.calculator.base.util;
 
 public class OutObject<V> {
     
