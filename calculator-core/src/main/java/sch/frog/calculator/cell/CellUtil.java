@@ -4,7 +4,7 @@ import sch.frog.calculator.compile.semantic.IExecuteContext;
 import sch.frog.calculator.compile.semantic.exec.exception.ExecuteException;
 import sch.frog.calculator.compile.semantic.result.IValue;
 import sch.frog.calculator.compile.semantic.result.VariableValue;
-import sch.frog.calculator.base.number.ComplexNumber;
+import sch.frog.calculator.number.impl.ComplexNumber;
 
 public class CellUtil {
 

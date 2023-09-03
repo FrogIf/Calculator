@@ -3,7 +3,7 @@ package sch.frog.calculator.math.caspkg;
 import sch.frog.calculator.math.caspkg.rationaddgroup.RationalAdditionInverseTransformer;
 import sch.frog.calculator.math.caspkg.rationaddgroup.RationalAdditionOperator;
 import sch.frog.calculator.math.caspkg.rationaddgroup.RationalElement;
-import sch.frog.calculator.base.number.RationalNumber;
+import sch.frog.calculator.number.impl.RationalNumber;
 import sch.frog.calculator.math.cas.Group;
 
 /**

@@ -1,6 +1,6 @@
 package sch.frog.calculator.math.caspkg.rationaddgroup;
 
-import sch.frog.calculator.base.number.RationalNumber;
+import sch.frog.calculator.number.impl.RationalNumber;
 import sch.frog.calculator.math.cas.IElement;
 
 public class RationalElement implements IElement {

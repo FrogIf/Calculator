@@ -11,7 +11,7 @@
     <modules>
         <module>calculator-core</module>
         <module>calculator-app</module>
-        <module>calculator-base</module>
+        <module>calculator-number</module>
     </modules>
 
     <properties>
