@@ -1,9 +1,9 @@
 package sch.frog.test;
 
-import sch.frog.calculator.facade.Calculator;
-import sch.frog.calculator.facade.ExecuteSession;
-import sch.frog.calculator.facade.SessionConfiguration;
-import sch.frog.calculator.io.IOutputStream;
+import io.github.frogif.calculator.facade.Calculator;
+import io.github.frogif.calculator.facade.ExecuteSession;
+import io.github.frogif.calculator.facade.SessionConfiguration;
+import io.github.frogif.calculator.io.IOutputStream;
 
 import java.io.PrintStream;
 import java.util.Scanner;

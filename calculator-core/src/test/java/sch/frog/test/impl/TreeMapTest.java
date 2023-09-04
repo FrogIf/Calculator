@@ -1,9 +1,9 @@
 package sch.frog.test.impl;
 
-import sch.frog.calculator.util.collection.IMap;
-import sch.frog.calculator.util.collection.ISet;
-import sch.frog.calculator.util.collection.Iterator;
-import sch.frog.calculator.util.collection.TreeMap;
+import io.github.frogif.calculator.util.collection.IMap;
+import io.github.frogif.calculator.util.collection.ISet;
+import io.github.frogif.calculator.util.collection.Iterator;
+import io.github.frogif.calculator.util.collection.TreeMap;
 import sch.frog.test.util.TestUtil;
 
 import java.util.HashMap;

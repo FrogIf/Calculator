@@ -1,8 +1,8 @@
 package sch.frog.test;
 
-import sch.frog.calculator.util.collection.ArrayList;
-import sch.frog.calculator.util.collection.IList;
-import sch.frog.calculator.util.collection.Iterator;
+import io.github.frogif.calculator.util.collection.ArrayList;
+import io.github.frogif.calculator.util.collection.IList;
+import io.github.frogif.calculator.util.collection.Iterator;
 import sch.frog.test.impl.RBTreeTest;
 import sch.frog.test.impl.TreeMapTest;
 
