@@ -22,7 +22,7 @@
         <dependency>
             <groupId>io.github.frogif</groupId>
             <artifactId>calculator-number</artifactId>
-            <version>${project.version}</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
