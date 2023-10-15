@@ -334,6 +334,10 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      * @return 转换结果
      */
     public static IntegerNumber valueOf(int number){
+        return valueOf((long)number);
+    }
+
+    public static IntegerNumber valueOf(long number){
         if(number == 0){
             return ZERO;
         }else if(number == 1) {
@@ -342,7 +346,7 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
             return NEGATIVE_ONE;
         }else{
             byte sign;
-            int absNum;
+            long absNum;
             if(number < 0){
                 absNum = -number;
                 sign = SIGN_NEGATIVE;

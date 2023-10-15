@@ -685,15 +685,15 @@ class PositiveIntegerUtil {
      * @param absNum 正整数
      * @return 数值数组
      */
-    public static int[] convertToNumberArray(int absNum){
+    public static int[] convertToNumberArray(long absNum){
         int[] result;
         if(absNum < PositiveIntegerUtil.SCALE){
             result = new int[1];
-            result[0] = absNum;
+            result[0] = (int)absNum;
         }else{
             result = new int[2];
-            result[0] = absNum % PositiveIntegerUtil.SCALE;
-            result[1] = absNum / PositiveIntegerUtil.SCALE;
+            result[0] = (int)(absNum % PositiveIntegerUtil.SCALE);
+            result[1] = (int)(absNum / PositiveIntegerUtil.SCALE);
         }
         return result;
     }

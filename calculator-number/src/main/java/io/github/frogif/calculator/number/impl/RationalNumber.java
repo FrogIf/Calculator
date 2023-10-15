@@ -321,44 +321,6 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
         return this.numerator.hashCode() + this.denominator.hashCode();
     }
 
-    public static RationalNumber valueOf(String numString){
-        int dot1 = numString.indexOf('.');
-        int dot2 = numString.indexOf('_');
-        int ePos = numString.indexOf(NumberConstant.SCIENTIFIC_MARK);
-
-        String beforeE;
-        int eVal = 0;
-        if(ePos > 0){
-            beforeE = numString.substring(0, ePos);
-            eVal = Integer.parseInt(numString.substring(ePos + 1));
-        }else{
-            beforeE = numString;
-        }
-
-        RationalNumber rationalNumber;
-        if(dot2 == -1){ // 没有循环节
-            rationalNumber = new RationalNumber(beforeE);
-        }else{  // 有循环节
-            beforeE = beforeE.replace("_", "");
-            rationalNumber = new RationalNumber(beforeE, dot2 - dot1 - 1);
-        }
-
-        // 存在科学计数法
-        if(eVal > 0){
-            IntegerNumber newNumerator = rationalNumber.numerator.decLeftShift(eVal);
-            rationalNumber = reduction(newNumerator, rationalNumber.denominator);
-        }else if(eVal < 0){
-            IntegerNumber newDenominator = rationalNumber.denominator.decLeftShift(-eVal);
-            rationalNumber = reduction(rationalNumber.numerator, newDenominator);
-        }
-
-        return rationalNumber;
-    }
-
-    public static RationalNumber valueOf(double value){
-        return valueOf(Double.toString(value));
-    }
-
     @Override
     public String decimal(int scale, NumberRoundingMode roundingMode) {
         if(IntegerNumber.ONE.equals(this.denominator)){
@@ -478,5 +440,55 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
      */
     public IntegerNumber getDenominator() {
         return denominator;
+    }
+
+    public static RationalNumber valueOf(String numString){
+        int dot1 = numString.indexOf('.');
+        int dot2 = numString.indexOf('_');
+        int ePos = numString.indexOf(NumberConstant.SCIENTIFIC_MARK);
+
+        String beforeE;
+        int eVal = 0;
+        if(ePos > 0){
+            beforeE = numString.substring(0, ePos);
+            eVal = Integer.parseInt(numString.substring(ePos + 1));
+        }else{
+            beforeE = numString;
+        }
+
+        RationalNumber rationalNumber;
+        if(dot2 == -1){ // 没有循环节
+            rationalNumber = new RationalNumber(beforeE);
+        }else{  // 有循环节
+            beforeE = beforeE.replace("_", "");
+            rationalNumber = new RationalNumber(beforeE, dot2 - dot1 - 1);
+        }
+
+        // 存在科学计数法
+        if(eVal > 0){
+            IntegerNumber newNumerator = rationalNumber.numerator.decLeftShift(eVal);
+            rationalNumber = reduction(newNumerator, rationalNumber.denominator);
+        }else if(eVal < 0){
+            IntegerNumber newDenominator = rationalNumber.denominator.decLeftShift(-eVal);
+            rationalNumber = reduction(rationalNumber.numerator, newDenominator);
+        }
+
+        return rationalNumber;
+    }
+
+    public static RationalNumber valueOf(double value){
+        return valueOf(Double.toString(value));
+    }
+
+    public static RationalNumber valueOf(float value){
+        return valueOf(Float.toString(value));
+    }
+
+    public static RationalNumber valueOf(int num){
+        return new RationalNumber(IntegerNumber.valueOf(num));
+    }
+
+    public static RationalNumber valueOf(long num){
+        return new RationalNumber(IntegerNumber.valueOf(num));
     }
 }
