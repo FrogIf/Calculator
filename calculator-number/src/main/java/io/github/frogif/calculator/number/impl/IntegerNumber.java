@@ -674,37 +674,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
             shift *= PositiveIntegerUtil.SCALE;
         }
         return v;
-
-//        if(this.highPos == 0) {
-//            int v = this.values[0];
-//            return this.sign == SIGN_NEGATIVE ? -v : v;
-//        }else if(this.highPos > 1){
-//            throw new NumericOverflowException(this + " out of int range");
-//        }else{
-//            final int firstNum = Integer.MAX_VALUE / PositiveIntegerUtil.SCALE;
-//            if(this.values[1] > firstNum){
-//                throw new NumericOverflowException(this.toPlainString() + " out of int range");
-//            }
-//            if(this.values[1] < firstNum){
-//                return this.values[1] * PositiveIntegerUtil.SCALE + this.values[0];
-//            }
-//            // start with 2
-//            if(this.sign == SIGN_NEGATIVE){ // 负数
-//                int edge = -(Integer.MIN_VALUE % PositiveIntegerUtil.SCALE);
-//                if(this.values[0] > edge){
-//                    throw new NumericOverflowException(this.toPlainString() + " out of int range");
-//                }else if(edge == this.values[0]){
-//                    return Integer.MIN_VALUE;
-//                }
-//                return -(this.values[1] * PositiveIntegerUtil.SCALE + this.values[0]);
-//            }else{ // 正数
-//                int edge = Integer.MAX_VALUE % PositiveIntegerUtil.SCALE;
-//                if(this.values[0] > edge){
-//                    throw new NumericOverflowException(this.toPlainString() + " out of int range");
-//                }
-//                return this.values[1] * PositiveIntegerUtil.SCALE + this.values[0];
-//            }
-//        }
     }
 
     private static final IntegerNumber LONG_MAX = IntegerNumber.valueOf(Long.MAX_VALUE);
@@ -713,11 +682,11 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
     public long longValue(){
         if (this.sign == SIGN_NEGATIVE) {
             if(LONG_MIN.compareTo(this) > 0){
-                throw new NumericOverflowException(this + " out of int range");
+                throw new NumericOverflowException(this + " out of long range");
             }
         }else{
             if(LONG_MAX.compareTo(this) < 0){
-                throw new NumericOverflowException(this + " out of int range");
+                throw new NumericOverflowException(this + " out of long range");
             }
         }
 

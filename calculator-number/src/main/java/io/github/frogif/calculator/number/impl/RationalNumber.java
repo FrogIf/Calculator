@@ -1,5 +1,6 @@
 package io.github.frogif.calculator.number.impl;
 
+import io.github.frogif.calculator.number.exception.NumericOverflowException;
 import io.github.frogif.calculator.number.util.StrUtils;
 
 /**
@@ -490,5 +491,21 @@ public final class RationalNumber extends AbstractBaseNumber implements Comparab
 
     public static RationalNumber valueOf(long num){
         return new RationalNumber(IntegerNumber.valueOf(num));
+    }
+
+    public double doubleValue(){
+        double d = Double.parseDouble(this.toPlainString(10, NumberRoundingMode.HALF_DOWN));
+        if(d == Double.POSITIVE_INFINITY || d == Double.NEGATIVE_INFINITY){
+            throw new NumericOverflowException(this + " out of double range");
+        }
+        return d;
+    }
+
+    public float floatValue(){
+        float f = Float.parseFloat(this.toPlainString(10, NumberRoundingMode.HALF_DOWN));
+        if(f == Float.POSITIVE_INFINITY || f == Float.NEGATIVE_INFINITY){
+            throw new NumericOverflowException(this + " out of float range");
+        }
+        return f;
     }
 }
