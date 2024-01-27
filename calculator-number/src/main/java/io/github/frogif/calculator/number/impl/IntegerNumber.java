@@ -1,6 +1,7 @@
 package io.github.frogif.calculator.number.impl;
 
 import io.github.frogif.calculator.number.exception.DivideByZeroException;
+import io.github.frogif.calculator.number.exception.NumericOverflowException;
 import io.github.frogif.calculator.number.util.StrUtils;
 
 /**
@@ -56,7 +57,6 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
      */
     private IntegerNumber(int sign, String literal) {
         this.sign = sign;
-        this.literal = literal;
         this.values = generateVal(literal);
         this.highPos = values.length - 1;
     }
@@ -348,8 +348,12 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
             byte sign;
             long absNum;
             if(number < 0){
-                absNum = -number;
-                sign = SIGN_NEGATIVE;
+                if(number == Long.MIN_VALUE){
+                    return new IntegerNumber(SIGN_NEGATIVE, new int[]{ 854775808, 223372036, 9 });
+                }else{
+                    absNum = -number;
+                    sign = SIGN_NEGATIVE;
+                }
             }else{
                 absNum = number;
                 sign = SIGN_POSITIVE;
@@ -646,6 +650,84 @@ public final class IntegerNumber extends AbstractBaseNumber implements Comparabl
         int[] val = generateVal(valStr);
         int[] e = PositiveIntegerUtil.subtract(originE, originE.length - 1, numArrAfterDot, numArrAfterDot.length - 1);
         return PositiveIntegerUtil.decLeftShift(val, val.length - 1, e, PositiveIntegerUtil.highPos(e));
+    }
+
+    private static final IntegerNumber INT_MIN = IntegerNumber.valueOf(Integer.MIN_VALUE);
+    private static final IntegerNumber INT_MAX = IntegerNumber.valueOf(Integer.MAX_VALUE);
+
+    public int intValue(){
+        if (this.sign == SIGN_NEGATIVE) {
+            if(INT_MIN.compareTo(this) > 0){
+                throw new NumericOverflowException(this + " out of int range");
+            }
+        }else{
+            if(INT_MAX.compareTo(this) < 0){
+                throw new NumericOverflowException(this + " out of int range");
+            }
+        }
+
+
+        int v = 0;
+        int shift = this.sign == SIGN_NEGATIVE ? -1 : 1;
+        for (int val : this.values) {
+            v += val * shift;
+            shift *= PositiveIntegerUtil.SCALE;
+        }
+        return v;
+
+//        if(this.highPos == 0) {
+//            int v = this.values[0];
+//            return this.sign == SIGN_NEGATIVE ? -v : v;
+//        }else if(this.highPos > 1){
+//            throw new NumericOverflowException(this + " out of int range");
+//        }else{
+//            final int firstNum = Integer.MAX_VALUE / PositiveIntegerUtil.SCALE;
+//            if(this.values[1] > firstNum){
+//                throw new NumericOverflowException(this.toPlainString() + " out of int range");
+//            }
+//            if(this.values[1] < firstNum){
+//                return this.values[1] * PositiveIntegerUtil.SCALE + this.values[0];
+//            }
+//            // start with 2
+//            if(this.sign == SIGN_NEGATIVE){ // 负数
+//                int edge = -(Integer.MIN_VALUE % PositiveIntegerUtil.SCALE);
+//                if(this.values[0] > edge){
+//                    throw new NumericOverflowException(this.toPlainString() + " out of int range");
+//                }else if(edge == this.values[0]){
+//                    return Integer.MIN_VALUE;
+//                }
+//                return -(this.values[1] * PositiveIntegerUtil.SCALE + this.values[0]);
+//            }else{ // 正数
+//                int edge = Integer.MAX_VALUE % PositiveIntegerUtil.SCALE;
+//                if(this.values[0] > edge){
+//                    throw new NumericOverflowException(this.toPlainString() + " out of int range");
+//                }
+//                return this.values[1] * PositiveIntegerUtil.SCALE + this.values[0];
+//            }
+//        }
+    }
+
+    private static final IntegerNumber LONG_MAX = IntegerNumber.valueOf(Long.MAX_VALUE);
+    private static final IntegerNumber LONG_MIN = IntegerNumber.valueOf(Long.MIN_VALUE);
+
+    public long longValue(){
+        if (this.sign == SIGN_NEGATIVE) {
+            if(LONG_MIN.compareTo(this) > 0){
+                throw new NumericOverflowException(this + " out of int range");
+            }
+        }else{
+            if(LONG_MAX.compareTo(this) < 0){
+                throw new NumericOverflowException(this + " out of int range");
+            }
+        }
+
+        long v = 0;
+        long shift = this.sign == SIGN_NEGATIVE ? -1 : 1;
+        for (int val : this.values) {
+            v += val * shift;
+            shift *= PositiveIntegerUtil.SCALE;
+        }
+        return v;
     }
 
     /**

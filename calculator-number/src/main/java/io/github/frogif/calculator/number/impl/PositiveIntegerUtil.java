@@ -1,7 +1,7 @@
 package io.github.frogif.calculator.number.impl;
 
 import io.github.frogif.calculator.number.exception.DivideByZeroException;
-import io.github.frogif.calculator.number.exception.OutOfRangeException;
+import io.github.frogif.calculator.number.exception.NumericOverflowException;
 
 /**
  * 正整数工具类 所有 正整数的大数操作, 都将在这里完成 包内可见, 主要是这个类并不符合知道最少原则, 暴露出去没有意义,
@@ -653,11 +653,11 @@ class PositiveIntegerUtil {
             int rVal = r[0];
             long qInt = 0;
             if(q.length > 2){   // 超出数组最大容量
-                throw new OutOfRangeException();
+                throw new NumericOverflowException();
             }else if(q.length == 2){
                 long l = q[1] * 1L * SCALE + q[0];
                 if(l > Integer.MAX_VALUE){
-                    throw new OutOfRangeException();
+                    throw new NumericOverflowException();
                 }
                 qInt = (int)l;
             }else{
@@ -668,7 +668,7 @@ class PositiveIntegerUtil {
             highPos = highPos(num);
             long len = qInt + highPos + 1;
             if(len > Integer.MAX_VALUE){
-                throw new OutOfRangeException();
+                throw new NumericOverflowException();
             }
 
             int[] result = new int[(int)len];
@@ -690,10 +690,15 @@ class PositiveIntegerUtil {
         if(absNum < PositiveIntegerUtil.SCALE){
             result = new int[1];
             result[0] = (int)absNum;
-        }else{
+        }else if(absNum < (long) PositiveIntegerUtil.SCALE * PositiveIntegerUtil.SCALE){
             result = new int[2];
             result[0] = (int)(absNum % PositiveIntegerUtil.SCALE);
             result[1] = (int)(absNum / PositiveIntegerUtil.SCALE);
+        }else{
+            result = new int[3];
+            result[0] = (int)(absNum % PositiveIntegerUtil.SCALE);
+            result[1] = (int)(absNum / PositiveIntegerUtil.SCALE % PositiveIntegerUtil.SCALE);
+            result[2] = (int)(absNum / PositiveIntegerUtil.SCALE / PositiveIntegerUtil.SCALE);
         }
         return result;
     }
