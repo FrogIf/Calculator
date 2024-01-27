@@ -7,7 +7,7 @@
     <groupId>io.github.frogif</groupId>
     <name>calculator-number</name>
     <artifactId>calculator-number</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <packaging>jar</packaging>
     <description>support general calculate for rational number and integer number, and precision lossless.</description>
 
